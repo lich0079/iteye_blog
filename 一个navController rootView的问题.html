@@ -1,0 +1,12 @@
+<p>做一个<span class="t_tag">app</span> ， window下面是tabBarController, tabBarController里面3个tab, 每个都是一个navController， 3个navController的rootView我都是用的一个自定义的RootView,&nbsp;&nbsp;RootView实际是一个tableView的子类<br><br> 现在的问题是，我在初始化rootView的时候怎么知道用户点的那个tab， 从而展示不同的内容， </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">NSUInteger *i= self.navigationController.tabBarController.selectedIndex;
+        NSLog(@"%d",i);
+        if (i == 0) {
+               
+        }else if (i == 1) {
+                               
+        }else if (i == 2) {
+               
+        }</pre> &nbsp;

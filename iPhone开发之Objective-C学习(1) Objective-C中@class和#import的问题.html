@@ -1,0 +1,222 @@
+<p>Objective-C中@class和#import的问题。<a title="http://stackoverflow.com/questions/322597/objective-c-class-vs-import" href="http://stackoverflow.com/questions/322597/objective-c-class-vs-import" target="_blank">参考</a> 。</p> 
+<p>假设，有两个类：ClassA和ClassB，两个之间相互使用到，即构成了circular dependency（循环依赖）。如果在头文件里面只用#import把对方的头文件包含进来（构成circular inclusions，循环包含），则编译器会报错：</p> 
+<p>Expected specifier-qualifier-list before ‘ClassA’</p> 
+<p>或者</p> 
+<p>Expected specifier-qualifier-list before ‘ClassB’</p> 
+<p>为了避免循环包含，在ClassA.h文件里面用@class classB把classB包含进来，同样，在ClassB.h文件里面用@class ClassA把ClassA包含进来。@class指令只是告诉编译器，这是个类，保留个空间来存放指针就可以了。</p> 
+<p>接下来，很可能在ClassA.m和ClassB.m中会有访问包含进来对象的成员的情况，这时必须让编译器知道更多信息，比如那个类有些什么方法可以调用，就必须用#import，再次把用到的类包含进来，告诉编译器所需要的额外信息。</p> 
+<p>否则，编译器会警告：</p> 
+<p>warning: receiver ‘ClassA’ is a forward class and corresponding @interface may not exist</p> 
+<p>还有另一种情况，使用有Categories的类，要在.h头文件里用#import把Categories包含进来。</p> 
+<p>总之，使用原则是：</p> 
+<ol> 
+ <li>头文件里面只#import超类</li> 
+ <li>消息文件里面#import需要发消息过去的类</li> 
+ <li>其他地方就用@class转向声明</li> 
+</ol> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>转载自：<a href="http://www.flyblog.info/" class="footA"><span style="color: #207f7b;">FLYBLOG</span> </a> [<a href="http://www.flyblog.info/" class="footA"><span style="color: #207f7b;">http://www.flyblog.info</span> </a> ] </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="color: #0000ff;">写在前面， 之所以想写点Objective-C相关知识的文章，是因为近1年都在从事苹果及iPhone的开发，其中也走过不少弯路，也从其他网友那获得了很多帮助，所以想把自己的学习心得写出来，以便有需要的朋友作为参考。以下内容均假定阅读者有一定的软件开发经验。</span> </p> 
+<p>如果想在苹果Mac OSX系统进行开发，Objective-C是最重要的开发语言，现在Apple已经把开发的重点放在了基于Cocoa库的图形界面， 支持C++的Carbon图形库已经让出了主导地位， 而Cocoa库正是应用Objective-C语言开发的。 如果你有C/C++的编程经验， 那么在进行Objective-C的开发将会容易些，因为Objective-C本身就是C/c++的超集， 它包含C/C++的所有特性和支持标准C库， 但其语法本身更优美 简洁，更能体现OO思想也就是面向对象。</p> 
+<p>在学习Objective-C之前先把Objective-C（以下会以O-C代替）、Cocoa、Carbon以及XCode等几个名词的概念搞清楚， Objective-C是开发语言，前面说过，O-C是c/c++的超集合， Cocoa是在苹果系统上O-C实现的图形开发库相当于windows系统的win32 SDK和MFC， Carbon是早期苹果操作系统上的C/C++图形库也相当于MFC，XCode是个开发集成环境，相当于windows系统上的Visual Stdio系列。</p> 
+<p>以上介绍了苹果系统开发的基本概念，现在介绍一些Objective-C基础知识，</p> 
+<ul> 
+ <li>变量类型<br> Objective-C支持C的所有类型，也就是说char，unsigned char，int，long，float，double等均可使用；<br> 结构类型 如日期的结构定义 <p>&nbsp;</p> 
+  <div class="wp_codebox_msgheader"> 
+   <span class="right"><sup><a title="WP-CodeBox HowTo?" href="http://www.ericbess.com/ericblog/2008/03/03/wp-codebox/#examples" target="_blank"><span style="color: #99cc00;">?</span> </a> </sup></span> 
+   <span class="left"><a>View Code</a> OBJC</span> 
+  </div> 
+  <div class="wp_codebox" style="padding-bottom: 0px;"> 
+   <table border="0" width="100%">
+    <tbody>
+     <tr> 
+      <td class="line_numbers"> <pre>1
+2
+3
+4
+5
+6
+</pre> </td> 
+      <td class="code"> <pre class="objc"><span style="color: #a61390;">struct</span>
+ Date
+<span style="color: #002200;">{</span>
+
+	<span style="color: #a61390;">unsigned</span>
+ <span style="color: #a61390;">char</span>
+ day;
+	<span style="color: #a61390;">unsigned</span>
+ <span style="color: #a61390;">char</span>
+ month;
+	<span style="color: #a61390;">unsigned</span>
+ <span style="color: #a61390;">char</span>
+ year;
+<span style="color: #002200;">}</span>
+;</pre> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> <p>其它类型比如枚举、及预定义变量均和c语言用法相同 </p> </li> 
+ <li>文件引用、类型导入<br> Objective-C中依然可以使用#include来引入其他文件，不过推荐使用#import来导入其它类型，官方文档介绍说这样可以减少出错的几率 </li> 
+ <li>id类型<br> id是Objective-C中的特殊类型， 他指向一个对象，你可以理解为c中的void* </li> 
+ <li>字符串<br> Objective-C中可以有c类型的字符串，比如”string”,也可以用NSString类型字符串，一般用@”string”表示， 其中‘@’是将字符串”string”转换为NSString类型 </li> 
+</ul> 
+<p>以上是一些基本的语言知识， 其中大多数都和c/c++相同，目前为止除了#import之外，其它的内容对于C/C++开发人员来说都非常熟悉了。</p> 
+<p>这里先从如何调用类的方法开始说起， 看下面的代码</p> 
+<div class="wp_codebox_msgheader"> 
+ <span class="right"><sup><a title="WP-CodeBox HowTo?" href="http://www.ericbess.com/ericblog/2008/03/03/wp-codebox/#examples" target="_blank"><span style="color: #99cc00;">?</span> </a> </sup></span> 
+ <span class="left"><a>View Code</a> OBJC</span> 
+</div> 
+<div class="wp_codebox" style="padding-bottom: 0px;"> 
+ <table border="0" width="100%">
+  <tbody>
+   <tr> 
+    <td class="line_numbers"> <pre>1
+2
+</pre> </td> 
+    <td class="code"> <pre class="objc"><span style="color: #002200;">[</span>
+object method<span style="color: #002200;">]</span>
+;
+<span style="color: #002200;">[</span>
+object methodWithParamter<span style="color: #002200;">:</span>
+param<span style="color: #002200;">]</span>
+;</pre> </td> 
+   </tr>
+  </tbody>
+ </table> 
+</div> 
+<p>没错，Objective-C就是这样进行方法调用的，与C/c++不同的是 ‘[]’的使用， [] 表示对一个类对象的方法进行调用，其中object是类对象， method就是所调用的方法， 你可以调用带有参数的方法，不过在方法名称和参数之间要保留 ‘:’ 来告知编译器如何编译。<br> 方法也可以有返回值，如下</p> 
+<div class="wp_codebox_msgheader"> 
+ <span class="right"><sup><a title="WP-CodeBox HowTo?" href="http://www.ericbess.com/ericblog/2008/03/03/wp-codebox/#examples" target="_blank"><span style="color: #99cc00;">?</span> </a> </sup></span> 
+ <span class="left"><a>View Code</a> OBJC</span> 
+</div> 
+<div class="wp_codebox" style="padding-bottom: 0px;"> 
+ <table border="0" width="100%">
+  <tbody>
+   <tr> 
+    <td class="line_numbers"> <pre>1
+2
+</pre> </td> 
+    <td class="code"> <pre class="objc">result <span style="color: #002200;">=</span>
+ <span style="color: #002200;">[</span>
+object methodWithRetValue<span style="color: #002200;">]</span>
+;
+result <span style="color: #002200;">=</span>
+ <span style="color: #002200;">[</span>
+object methodwithPrameterAndRetValue<span style="color: #002200;">:</span>
+param<span style="color: #002200;">]</span>
+;</pre> </td> 
+   </tr>
+  </tbody>
+ </table> 
+</div> 
+<p>你也可以这样调用类的方法，比如NSString</p> 
+<div class="wp_codebox_msgheader"> 
+ <span class="right"><sup><a title="WP-CodeBox HowTo?" href="http://www.ericbess.com/ericblog/2008/03/03/wp-codebox/#examples" target="_blank"><span style="color: #99cc00;">?</span> </a> </sup></span> 
+ <span class="left"><a>View Code</a> OBJC</span> 
+</div> 
+<div class="wp_codebox" style="padding-bottom: 0px;"> 
+ <table border="0" width="100%">
+  <tbody>
+   <tr> 
+    <td class="line_numbers"> <pre>1
+</pre> </td> 
+    <td class="code"> <pre class="objc"><span style="color: #400080;">NSString</span>
+<span style="color: #002200;">*</span>
+ <span style="color: #a61390;">string</span>
+ <span style="color: #002200;">=</span>
+ <span style="color: #002200;">[</span>
+<span style="color: #400080;">NSString</span>
+ <span style="color: #a61390;">string</span>
+<span style="color: #002200;">]</span>
+;</pre> </td> 
+   </tr>
+  </tbody>
+ </table> 
+</div> 
+<p>这里方法string就是NSString类特殊方法，类似于c++中的静态成员函数</p> 
+<p>多重方法调用，比如C++ 中的 result = object1.function1 ( object2.function2() );在O-C中可以这样来实现</p> 
+<div class="wp_codebox_msgheader"> 
+ <span class="right"><sup><a title="WP-CodeBox HowTo?" href="http://www.ericbess.com/ericblog/2008/03/03/wp-codebox/#examples" target="_blank"><span style="color: #99cc00;">?</span> </a> </sup></span> 
+ <span class="left"><a>View Code</a> OBJC</span> 
+</div> 
+<div class="wp_codebox" style="padding-bottom: 0px;"> 
+ <table border="0" width="100%">
+  <tbody>
+   <tr> 
+    <td class="line_numbers"> <pre>1
+</pre> </td> 
+    <td class="code"> <pre class="objc">result <span style="color: #002200;">=</span>
+ <span style="color: #002200;">[</span>
+object1 function1<span style="color: #002200;">:</span>
+<span style="color: #002200;">[</span>
+object2 function2<span style="color: #002200;">]</span>
+<span style="color: #002200;">]</span>
+;</pre> </td> 
+   </tr>
+  </tbody>
+ </table> 
+</div> 
+<p>代码中 最外层[]表示object1 调用function1方法，里面的[]表示object2 调用function2所得的结果作为function1的参数传入</p> 
+<p>多参数方法调用，比如c/c++中的 object.function(arg1, arg2,arg3 );在O-C中就该是这样的<br> 首先是方法申明</p> 
+<div class="wp_codebox_msgheader"> 
+ <span class="right"><sup><a title="WP-CodeBox HowTo?" href="http://www.ericbess.com/ericblog/2008/03/03/wp-codebox/#examples" target="_blank"><span style="color: #99cc00;">?</span> </a> </sup></span> 
+ <span class="left"><a>View Code</a> OBJC</span> 
+</div> 
+<div class="wp_codebox" style="padding-bottom: 15px;"> 
+ <table border="0" width="100%">
+  <tbody>
+   <tr> 
+    <td class="line_numbers"> <pre>1
+</pre> </td> 
+    <td class="code"> <pre class="objc"><span style="color: #002200;">-</span>
+<span style="color: #002200;">(</span>
+<span style="color: #a61390;">void</span>
+<span style="color: #002200;">)</span>
+ function<span style="color: #002200;">:</span>
+<span style="color: #002200;">(</span>
+<span style="color: #a61390;">int</span>
+<span style="color: #002200;">)</span>
+arg1 secondArg<span style="color: #002200;">:</span>
+<span style="color: #002200;">(</span>
+<span style="color: #a61390;">float</span>
+<span style="color: #002200;">)</span>
+ arg2 thirdArg<span style="color: #002200;">:</span>
+<span style="color: #002200;">(</span>
+<span style="color: #400080;">NSString</span>
+<span style="color: #002200;">*</span>
+<span style="color: #002200;">)</span>
+arg3;</pre> </td> 
+   </tr>
+  </tbody>
+ </table> 
+</div> 
+<p>调用时就是这样的</p> 
+<div class="wp_codebox_msgheader"> 
+ <span class="right"><sup><a title="WP-CodeBox HowTo?" href="http://www.ericbess.com/ericblog/2008/03/03/wp-codebox/#examples" target="_blank"><span style="color: #99cc00;">?</span> </a> </sup></span> 
+ <span class="left"><a>View Code</a> OBJC</span> 
+</div> 
+<div class="wp_codebox" style="padding-bottom: 0px;"> 
+ <table border="0" width="100%">
+  <tbody>
+   <tr> 
+    <td class="line_numbers"> <pre>1
+</pre> </td> 
+    <td class="code"> <pre class="objc"><span style="color: #002200;">[</span>
+object function<span style="color: #002200;">:</span>
+arg1 secondArg<span style="color: #002200;">:</span>
+arg2 thirdArg<span style="color: #002200;">:</span>
+arg3<span style="color: #002200;">]</span>
+;</pre> </td> 
+   </tr>
+  </tbody>
+ </table> 
+</div> 
+<p>也就是方法名称后面直接跟参数列表， 其中第一个参数不需要别名，其它参数必须设置别名，O-C使用参数别名还确定所调用参数的，这样编译器才能正确解释，参数之间用1-N个空格分开。</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

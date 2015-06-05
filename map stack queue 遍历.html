@@ -1,0 +1,41 @@
+<pre class="java" name="code">Set&lt;Entry&lt;String,Object&gt;&gt; entrySet = map.entrySet(); 
+for (Entry&lt;String, Object&gt; entry : entrySet) { 
+Object o = entry.getValue(); 
+} </pre> 
+<pre class="java" name="code"></pre> 
+<pre class="java" name="code"></pre> 
+<pre class="java" name="code"></pre> 
+<pre class="java" name="code">//JDK1.5
+Map  m  =  new HashMap();  
+  for   (Object o  : map.keySet()){  
+          map.get(o);  
+  }
+
+JDK1.4
+
+Map map =  new HashMap()   ;  
+   
+  Iterator   it   =   map.entrySet().iterator()   ;  
+  while   (it.hasNext())  
+  {  
+  Map.Entry   entry   =   (Map.Entry)   it.next()   ;  
+  Object   key   =   entry.getKey()   ;  
+  Object   value   =   entry.getValue()   ;  
+  } </pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>stack</p> 
+<pre class="java" name="code">while (!s.empty()) { 
+                        System.out.println(s.pop()); 
+                } 
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>queue</p> 
+<pre class="java" name="code">while (q.peek() != null) { 
+                        System.out.println(q.poll()); 
+                } 
+</pre> 
+<p>&nbsp;</p>

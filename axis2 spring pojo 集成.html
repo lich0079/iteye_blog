@@ -1,0 +1,187 @@
+<p>之前写的 <a title="http://renxiangzyq.iteye.com/blog/1021112" href="/blog/1021112">http://renxiangzyq.iteye.com/blog/1021112</a> 集成spring axis2 的方法太过复杂，切为了达到需求要对生成的代码做多出修改，极不方便， 网上看了一些文章，发现其实集成axis2 spring很简单</p> 
+<p>&nbsp;</p> 
+<p>假设你已经有了一个可以用的spring项目</p> 
+<p>你有一个类要发布成webservice</p> 
+<pre class="java" name="code">public class MyService {
+
+    public Person serviceA(String name, Integer age) {
+
+        Person person = new Person();
+        person.setAge(age);
+        person.setName(name);
+
+        City city = new City();
+        city.setName("shanghai");
+        city.setZone("east");
+
+        person.setCity(city);
+
+        return person;
+    }
+}</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>1. 下载axsi2.war 这个在 axis2官网有下，把他WEB-INF目录下的conf, lib, modules, services目录都copy到你的WEB-INF下， 其实lib里面的jar应该不用全copy的，有时间可以去筛选</p> 
+<p>&nbsp;</p> 
+<p>2. 在你的web.xml加入以下</p> 
+<pre class="java" name="code">	&lt;servlet&gt;
+		&lt;servlet-name&gt;AxisServlet&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.apache.axis2.transport.http.AxisServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;AxisServlet&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;/services/*&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;</pre> 
+<p>&nbsp;</p> 
+<p>3. 在你的application-context.xml里加入</p> 
+<pre class="java" name="code">	&lt;bean id="applicationContext"
+		class="org.apache.axis2.extensions.spring.receivers.ApplicationContextHolder" /&gt;
+
+	&lt;bean id="springAwareService" class="com.axisspring.service.MyService"&gt;
+	&lt;/bean&gt;</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>4. 在你的WEB-INF/services下， 建立 ./test/META-INF/services.xml, 里面的内容为</p> 
+<pre class="java" name="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;service name="testService"&gt;  
+	&lt;description&gt;simple spring example&lt;/description&gt;
+	&lt;parameter name="ServiceObjectSupplier"&gt;
+		org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier
+	&lt;/parameter&gt;
+	&lt;parameter name="SpringBeanName"&gt;springAwareService
+	&lt;/parameter&gt;
+	&lt;messageReceivers&gt;
+		&lt;messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only"
+			class="org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver" /&gt;
+		&lt;messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
+			class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" /&gt;
+	&lt;/messageReceivers&gt;
+&lt;/service&gt;</pre> &nbsp; 
+<p>然后就是部署了， 因为我在web.xml里面拦截的是/services/*, 在services.xml里面配的是testService,所以我的webservice地址是 </p> 
+<p>http://localhost:8080/axisspring/services/testService?wsdl，</p> 
+<p>&nbsp;</p> 
+<p>生成的wsdl如下</p> 
+<pre class="xml" name="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://service.axisspring.com" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ax21="http://service.axisspring.com/xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://service.axisspring.com"&gt;
+    &lt;wsdl:documentation&gt;testService&lt;/wsdl:documentation&gt;
+    &lt;wsdl:types&gt;
+        &lt;xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.axisspring.com/xsd"&gt;
+            &lt;xs:complexType name="Person"&gt;
+                &lt;xs:sequence&gt;
+                    &lt;xs:element minOccurs="0" name="age" type="xs:int"/&gt;
+                    &lt;xs:element minOccurs="0" name="city" nillable="true" type="ax21:City"/&gt;
+
+                    &lt;xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/&gt;
+                &lt;/xs:sequence&gt;
+            &lt;/xs:complexType&gt;
+            &lt;xs:complexType name="City"&gt;
+                &lt;xs:sequence&gt;
+                    &lt;xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/&gt;
+                    &lt;xs:element minOccurs="0" name="zone" nillable="true" type="xs:string"/&gt;
+                &lt;/xs:sequence&gt;
+            &lt;/xs:complexType&gt;
+
+        &lt;/xs:schema&gt;
+        &lt;xs:schema xmlns:ax22="http://service.axisspring.com/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.axisspring.com"&gt;
+            &lt;xs:import namespace="http://service.axisspring.com/xsd"/&gt;
+            &lt;xs:element name="serviceA"&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/&gt;
+                        &lt;xs:element minOccurs="0" name="age" type="xs:int"/&gt;
+                    &lt;/xs:sequence&gt;
+
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+            &lt;xs:element name="serviceAResponse"&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element minOccurs="0" name="return" nillable="true" type="ax22:Person"/&gt;
+                    &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+
+        &lt;/xs:schema&gt;
+    &lt;/wsdl:types&gt;
+    &lt;wsdl:message name="serviceARequest"&gt;
+        &lt;wsdl:part name="parameters" element="ns:serviceA"/&gt;
+    &lt;/wsdl:message&gt;
+    &lt;wsdl:message name="serviceAResponse"&gt;
+        &lt;wsdl:part name="parameters" element="ns:serviceAResponse"/&gt;
+    &lt;/wsdl:message&gt;
+    &lt;wsdl:portType name="testServicePortType"&gt;
+
+        &lt;wsdl:operation name="serviceA"&gt;
+            &lt;wsdl:input message="ns:serviceARequest" wsaw:Action="urn:serviceA"/&gt;
+            &lt;wsdl:output message="ns:serviceAResponse" wsaw:Action="urn:serviceAResponse"/&gt;
+        &lt;/wsdl:operation&gt;
+    &lt;/wsdl:portType&gt;
+    &lt;wsdl:binding name="testServiceSoap11Binding" type="ns:testServicePortType"&gt;
+        &lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/&gt;
+        &lt;wsdl:operation name="serviceA"&gt;
+            &lt;soap:operation soapAction="urn:serviceA" style="document"/&gt;
+
+            &lt;wsdl:input&gt;
+                &lt;soap:body use="literal"/&gt;
+            &lt;/wsdl:input&gt;
+            &lt;wsdl:output&gt;
+                &lt;soap:body use="literal"/&gt;
+            &lt;/wsdl:output&gt;
+        &lt;/wsdl:operation&gt;
+    &lt;/wsdl:binding&gt;
+    &lt;wsdl:binding name="testServiceSoap12Binding" type="ns:testServicePortType"&gt;
+
+        &lt;soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/&gt;
+        &lt;wsdl:operation name="serviceA"&gt;
+            &lt;soap12:operation soapAction="urn:serviceA" style="document"/&gt;
+            &lt;wsdl:input&gt;
+                &lt;soap12:body use="literal"/&gt;
+            &lt;/wsdl:input&gt;
+            &lt;wsdl:output&gt;
+                &lt;soap12:body use="literal"/&gt;
+            &lt;/wsdl:output&gt;
+
+        &lt;/wsdl:operation&gt;
+    &lt;/wsdl:binding&gt;
+    &lt;wsdl:binding name="testServiceHttpBinding" type="ns:testServicePortType"&gt;
+        &lt;http:binding verb="POST"/&gt;
+        &lt;wsdl:operation name="serviceA"&gt;
+            &lt;http:operation location="testService/serviceA"/&gt;
+            &lt;wsdl:input&gt;
+                &lt;mime:content type="text/xml" part="serviceA"/&gt;
+            &lt;/wsdl:input&gt;
+
+            &lt;wsdl:output&gt;
+                &lt;mime:content type="text/xml" part="serviceA"/&gt;
+            &lt;/wsdl:output&gt;
+        &lt;/wsdl:operation&gt;
+    &lt;/wsdl:binding&gt;
+    &lt;wsdl:service name="testService"&gt;
+        &lt;wsdl:port name="testServiceHttpSoap11Endpoint" binding="ns:testServiceSoap11Binding"&gt;
+            &lt;soap:address location="http://localhost:8080/axisspring/services/testService.testServiceHttpSoap11Endpoint/"/&gt;
+        &lt;/wsdl:port&gt;
+
+        &lt;wsdl:port name="testServiceHttpSoap12Endpoint" binding="ns:testServiceSoap12Binding"&gt;
+            &lt;soap12:address location="http://localhost:8080/axisspring/services/testService.testServiceHttpSoap12Endpoint/"/&gt;
+        &lt;/wsdl:port&gt;
+        &lt;wsdl:port name="testServiceHttpEndpoint" binding="ns:testServiceHttpBinding"&gt;
+            &lt;http:address location="http://localhost:8080/axisspring/services/testService.testServiceHttpEndpoint/"/&gt;
+        &lt;/wsdl:port&gt;
+    &lt;/wsdl:service&gt;
+&lt;/wsdl:definitions&gt;
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>把这个wsdl保存成文件, 用soapui测试， 可以正常使用</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>有些要提的地方， </p> 
+<p>&nbsp;</p> 
+<p>所有public方法自动发布成webservice</p> 
+<p>&nbsp;</p> 
+<p>函数的输入自动匹配成webservice的输入， 返回成输出， </p> 
+<p>&nbsp;</p> 
+<p>如果我的返回数据不止一个， 比如上面我就包装了一个person, 所以返回的数据的顶层节点就是一个person, person里面可以有很多节点，很多层，&nbsp;</p> 
+<p>&nbsp;</p> 
+<p> 但假如我想要返回的是2个顶层的节点，就不知道怎么弄了， 我试过返回一个map里面放2个数据， 但不行，之前的那篇文章的集成方法就可以返回2个顶层的节点</p> 
+<p>&nbsp;</p> 
+<p>还有假如要返回数组， 返回文件流&nbsp; 等 也还没有去研究</p>

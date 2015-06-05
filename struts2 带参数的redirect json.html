@@ -1,0 +1,35 @@
+<p>&lt;action name="createAction" class="MyAction" method="create"&gt;<br> &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;result type="redirectAction" name="success"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;param name="actionName"&gt;showAction&lt;/param&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;param name="id"&gt;${aEntry.aId}&lt;/param&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/result&gt;<br> &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;interceptor-ref name="login"&gt;&lt;/interceptor-ref&gt;<br> &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/action&gt;</p> 
+<p>&nbsp;</p> 
+<p>/showAction?id=${aEntry.aId}</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>json&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>struts2-json-plugin-2.x.x.jar 中有个 &nbsp;struts-plugin.xml</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">    &lt;package name="json-default" extends="struts-default"&gt;
+        &lt;result-types&gt;
+            &lt;result-type name="json" class="org.apache.struts2.json.JSONResult"/&gt;
+        &lt;/result-types&gt;
+        &lt;interceptors&gt;
+            &lt;interceptor name="json" class="org.apache.struts2.json.JSONInterceptor"/&gt;
+        &lt;/interceptors&gt;
+    &lt;/package&gt;</pre> 
+<p>把你自己的package继承&nbsp;<span style="white-space: pre;">json-default</span></p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">    &lt;package name="json" extends="json-default" namespace="/json"&gt;
+                &lt;action name="jsonQuery" class="com.xxxxx.CCCAction" method="jsonQuery"&gt;
+            &lt;result type="json" /&gt;
+        &lt;/action&gt;
+    &lt;/package&gt;</pre> 
+<p> action 里面return&nbsp;<span style="color: #2c00cc; font-family: Monaco; font-size: 14px;">SUCCESS 就好了</span></p> &nbsp; 
+<p>&nbsp;</p> 
+<p>他默认的返回结果是把Action里面所有的实列变量序列化（json化）返回来</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

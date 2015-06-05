@@ -1,0 +1,308 @@
+<div class="postTitle"> 
+ <a href="http://www.phpweblog.net/kiyone/archive/2008/08/22/5644.html" class="postTitle2">mysql insert的几点操作(DELAYED 、IGNORE、ON DUPLICATE KEY UPDATE )</a> 
+</div> 
+<p><strong><span style="">INSERT</span> </strong> <strong><span style="">语法</span> </strong> <span></span> </p> 
+<pre><span style=""><span style="color: #0000ff;">INSERT [LOW_PRIORITY | </span>
+<strong><span style="">DELAYED</span> </strong>
+<span style="color: #ff9900;"> <span style="color: #0000ff;">| HIGH_PRIORITY] [</span> </span>
+<strong><span style="">IGNORE</span> </strong>
+<span style="color: #0000ff;">]</span>
+<span></span>
+</span>
+</pre> 
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #0000ff;">[INTO] tbl_name [(col_name,...)]</span>
+</pre> 
+<pre><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="color: #0000ff;">VALUES ({expr | DEFAULT},...),(...),..</span>
+.<span></span>
+</pre> 
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #0000ff;">[</span>
+ <span style="color: #ff00ff;"><strong>ON DUPLICATE KEY UPDATE</strong>
+</span>
+ <span style="color: #0000ff;">col_name=expr, ... ]</span>
+</pre> 
+<p><span style=""><span style="color: #0000ff;">或：</span> <span></span> </span> </p> 
+<pre><span style=""><span style="color: #0000ff;">INSERT [LOW_PRIORITY | </span>
+<strong><span style="">DELAYED</span> </strong>
+<span style="color: #ff9900;"> <span style="color: #0000ff;">| HIGH_PRIORITY] [</span> </span>
+<strong><span style="">IGNORE</span> </strong>
+<span style="color: #0000ff;">]</span>
+<span></span>
+</span>
+</pre> 
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #0000ff;">[INTO] tbl_name</span>
+</pre> 
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #0000ff;">SET col_name={expr | DEFAULT}, ...</span>
+</pre> 
+<pre><span style=""><span style="color: #ff9900;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>&nbsp; </span> <span style="color: #0000ff;">[</span> </span>
+<span style="color: fuchsia;"><strong>ON DUPLICATE KEY UPDATE</strong> </span>
+ </span>
+<span style="color: #0000ff;">col_name=expr, ... ]</span>
+<span style=""><span></span>
+</span>
+</pre> 
+<p><span style=""><span style="color: #0000ff;">或：</span> <span></span> </span> </p> 
+<pre><span style=""><span style="color: #0000ff;">INSERT [LOW_PRIORITY | HIGH_PRIORITY] [</span>
+<strong><span style="">IGNORE</span> </strong>
+<span style="color: #0000ff;">]</span>
+<span></span>
+</span>
+</pre> 
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #0000ff;"> [INTO] tbl_name [(col_name,...)]</span>
+</pre> 
+<pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #0000ff;">SELECT ...</span>
+</pre> 
+<pre><span style=""><span style="color: #ff9900;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>&nbsp; </span> <span style="color: #0000ff;">[ </span> </span>
+<span style="color: fuchsia;"><strong>ON DUPLICATE KEY UPDATE</strong> </span>
+ </span>
+<span style="color: #0000ff;">col_name=expr, ...</span>
+ ]<span></span>
+</pre> 
+<pre><span><span style=""> </span>
+</span>
+</pre> 
+<pre><span style="">一、<strong><span style="">DELAYED</span> </strong>
+<span style="color: #ff9900;"> </span>
+的使用<span></span>
+</span>
+</pre> 
+<pre><span style=""><span>&nbsp;&nbsp;&nbsp;<span>&nbsp; </span> </span>
+使用延迟插入操作<span></span>
+</span>
+</pre> 
+<pre><span style=""><span>DELAYED</span>
+调节符应用于<span>INSERT</span>
+和<span>REPLACE</span>
+语句。当<span>DELAYED</span>
+插入操作到达的时候，</span>
+<span>
+
+</span>
+<span style="">服务器把数据行放入一个队列中，并立即给客户端返回一个状态信息，这样客户</span>
+<span>
+
+</span>
+<span style="">端就可以在数据表被真正地插入记录之前继续进行操作了。如果读取者从该数据</span>
+<span>
+
+</span>
+<span style="">表中读取数据，队列中的数据就会被保持着，直到没有读取者为止。接着服务器</span>
+<span>
+
+</span>
+<span style="">开始插入延迟数据行（<span>delayed-row</span>
+）队列中的数据行。在插入操作的同时，服务器</span>
+<span>
+
+</span>
+<span style="">还要检查是否有新的读取请求到达和等待。如果有，延迟数据行队列就被挂起，</span>
+<span>
+
+</span>
+<span style="">允许读取者继续操作。当没有读取者的时候，服务器再次开始插入延迟的数据行。</span>
+<span>
+
+</span>
+<span style="">这个过程一直进行，直到队列空了为止。<span></span>
+</span>
+</pre> 
+<pre><span style="">几点要注意事项：</span>
+<span>
+
+<span style="">· INSERT DELAYED</span>
+</span>
+<span style="">应该仅用于指定值清单的<span>INSERT</span>
+语句。服务器忽略用于<span>INSERT DELAYED...SELECT</span>
+语句的<span>DELAYED</span>
+。</span>
+<span>
+
+<span style="">· </span>
+</span>
+<span style="">服务器忽略用于<span>INSERT DELAYED...ON DUPLICATE UPDATE</span>
+语句的<span>DELAYED</span>
+。</span>
+<span>
+
+<span style="">· </span>
+</span>
+<span style="">因为在行被插入前，语句立刻返回，所以您不能使用<span>LAST_INSERT_ID()</span>
+来获取<span>AUTO_INCREMENT</span>
+值。<span>AUTO_INCREMENT</span>
+值可能由语句生成。</span>
+<span>
+
+<span style="">· </span>
+</span>
+<span style="">对于<span>SELECT</span>
+语句，<span>DELAYED</span>
+行不可见，直到这些行确实被插入了为止。</span>
+<span>
+
+<span style="">· DELAYED</span>
+</span>
+<span style="">在从属复制服务器中被忽略了，因为<span>DELAYED</span>
+不会在从属服务器中产生与主服务器不一样的数据。<span></span>
+</span>
+</pre> 
+<pre><span style="">注意，目前在队列中的各行只保存在存储器中，直到它们被插入到表中为止。这意味着，如果您强行中止了<span>mysqld</span>
+（例如，使用<span>kill -9</span>
+）</span>
+<span>
+
+</span>
+<span style="">或者如果<span>mysqld</span>
+意外停止，则所有没有被写入磁盘的行都会丢失。<span></span>
+</span>
+</pre> 
+<pre><span style="">二、<strong><span style="">IGNORE</span> </strong>
+的使用<span></span>
+</span>
+</pre> 
+<pre><span style=""><span>IGNORE</span>
+是<span><a target="_self"><strong><span style="">MySQL</span> </strong> </a> </span>
+相对于标准<span>SQL</span>
+的扩展。如果在新表中有重复关键字，</span>
+<span>
+
+</span>
+<span style="">或者当<span>STRICT</span>
+模式启动后出现警告，则使用<span>IGNORE</span>
+控制<span>ALTER TABLE</span>
+的运行。</span>
+<span>
+
+</span>
+<span style="">如果没有指定<span>IGNORE</span>
+，当重复关键字错误发生时，复制操作被放弃，返回前一步骤。</span>
+<span>
+
+</span>
+<span style="">如果指定了<span>IGNORE</span>
+，则对于有重复关键字的行，只使用第一行，其它有冲突的行被删除。</span>
+<span>
+
+</span>
+<span style="">并且，对错误值进行修正，使之尽量接近正确值。<span></span>
+</span>
+</pre> 
+<pre><span><span style="">insert ignore into tb(...) value(...)</span>
+</span>
+</pre> 
+<pre><span style="">这样不用校验是否存在了，有则忽略，无则添加</span>
+<span>
+
+<span style=""><span>&nbsp;</span> </span>
+</span>
+<span style="">三、<span style="color: fuchsia;">ON DUPLICATE KEY UPDATE</span>
+的使用<span></span>
+</span>
+</pre> 
+<p><span style="">如果您指定了<span>ON DUPLICATE KEY UPDATE</span> ，并且插入行后会导致在一个<span>UNIQUE</span> 索引或<span>PRIMARY KEY</span> 中出现重复值，则执行旧行<span>UPDATE</span> 。 例如，如果列<span>a</span> 被定义为<span>UNIQUE</span> ，并且 包含值<span>1</span> ，则以下两个语句具有相同的效果：<span></span> </span> </p> 
+<pre><span><span style="">mysql&gt; <strong><span style="">INSERT INTO table (a,b,c) VALUES (1,2,3)</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>&nbsp; </span> -&gt; <strong><span style="">ON DUPLICATE KEY UPDATE c=c+1;</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style=""> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style="">mysql&gt; <strong><span style="">UPDATE table SET c=c+1 WHERE a=1;</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span style="">如果行作为新记录被插入，则受影响行的值为<span>1</span> ； 如果原有的记录被更新，则受影响行的值为<span>2</span> 。<span></span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span style="">注释：如果列<span>b</span> 也是唯一列，则<span>INSERT</span> 与此<span>UPDATE</span> 语句相当：<span></span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style="">mysql&gt; <strong><span style="">UPDATE table SET c=c+1 WHERE a=1 OR b=2 LIMIT 1;</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span style="">如果<span>a=1 OR b=2</span> 与多个行向匹 配，则只有一个行被更新。通常，您应该尽量避免对带有多个唯一关键字的表使用<span>ON DUPLICATE KEY</span> 子 句。<span></span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span style="">您可以在<span>UPDATE</span> 子句中使用<span>VALUES(col_name)</span> 函数从<span>INSERT...UPDATE</span> 语 句的<span>INSERT</span> 部分引用列值。换句话说，如果没有发生重复关键字冲突，则<span>UPDATE</span> 子句中的<span>VALUES(<em><span style="">col_name</span> </em> )</span> 可以引用被插入的<em><span style="">col_name</span> </em> 的值。本函数特别适用于多行插 入。<span>VALUES()</span> 函数只在<span>INSERT...UPDATE</span> 语 句中有意义，其它时候会返回<span>NULL</span> 。<span></span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span style="">示例：<span></span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style="">mysql&gt; <strong><span style="">INSERT INTO table (a,b,c) VALUES (1,2,3),(4,5,6)</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>&nbsp; </span> -&gt; <strong><span style="">ON DUPLICATE KEY UPDATE c=VALUES(a)+VALUES(b);</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span style="">本语句与以下两个语句作用相同：<span></span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style="">mysql&gt; <strong><span style="">INSERT INTO table (a,b,c) VALUES (1,2,3)</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>&nbsp; </span> -&gt; <strong><span style="">ON DUPLICATE KEY UPDATE c=3;</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style="">mysql&gt; <strong><span style="">INSERT INTO table (a,b,c) VALUES (4,5,6)</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>&nbsp; </span> -&gt; <strong><span style="">ON DUPLICATE KEY UPDATE c=9;</span> </strong> </span>
+</span>
+</pre> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span style="">当您使用<span>ON DUPLICATE KEY UPDATE</span> 时，<span>DELAYED</span> 选项被忽略。<span></span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span><span style=""><span>&nbsp;</span> </span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span><a target="_self"><strong><span style=""><span>总结</span> </span> </strong> </a> </span> <span style="">：<span style="color: #ff6600;">DELAYED </span> <span style="color: #ff6600;">做为快速插入，并不是很关心失效性，提高插入性能。</span> <span></span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p><span style=""><span style="color: #ff6600;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>&nbsp; </span> ignore&nbsp;&nbsp;&nbsp;<span>&nbsp; </span> </span> <span style="color: #ff6600;">只关注主键对应记录是不存在，无则添加，有则忽略。</span> <span></span> </span> </p> 
+<pre><span><span style="">&nbsp;</span>
+</span>
+</pre> 
+<p> <span style=""><span style="color: #ff6600;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ON DUPLICATE KEY UPDATE </span> <span style="color: #ff6600;">在添加时操作，关注非主键列，注意与<span>ignore</span> 的区别。 有则更新指定列，无则添加。</span> </span> </p>

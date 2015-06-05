@@ -1,0 +1,77 @@
+<p>http://www.evernote.com/shard/s20/sh/31282c0d-f702-4900-9842-cffd64cdc45a/fbf2f02e8cd81c5f9445f825ca1531d3</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;kvc 就是一种通过字符串去间接操作对象属性的机制，&nbsp; <br> 访问一个对象属性我们可以 person.age&nbsp; 也可以通过kvc的方式&nbsp;&nbsp; [person valueForKey:@"age"]<br> keypath 就是属性链式访问&nbsp; 如 person.address.street&nbsp; 有点象java里面的pojo&nbsp; ognl表达式之类的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<p style="font-size: 16px; font-family: Menlo;">Collection Operators</p> 
+<p style="font-size: 16px; font-family: Menlo;">&nbsp;</p> 
+<p style="font-size: 16px; font-family: Menlo;">假如有一个数组&nbsp;<span style="color: #00b1ff;">NSArray</span> *sellers, 数组里每一个元素都是用一个Dic来代表一个seller, Dic里面有个key可以拿到一个数组account, 假如我想把所有seller里面的所有accounts里面的account一次拿出来，以往要遍历数组， 现在只要</p> 
+<p style="font-size: 16px; font-family: Menlo;">&nbsp;</p> 
+<p style="font-size: 16px; font-family: Menlo;"> </p> 
+<p><span style="color: #00b1ff;">NSArray</span><span style="color: #ffffff;"> </span>*accounts = [sellers <span style="color: #00b1ff;">valueForKeyPath</span><span style="color: #ffffff;">:</span><span style="color: #ff4647;">@"@distinctUnionOfArrays.accounts"</span><span style="color: #ffffff;">]</span></p> 
+<p>这句话相当于对遍历每一个sellers里面的元素（Dic）访问accounts属性（数组）,然后拿出这些数组里面的值， 合成一个数组<span style="color: #ffffff;">;</span></p> 
+<p>&nbsp;</p> 
+<br> 假如给出的字符串没有对象的属性 会访问valueForUndefineKey方法 默认实现是raise 一个异常 但你可以重写这个方法,&nbsp;&nbsp; setValue的时候也是一样的道理
+<br>
+<br> key path accounts.transactions.payee would return an array with all the payee objects, for all the transactions, in all the accounts.
+<br>
+<br> 当设置一个非对象属性为nil时会抛异常， 但你也可以重写方法
+<br>
+<br> kvo 就是一个在语言框架层面实现的观察者模式 通过kvc的方式修改属性时，会主动通知观察者
+<br>
+<br> 例子
+<br> person类
+<br> @implementation Person
+<br>
+<br> @synthesize name,age;
+<br>
+<br>
+<br> -(void) changeName{
+<br> &nbsp;&nbsp;&nbsp; name=@"changeName directly";
+<br> }
+<br>
+<br> @end
+<br>
+<br>
+<br> PersonMonitor类&nbsp; 监视了name属性
+<br>
+<br> @implementation PersonMonitor
+<br>
+<br>
+<br> - (void)observeValueForKeyPath:(NSString *)keyPath
+<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ofObject:(id)object
+<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; change:(NSDictionary *)change
+<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; context:(void *)context
+<br> {
+<br> &nbsp;&nbsp;&nbsp; if ([keyPath isEqual:@"name"]) {
+<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NSLog(@"change happen, old:%@&nbsp;&nbsp; new:%@",[change objectForKey:NSKeyValueChangeOldKey],[change objectForKey:NSKeyValueChangeNewKey]);
+<br>
+<br> &nbsp;&nbsp;&nbsp; }
+<br> &nbsp;&nbsp;&nbsp; }
+<br>
+<br> @end
+<br>
+<br>
+<br>
+<br> 测试代码
+<br> &nbsp;&nbsp;&nbsp; Person *p =[[Person alloc] init];
+<br> &nbsp;&nbsp; 
+<br> &nbsp;&nbsp;&nbsp; PersonMonitor *pm= [[PersonMonitor alloc]init];
+<br> &nbsp;&nbsp;&nbsp; [p addObserver:pm forKeyPath:@"name" options:(NSKeyValueObservingOptionNew |
+<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NSKeyValueObservingOptionOld) context:nil];
+<br> &nbsp;&nbsp; 
+<br> &nbsp;&nbsp;&nbsp; NSLog(@"p.name is %@",p.name);
+<br> &nbsp;&nbsp;&nbsp; [p setValue:@"name kvc" forKey:@"name"];
+<br> &nbsp;&nbsp;&nbsp; NSLog(@"p name get by kvc is %@",[p valueForKey:@"name"]);
+<br> &nbsp;&nbsp;&nbsp; p.name=@"name change by .name=";
+<br> &nbsp;&nbsp;&nbsp; [p changeName]; //can't be notify
+<br>
+<br>
+<br> 输出
+<br> 2011-07-03 16:35:57.406 Cocoa[13970:903] p.name is name
+<br> 2011-07-03 16:35:57.418 Cocoa[13970:903] change happen, old:name&nbsp;&nbsp; new:name kvc
+<br> 2011-07-03 16:35:57.420 Cocoa[13970:903] p name get by kvc is name kvc
+<br> 2011-07-03 16:35:57.421 Cocoa[13970:903] change happen, old:name kvc&nbsp;&nbsp; new:name change by .name=
+<br> 最后一次修改是直接修改&nbsp; 所以没法产生通知
+<br>

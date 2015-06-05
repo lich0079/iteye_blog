@@ -1,0 +1,119 @@
+<p>假想需求</p> 
+<p>&nbsp;&nbsp; 有白人 黑人&nbsp;&nbsp; 有说英语的白人&nbsp; 有说汉语的白人&nbsp; 有说汉语的黑人 有说英语的黑人 </p> 
+<p>&nbsp;&nbsp; 按照一般的方法 子类 父类 可以造出4个子类来 这还是2*2的组合 假如分支多了就是N*N了</p> 
+<p>&nbsp;</p> 
+<p>解决 </p> 
+<p>&nbsp; 桥接模式&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 分出其中一种稳定的类型分支用继承体系来区分&nbsp; 另一种行为分支用接口封装行为（策略模式？）&nbsp; </p> 
+<p>&nbsp;</p> 
+<p>接下来看代码</p> 
+<p>&nbsp;</p> 
+<p>抽象人 </p> 
+<p>&nbsp; </p> 
+<pre class="java" name="code">public abstract class People {
+    protected Language language;
+    
+    abstract void speak();
+}</pre> 
+<p>&nbsp;</p> 
+<p>黑人</p> 
+<pre class="java" name="code">public class BlackPeople extends People {
+
+    /**
+     * 
+     */
+    public BlackPeople() {
+    }
+    
+    public BlackPeople(Language language){
+        this.language=language;
+    }    
+    
+    @Override
+    void speak() {
+        System.out.println("I'm black");
+        language.speak();
+    }
+
+}</pre> 
+<p>&nbsp;</p> 
+<p>白人</p> 
+<pre class="java" name="code">public class WhitePeople extends People {
+
+    /**
+     * 
+     */
+    public WhitePeople() {
+    }
+    
+    public WhitePeople(Language language){
+        this.language=language;
+    }    
+    
+    @Override
+    void speak() {
+        System.out.println("I'm white");
+        language.speak();
+    }
+
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>行为抽象类 </p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">public interface Language {
+    void speak();
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>汉语</p> 
+<pre class="java" name="code">public class Chinese implements Language {
+
+    public void speak() {
+        System.out.println("你好 世界");
+    }
+
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>英语</p> 
+<pre class="java" name="code">public class English implements Language {
+
+    public void speak() {
+        System.out.println("hello world");
+    }
+
+}</pre> 
+<p>&nbsp;</p> 
+<p>测试类</p> 
+<pre class="java" name="code">public class Client extends TestCase {
+    public void test1() {
+        People black=new BlackPeople(new Chinese());
+        black.speak();
+        People black2=new BlackPeople(new English());
+        black2.speak();
+        
+        System.out.println("=============");
+        
+        People white=new WhitePeople(new Chinese());
+        white.speak();
+        People white2=new WhitePeople(new English());
+        white2.speak();
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>输出</p> 
+<pre class="java" name="code">I'm black
+你好 世界
+I'm black
+hello world
+=============
+I'm white
+你好 世界
+I'm white
+hello world</pre> 
+<p>&nbsp;</p> 
+<p>这样使用模式后 极大的减少了代码 虽然现在有6个类 但是这是 1+1+2+2 </p> 
+<p>假如按照原来的分法 有N*N个分支&nbsp; 使用模式后 会有1+1+N+N&nbsp; 而不是N*N个类&nbsp; </p> 
+<p>代码少了 出错的几率就少了 改需求的时候改的地方也少了 更重要的是 没有了重复的代码片段</p> 
+<p>&nbsp;</p>

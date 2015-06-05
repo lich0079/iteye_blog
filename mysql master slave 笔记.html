@@ -1,0 +1,53 @@
+<p>//dump出整个数据库包含函数定义&nbsp; 可用于master slave</p> 
+<p>mysqldump --master-data=2 -R test &gt; dumpfile_with-R</p> 
+<p>&nbsp;</p> 
+<p>mysql master&nbsp; 192.168.1.101</p> 
+<p>mysql slave&nbsp; 192.168.1.102</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>首先保证互相能访问登录</p> 
+<p>在mysql&gt;里输入</p> 
+<p>GRANT ALL PRIVILEGES ON *.* TO 'myuser'@'%'IDENTIFIED BY 'mypassword' WITH GRANT OPTION;</p> 
+<p>% 表示所有IP地址 或者你可以指定一个</p> 
+<p>或</p> 
+<p>grant replication slave on *.* to "loki"@"192.168.2.24" identified by "506506"; 只给复制权限</p> 
+<p>&nbsp;</p> 
+<p>记得 mysql&gt;&nbsp; flush privileges;&nbsp; </p> 
+<p>但我这样做了还是访问不了 </p> 
+<p>后来知道是mysql.user表里有其他账号干扰</p> 
+<p>use mysql;</p> 
+<p>select user,host from user;</p> 
+<p>看下是否有user=''的用户 存在，有就删掉，我就被这个折磨了半天</p> 
+<p>&nbsp;</p> 
+<p>然后就应该可以互访问了。</p> 
+<p>&nbsp;</p> 
+<p>然后 在slave上</p> 
+<p>&nbsp;</p> 
+<p>mysql&gt;CHANGE MASTER TO MASTER_HOST='192.168.1.101', MASTER_PASSWORD='1111',&nbsp; MASTER_LOG_FILE='mysql-bin.001', MASTER_LOG_POS=001;</p> 
+<p>mysql&gt;start slave;</p> 
+<p>&nbsp;</p> 
+<p>接着要检查一下是否成功</p> 
+<p>mysql&gt;show slave status\G;</p> 
+<p>这是有可能报错：</p> 
+<p>server id重复&nbsp;&nbsp; 这个要去改my.cnf&nbsp; 里面有一行是serverid&nbsp; 确保主从的ID不一样</p> 
+<p>&nbsp;</p> 
+<p>这里要注意：</p> 
+<p>不过稍后<span class="wp_keywordlink"><a target="_blank" href="http://www.wenzizone.cn/" title="蚊子">蚊子</a> </span> 使用/etc/init.d/mysqld restart重启了mysql服务，然后查看slave状态，发现又出现了上面的错误，然后查看server_id发现这个数值又恢复到了1。</p> 
+<p>之后<span class="wp_keywordlink"><a target="_blank" href="http://www.wenzizone.cn/" title="蚊子">蚊子</a> </span> 又重新查看了一下/etc/my.cnf的内容，确认应该不是这个文 件的问题，于是去google查了一下，看到mysql在启动的时候会查找/etc/my.cnf、DATADIR/my.cnf，USER_HOME /my.cnf。</p> 
+<p>&nbsp;</p> 
+<p>然后再次mysql&gt;show slave status\G;</p> 
+<p>这次告诉我有重复的内容duplicate entry</p> 
+<p>这是你可以在slave 的my.cnf 中</p> 
+<p>&nbsp;</p> 
+<ol> 
+ <li>slave-skip-errors=all # 於 [mysqld] 下面加入此行</li> 
+ <li>再 restart mysql 即可</li> 
+</ol> 
+<p>这时会忽略所有错误 </p> 
+<p>&nbsp;</p> 
+<p>mysql&gt; show variables like "%slave%";&nbsp; 看下是否改动成功</p> 
+<p>&nbsp;</p> 
+<p> 若只要排除 Duplicate entry (Last_Errno: 1062), 可以單獨指定 Error No, 多個寫法如下:</p> 
+<p>slave-skip-errors=1062,1053</p> 
+<p>&nbsp;</p> 
+<p>查看主从服务器的状态：<br><br> MySQL&gt; SHOW PROCESSLIST\G</p>

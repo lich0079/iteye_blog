@@ -1,0 +1,55 @@
+<pre name="code" class="java">	/**
+	 * 自定义函数库实现
+	 * @author Administrator
+	 *
+	 */
+	public class MyFunctions {
+		
+		/**
+		 * 方法必须是public静态的
+		 * @param name
+		 * @return
+		 */
+		public static String sayHello(String name) {
+			return "Hello " + name;
+		}
+	}
+
+
+	myfunctions.tld
+
+	&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+
+&lt;taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+  version="2.0"&gt;
+    
+  &lt;description&gt;my functions library&lt;/description&gt;
+  &lt;display-name&gt;my functions&lt;/display-name&gt;
+  &lt;tlib-version&gt;1.0&lt;/tlib-version&gt;
+  &lt;short-name&gt;my&lt;/short-name&gt;
+  &lt;uri&gt;http://www.bjsxt.com/functions&lt;/uri&gt;
+  
+  &lt;function&gt;
+    &lt;name&gt;sayHello&lt;/name&gt;
+    &lt;function-class&gt;com.bjsxt.struts.MyFunctions&lt;/function-class&gt;
+    &lt;function-signature&gt;java.lang.String sayHello(java.lang.String)&lt;/function-signature&gt;
+  &lt;/function&gt;
+  
+&lt;/taglib&gt;
+
+
+
+	&lt;%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions"%&gt;
+	&lt;%@ taglib prefix="my" uri="http://www.bjsxt.com/functions"%&gt;   
+
+
+		&lt;h1&gt;测试函数库&lt;/h1&gt;
+	&lt;hr&gt;
+	hello.length(jsp脚本):&lt;%=((String)request.getAttribute("hello")).length() %&gt;&lt;br&gt;
+	hello.length(jstl函数库取长度，函数调用在el表达式中，前缀+冒号+函数名):${fn:length(hello) }&lt;br&gt;
+	list.size:${fn:length(list) }&lt;br&gt;
+	sayHello:${my:sayHello("Tom") }&lt;br&gt;
+	sayHello:${my:sayHello(name) }&lt;br&gt;</pre> 
+<p>&nbsp;</p>

@@ -1,0 +1,6 @@
+<p>log4j.appender.Root=org.apache.log4j.DailyRollingFileAppender<br>log4j.appender.Root.File=../logs/blog<br>log4j.appender.Root.DatePattern='_'yyyy-MM-dd'.log'<br>log4j.appender.Root.layout=org.apache.log4j.PatternLayout&nbsp; <br>log4j.appender.Root.layout.ConversionPattern=[%p] %-d{yyyy-MM-dd HH\:mm\:ss} [%c.%M\:%L]&nbsp; %m%n</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>这样的方式可以在tomcat/logs/ 下生成 如：blog_2009_11_12.log这样的log文件，网上都是这样说的，但实际上自己做的时候发现生成的老是&nbsp; blog这样一个文件&nbsp; 没后缀，本以为会生成blog_2009_11_12.log这样的，怎么试都不对，快郁闷死了，后来改了一下我的电脑的时间，改到13号，发现这时生成了一个blog_2009_11_12.log</p> 
+<p>&nbsp;</p> 
+<p>后来试了下，总算明白了 log4j会先生成blog这样一个文件，然后当这一天过去的时候，生成一个新的blog，然后把原来的保存为加上日期格式后缀的文件（或者是把原来的挪到新的，把新的改变叫blog_2009_11_12.log 没去研究）</p>

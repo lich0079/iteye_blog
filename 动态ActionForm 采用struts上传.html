@@ -1,0 +1,226 @@
+<pre class="java" name="code">	1、动态ActionForm
+	* 动态ActionForm是为了避免标准ActionForm膨胀而设计的，使用动态ActionForm可以
+	得到标准ActionForm的所有功能
+	* 在struts-config.xml文件中定义动态ActionForm,如：
+	&lt;form-beans&gt;
+		&lt;form-bean name="dynaForm" type="org.apache.struts.action.DynaActionForm"&gt;
+			&lt;form-property name="name" type="java.lang.String" /&gt;
+			&lt;form-property name="age" type="java.lang.Integer"/&gt;
+		&lt;/form-bean&gt;
+	&lt;/form-beans&gt;
+	*在Action中使用动态ActionForm，参见DynaActionFormTestAction.java
+		DynaActionForm daf = (DynaActionForm)form;
+		String name = (String)daf.get("name");
+		Integer age = (Integer)daf.get("age");
+		
+	动态ActionForm其实是把页面中的html元素的名字和值放到了map中，所以通过get方法可以取出相应的值
+	动态ActionForm采用EL表达式的输出方式，${dynabean.map.prop}, 参见：dyan_actionform_success.jsp
+	动态Action的验证，通常使用动态验证框架validator
+-----------------------------------------------------------------------------------------------
+2、采用struts上传
+	* 页面中的配置如下：
+	  &lt;form action="upload.do" method="post" enctype="multipart/form-data"&gt;
+		title:&lt;input type="text" name="title"&gt;&lt;br&gt;
+		file:&lt;input type="file" name="myfile"&gt;&lt;br&gt;
+		&lt;input type="submit"&gt;
+	    &lt;/form&gt;
+
+
+	* 在ActionForm中使用FormFile来接收上传的文件，参见：UploadActionForm.java
+	private String title;
+	private FormFile myfile;
+
+	
+	* 在Action中调用FormFile取得上传文件数据，采用流输出，完成上传，参见：UploadTestAction.java
+	public class UploadAction extends Action {
+
+		@Override
+		public ActionForward execute(ActionMapping mapping, ActionForm form,
+				HttpServletRequest request, HttpServletResponse response)
+				throws Exception {
+			UploadActionForm uf=(UploadActionForm)form;
+			String tilte=uf.getTitle();
+			FormFile myfile=uf.getMyfile();
+			if(myfile!=null){
+				FileOutputStream fos=new FileOutputStream("c:\\"+myfile.getFileName());
+				fos.write(myfile.getFileData());
+				fos.flush();
+				fos.close();
+				uf.setTitle(myfile.getFileName());
+				uf.setFileSize(myfile.getFileSize());
+			}
+			
+			return mapping.findForward("success");
+		}
+	
+	}
+
+
+	上传文件大小的设置：&lt;controller maxFileSize="300M"/&gt;
+
+	&lt;/action-mappings&gt;
+		&lt;controller maxFileSize="400M"&gt;
+
+		&lt;/controller&gt;
+		
+	&lt;/struts-config&gt;
+-----------------------------------------------------------------------------------------------
+3、测试ActionForm类型的自动转换
+	* boolean:yes,1,on,true都会转换成True类型，而且忽略大小写，其他情况转换成false
+	* Date类型的转换：
+		* 如果是java.sql.Date，页面日期的格式必须为yyyy-mm-dd，才可以转换
+		* 如果是java.util.Date,默认情况下struts无法转换
+		---------------------------------------------------
+	* 自定义转换器的实现步骤
+		* 实现converter接口，实现convert方法
+
+		/**
+		 * java.util.Date转换器
+		 * @author Administrator
+		 *
+		 */
+		public class UtilDateConverter implements Converter {
+
+			public Object convert(Class type, Object value) {
+				System.out.println("UtilDateConverter.convert() value=" + value);
+				if (value == null) {
+					return new Date();
+				}
+				if (value instanceof Date) {
+					return value;
+				}
+				if (value instanceof String) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					try {
+						return sdf.parse((String)value);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return null;
+			}
+
+		}
+		* 将实现的conerter注册，通常情况采用servlet注册
+
+		/**
+		 * 注册UitlDateConverter
+		 * @author Administrator
+		 *
+		 */
+		public class UtilDateConverterInitWithServlet extends HttpServlet {
+
+			@Override
+			public void init() throws ServletException {
+				System.out.println("UtilDateConverterInitWithServlet.init()");
+				ConvertUtils.register(new UtilDateConverter(), java.util.Date.class);
+			}
+
+		}
+
+		* 采用servlet注册需要注意标签的配置,&lt;load-on-startup&gt;10&lt;/load-on-startup&gt;
+		 
+		 &lt;servlet&gt;
+			&lt;servlet-name&gt;UtilDateConverterInitWithServlet&lt;/servlet-name&gt;
+			&lt;servlet-class&gt;com.bjsxt.struts.UtilDateConverterInitWithServlet&lt;/servlet-class&gt;
+			&lt;load-on-startup&gt;3&lt;/load-on-startup&gt;
+		  &lt;/servlet&gt;
+		
+		*(也可以采用struts plugin注册)
+		
+		/**
+		 *  注册UitlDateConverter
+		 * @author Administrator
+		 *
+		 */
+		public class UtilDateConverterInitWithPlugin implements PlugIn {
+
+			public void destroy() {
+			}
+
+			public void init(ActionServlet servlet, ModuleConfig config)
+					throws ServletException {
+				System.out.println("UtilDateConverterInitWithPlugin.init()");
+				ConvertUtils.register(new UtilDateConverter(), java.util.Date.class);
+			}
+		}
+
+			&lt;/action-mappings&gt;		
+			&lt;plug-in className="com.bjsxt.struts.UtilDateConverterInitWithPlugin"/&gt;
+		&lt;/struts-config&gt;
+
+			
+		
+4、空字段问题
+	* 如果html没有写input输入域，jsp脚本接收到的值为null，el表达式则为空串
+	* 如果html中存在input输入域，没有输入值，那么jsp脚本和el表达式接收到的都是空串  
+
+Struts对ActionForm的自动搜集过程：
+  * 将页面数据放到map中，其中map中的key为页面中的名称，map中的value为页面中的value值
+  * 调用BeanUtils.setProperties方法，将map中的值逐个设置到ActionForm实例上，对于ActionForm中的每个属性
+    根据类型调用相应的Converter，然后调用相应的convert方法，将相应的字符串转换成ActionForm中指定的类型
+    
+可以通过BeanUtils.copyProperties(目标对象，源对象)方法进行对象值的复制。
+	
+	public class AddUserAction extends Action {
+	
+		public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			
+				//获取从页面表单中提交过来的值
+				UserActionForm uaf = (UserActionForm)form;
+				
+				//创建User实体对象，并将ActionForm中的内容设置到User对象中
+		//		User user = new User();
+		//		user.setUserId(uaf.getUserId());
+		//		user.setUserName(uaf.getUserName());
+		//		user.setPassword(uaf.getPassword());
+		//		user.setEmail(uaf.getEmail());
+		//		user.setContactTel(uaf.getContactTel());
+		//		user.setCreateDate(new Date());
+				
+				User user = new User();
+				BeanUtils.copyProperties(user, uaf);
+				user.setCreateDate(new Date());
+				
+				//调用业务逻辑操作
+				UserManager.getInstance().addUser(user);
+				
+				
+				return mapping.findForward("success");
+			}
+		
+	}
+-------------------------
+测试ActionMapping
+
+1、在struts-config.xml文件中每一个&lt;action&gt;标签对应了一个ActionMapping实例
+
+2、理解&lt;action&gt;标签中的forward属性和unknown属性
+	只能拦截*.do的未知页面
+	&lt;action path="/testunknown"
+	    		forward="/unknown.jsp"
+	    		unknown="true"
+	    &gt;&lt;/action&gt;
+
+3、了解一下jstl和struts tag对页面数据的保持
+	jstl:-------
+	&lt;form action="login.do" method="post"&gt;
+		用户：&lt;input type="text" name="username" value="${loginForm.username }"&gt;&lt;br&gt;
+		密码：&lt;input type="password" name="password" value="${loginForm.password }"&gt;&lt;br&gt;
+		&lt;input type="submit" value="登录"&gt;
+	&lt;/form&gt;
+	tag:--------
+	&lt;html:form action="login2.do" method="post"&gt;
+		用户：&lt;html:text property="username"/&gt;&lt;br&gt;
+		密码：&lt;html:password property="password"/&gt;&lt;br&gt;
+		&lt;html:submit value="登录"/&gt;
+	&lt;/html:form&gt;
+
+测试ActionFoward
+	* 理解全局和局部ActionFoward
+	* redirect
+	* struts-config.xml文件是不允许修改的
+	* 理解动态ActionForward，动态ActionFoward是可以修改参数的
+</pre> 
+<p>&nbsp;</p>

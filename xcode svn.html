@@ -1,0 +1,14 @@
+<blockquote> 
+ <ol> 
+  <li>Create the project in XCODE.</li> 
+  <li>Setup subversion in XCODE and select the subversion repository for this project.</li> 
+  <li>Use Xcode SCM &gt; Repository and click on the IMPORT icon. This will move the local copy to the subversion repository.</li> 
+  <li>Now delete your local copy (or move it to another location just in case).</li> 
+  <li>Finally CHECKOUT the project from subversion (this will create the subversion .svn folders, …).</li> 
+  <li>Reselect the subversion repository for this project.</li> 
+  <li>Commit the entire project.</li> 
+ </ol> 
+</blockquote> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>第一步，配置Subversion<br> Xcode中SVN使用时需要配置Subversion。Leopard中自带了SVN，但Xcode的项目文件中，并不是所有文件都适于加入SVN中进 行管理，比如编译后的文件和编译过程中产生的文件，这些文件不属于源代码，应该告诉svn忽略掉，方法：编辑~/.subversion/config文 件<br> 1.找到global-ignores一行，去掉注释，编辑成<br> global-ignores=build*~.nib*.so*.pbxuser*.mode*.perspective*<br> Xcode项目文件中有些文件是文本文件，需要告诉SVN，因为SVN能更好地管理文本文件（谁用谁知道）<br> 2.找到enable-auto-props=yes把注释去掉，在[auto-props]Section声明以下文本文件<br> *.mode*=svn:mime-type=text/X-xcode<br> *.pbxuser=svn:mime-type=text/X-xcode<br> *.perspective*=svn:mime-type=text/X-xcode<br> *.pbxproj=svn:mime-type=text/X-xcode</p>

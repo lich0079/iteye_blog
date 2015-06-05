@@ -1,0 +1,91 @@
+<p>最开始想做个twitter客户端玩玩，算是在实践中学习api</p> 
+<p>&nbsp;</p> 
+<p>后来发现twitter原来是可以让开发者用 base64认证的方式去使用api的，结果现在不行了</p> 
+<p>必须使用oauth的方式， 但oauth方式下必须到twitter的页面上去点击确定，这还是本地app程序吗，太恶心了，</p> 
+<p>其实twitter也提供了xauth方式认证，可以省去oauth认证中去网站上点确定的那一步，但可是要使用这种认证必须</p> 
+<p>给twitter发邮件，说明一堆理由。。。</p> 
+<p>&nbsp;</p> 
+<p>假如你的应用中只有一个用户使用，即twitter账户是固定的话（这在普通应用中集成twitter的情况下常见），可以使用预先取得的access token 来完成oauth认证，也不需要去和web交互</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>我用的是gtm-oauth库，直接copy代码到项目中，因为不知道怎么导入静态库，那位会，教下我 ：）</p> 
+<p>http://code.google.com/p/gtm-oauth/wiki/GTMOAuthIntroduction</p> 
+<p>&nbsp;</p> 
+<pre class="cpp" name="code">    NSString *myConsumerKey = @"1111";  //这里是你的应用的key
+    NSString *myConsumerSecret = @"2222"; // 这里是你的应用的secret
+    
+    GTMOAuthAuthentication *auth;
+    auth = [[[GTMOAuthAuthentication alloc] initWithSignatureMethod:kGTMOAuthSignatureMethodHMAC_SHA1
+                                                        consumerKey:myConsumerKey
+                                                         privateKey:myConsumerSecret] autorelease];
+
+    // setting the service name lets us inspect the auth object later to know
+    // what service it is for
+    auth.scope=@"http://api.twitter.com/";
+    auth.serviceProvider = @"Twitter";
+    auth.accessToken = @"33-33";     //这里是你自己个人的accesstoken
+    auth.signatureMethod = @"HMAC-SHA1";
+    auth.shouldUseParamsToAuthorize =NO;
+    auth.tokenSecret=@"4444A";    //这里是你自己个人的accesstokensecret
+</pre> 
+<p>&nbsp;上面的代码是在拼一个GTMOAuthAuthentication对象，有了这个对象你就可以给你的request添加认证信息</p> 
+<p>&nbsp;</p> 
+<p>接下来是调用api访问用户自己的信息，&nbsp; get</p> 
+<pre class="cpp" name="code">NSURL *requestURL = [NSURL URLWithString:@"http://api.twitter.com/1/account/verify_credentials.json"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
+
+    [auth authorizeRequest:request];  //认证请求
+    
+    GTMHTTPFetcher *fetcher = [GTMHTTPFetcher fetcherWithRequest:request];
+    
+    [fetcher beginFetchWithDelegate:self
+                    didFinishSelector:@selector(myFetcher:finishedWithData:error:)];
+
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible=YES;
+
+
+
+- (void)myFetcher:(GTMHTTPFetcher *)fetcher finishedWithData:(NSData *)retrievedData error:(NSError *)error{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible=NO;
+    if(error){
+        NSLog(@"%@",error);
+    }else{
+        NSString* aStr = [[NSString alloc] initWithData:retrievedData encoding:NSASCIIStringEncoding];
+        NSLog(@"%@",aStr);
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>下面是post请求发推</p> 
+<pre class="java" name="code">    NSURL *requestURL = [NSURL URLWithString:@"http://api.twitter.com/1/statuses/update.json"];
+
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
+    NSString *post = [NSString stringWithFormat:@"status=this tweet is by objective-c code in xcode at %@",[[[[NSDate alloc] init] autorelease] description] ];
+    NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
+    NSString *postLength = [NSString stringWithFormat:@"%d", [postData length]];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPBody:postData];
+    
+    
+    [auth authorizeRequest:request];
+    
+    GTMHTTPFetcher *fetcher = [GTMHTTPFetcher fetcherWithRequest:request];
+    
+    [fetcher beginFetchWithDelegate:self
+                    didFinishSelector:@selector(myFetcher:finishedWithData:error:)];
+
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible=YES;</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

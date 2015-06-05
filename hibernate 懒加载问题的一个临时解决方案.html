@@ -1,0 +1,49 @@
+<p>hibernate的懒加载问题时常会困扰着我们， 今天发现了hibernate自身也提供一些解决办法</p> 
+<p>Hibernate.initialize(company.getUsers());&nbsp; 这样就加载了users集合</p> 
+<p>但不支持递归加载</p> 
+<pre class="java" name="code"> it is not guaranteed that the elements INSIDE the collection will be initialized/materialized</pre> 
+<p>假如这时session关闭了 &nbsp;会报错</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>真正解决懒加载还是应该在类的设计 xml文件的配置上下功夫</p> 
+<p>&nbsp;</p> 
+<p>源码：</p> 
+<pre class="java" name="code">	/**
+	 * Force initialization of a proxy or persistent collection.
+	 * &lt;p/&gt;
+	 * Note: This only ensures intialization of a proxy object or collection;
+	 * it is not guaranteed that the elements INSIDE the collection will be initialized/materialized.
+	 *
+	 * @param proxy a persistable object, proxy, persistent collection or &lt;tt&gt;null&lt;/tt&gt;
+	 * @throws HibernateException if we can't initialize the proxy at this time, eg. the &lt;tt&gt;Session&lt;/tt&gt; was closed
+	 */
+	public static void initialize(Object proxy) throws HibernateException {
+		if ( proxy == null ) {
+			return;
+		}
+		else if ( proxy instanceof HibernateProxy ) {
+			( ( HibernateProxy ) proxy ).getHibernateLazyInitializer().initialize();
+		}
+		else if ( proxy instanceof PersistentCollection ) {
+			( ( PersistentCollection ) proxy ).forceInitialization();
+		}
+	}
+
+	/**
+	 * Check if the proxy or persistent collection is initialized.
+	 *
+	 * @param proxy a persistable object, proxy, persistent collection or &lt;tt&gt;null&lt;/tt&gt;
+	 * @return true if the argument is already initialized, or is not a proxy or collection
+	 */
+	public static boolean isInitialized(Object proxy) {
+		if ( proxy instanceof HibernateProxy ) {
+			return !( ( HibernateProxy ) proxy ).getHibernateLazyInitializer().isUninitialized();
+		}
+		else if ( proxy instanceof PersistentCollection ) {
+			return ( ( PersistentCollection ) proxy ).wasInitialized();
+		}
+		else {
+			return true;
+		}
+	}
+</pre>

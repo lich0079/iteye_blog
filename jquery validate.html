@@ -1,0 +1,46 @@
+<pre class="java" name="code">			function(){
+				$("#register_company_admin_form").validate({
+					rules:{
+					"completeUserDTO.company.name" :"required",
+					"completeUserDTO.company.address.address1": "required",
+					"completeUserDTO.company.address.city": "required",
+					"completeUserDTO.company.address.zipCode": "required",
+					"completeUserDTO.company.siteShortName": "required",
+					"completeUserDTO.company.siteUrl" : { required: true,url: true },
+                    "completeUserDTO.company.siteLoginUrl" : { required: true,url: true }
+				},
+				messages: {
+					"completeUserDTO.company.name" : "Please enter your Company Name.",
+					"completeUserDTO.company.address.address1": "Please enter your Address.",
+					"completeUserDTO.company.address.city": "Please enter your City.",
+					"completeUserDTO.company.address.zipCode": "Please enter your ZipCode.",
+					"completeUserDTO.company.siteShortName": "Please enter your Site Short Name.",
+                    "completeUserDTO.company.siteUrl" : { required: "Please enter your Site Url.",url:"Please enter valid Site Url, start with http:// ."},
+                    "completeUserDTO.company.siteLoginUrl" : { required: "Please enter your Site Login Url.",url:"Please enter valid Site Login Url, start with http:// ."}
+				}
+			});</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>form</p> 
+<pre class="java" name="code">&lt;s:form id="register_company_admin_form"  action="xxx" method="post"&gt;
+	  &lt;div class="search-vin1"&gt;
+			  	&lt;div class="user-account"&gt;&lt;ul&gt;&lt;li&gt;Create the third-party integration Client&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+				&lt;div class="user-import"&gt;
+					&lt;div class="user-import-list1"&gt;
+						&lt;div class="user-content-left"&gt;&lt;ul&gt;&lt;li&gt;Company Name:&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+						&lt;div class="user-content-left1"&gt;&lt;ul&gt;&lt;li&gt;*&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+						&lt;div class="user-input-from"&gt;&lt;s:textfield name="completeUserDTO.company.name" /&gt;&lt;/div&gt;
+					&lt;/div&gt;</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>errorPlacement：Callback <br><br> Default: 把错误信息放在验证的元素后面 <br> 指明错误放置的位置，默认情况是：error.appendTo(element.parent());即把错误信息放在验证的元素后面 <br> errorPlacement: function(error, element) {&nbsp; <br> &nbsp;&nbsp;&nbsp; error.appendTo(element.parent());&nbsp; <br> } </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>错误的时候会默认在input 元素后面生成</p> 
+<p>&nbsp;</p> 
+<p>&lt;label for="register_company_admin_form_completeUserDTO_company_name" generated="true" class="error"&gt;Please enter your Company Name.&lt;/label&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

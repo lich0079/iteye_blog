@@ -1,0 +1,15 @@
+<p>转自：http://blog.sina.com.cn/s/blog_42ce8e350100dlsb.html</p> 
+<p>&nbsp;</p> 
+<p>今天使用ExtJS 2.2.1进行页面开发时，发现在IE6中的Grid的表头显示</p> 
+<div class="articleContent">
+ 异常，图标和文字发生错乱，如图： 
+ <p><img alt="IE6中ExtJS Grid表头下拉菜单错乱问题" height="223" src="http://img.ddvip.com/2009_05_21/1242879580_ddvip_6372.gif" width="346"> 　</p> 
+ <p>　　在Firefox和chrome显示都是正常的，很是奇怪，难道是版本问题？</p> 
+ <p>　　将2.2版本和2.2.1版本的ext-all.css进行了比较，发现有两处不一样，改回2.2版本后一切正常：</p> 
+ <p>　　找到.x-menu a.x-menu-item{display:block;line-height:16px;padding:3px 21px 3px 27px;</p> 
+ <p>　　修改成.x-menu a.x-menu-item{display:block;line-height:16px;padding:3px 21px 3px 3px;</p> 
+ <p>　　找到.x-menu-item-icon{border:0 none;height:16px;padding:0;vertical-align:top;width:16px;position:absolute;left:3px;top:3px;margin:0;</p> 
+ <p>　　修改成.x-menu-item-icon{border:0 none;height:16px;padding:0;vertical-align:top;width:16px;margin:0 8px 0 0;</p> 
+ <p><img alt="IE6中ExtJS Grid表头下拉菜单错乱问题" height="216" src="http://img.ddvip.com/2009_05_21/1242879580_ddvip_5095.gif" width="342"></p> 
+ <p>　　另外，ExtJS最新的3.0 RC1版已经没有这个问题了。</p> 
+</div>

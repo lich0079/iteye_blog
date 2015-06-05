@@ -1,0 +1,15 @@
+<pre name="code" class="java">	try {
+			Connection conn = ConnectionManager.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			for (Iterator iter=flowCardDetailList.iterator(); iter.hasNext();) {
+				FlowCardDetail flowCardDetail = (FlowCardDetail)iter.next();
+				pstmt.setString(1, vouNo);
+				pstmt.setString(2, flowCardDetail.getAimClient().getId());
+				pstmt.setString(3, flowCardDetail.getItem().getItemNo());
+				pstmt.setDouble(4, flowCardDetail.getQty());
+				pstmt.setString(5, flowCardDetail.getAdjusFlag());
+-----------------------------	pstmt.addBatch();
+			}
+			pstmt.executeBatch();
+		}</pre> 
+<p>&nbsp;</p>

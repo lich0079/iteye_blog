@@ -1,0 +1,71 @@
+<p>使用 jboss_home/server/default/conf下的 &nbsp;jboss-log4j.xml 配置log4j &nbsp;</p> 
+<p>要注意的</p> 
+<p>1. 这个是针对所有这个server下的webapp的， 所以rootlogger设法不能和单独log4j的配置一样</p> 
+<p>2. webapp下的log4j.properties, &nbsp;log4j.jar 都去掉，防止干扰</p> 
+<p>3. copy &nbsp;jboss_home/lib 下的 commons-logging.jar, jboss-common.jar到你的webapp &nbsp;WBE_INF/lib里, 不然会有个不相容的错误 (我的环境是jboss-4.2.3.GA)</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>将下面的加到默认的jboss-log4j.xml的最下面</p> 
+<p> </p> 
+<pre class="java" name="code"> &lt;appender name="A1" class="org.jboss.logging.appender.RollingFileAppender"&gt;
+     &lt;errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/&gt;
+     &lt;param name="File" value="${jboss.server.log.dir}/dlog.log"/&gt;
+     &lt;param name="MaxFileSize" value="200KB"/&gt;
+     &lt;param name="MaxBackupIndex" value="10"/&gt;
+
+     &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+       &lt;param name="ConversionPattern" value="%d [%t] %-5p - %m%n"/&gt;
+     &lt;/layout&gt;	    
+ &lt;/appender&gt;
+  &lt;appender name="DB" class="org.jboss.logging.appender.RollingFileAppender"&gt;
+     &lt;errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/&gt;
+     &lt;param name="File" value="${jboss.server.log.dir}/d2log.log"/&gt;
+     &lt;param name="MaxFileSize" value="200KB"/&gt;
+     &lt;param name="MaxBackupIndex" value="10"/&gt;
+
+     &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+       &lt;param name="ConversionPattern" value="%d [%t] %-5p - %m%n"/&gt;
+     &lt;/layout&gt;	    
+ &lt;/appender&gt;
+ 
+ 
+ &lt;category name="com.b"&gt;
+	  &lt;priority value="INFO" /&gt;
+     &lt;appender-ref ref="A1"/&gt;
+ &lt;/category&gt;
+ &lt;category name="com.d"&gt;
+	  &lt;priority value="INFO" /&gt;
+     &lt;appender-ref ref="A1"/&gt;
+ &lt;/category&gt;
+ &lt;category name="com.h"&gt;
+	  &lt;priority value="INFO" /&gt;
+     &lt;appender-ref ref="A1"/&gt;
+ &lt;/category&gt;
+
+
+ &lt;category name="com.b.bus"&gt;
+     &lt;priority value="DEBUG" /&gt;
+     &lt;appender-ref ref="A1"/&gt;
+ &lt;/category&gt;
+ &lt;category name="com.n.server"&gt;
+     &lt;priority value="ERROR" /&gt;
+     &lt;appender-ref ref="A1"/&gt;
+ &lt;/category&gt;
+ &lt;category name="com.h.database"&gt;
+     &lt;priority value="DEBUG" /&gt;
+     &lt;appender-ref ref="DB"/&gt;
+ &lt;/category&gt;
+
+   &lt;!-- ======================= --&gt;
+   &lt;!-- Setup the Root category --&gt;
+   &lt;!-- ======================= --&gt;
+ &lt;root&gt;
+      &lt;appender-ref ref="CONSOLE"/&gt;
+	  &lt;appender-ref ref="FILE"/&gt;
+   &lt;/root&gt;
+&lt;/log4j:configuration&gt;</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

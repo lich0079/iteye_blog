@@ -1,0 +1,144 @@
+<pre name="code" class="java"></pre> 
+<pre name="code" class="java">package pcs;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+public abstract class Element {
+    PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+
+    protected void addPropertyChangeListener(PropertyChangeListener listener) {
+        listeners.addPropertyChangeListener(listener);
+    }
+
+    protected void addPropertyChangeListener(String propertyName,PropertyChangeListener listener) {
+        listeners.addPropertyChangeListener(propertyName,listener);
+    }
+    
+    protected void removePropertyChangeListener(PropertyChangeListener listener) {
+        listeners.removePropertyChangeListener(listener);
+    }
+
+    protected void firePropertyChange(String propertyName, Object oldValue,
+            Object newValue) {
+        listeners.firePropertyChange(propertyName, oldValue, newValue);
+    }
+    
+    protected PropertyChangeSupport getPropertyChangeSupport(){
+        return listeners;
+    }
+    
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">package pcs;
+
+public class Node extends Element {
+    private int id;
+    private String name;
+    private int age;
+    private String address;
+    
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        firePropertyChange("address",this.address,address);
+        this.address = address;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+//        firePropertyChange("id",this.id,id);
+        getPropertyChangeSupport().fireIndexedPropertyChange("id",1,this.id,id);
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        if (!name.equals(this.name)) {
+            firePropertyChange("name", this.name, name);
+        }
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">package pcs;
+
+import java.beans.IndexedPropertyChangeEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+public class Client {
+    public static void main(String[] args) {
+        Node a = new Node();
+        a.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                System.out.println("change-------------");
+                System.out.println(evt.getClass().getName()
+                        + "--  evt class name   ");
+                System.out.println(evt.getPropertyName() + "  "
+                        + evt.getOldValue() + "  " + evt.getNewValue());
+                System.out.println(evt.getSource() + "--  source");
+                System.out.println(evt.getPropagationId() + "--  id ");
+                System.out.println("---------------");
+                if (evt instanceof IndexedPropertyChangeEvent) {
+                    System.out.println(((IndexedPropertyChangeEvent) evt).getIndex()+"   --------index");
+                    
+                }
+            }
+
+        });
+        a.addPropertyChangeListener("name", new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                System.out.println("888888888888property name change88888888888888");
+            }
+        });
+        a.addPropertyChangeListener("id", new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                System.out.println("888888888888property id change88888888888888");
+            }
+        });
+        a.setId(222);
+        a.setId(333);
+        a.setAddress("bj");
+        a.setAddress("sh");
+//        a.setName("first");
+//        a.setName("second");
+    }
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p style="text-align: left;"><span style="font-size: small;">&nbsp;PropertyChangeSupport是一个观察着模式的帮助类，</span></p> 
+<p style="text-align: left;"><span style="font-size: small;">1.首先一般是写个基类设一个属性（字段）使用它，注意构造的时候必须传入自身。</span></p> 
+<p style="text-align: left;"><span style="font-size: small;">然后设置addPropertyChangeListener,与remove的方法，这2个方法一般写到基类中，这样子类才可以实时的添加监听器，（也可以写个getPropertyChangeSupport方法， 然后让子类去添加listener,但一般没看人这样做过）。这一步主要是设置监听器。</span></p> 
+<p style="text-align: left;"><span style="font-size: small;">2.然后发布事件， 用到的是firePropertyChange，fireIndexedPropertyChange&nbsp; 方法，第2个可以多设置一个index属性， 发布出去的是一个PropertyChangeEvent，IndexedPropertyChangeEvent是它的子类，所以用的时候要instanceof。这2个方法可以写到基类中让子类使用，也可以在基类中设置一个getListeners方法让子类获得PropertyChangeSupport,然后后自己去fire不同的方法，如 getPropertyChangeSupport().fireIndexedPropertyChange("id",1,this.id,id);&nbsp;&nbsp; 这一步是设置发布事件的方法</span></p> 
+<p style="text-align: left;"><span style="font-size: small;">3.这一步才是真正的发布事件，在Bean 的set方法，或其他你想要的地方使用fire方法发布事件，注意fire的时候代码要在this.name = name; 之前，因为它会自动判断修改前后的值，写在this.name = name;之后的话因为this.name已经等于name,所以它不会真的发布事件，必须写在this.name = name;前面</span></p> 
+<p style="text-align: left;"><span style="font-size: small;">4.最后一步是在客户代码中接受事件并执行相应的具体的监听器的逻辑，添加监听器的时候可以只监听具体的某一个字段</span></p> 
+<p style="text-align: left;"><span style="font-size: small;">如 addPropertyChangeListener("name", new PropertyChangeListener()， 也可以监听全部addPropertyChangeListener(new PropertyChangeListener()</span></p> 
+<p style="text-align: left;"><span style="font-size: small;">&nbsp;</span></p> 
+<p>&nbsp;</p>

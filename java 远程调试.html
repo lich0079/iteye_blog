@@ -1,0 +1,25 @@
+<p><span style=""><strong style="font-weight: bold;">什么是JPDA</strong>&nbsp;<br>　　Java Platform Debugger Architecture(JPDA:Java平台调试架构) 由Java虚拟机后端和调试平台前端组成&nbsp;<br>　　1.Java虚拟机提供了Java调试的功能&nbsp;<br>　　2.调试平台通过调试交互协议向Java虚拟机请求服务以对在虚拟机中运行的程序进行调试&nbsp;<br><br>　　<strong style="font-weight: bold;">JPDA的构架</strong>&nbsp;<br>　　JPDA通过两个接口和协议来完成如上的说明，分别是JVMTI（Java虚拟机工具接口）、JDWP（Java调试连线协议）和JDI（Java调试接口）。&nbsp;<br>　　1.JVMTI定义了虚拟机应该提供的调试服务，包括调试信息（Information譬如栈信息）、调试行为（Action譬如客户端设置一个断点）和通知（Notification譬如到达某个断点时通知客户端），该接口由虚拟机实现者提供实现，并结合在虚拟机中&nbsp;<br>&nbsp;&nbsp;&nbsp; 2.JDWP定义调试服务和调试器之间的通信，包括定义调试信息格式和调试请求机制&nbsp;<br>&nbsp;&nbsp;&nbsp; 3.JDI在语言的高层次上定义了调试者可以使用的调试接口以能方便地与远程的调试服务进行交互，Java语言实现，调试器实现者可直接使用该接口访问虚拟机调试服务。&nbsp;<br><br>　　<strong style="font-weight: bold;">运行方式</strong>&nbsp;<br>　　当虚拟机的调试服务运行时，虚拟机作为调试的服务提供端，监听一个连接，而调试器通过该连接与虚拟机进行交互。目前，Windows平台的JVM提供了两种方式的连接：共享内存和 Socket连接，共享内存的服务提供端和调试端只能位于同一台机，而Socket连接则支持不同异机调试，即远程调试。&nbsp;<br><br>　　<strong style="font-weight: bold;">虚拟机参数设置</strong>&nbsp;<br>　　1．启用调试服务&nbsp;<br>　　　　-Xdebug 启用调试&nbsp;<br>　　　　-Xrunjdwp:&lt;sub-options&gt; 加载JVM的JPDA参考实现库&nbsp;<br>　　2．Xrunjdwp子参数（sub-options）配置&nbsp;<br>　　　　Xrunjdwp子参数的配置格式如下&nbsp;<br>　　　　-Xrunjdwp:&lt;name1&gt;[=&lt;value1&gt;],&lt;name2&gt;[=&lt;value2&gt;]...&nbsp;<br><br>　　<strong style="font-weight: bold;">几个例子</strong>&nbsp;<br>　　-Xrunjdwp:transport=dt_socket,server=y,address=8000&nbsp;<br>　　在8000端口监听Socket连接，挂起VM并且不加载运行主函数直到调试请求到达&nbsp;<br>　　-Xrunjdwp:transport=dt_shmem,server=y,suspend=n&nbsp;<br>　　选择一个可用的共享内存（因为没有指address）并监听该内存连接，同时加载运行主函数&nbsp;<br>　　-Xrunjdwp:transport=dt_socket,address=myhost:8000&nbsp;<br>　　连接到myhost:8000提供的调试服务（server=n，以调试客户端存在），挂起VM并且不加载运行主函数&nbsp;<br>　　-Xrunjdwp:transport=dt_shmem,address=mysharedmemory&nbsp;<br>　　通过共享内存的方式连接到调试服务，挂起VM并且不加载运行主函数&nbsp;<br>　　-Xrunjdwp:transport=dt_socket,server=y,address=8000,&nbsp;<br>　　onthrow=java.io.IOException,launch=/usr/local/bin/debugstub&nbsp;<br>　　等待java.io.IOException被抛出，然后挂起VM并监听8000端口连接，在接到调试请求后以命令/usr/local/bin/debugstub dt_socket myhost:8000执行&nbsp;<br>　　-Xrunjdwp:transport=dt_shmem,server=y,onuncaught=y,launch=d:\bin\debugstub.exe&nbsp;<br>　　等待一个RuntimeException被抛出，然后挂起VM并监听一个可用的共享内存，在接到调试请求后以命令d:\bin\debugstub.exe dt_shmem &lt;address&gt;执行,&lt;address&gt;是可用的共享内存&nbsp;<br><br>　　<strong style="font-weight: bold;">启动tomcat</strong>&nbsp;<br>&nbsp;&nbsp;&nbsp; -Xdebug -Xrunjdwp:transport=%JPDA_TRANSPORT%,address=%JPDA_ADDRESS%,server=y,suspend=n&nbsp;<br><br>&nbsp;&nbsp;&nbsp; 以上两行是tomcat5.5.12的catalina.bat文件中的一句，可以看出tomcat在JPDA方式下是怎么启动的，启动tomcat要用catalina jpda start来启动，不能用startup.bat启动，启动前设置好JPDA_TRANSPORT，JPDA_ADDRESS就OK了&nbsp;</span></p> 
+<p>================================================================</p> 
+<p>下面的方式也可以在tomcat运行时打开远程调试端口</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<div style="border: none; padding: 0cm 0cm 1.0pt 0cm; margin-left: 18.0pt; margin-right: 0cm;"> 
+ <p class="MsoListParagraph" style="text-indent: 0cm; border: none; padding: 0cm;"><span>You need to modify the startup.bat, add jpda when start</span></p> 
+</div> 
+<p class="MsoNormal"><span>&nbsp;</span></p> 
+<p class="MsoListParagraph" style="margin-left: 18.0pt;"><span>call "%EXECUTABLE%" <span style="color: red;">jpda</span> start %CMD_LINE_ARGS%</span></p> 
+<p class="MsoListParagraph" style="margin-left: 18.0pt;"><span>&nbsp;</span></p> 
+<div style="border: none; padding: 0cm 0cm 1.0pt 0cm; margin-left: 18.0pt; margin-right: 0cm;"> 
+ <p class="MsoListParagraph" style="text-indent: 0cm; border: none; padding: 0cm;"><span>:end</span></p> 
+</div> 
+<p class="MsoListParagraph" style="margin-left: 18.0pt; text-indent: 0cm;"><span>&nbsp;</span></p> 
+<div style="border: none; padding: 0cm 0cm 1.0pt 0cm; margin-left: 18.0pt; margin-right: 0cm;"> 
+ <p class="MsoListParagraph" style="text-indent: 0cm; border: none; padding: 0cm;"><span>Modify catalina.bat, </span></p> 
+</div> 
+<p class="MsoListParagraph" style="margin-left: 18.0pt;"><span>set JPDA_TRANSPORT=<span style="color: red;">dt_socket</span></span></p> 
+<p class="MsoListParagraph" style="margin-left: 18.0pt;"><span>:gotJpdaTransport</span></p> 
+<p class="MsoListParagraph" style="margin-left: 18.0pt;"><span>if not "%JPDA_ADDRESS%" == "" goto gotJpdaAddress</span></p> 
+<div style="border: none; padding: 0cm 0cm 1.0pt 0cm; margin-left: 18.0pt; margin-right: 0cm;"> 
+ <p class="MsoListParagraph" style="border: none; padding: 0cm;"><span>set JPDA_ADDRESS=<span style="color: red;">1045</span></span></p> 
+</div> 
+<p class="MsoListParagraph" style="margin-left: 18.0pt;"><span style="color: red;">&nbsp;</span></p>

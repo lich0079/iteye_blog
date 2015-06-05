@@ -1,0 +1,15 @@
+<p>iptables -nL&nbsp;&nbsp;&nbsp; 查看端口打开情况</p> 
+<p>iptables -P INPUT&nbsp; ACCEPT&nbsp; 打开所有<br> iptables -P INPUT DROP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 关闭</p> 
+<p>iptables -A INPUT -s www.xxx.com -j ACCEPT 允许接收来自www.xxx.com的包</p> 
+<p>iptables -D INPUT -s www.xxx.com -j ACCEPT&nbsp; 删除上面那条记录</p> 
+<p>&nbsp;</p> 
+<p>iptables -nvL INPUT --line-numbers&nbsp;&nbsp;&nbsp; //查看策略</p> 
+<p>&nbsp;</p> 
+<p>iptables -I INPUT NUM -p tcp -i eth1 -m state --state NEW -m tcp -s 111.22.76.11 --sport 1024:65535 --dport 8080 -j ACCEPT<br> &nbsp;NUM表示你要插在第几行<br> 或者“-m state --state NEW -m tcp”这段不要也可以<br></p> 
+<p>&nbsp;</p> 
+<p>iptables -I INPUT 27 -i eth1 -s 111.22.76.11 -p tcp --dport 8088 -j ACCEPT</p> 
+<p>&nbsp;</p> 
+<p>删除的话&nbsp; iptables -D INPUT 34 //是行号</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>#!/bin/sh<br><br> ###clear all ploicy and rule<br> iptables -F<br> iptables -X<br><br> #input policy to drop<br> iptables -P INPUT DROP<br><br> #output policy to drop<br> #iptables -P OUTPUT DROP<br><br> #localhost accept<br> iptables -A INPUT -s 127.0.0.1 -j ACCEPT<br> iptables -A INPUT -s 60.199.2.1 -j ACCEPT<br> iptables -A INPUT -s 61.33.3.4 -j ACCEPT<br> iptables -A INPUT -s 61.31.9.9 -j ACCEPT<br> iptables -A INPUT -s 61.31.1.1 -j ACCEPT<br> iptables -A INPUT -s 2.1.2.3 -j ACCEPT<br> iptables -A INPUT -s www.bshare.cn&nbsp; -j ACCEPT&nbsp; #need to get some data from here<br> iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE #vpn<br> #iptables -A INPUT -p tcp --dport 1723 -j ACCEPT&nbsp; #vpn<br> #iptables -A INPUT -p gre -j ACCEPT&nbsp; #VPN<br><br><br> #### allow http 80 port ####<br> &nbsp;iptables -A INPUT -p tcp --dport 80 -j ACCEPT</p>

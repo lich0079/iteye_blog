@@ -1,0 +1,65 @@
+<h2 class="post-title">Ext.get()与Ext.fly()之区别</h2> 
+<div class="post-body dlink"> 
+ <p>从一开始接触Ext就看到有Ext.fly这个函数，当时觉得这个跟Ext.get没什么区别，加之当时对JS性能相关问题认识肤浅，也一直没有在意其区别，今日看learning extjs一书，看到了有专门对Ext.fly特别强调的一处：</p> 
+ <p class="code"><code>This&nbsp;isn't&nbsp;exactly&nbsp;a&nbsp;speed&nbsp;tip,&nbsp;but&nbsp;is&nbsp;more&nbsp;about&nbsp;conserving&nbsp;memory&nbsp;by&nbsp;using&nbsp;<br>something&nbsp;called&nbsp;a&nbsp;"flyweight"&nbsp;to&nbsp;perform&nbsp;simple&nbsp;tasks,&nbsp;which&nbsp;results&nbsp;in&nbsp;higher&nbsp;speed&nbsp;<br>by&nbsp;not&nbsp;clogging&nbsp;up&nbsp;the&nbsp;browser's&nbsp;memory</code></p> 
+ <p>大概意思也就是Ext.Fly采用flyweight模式使所有fly出来的元素共享内存，可以提高程序执行速度，减少内存占用。</p> 
+ <p>这段话激起了我对这个函数的兴趣，毕竟近段时间一直在搞JS性能优化相关问题，对“内存”这个字眼非常敏感。大概看了下Ext源码对get和fly实现的部分，然后在网上查看了一些资料，终于对他们之间的异同有了个比较深入的认识。 Ext的官方开发人员给出了如下的解释：</p> 
+ <p class="code"><code>Ext.Element&nbsp;wraps&nbsp;a&nbsp;lot&nbsp;of&nbsp;functionality&nbsp;around&nbsp;DOM&nbsp;element/node,&nbsp;for&nbsp;example&nbsp;functions&nbsp;like&nbsp;hide,&nbsp;show,&nbsp;all&nbsp;animation&nbsp;stuff,&nbsp;dimensions&nbsp;getting&nbsp;and&nbsp;setting&nbsp;function&nbsp;and&nbsp;a&nbsp;lot&nbsp;more.&nbsp;<br><br>Ext.Element&nbsp;keeps&nbsp;reference&nbsp;to&nbsp;DOM&nbsp;element&nbsp;it&nbsp;is&nbsp;wrapped&nbsp;around&nbsp;in&nbsp;dom&nbsp;property.&nbsp;Once&nbsp;you&nbsp;have&nbsp;an&nbsp;Ext.Element&nbsp;(e.g.&nbsp;you&nbsp;call&nbsp;Ext.get('some-id')&nbsp;it&nbsp;is&nbsp;an&nbsp;instance&nbsp;of&nbsp;Element&nbsp;class&nbsp;and&nbsp;you&nbsp;can&nbsp;work&nbsp;with&nbsp;it&nbsp;as&nbsp;such.&nbsp;<br><br>Now,&nbsp;imagine&nbsp;that&nbsp;you&nbsp;need&nbsp;to&nbsp;hide&nbsp;1000&nbsp;DOM&nbsp;nodes,&nbsp;you&nbsp;call&nbsp;1000&nbsp;times&nbsp;Ext.get('some-one-of-1000-id').hide()&nbsp;so&nbsp;you&nbsp;create&nbsp;1000&nbsp;instances&nbsp;of&nbsp;Element&nbsp;just&nbsp;to&nbsp;call&nbsp;one&nbsp;function:&nbsp;hide.&nbsp;<br><br>Ext.fly&nbsp;is&nbsp;one&nbsp;instance&nbsp;of&nbsp;Ext.Element&nbsp;with&nbsp;"replaceable"&nbsp;DOM&nbsp;node&nbsp;it&nbsp;is&nbsp;wrapped&nbsp;around.&nbsp;If&nbsp;you&nbsp;call&nbsp;1000&nbsp;times&nbsp;Ext.fly('some-one-of-1000-id').hide()&nbsp;you&nbsp;1000&nbsp;times&nbsp;replace&nbsp;dom&nbsp;property&nbsp;of&nbsp;one&nbsp;instance&nbsp;of&nbsp;Ext.Element.&nbsp;<br><br>Result:&nbsp;higher&nbsp;performance,&nbsp;lower&nbsp;memory&nbsp;usage.&nbsp;<br><br>You&nbsp;only&nbsp;need&nbsp;to&nbsp;keep&nbsp;in&nbsp;mind&nbsp;that&nbsp;you&nbsp;cannot&nbsp;keep&nbsp;Element&nbsp;returned&nbsp;by&nbsp;Ext.fly&nbsp;for&nbsp;later&nbsp;use&nbsp;as&nbsp;it's&nbsp;dom&nbsp;will&nbsp;sooner&nbsp;or&nbsp;later&nbsp;gets&nbsp;replaced&nbsp;by&nbsp;another&nbsp;one.</code></p> 
+ <p><strong>这段话中，大致的意思如下：</strong></p> 
+ <p>Ext.Element是Ext对Dom元素的一个强有力封装，它封装了很多方便对dom操作的接口(并通过Element的dom属性引用对应的dom元素)，因此每创建一个Element元素都将消耗不少的内存(主要是大量的操作接口消耗)，因此如果创建过多的Element元素必然导致内存占用的剧增和系统性能的下降。</p> 
+ <p>Ext.get和Ext.fly返回的都是一个Element对象，但是Ext.get返回的是一个独立的Element，拥有自己独立的操作接口封装，可以将其返回值保存到变量中，以便以后调用操作等，这样为重用带来了方便。但是它的一个很大缺点就是内存消耗问题，假如调用Ext.get(id)1000次，则会在内存中创建1000个独立Element，其内存占用可想而知。但是很多时候我们可能仅仅只是对该dom元素执行一次很简单的操作，如隐藏(hide)，这样如果每次都创建一个独立Element放在内存中，实在是对内存的巨大浪费，因此当我们在只需要执行一次操作或者一个很简单的操作时，采用Ext.get就显得很不合理。Ext.fly正是为了解决这个问题而出现，它通过使每次创建的Element共享内存中的一套操作接口来达到节省内存的效果。</p> 
+ <p><strong>下面来看Ext.fly的实现代码(我简单加了一些注释)：</strong></p> 
+ <pre><code class="javascript"><span class="keywords">var</span>&nbsp;flyFn&nbsp;=&nbsp;<span class="keywords">function</span>(){};&nbsp;
+flyFn.<span class="global">prototype</span>&nbsp;=&nbsp;El.<span class="global">prototype</span>;&nbsp;
+<span class="keywords">var</span>&nbsp;_cls&nbsp;=&nbsp;<span class="keywords">new</span>&nbsp;flyFn();&nbsp;<span class="com">//将Element的所有操作接口放在_cls中</span>&nbsp;
+&nbsp;
+<span class="com">//&nbsp;dom&nbsp;is&nbsp;optional</span>&nbsp;
+El.Flyweight&nbsp;=&nbsp;<span class="keywords">function</span>(dom){&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywords">this</span>.dom&nbsp;=&nbsp;dom;&nbsp;
+};&nbsp;<span class="com">//仅包含一个dom属性的Object</span>&nbsp;
+&nbsp;
+El.Flyweight.<span class="global">prototype</span>&nbsp;=&nbsp;_cls;&nbsp;<span class="com">//将操作接口复制给Element实例对象</span>&nbsp;
+El.Flyweight.<span class="global">prototype</span>.isFlyweight&nbsp;=&nbsp;<span class="keywords">true</span>;&nbsp;<span class="com">//标志该Element是flyweight对象</span>&nbsp;
+&nbsp;
+El._flyweights&nbsp;=&nbsp;{};&nbsp;<span class="com">//flyweight对象缓存容器</span>&nbsp;
+&nbsp;
+El.fly&nbsp;=&nbsp;<span class="keywords">function</span>(el,&nbsp;named){&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;named&nbsp;=&nbsp;named&nbsp;||&nbsp;<span class="string">'_global'</span>;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;el&nbsp;=&nbsp;Ext.getDom(el);&nbsp;<span class="com">//取得dom对象</span>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywords">if</span>(!el){&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywords">return</span>&nbsp;<span class="keywords">null</span>;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywords">if</span>(!El._flyweights[named]){&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;El._flyweights[named]&nbsp;=&nbsp;<span class="keywords">new</span>&nbsp;El.Flyweight();&nbsp;<span class="com">//仅在第一次调用Ext.fly时创建一个Flyweight对象并缓存</span>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;El._flyweights[named].dom&nbsp;=&nbsp;el;&nbsp;<span class="com">//将flyweight对象的dom属性指向该el</span>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keywords">return</span>&nbsp;El._flyweights[named];&nbsp;
+};</code></pre> 
+ <textarea style="display: none;">var flyFn = function(){};
+flyFn.prototype = El.prototype;
+var _cls = new flyFn(); //将Element的所有操作接口放在_cls中
+
+// dom is optional
+El.Flyweight = function(dom){
+    this.dom = dom;
+}; //仅包含一个dom属性的Object
+
+El.Flyweight.prototype = _cls; //将操作接口复制给Element实例对象
+El.Flyweight.prototype.isFlyweight = true; //标志该Element是flyweight对象
+
+El._flyweights = {}; //flyweight对象缓存容器
+
+El.fly = function(el, named){
+    named = named || '_global';
+    el = Ext.getDom(el); //取得dom对象
+    if(!el){
+        return null;
+    }
+    if(!El._flyweights[named]){
+        El._flyweights[named] = new El.Flyweight(); //仅在第一次调用Ext.fly时创建一个Flyweight对象并缓存
+    }
+    El._flyweights[named].dom = el; //将flyweight对象的dom属性指向该el
+    return El._flyweights[named];
+};</textarea>
+ <p>从上面的代码不难看出，仅在第一次调用Ext.fly时创建一个Flyweight对象（该对象包含了Element的所有操作接口）并将其缓存，之后的所有fly操作都只是修改该flyweight对象的dom属性，每次fly返回的结果都是共享的同一个flyweight对象。这样每次fly返回的Element相比Ext.get而言，减少了每次创建Element时对大量的操作接口的创建。所有fly的对象都共享一套Element操作接口，内存占用自然少了很多，而且执行速度也得到了提升。在大量的创建操作中效果会更加明显。</p> 
+</div>

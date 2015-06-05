@@ -1,0 +1,21 @@
+<p>第一个hibernate项目</p> 
+<p>1、新建一个java项目</p> 
+<p>2、创建User Library<br>&nbsp;* HIBERNATE_HONE/lib/*.jar<br>&nbsp;* HIBERNATE_HOME/hibernate3.jar<br>&nbsp;* MySql JDBC驱动<br>&nbsp;<br>3、创建hibernate配置文件hibernate.cfg.xml&nbsp;<br>&nbsp; <br>4、创建实体类</p> 
+<p>5、提供User实体类的映射文件User.hbm.xml</p> 
+<p>6、将User.hbm.xml文件配置到hibernate.cfg.xml文件中</p> 
+<p>7、创建数据库表，采用hibernate工具类，将实体类生成数据库表</p> 
+<p>8、开发客户端</p> 
+<p>为了调试方便将log4j配置文件拷贝到项目中，可以在hibernate.cfg.xml中加入如下配置，来观看hibernate sql的执行：<br>&lt;property name="hibernate.show_sql"&gt;true&lt;/property&gt;</p> 
+<p>-------------------------------------</p> 
+<p>测试实体对象的生命周期</p> 
+<p>junit简介：<br>&nbsp;* 编写测试类xxxTest，需要继承TestCase<br>&nbsp;* 编写单元测试方法，测试方法必须以test开头，测试方法不能含有参数和返回值，如：<br>&nbsp;&nbsp; public void testHello1() {}<br>&nbsp;* 最好单元测试的代码单独建立一个目录<br>&nbsp;<br>了解session的CRUD操作</p> 
+<p>了解session.get()和session.load()方法的区别？<br>&nbsp;* get不支持lazy，load支持lazy<br>&nbsp;* 采用get加载数据，如果数据库中不存在相应的数据，那么返回null;<br>&nbsp;&nbsp; 采用load加载数据，如果数据库中不存在相应的数据，那么抛出ObjectNotFoundException</p> 
+<p>Transient状态：<br>&nbsp;* 不处在session的缓存中，不和任何session实例有关联<br>&nbsp;* 在数据库中没有相应的记录<br>&nbsp;<br>Persistent状态：<br>&nbsp;* 位于session的缓存中，persistent状态的对象总是和session实例关联<br>&nbsp;* persistent状态的对象和数据库表中的记录有对应<br>&nbsp;* persistent状态的对象发生改变会自动和数据库同步<br>&nbsp;<br>Detached状态：<br>&nbsp;* 不处于session的缓存中，不和任何session实例有关联<br>&nbsp;* Detached状态的对象在数据库中有与之对应的记录<br>&nbsp;&nbsp;&nbsp;&nbsp; <br>------------------------------------------------------<br>hibernate基本映射</p> 
+<p>实体类---》数据库表<br>普通属性---》表字段</p> 
+<p>通过&lt;class&gt;映射成数据库表，通过&lt;property&gt;标签将普通属性映射成数据库表字段<br>所谓普通属性指不包含自定义类、集合、数组等等</p> 
+<p>实体类的设计原则：<br>&nbsp;* 实现一个默认的（即无参数的）构造方法（constructor）<br>&nbsp;* 提供一个标识属性（identifier property）（可选） <br>&nbsp;* 使用非final的类 (可选)<br>&nbsp;* 为持久化字段声明访问器(accessors)</p> 
+<p>主键生成策略<br>&nbsp;* uuid<br>&nbsp;* native<br>&nbsp;* assigne</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>hibernate.cfg.xml</p> 
+<p>set&nbsp; order-by="orderNo"&nbsp; set不能排序</p>

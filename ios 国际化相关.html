@@ -1,0 +1,110 @@
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="font-family: Arial; font-size: medium;"><strong><span style="font-size: large;"><span style="font-size: 18px;">添加国际化</span></span></strong></span></p> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ 1. 代码中使用字符串的地方 使用&nbsp;
+ <span style="color: #01010a;">&nbsp;</span>
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">NSLocalizedString</span></span>
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">(</span></span>
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">@"keyName"</span></span>
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">,</span></span>
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">@"comment"</span></span>
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">)</span></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">2. genstrings 扫描 .m 文件 ，生成 &nbsp;Localizable.strings</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">3. 在项目目录里生成en.lproj&nbsp;zh-Hans.lproj文件夹， 把</span></span>
+ <span style="color: #01010a; font-family: Menlo; font-size: 14px;">Localizable.strings 放进去</span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="color: #01010a; font-family: Menlo; font-size: 14px;">4. 把</span>
+ <span style="color: #01010a; font-family: Menlo; font-size: 14px;">Localizable.strings添加成项目的资源文件(</span>
+ <span style="color: #01010a; font-family: Menlo; font-size: 14px;">copy bundle resources</span>
+ <span style="color: #01010a; font-family: Menlo; font-size: 14px;">)，确保打包的时候会被copy进去，&nbsp;</span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <div>
+  <strong><span style="font-size: large;"><span style="font-size: 18px;">程序名国际化</span></span></strong>
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div> 
+  <span style="color: #01010a; font-family: Menlo; font-size: 14px;">en.lproj/</span>
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 14px; line-height: 25px;">InfoPlist.strings 添加</span>
+  <br> 
+ </div> 
+ <span><span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 14px; line-height: 25px; text-align: left;">CFBundleName="EnglishName";&nbsp;&nbsp;&nbsp;<br></span></span> 
+ <div>
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 14px; line-height: 25px;">CFBundleDisplayName="EnglishName";</span>
+ </div> 
+</div> 
+<div>
+ <br>
+</div> 
+<div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; line-height: 25px; font-size: 18px;"><span style="color: #01010a;"><strong>Settings.bundle 国际化</strong></span></span>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 14px; line-height: 25px;"><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;"> 
+  <span style="color: #01010a; font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 14px; line-height: 25px;">Settings.bundle/en.lproj/</span>
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 14px; line-height: 25px;"><span style="color: #01010a;">Root.strings</span></span> 
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 14px; line-height: 25px;"><span style="color: #01010a;">"version"="Version";</span></span>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <span style="color: #01010a; font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 14px; line-height: 25px;">Root.plist的 title写 version， 显示的就是Version</span>
+ </div> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <div>
+  <strong><span style="font-size: large;"><span style="font-size: 18px;">检测用户locale &nbsp;</span></span></strong>
+ </div> 
+ <div>
+  <strong><br></strong>
+ </div> 
+ <div>
+  <strong>//这里实际检测出的是region format设定 &nbsp;不是language设定</strong>
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div> 
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">CFLocaleGetIdentifier</span></span>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">(</span></span>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">CFLocaleCopyCurrent</span></span>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">()) &nbsp; &nbsp; &nbsp;//zh_CN</span></span>
+  <br> 
+ </div> 
+ <div> 
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">[[</span></span>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">NSLocale</span></span>
+  <span style="color: #47afff; font-family: Menlo; font-size: 14px;"><span style="color: #ffffff;"><span style="color: #01010a;">autoupdatingCurrentLocale] localeIdentifier &nbsp;//zh_CN</span><span style="color: #ffffff;">]&nbsp;</span></span></span> 
+ </div> 
+</div> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>asdasd</p>

@@ -1,0 +1,12 @@
+<p>在拼接字符串操作的时候应该要注意 为了可以多平台运行</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">public class Client {
+    public static void main(String[] args) {
+       String  line_separator=System.getProperty("line.separator");
+       String pathSeparator=File.pathSeparator;
+       String separator=File.separator;
+       System.out.println(separator+"   "+pathSeparator+"    "+line_separator);
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

@@ -1,0 +1,177 @@
+<p>&nbsp;</p> 
+<div class="postbody"> 
+ <span style="color: red;"><span style="font-size: 200%; line-height: normal;">安装JAVA环境支持</span> </span> 
+ <br>
+ <br> 打开终端，执行以下命令：
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  sudo apt-get install sun-java6-jre
+ </div> 
+ <br> 如果空间富裕，建议安装一个JDK(搞开发一定要装吧，要不然还搞咩[乜野])。
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  sudo apt-get install sun-java6-jdk
+ </div> 
+ <br>
+ <span style="color: #ff0000;">上面两个的安装也可以使用Adept/新立得软件管理器，在其中分别搜索"sun-java6-jre"和"sun-java6-jdk"并标记安装</span> 
+ <br> 提示：安装过程中需要你回答是否同意使用协议（终端中红蓝色的提示界面），此时按tab键至OK，再按回车即可正常安装。
+ <br>
+ <br> 设置当前默认的java解释器：
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  sudo update-alternatives --config java
+ </div> 
+ <br> 执行后会出现类似如下的画面:
+ <br>
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  There are 2 alternatives which provide `java'.
+  <br>
+  <br> Selection Alternative
+  <br> -----------------------------------------------
+  <br> 1 /usr/bin/gij-wrapper-4.1
+  <br> *+ 2 /usr/lib/jvm/java-6-sun/jre/bin/java
+  <br>
+  <br> Press enter to keep the default[*], or type selection number:
+ </div> 
+ <br>
+ <br> 输入 有包含 "sun" 的行的前面的数字。如上面显示，则输入2，然后回车确定。
+ <br> 注：如果你是新安装的8.04版本的ubuntu，那么会出现类似"系统只有一个java，不需要设置"的英文提示消息。如下所示： 
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  There is only 1 program which provides java
+  <br> (/usr/lib/jvm/java-6-sun/jre/bin/java). Nothing to configure.
+ </div> 
+ <br>
+ <br> 配置JAVA环境变量:
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  sudo gedit /etc/environment
+ </div> 
+ <br> 在其中添加如下两行：
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  CLASSPATH=.:/usr/lib/jvm/java-6-sun/lib#中间是以英文的冒号隔开，记得windows中是以英文的分号做为分隔的
+  <br> JAVA_HOME=/usr/lib/jvm/java-6-sun
+ </div> 
+ <br>
+ <br> 然后：
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  sudo gedit /etc/jvm
+ </div> 
+ <br> 将文件中的
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  /usr/lib/jvm/java-6-sun(其实也就是JAVA_HOME)
+ </div> 
+ <br> 这一行填入到配置块的顶部
+ <br>
+ <span style="color: #ff0000;">关于具体的路径，安装java的时候都会给予提示和说明，请根据实际情况添加，且不可盲目照抄上面的</span> 
+ <br>
+ <br> 安装浏览器的JAVA Plugin（可选）：
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  sudo apt-get install sun-java6-plugin
+ </div> 
+ <br>
+ <br>
+ <span style="color: red;"><span style="font-size: 200%; line-height: normal;">安装tmocat6.X</span> </span> 
+ <br> 其实你想用哪个版本都可以，到Tomcat主页
+ <a href="http://tomcat.apache.org/" class="postlink">http://tomcat.apache.org/</a> 选择你要使用的版本，选择Binary Distributions，下载以.tar.gz结尾的文件，解压后就可以直接使用了。
+ <br> 现在最新版本为tomcat6.0.18，地址为：
+ <a href="http://dev.xiaonei.com/apache-mirror/tomcat/tomcat-6/v6.0.18/bin/apache-tomcat-6.0.18.tar.gz" class="postlink">http://dev.xiaonei.com/apache-mirror/tomcat/tomcat-6/v6.0.18/bin/apache-tomcat-6.0.18.tar.gz</a> 
+ <br>
+ <span style="color: #ff0000;">tomcat的启动需要java的支持，请确保已经按照前面安装JAVA环境的步骤配置了JAVA环境变量</span> 在终端中进入解压后的bin目录下，
+ <span style="color: red;">./startup.sh</span> 启动tomcat，
+ <span style="color: red;">./shutdown.sh</span> 关闭tomcat。
+ <br> 当看到类似以下输出时，你已经成功启动tomcat了：
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  lym@lym-laptop:~/System/ubuntu/software/apache-tomcat-6.0.18/bin$ ./startup.sh 
+  <br> Using CATALINA_BASE:&nbsp; &nbsp;/home/lym/System/ubuntu/software/apache-tomcat-6.0.18
+  <br> Using CATALINA_HOME:&nbsp; &nbsp;/home/lym/System/ubuntu/software/apache-tomcat-6.0.18
+  <br> Using CATALINA_TMPDIR: /home/lym/System/ubuntu/software/apache-tomcat-6.0.18/temp
+  <br> Using JRE_HOME:&nbsp; &nbsp; &nbsp; &nbsp;/usr/lib/jvm/java-6-sun
+  <br> 
+ </div> 
+ <br> 如果你没有配置JAVA环境变量，你会看到如下的错误信息：
+ <br>
+ <div class="codetitle"> 
+  <strong>代码:</strong> 
+ </div> 
+ <div class="codecontent">
+  Neither the JAVA_HOME nor the JRE_HOME environment variable is defined
+  <br> At least one of these environment variable is needed to run this program
+ </div> 
+ <br>
+ <br> tomcat启动成功后，就可以访问
+ <a href="http://localhost:8080/" class="postlink">http://localhost:8080/</a> 来检测tomcat是否成功启动了。
+ <br> 注：tomcat默认端口是8080，端口号可以在config目录的server.xml中进行更改，但要注意，在Linux中1000以内的端口号必须需要root权限，使用时要加sudo命令，1000以外的OK，所以想要在类似eclipse的IDE中用tomcat的话还是设置在1000以外为宜。
+ <br>
+ <br>
+ <span style="color: red;"><span style="font-size: 200%; line-height: normal;">安装eclipse</span> </span> 
+ <br> eclipse的主页：
+ <a href="http://www.eclipse.org/" class="postlink">http://www.eclipse.org/</a> 
+ <br> 下载eclipse标准版，以eclipse3.3为例，地址：
+ <a href="http://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops/R-3.3.2-200802211800/eclipse-SDK-3.3.2-linux-gtk.tar.gz" class="postlink">http://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops/R-3.3.2-200802211800/eclipse-SDK-3.3.2-linux-gtk.tar.gz</a> 
+ <br> 也是解压后直接运行。
+ <br> 现在最新版本是3.4.1(见下图)，请大家到下载主页
+ <a href="http://www.eclipse.org/downloads/" class="postlink">http://www.eclipse.org/downloads/</a> 上去下载。
+ <br>
+ <a href="http://www.fileden.com/files/2007/12/2/1620731/eclipsek.bmp" class="highslide"><img alt="图片" style=""></a> 
+ <br>
+ <br>
+ <span style="color: red;"><span style="font-size: 200%; line-height: normal;">安装MyEclipse插件</span> </span> 
+ <br> MyEclipse相对于eclipse来说，集成了很多进行javaee开发需要的功能，相对于eclipse来说，MyEclipse还是很方便的，现在企业用的也比较多，不过MyEclipse是一个商业软件，只能免费试用30天，30天之后必须提交订阅码才能继续使用。授权费用为标准版是 32美元，专业版是53美元。如果你有兴趣并且也愿意为此掏钱，那么请购买授权，否则想要继续使用，请自行处理，
+ <span style="color: red;">反正我是绝对不会干出告诉你说让你到Google上搜索序列号这种事的</span> 。
+ <br>
+ <br> 首先下载MyEclipse Archived Update Site：
+ <br> 官方网址：
+ <a href="http://www.myeclipseide.com/" class="postlink">http://www.myeclipseide.com/</a> 
+ <br> 需要选择与相应Eclipse版本匹配的MyEclipse版本(网页上会有说明)，现在MyEclipse最新版为6.5.1 GA，Eclipse3.3可以直接使用这个版本，注意要下载的是MyEclipse Archived Update Site - 6.5.1 GA，界面如下图：
+ <br>
+ <a href="http://www.fileden.com/files/2007/12/2/1620731/MyEclipse6.5.1.PNG" class="highslide"><img alt="图片" style=""></a> 
+ <br> 简单翻译一下使用方法：
+ <br> 下载后的文件为zip格式，不要解压缩，请确保已经安装Eclipse 3.3；
+ <br> 打开eclipse，在菜单栏依次点击Help &gt; Software Updates &gt; Find and Install &gt; New&gt; Features；
+ <br> 会提示让你添加一个新的Archived Update Site，直接指向你下载后的zip文件，然后一直点击next就可以了。
+ <br>
+ <br>
+ <span style="color: #0040ff;">以前MyEclipse 6.0 GA是以plug-in方式提供对eclipse的升级的，安装方法如下：<br> 下载完MyEclipse的Linux版的plug-in之后，得到的是一个.bin的文件，打开终端，使用cd命令进入MyEclipse安装文件所在目录，输入命令：<br> $sudo sh MyEclipse_6_0_1GA_E3_3_1_Installer.bin<br> 随后就会启动一个GUI的安装程序。<br> 单击“Next“按钮继续，选择“I accept...“：<br> 在这里选择Eclipse所在目录，单击“Choose“按钮来选择，接下来选择MyEclipse的安装位置，接下来选择Link Folder，可以保持默认选择继续，接下来就可以安装了，单击“Install“按钮，安装好后进入eclipse目录直接双击执行eclipse即可自动识别出MyEclipse</span> 
+ <br>
+ <br> 好了，现在你就可以在MyEclipse里面编写你的JavaEE程序了。
+</div> 
+<p><span class="signature"><br></span> </p>

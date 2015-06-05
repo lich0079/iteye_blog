@@ -1,0 +1,35 @@
+<p>因为自己以前不小心 chmod 700 -R ~/ 导致自己目录里面的很多文件不能被系统索引到 &nbsp;搜索的时候不方便</p> 
+<p>又不想chmod 777 -R ~/</p> 
+<p>&nbsp;</p> 
+<p>就想有什么办法能对目录 g+r+x o+r+x &nbsp;对文件g+r &nbsp;o+r 呢&nbsp;</p> 
+<p>正好又！在学python， 就自己用python写了一个</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="python"># coding:utf-8
+import os
+import stat
+path="/Users/xxx/BOOKS"
+
+
+
+for root, dirs, files in os.walk(path):
+    for file in files:
+        if(not file[0] == "."):
+            fp=os.path.join(root, file)   #生成完整路径
+            print fp
+            # 在原来的权限基础上加上 g+r o+r
+            os.chmod(fp, stat.S_IMODE(os.stat(fp)[stat.ST_MODE]) | stat.S_IRGRP | stat.S_IROTH )
+    for dir in dirs:
+        if(not dir[0] == "."):  # 这句话没有起作用  因为walk自己还是会遍历到.dir下面去
+            dp = os.path.join(root, dir)
+            print dp
+            os.chmod(dp, stat.S_IMODE(os.stat(dp)[stat.ST_MODE])  | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+               # visit(os.path.join(root, dir))   walk方法自己会去递归遍历子目录 不要加这句
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>学python的时候看到一个好文章 也贴下 </p> 
+<h2> <a title="Permanent Link: 从140秒到2秒的优化" href="http://www.fuchaoqun.com/2009/11/from-140s-to-2s/">从140秒到2秒的优化</a> http://www.fuchaoqun.com/2009/11/from-140s-to-2s/<br> </h2> 
+<p>&nbsp;</p>

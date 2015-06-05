@@ -1,0 +1,119 @@
+<p><img height="106" alt="" width="379" src="http://dl.iteye.com/upload/attachment/193956/e3fa4a5f-592d-3cdd-87cb-88d31b74705a.png"></p> 
+<p>&nbsp;</p> 
+<p>上面的按钮的tooltip实现在按钮的右下，出于某种需要，需要使tooltip显示在其他位置，比如 上方</p> 
+<p>&nbsp;</p> 
+<p>试了下一般情况下的tooltip是可以实现这个需求的 anchor：'bottom' anchor：'top'</p> 
+<p>&nbsp;</p> 
+<p>但button的tootlip不行</p> 
+<p>&nbsp;</p> 
+<p>遂查看源码 :</p> 
+<p>Button.js</p> 
+<pre name="code" class="java">initButtonEl : function(btn, btnEl){
+        this.el = btn;
+
+        if(this.id){
+            this.el.dom.id = this.el.id = this.id;
+        }
+        if(this.icon){
+            btnEl.setStyle('background-image', 'url(' +this.icon +')');
+        }
+        if(this.tabIndex !== undefined){
+            btnEl.dom.tabIndex = this.tabIndex;
+        }
+        if(this.tooltip){
+            this.setTooltip(this.tooltip, true);
+        }</pre> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">setTooltip : function(tooltip, /* private */ initial){
+        if(this.rendered){
+            if(!initial){
+                this.clearTip();
+            }
+            if(Ext.isObject(tooltip)){
+                Ext.QuickTips.register(Ext.apply({
+                      target: this.btnEl.id
+                }, tooltip));
+                this.tooltip = tooltip;
+            }else{
+                this.btnEl.dom[this.tooltipType] = tooltip;
+            }
+        }else{
+            this.tooltip = tooltip;
+        }
+        return this;
+    },</pre> 
+<p>&nbsp;</p> 
+<p>Button实际上调用的是</p> 
+<p>Ext.QuickTips.register(Ext.apply({<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; target: this.btnEl.id<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, tooltip));</p> 
+<p>QuickTips.js</p> 
+<pre name="code" class="java">/**
+         * Configures a new quick tip instance and assigns it to a target element.  See
+         * {@link Ext.QuickTip#register} for details.
+         * @param {Object} config The config object
+         */
+        register : function(){
+            tip.register.apply(tip, arguments);
+        },</pre> 
+<p>&nbsp;QuickTips调用的是QuickTip的register</p> 
+<p>&nbsp;</p> 
+<p>QuickTip.js</p> 
+<pre name="code" class="java"> /**
+     * Configures a new quick tip instance and assigns it to a target element.  The following config values are
+     * supported (for example usage, see the {@link Ext.QuickTips} class header):
+     * &lt;div class="mdetail-params"&gt;&lt;ul&gt;
+     * &lt;li&gt;autoHide&lt;/li&gt;
+     * &lt;li&gt;cls&lt;/li&gt;
+     * &lt;li&gt;dismissDelay (overrides the singleton value)&lt;/li&gt;
+     * &lt;li&gt;target (required)&lt;/li&gt;
+     * &lt;li&gt;text (required)&lt;/li&gt;
+     * &lt;li&gt;title&lt;/li&gt;
+     * &lt;li&gt;width&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+     * @param {Object} config The config object
+     */
+    register : function(config){
+        var cs = Ext.isArray(config) ? config : arguments;
+        for(var i = 0, len = cs.length; i &lt; len; i++){
+            var c = cs[i];
+            var target = c.target;
+            if(target){
+                if(Ext.isArray(target)){
+                    for(var j = 0, jlen = target.length; j &lt; jlen; j++){
+                        this.targets[Ext.id(target[j])] = c;
+                    }
+                } else{
+                    this.targets[Ext.id(target)] = c;
+                }
+            }
+        }
+    },</pre> 
+<p>&nbsp;</p> 
+<p>这里看注释就明白了</p> 
+<p>The following config values are supported (for example usage, see the <a>Ext.QuickTips</a> class header): </p> 
+<div class="mdetail-params"> 
+ <ul> 
+  <li>autoHide </li> 
+  <li>cls </li> 
+  <li>dismissDelay (overrides the singleton value) </li> 
+  <li>target (required) </li> 
+  <li>text (required) </li> 
+  <li>title </li> 
+  <li>width</li> 
+ </ul> 
+</div> 
+<p>只支持这几种属性，里面没有配置anchor的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>==================================================</p> 
+<p><a href="http://www.extjs.com/forum/showthread.php?t=27886">http://www.extjs.com/forum/showthread.php?t=27886</a>&nbsp;相关的帖子</p> 
+<pre name="code" class="java">Ext.QuickTips.init()
+Ext.apply( Ext.QuickTips.getQuickTip(), {
+    defaultAlign:'l-r',
+    maxWidth:500,
+    minWidth:200,
+    showDelay:200
+});</pre> 
+<p>&nbsp;</p>

@@ -1,0 +1,284 @@
+<p>hibernate 里面用sql查询时 在没有return scalar的情况下返回值的顺序是按照sql中的select，</p> 
+<p>有return scalar的情况下返回值的顺序是按照scalar的排列顺序</p> 
+<p>&nbsp;</p> 
+<p>列子：</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;sql-query name="xxx.vvv"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;return-scalar column="click" type="long"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;return-scalar column="ipClick" type="long"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;return-scalar column="view" type="long"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;return-scalar column="ipView" type="long"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select xxx,sum(view) as view,sum(IP_view) as ipView,sum(click) as click,sum(ip_click) as ipClick <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; from vvv<br> &nbsp;&nbsp;&nbsp; &lt;/sql-query&gt;</p> 
+<p>&nbsp;</p> 
+<p>最后实际上返回值 Object[]&nbsp; 中的顺序是按照scalar的排列顺序来的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<h2 class="title">第&nbsp;17&nbsp;章&nbsp;Native SQL查询</h2> 
+<p> 你也可以使用你的数据库的Native SQL语言来查询数据。这对你在要使用数据库的某些特性的时候(比如说在查询提示或者Oracle中的 <tt class="literal">CONNECT</tt> 关键字)，这是非常有用的。这就能够扫清你把原来直接使用SQL/JDBC 的程序迁移到基于 Hibernate应用的道路上的障碍。 </p> 
+<p> Hibernate3允许你使用手写的sql来完成所有的create,update,delete,和load操作（包括存储过程） </p> 
+<div class="sect1"> 
+ <div class="titlepage"> 
+  <div> 
+   <div> 
+    <h2 style="clear: both;" class="title"> <a name="querysql-creating"></a> 17.1.&nbsp;创建一个基于SQL的<tt class="literal">Query</tt> </h2> 
+   </div> 
+  </div> 
+ </div> 
+ <p> SQL查询是通过<tt class="literal">SQLQuery</tt> 接口来控制的，它是通过调用Session.createSQLQuery()方法来获得 </p> 
+ <pre class="programlisting">List cats = sess.createSQLQuery("select {cat.*} from cats cat")
+        .addEntity("cat", Cat.class);
+        .setMaxResults(50);
+        .list();</pre> 
+ <p> 这个查询指定了: </p> 
+ <div class="itemizedlist"> 
+  <ul> 
+   <li> <p> SQL查询语句，它带一个占位符，可以让Hibernate使用字段的别名. </p> </li> 
+   <li> <p> 查询返回的实体，和它的SQL表的别名. </p> </li> 
+  </ul> 
+ </div> 
+ <p> <tt class="literal">addEntity()</tt> 方法将SQL表的别名和实体类联系起来，并且确定查询结果集的形态。 </p> 
+ <p> <tt class="literal">addJoin()</tt> 方法可以被用于载入其他的实体和集合的关联，TODO:examples! </p> 
+ <p> 原生的SQL查询可能返回一个简单的标量值或者一个标量和实体的结合体。 </p> 
+ <pre class="programlisting">Double max = (Double) sess.createSQLQuery("select max(cat.weight) as maxWeight from cats cat")
+        .addScalar("maxWeight", Hibernate.DOUBLE);
+        .uniqueResult();</pre> 
+</div> 
+<div class="sect1"> 
+ <div class="titlepage"> 
+  <div> 
+   <div> 
+    <h2 style="clear: both;" class="title"> <a name="querysql-aliasreferences"></a> 17.2.&nbsp;别名和属性引用</h2> 
+   </div> 
+  </div> 
+ </div> 
+ <p> 上面使用的<tt class="literal">{cat.*}</tt> 标记是 "所有属性" 的简写.你可以显式地列出需要的字段,但是你必须让Hibernate 为每一个属性注入字段的别名.这些字段的站位符是以字段别名为前导,再加上属性名.在下面的例子里,我们从一个其他的表(<tt class="literal">cat_log</tt> ) 中获取<tt class="literal">Cat</tt> 对象,而非Cat对象原本在映射元数据中声明的表.注意我们甚至在where子句中也可以使用属性别名. 对于命名查询,{}语法并不是必需的.你可以在<a title="17.3.&nbsp;命名SQL查询" href="http://oss.org.cn/ossdocs/framework/hibernate/reference-v3_zh-cn/querysql.html#querysql-namedqueries">第&nbsp;17.3&nbsp;节 “命名SQL查询”</a> 得到更多的细节. </p> 
+ <pre class="programlisting">String sql = "select cat.originalId as {cat.id}, " +
+    "cat.mateid as {cat.mate}, cat.sex as {cat.sex}, " +
+    "cat.weight*10 as {cat.weight}, cat.name as {cat.name} " +
+    "from cat_log cat where {cat.mate} = :catId"
+    
+List loggedCats = sess.createSQLQuery(sql)
+    .addEntity("cat", Cat.class)
+    .setLong("catId", catId)
+    .list();</pre> 
+ <p> <span class="emphasis"><em>注意:</em> </span> 如果你明确地列出了每个属性,你必须包含这个类<span class="emphasis"><em>和它的子类的属性</em> </span> ! <span class="emphasis"><em>and its subclasses</em> </span> ! </p> 
+</div> 
+<div class="sect1"> 
+ <div class="titlepage"> 
+  <div> 
+   <div> 
+    <h2 style="clear: both;" class="title"> <a name="querysql-namedqueries"></a> 17.3.&nbsp;命名SQL查询</h2> 
+   </div> 
+  </div> 
+ </div> 
+ <p> 可以在映射文档中定义查询的名字,然后就可以象调用一个命名的HQL查询一样直接调用命名SQL查询.在这种情况下,我们<span class="emphasis"><em>不</em> </span> 需要调用<tt class="literal">addEntity()</tt> 方法. </p> 
+ <pre class="programlisting">&lt;sql-query name="mySqlQuery"&gt;
+    &lt;return alias="person" class="eg.Person"/&gt;
+    SELECT person.NAME AS {person.name},
+           person.AGE AS {person.age},
+           person.SEX AS {person.sex}
+    FROM PERSON person WHERE person.NAME LIKE 'Hiber%'
+&lt;/sql-query&gt;</pre> 
+ <pre class="programlisting">List people = sess.getNamedQuery("mySqlQuery")
+    .setMaxResults(50)
+    .list();</pre> 
+ <p> 一个命名查询可能会返回一个标量值.你必须使用<tt class="literal">&lt;return-scalar&gt;</tt> 元素来指定字段的别名和 Hibernate类型 </p> 
+ <pre class="programlisting">&lt;sql-query name="mySqlQuery"&gt;
+    &lt;return-scalar column="name" type="string"/&gt;
+    &lt;return-scalar column="age" type="long"/&gt;
+    SELECT p.NAME AS name,
+           p.AGE AS age,
+    FROM PERSON p WHERE p.NAME LIKE 'Hiber%'
+&lt;/sql-query&gt;</pre> 
+ <p> <tt class="literal">&lt;return-join&gt;</tt> 和<tt class="literal">&lt;load-collection&gt;</tt> 元素分别用作 外连接和定义那些初始化集合的查询 </p> 
+ <div class="sect2"> 
+  <div class="titlepage"> 
+   <div> 
+    <div> 
+     <h3 class="title"> <a name="propertyresults"></a> 17.3.1.&nbsp;使用return-property来明确地指定字段/别名</h3> 
+    </div> 
+   </div> 
+  </div> 
+  <p> 使用<tt class="literal">&lt;return-property&gt;</tt> 你可以明确的告诉Hibernate使用哪些字段,这和使用<tt class="literal">{}</tt> -语法 来让Hibernate注入它自己的别名是相反的. </p> 
+  <pre class="programlisting">&lt;sql-query name="mySqlQuery"&gt;
+    &lt;return alias="person" class="eg.Person"&gt;
+      &lt;return-property name="name" column="myName"/&gt;
+      &lt;return-property name="age" column="myAge"/&gt;
+      &lt;return-property name="sex" column="mySex"/&gt;
+    &lt;/return&gt;
+    SELECT person.NAME AS myName,
+           person.AGE AS myAge,
+           person.SEX AS mySex,
+    FROM PERSON person WHERE person.NAME LIKE :name
+&lt;/sql-query&gt;
+</pre> 
+  <tt class="literal">&lt;return-property&gt;</tt> 也可用于多个字段,它解决了使用
+  <tt class="literal">{}</tt> -语法不能细粒度控制多个字段的限制 
+  <pre class="programlisting">&lt;sql-query name="organizationCurrentEmployments"&gt;
+            &lt;return alias="emp" class="Employment"&gt;            
+             &lt;return-property name="salary"&gt; 
+               &lt;return-column name="VALUE"/&gt;
+               &lt;return-column name="CURRENCY"/&gt;            
+             &lt;/return-property&gt;
+             &lt;return-property name="endDate" column="myEndDate"/&gt;
+            &lt;/return&gt;
+            SELECT EMPLOYEE AS {emp.employee}, EMPLOYER AS {emp.employer}, 
+            STARTDATE AS {emp.startDate}, ENDDATE AS {emp.endDate},
+            REGIONCODE as {emp.regionCode}, EID AS {emp.id}, VALUE, CURRENCY
+            FROM EMPLOYMENT
+            WHERE EMPLOYER = :id AND ENDDATE IS NULL
+            ORDER BY STARTDATE ASC
+&lt;/sql-query&gt;</pre> 
+  <p> 注意在这个例子中,我们使用了<tt class="literal">&lt;return-property&gt;</tt> 结合<tt class="literal">{}</tt> 的注入语法. 允许用户来选择如何引用字段以及属性. </p> 
+  <p> 如果你映射一个识别器(discriminator),你必须使用&lt;return-discriminator&gt;来指定识别器字段 </p> 
+ </div> 
+ <div class="sect2"> 
+  <div class="titlepage"> 
+   <div> 
+    <div> 
+     <h3 class="title"> <a name="sp_query"></a> 17.3.2.&nbsp;使用存储过程来查询</h3> 
+    </div> 
+   </div> 
+  </div> 
+  <p> Hibernate 3引入了对存储过程查询的支持. 存储过程必须返回一个结果集,作为Hibernate能够使用的第一个外部参数. 下面是一个Oracle9和更高版本的存储过程例子. </p> 
+  <pre class="programlisting">CREATE OR REPLACE FUNCTION selectAllEmployments 
+    RETURN SYS_REFCURSOR 
+AS 
+    st_cursor SYS_REFCURSOR; 
+BEGIN 
+    OPEN st_cursor FOR 
+ SELECT EMPLOYEE, EMPLOYER, 
+ STARTDATE, ENDDATE, 
+ REGIONCODE, EID, VALUE, CURRENCY 
+ FROM EMPLOYMENT; 
+      RETURN  st_cursor; 
+ END;</pre> 
+  <p> 在Hibernate里要要使用这个查询,你需要通过命名查询来映射它. </p> 
+  <pre class="programlisting">&lt;sql-query name="selectAllEmployees_SP" callable="true"&gt;
+    &lt;return alias="emp" class="Employment"&gt;
+        &lt;return-property name="employee" column="EMPLOYEE"/&gt;
+        &lt;return-property name="employer" column="EMPLOYER"/&gt;            
+        &lt;return-property name="startDate" column="STARTDATE"/&gt;
+        &lt;return-property name="endDate" column="ENDDATE"/&gt;            
+        &lt;return-property name="regionCode" column="REGIONCODE"/&gt;            
+        &lt;return-property name="id" column="EID"/&gt;                        
+        &lt;return-property name="salary"&gt; 
+            &lt;return-column name="VALUE"/&gt;
+            &lt;return-column name="CURRENCY"/&gt;            
+        &lt;/return-property&gt;
+    &lt;/return&gt;
+    { ? = call selectAllEmployments() }
+&lt;/sql-query&gt;</pre> 
+  <p>&nbsp;</p> 
+  <p> 注意存储过程当前仅仅返回标量和实体.现在不支持<tt class="literal">&lt;return-join&gt;</tt> 和<tt class="literal">&lt;load-collection&gt;</tt> </p> 
+  <div class="sect3"> 
+   <div class="titlepage"> 
+    <div> 
+     <div> 
+      <h4 class="title"> <a name="querysql-limits-storedprocedures"></a> 17.3.2.1.&nbsp;使用存储过程的规则和限制</h4> 
+     </div> 
+    </div> 
+   </div> 
+   <p> 为了在Hibernate中使用存储过程,你必须遵循一些规则.不遵循这些规则的存储过程将不可用.如果你仍然想要使用他们, 你必须通过<tt class="literal">session.connection()</tt> 来执行他们.这些规则针对于不同的数据库.因为数据库 提供商有各种不同的存储过程语法和语义. </p> 
+   <p> 对存储过程进行的查询无法使用<tt class="literal">setFirstResult()/setMaxResults()</tt> 进行分页。 </p> 
+   <p> 对于Oracle有如下规则: </p> 
+   <div class="itemizedlist"> 
+    <ul> 
+     <li> <p> 存储过程必须返回一个结果集.它通过返回SYS_REFCURSOR实现(在Oracle9或10),在Oracle里你需要定义一个<tt class="literal">REF CURSOR</tt> 类型 </p> </li> 
+     <li> <p> 推荐的格式是 <tt class="literal">{ ? = call procName(&lt;parameters&gt;) }</tt> 或 <tt class="literal">{ ? = call procName }</tt> (这更像是Oracle规则而不是Hibernate规则) </p> </li> 
+    </ul> 
+   </div> 
+   <p> 对于Sybase或者MS SQL server有如下规则: </p> 
+   <div class="itemizedlist"> 
+    <ul> 
+     <li> <p> 存储过程必须返回一个结果集。.注意这些servers可能返回多个结果集以及更新的数目.Hibernate将取出第一条结果集作为它的返回值， 其他将被丢弃。 </p> </li> 
+     <li> <p> 如果你能够在存储过程里设定<tt class="literal">SET NOCOUNT ON</tt> ，这可能会效率更高，但这不是必需的。 </p> </li> 
+    </ul> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<div class="sect1"> 
+ <div class="titlepage"> 
+  <div> 
+   <div> 
+    <h2 style="clear: both;" class="title"> <a name="querysql-cud"></a> 17.4.&nbsp;定制SQL用来create，update和delete</h2> 
+   </div> 
+  </div> 
+ </div> 
+ <p> Hibernate3能够使用定制的SQL语句来执行create,update和delete操作。在Hibernate中，持久化的类和集合已经 包含了一套配置期产生的语句(insertsql, deletesql, updatesql等等)，这些映射标记 <tt class="literal">&lt;sql-insert&gt;</tt> , <tt class="literal">&lt;sql-delete&gt;</tt> , and <tt class="literal">&lt;sql-update&gt;</tt> 重载了 这些语句。 </p> 
+ <pre class="programlisting">&lt;class name="Person"&gt;
+    &lt;id name="id"&gt;
+        &lt;generator class="increment"/&gt;
+    &lt;/id&gt;
+    &lt;property name="name" not-null="true"/&gt;
+    &lt;sql-insert&gt;INSERT INTO PERSON (NAME, ID) VALUES ( UPPER(?), ? )&lt;/sql-insert&gt;
+    &lt;sql-update&gt;UPDATE PERSON SET NAME=UPPER(?) WHERE ID=?&lt;/sql-update&gt;
+    &lt;sql-delete&gt;DELETE FROM PERSON WHERE ID=?&lt;/sql-delete&gt;
+&lt;/class&gt;</pre> 
+ <p> 这些SQL直接在你的数据库里执行，所以你可以自由的使用你喜欢的任意语法。但如果你使用数据库特定的语法， 这当然会降低你映射的可移植性。 </p> 
+ <p> 如果设定<tt class="literal">callable</tt> ，则能够支持存储过程了。 </p> 
+ <pre class="programlisting">&lt;class name="Person"&gt;
+    &lt;id name="id"&gt;
+        &lt;generator class="increment"/&gt;
+    &lt;/id&gt;
+    &lt;property name="name" not-null="true"/&gt;
+    &lt;sql-insert callable="true"&gt;{call createPerson (?, ?)}&lt;/sql-insert&gt;
+    &lt;sql-delete callable="true"&gt;{? = call deletePerson (?)}&lt;/sql-delete&gt;
+    &lt;sql-update callable="true"&gt;{? = call updatePerson (?, ?)}&lt;/sql-update&gt;
+&lt;/class&gt;</pre> 
+ <p> 参数的位置顺序是非常重要的，他们必须和Hibernate所期待的顺序相同。 </p> 
+ <p> 你能够通过设定日志调试级别为<tt class="literal">org.hiberante.persister.entity</tt> ,来查看Hibernate所期待的顺序。在这个级别下， Hibernate将会打印出create,update和delete实体的静态SQL。如果想看到预想中的顺序。记得不要将定制SQL包含在映射文件里， 因为他们会重载Hibernate生成的静态SQL。 </p> 
+ <p> 在大多数情况下(最好这么做)，存储过程需要返回插入/更新/删除的行数，因为Hibernate对语句的成功执行有些运行时的检查。 Hibernate常会把进行CUD操作的语句的第一个参数注册为一个数值型输出参数。 </p> 
+ <pre class="programlisting">CREATE OR REPLACE FUNCTION updatePerson (uid IN NUMBER, uname IN VARCHAR2)
+    RETURN NUMBER IS
+BEGIN
+
+    update PERSON
+    set
+        NAME = uname,
+    where
+        ID = uid;
+
+    return SQL%ROWCOUNT;
+
+END updatePerson;</pre> 
+</div> 
+<div class="sect1"> 
+ <div class="titlepage"> 
+  <div> 
+   <div> 
+    <h2 style="clear: both;" class="title"> <a name="querysql-load"></a> 17.5.&nbsp;定制装载SQL</h2> 
+   </div> 
+  </div> 
+ </div> 
+ <p> 你可能需要声明你自己的SQL(或HQL)来装载实体 </p> 
+ <pre class="programlisting">&lt;sql-query name="person"&gt;
+    &lt;return alias="p" class="Person" lock-mode="upgrade"/&gt;
+    SELECT NAME AS {p.name}, ID AS {p.id} FROM PERSON WHERE ID=? FOR UPDATE
+&lt;/sql-query&gt;</pre> 
+ <p> 这只是一个前面讨论过的命名查询声明，你可以在类映射里引用这个命名查询。 </p> 
+ <pre class="programlisting">&lt;class name="Person"&gt;
+    &lt;id name="id"&gt;
+        &lt;generator class="increment"/&gt;
+    &lt;/id&gt;
+    &lt;property name="name" not-null="true"/&gt;
+    &lt;loader query-ref="person"/&gt;
+&lt;/class&gt;</pre> 
+ <p> 这也可以用于存储过程 </p> 
+ <p> TODO: 未完成的例子 </p> 
+ <pre class="programlisting">&lt;sql-query name="organizationEmployments"&gt;
+    &lt;load-collection alias="empcol" role="Organization.employments"/&gt;
+    SELECT {empcol.*}
+    FROM EMPLOYMENT empcol
+    WHERE EMPLOYER = :id
+    ORDER BY STARTDATE ASC, EMPLOYEE ASC
+&lt;/sql-query&gt;
+
+&lt;sql-query name="organizationCurrentEmployments"&gt;
+    &lt;return alias="emp" class="Employment"/&gt;
+    &lt;synchronize table="EMPLOYMENT"/&gt;
+    SELECT EMPLOYEE AS {emp.employee}, EMPLOYER AS {emp.employer},
+        STARTDATE AS {emp.startDate}, ENDDATE AS {emp.endDate},
+        REGIONCODE as {emp.regionCode}, ID AS {emp.id}
+    FROM EMPLOYMENT
+    WHERE EMPLOYER = :id AND ENDDATE IS NULL
+    ORDER BY STARTDATE ASC
+&lt;/sql-query&gt;</pre> 
+</div>

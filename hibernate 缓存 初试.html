@@ -1,0 +1,180 @@
+<p>配置二级缓存</p> 
+<p>hibernate.cfg.xml</p> 
+<pre name="code" class="java">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;!DOCTYPE hibernate-configuration PUBLIC
+          "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd"&gt;
+
+&lt;hibernate-configuration&gt;
+ &lt;session-factory&gt;
+  &lt;property name="hibernate.cache.provider_class"&gt;org.hibernate.cache.EhCacheProvider&lt;/property&gt;
+
+  &lt;property name="hibernate.dialect"&gt;org.hibernate.dialect.SQLServerDialect&lt;/property&gt;
+  &lt;property name="hibernate.connection.driver_class"&gt;net.sourceforge.jtds.jdbc.Driver&lt;/property&gt;
+  &lt;property name="hibernate.connection.url"&gt;jdbc:jtds:sqlserver://localHost:1433/DSO&lt;/property&gt;
+  &lt;property name="hibernate.connection.username"&gt;sa&lt;/property&gt;
+  &lt;property name="hibernate.connection.password"&gt;sa&lt;/property&gt;
+  &lt;property name="show_sql"&gt;false&lt;/property&gt;
+
+  &lt;mapping resource="ComPermission.hbm.xml" /&gt;
+ &lt;/session-factory&gt;
+&lt;/hibernate-configuration&gt;</pre> 
+<p>&nbsp;ehcache.xml</p> 
+<pre name="code" class="java">&lt;ehcache&gt;
+         &lt;diskStore path="java.io.tmpdir" /&gt;
+         &lt;defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"             
+            timeToIdleSeconds="1200"     
+            timeToLiveSeconds="1200"     
+            overflowToDisk="true"       
+         /&gt;
+    &lt;/ehcache&gt;</pre> 
+<p>&nbsp;</p> 
+<p>ComPermission.hbm.xml</p> 
+<pre name="code" class="java">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+&lt;hibernate-mapping&gt;
+ &lt;class name="ComPermission" table="JB_COM_PERMISSION" dynamic-insert="true" dynamic-update="true"&gt;
+  &lt;cache usage="read-write" include="all" /&gt;
+  &lt;id name="permissionId" type="java.lang.String"&gt;
+   &lt;column name="PERMISSION_ID" length="5" /&gt;
+   &lt;generator class="assigned"&gt;&lt;/generator&gt;
+  &lt;/id&gt;
+  &lt;property name="permissionCode" type="java.lang.String"&gt;
+   &lt;column name="PERMISSION_CODE" length="5" not-null="true" /&gt;
+  &lt;/property&gt;
+  &lt;property name="permissionName" type="java.lang.String"&gt;
+   &lt;column name="PERMISSION_NAME" length="30" not-null="true" /&gt;
+  &lt;/property&gt;
+  &lt;property name="remark" type="java.lang.String"&gt;
+   &lt;column name="REMARK" length="255" /&gt;
+  &lt;/property&gt;
+ &lt;/class&gt;
+&lt;/hibernate-mapping&gt;</pre> 
+<p>&nbsp;Java实体类 ComPermission </p> 
+<pre name="code" class="java">public class ComPermission implements java.io.Serializable {
+
+    // Fields
+
+    private String permissionId;
+    private String permissionCode;
+    private String permissionName;
+    private String remark;
+
+}</pre> 
+<p>&nbsp;log4j设置</p> 
+<pre name="code" class="java">log4j.category.org.hibernate.cache=DEBUG,CA
+log4j.category.org.hibernate.SQL=DEBUG,CA</pre> 
+<p>&nbsp;</p> 
+<p>测试代码</p> 
+<pre name="code" class="java">public static void main(String[] args) {
+	    System.out.println(HibernateSessionFactory.getConfiguration());   
+        System.out.println("|||||||||||||||||||||||||||||||||||||||||||");   
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();   
+        long start = System.currentTimeMillis();
+        try {   
+            ComPermission permission = (ComPermission) session.load(ComPermission.class, "10001");   
+            System.out.println(permission.getPermissionName());   
+        } catch (RuntimeException re) {   
+            throw re;   
+        } finally {   
+            session.close();   
+        }   
+        System.out.println("time :" + (System.currentTimeMillis() - start));   
+        System.out.println("-----------------------------------------------");   
+  
+        Transaction tran = null;   
+        Session session2 = HibernateSessionFactory.getSessionFactory().openSession();   
+        start = System.currentTimeMillis();
+        try {   
+            tran = session2.beginTransaction();   
+            ComPermission permission = (ComPermission) session2.load(ComPermission.class, "10001");   
+            permission.setPermissionName(permission.getPermissionName() + "!");   
+            System.out.println(permission.getPermissionName());   
+            session2.update(permission);   
+            tran.commit();   
+        } catch (RuntimeException re) {   
+            tran.rollback();   
+            throw re;   
+        } finally {   
+            session2.close();   
+        }   
+        System.out.println("time :" + (System.currentTimeMillis() - start));   
+        System.out.println("---------------------------------------------------------");   
+  
+        
+        Session session3 = HibernateSessionFactory.getSessionFactory().openSession();   
+        start = System.currentTimeMillis();   
+        try {   
+            ComPermission permission = (ComPermission) session3.load(ComPermission.class, "10001");   
+            System.out.println(permission.getPermissionName());   
+        } catch (RuntimeException re) {   
+            throw re;   
+        } finally {   
+            session3.close();   
+        }   
+        System.out.println("time :" + (System.currentTimeMillis() - start));   
+        System.out.println("---------------------------------------------------------");   
+  
+        
+        Session session4 = HibernateSessionFactory.getSessionFactory().openSession();   
+        start = System.currentTimeMillis();   
+        try {   
+            ComPermission permission = (ComPermission) session4.load(ComPermission.class, "10001");   
+            System.out.println(permission.getPermissionName());   
+        } catch (RuntimeException re) {   
+            throw re;   
+        } finally {   
+            session4.close();   
+        }   
+        System.out.println("time :" + (System.currentTimeMillis() - start));   
+    } </pre> 
+<p>&nbsp;</p> 
+<p>log信息</p> 
+<pre name="code" class="java">DEBUG  [org.hibernate.cache.CacheFactory.createCache:39]  instantiating cache region: ComPermission usage strategy: read-write
+WARN  [org.hibernate.cache.EhCacheProvider.buildCache:103]  Could not find configuration [ComPermission]; using defaults.
+DEBUG  [org.hibernate.cache.EhCacheProvider.buildCache:106]  started EHCache region: ComPermission
+org.hibernate.cfg.Configuration@c4fe76
+|||||||||||||||||||||||||||||||||||||||||||
+DEBUG  [org.hibernate.cache.ReadWriteCache.get:75]  Cache lookup: ComPermission#10001  //尝试在缓存中查找对象  ComPermission#10001  
+DEBUG  [org.hibernate.cache.EhCache.get:104]  key: ComPermission#10001
+DEBUG  [org.hibernate.cache.EhCache.get:113]  Element for ComPermission#10001 is null
+DEBUG  [org.hibernate.cache.ReadWriteCache.get:91]  Cache miss: ComPermission#10001    //找不到
+DEBUG  [org.hibernate.jdbc.AbstractBatcher.log:346]  select compermiss0_.PERMISSION_ID as PERMISSION1_0_0_, compermiss0_.PERMISSION_CODE as PERMISSION2_0_0_, compermiss0_.PERMISSION_NAME as PERMISSION3_0_0_, compermiss0_.REMARK as REMARK0_0_ from JB_COM_PERMISSION compermiss0_ where compermiss0_.PERMISSION_ID=?
+DEBUG  [org.hibernate.cache.ReadWriteCache.put:148]  Caching: ComPermission#10001
+DEBUG  [org.hibernate.cache.EhCache.get:104]  key: ComPermission#10001
+DEBUG  [org.hibernate.cache.EhCache.get:113]  Element for ComPermission#10001 is null
+DEBUG  [org.hibernate.cache.ReadWriteCache.put:160]  Cached: ComPermission#10001      //将查询到的缓存起来
+测试信息
+time :47
+-----------------------------------------------
+DEBUG  [org.hibernate.cache.ReadWriteCache.get:75]  Cache lookup: ComPermission#10001
+DEBUG  [org.hibernate.cache.EhCache.get:104]  key: ComPermission#10001
+DEBUG  [org.hibernate.cache.ReadWriteCache.get:85]  Cache hit: ComPermission#10001     //找到了
+测试信息!
+DEBUG  [org.hibernate.cache.ReadWriteCache.lock:113]  Invalidating: ComPermission#10001
+DEBUG  [org.hibernate.cache.EhCache.get:104]  key: ComPermission#10001
+DEBUG  [org.hibernate.jdbc.AbstractBatcher.log:346]  update JB_COM_PERMISSION set PERMISSION_NAME=? where PERMISSION_ID=?
+DEBUG  [org.hibernate.cache.ReadWriteCache.release:195]  Releasing: ComPermission#10001  //由于对象被更新 将缓存中的对象释放
+DEBUG  [org.hibernate.cache.EhCache.get:104]  key: ComPermission#10001
+time :31
+---------------------------------------------------------
+DEBUG  [org.hibernate.cache.ReadWriteCache.get:75]  Cache lookup: ComPermission#10001
+DEBUG  [org.hibernate.cache.EhCache.get:104]  key: ComPermission#10001
+DEBUG  [org.hibernate.cache.ReadWriteCache.get:94]  Cached item was locked: ComPermission#10001  //lockable.isGettable(txTimestamp)==false
+DEBUG  [org.hibernate.jdbc.AbstractBatcher.log:346]  select compermiss0_.PERMISSION_ID as PERMISSION1_0_0_, compermiss0_.PERMISSION_CODE as PERMISSION2_0_0_, compermiss0_.PERMISSION_NAME as PERMISSION3_0_0_, compermiss0_.REMARK as REMARK0_0_ from JB_COM_PERMISSION compermiss0_ where compermiss0_.PERMISSION_ID=?
+DEBUG  [org.hibernate.cache.ReadWriteCache.put:148]  Caching: ComPermission#10001
+DEBUG  [org.hibernate.cache.EhCache.get:104]  key: ComPermission#10001
+DEBUG  [org.hibernate.cache.ReadWriteCache.put:160]  Cached: ComPermission#10001   //重新缓存对象
+测试信息!
+time :0
+---------------------------------------------------------
+DEBUG  [org.hibernate.cache.ReadWriteCache.get:75]  Cache lookup: ComPermission#10001
+DEBUG  [org.hibernate.cache.EhCache.get:104]  key: ComPermission#10001
+DEBUG  [org.hibernate.cache.ReadWriteCache.get:85]  Cache hit: ComPermission#10001     //缓存命中
+测试信息!
+time :0
+</pre> 
+<p>&nbsp;</p>

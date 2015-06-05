@@ -1,0 +1,50 @@
+<pre class="java" name="code">	ThreadLocal是线程的本地变量，可以防止线程安全问题，
+			因为它隔离了相关的资源（它只是一种手段，
+			我们可以采用同步机制解决线程安全问题），并在同一个线程中可以共享这个资源
+
+
+			public class ConnectionManager {
+
+				private static ThreadLocal connectionHolder = new ThreadLocal();
+				
+				/**
+				 * 取得Connection
+				 * @return
+				 */
+				public static Connection getConnection() {
+					Connection conn = (Connection)connectionHolder.get();
+					if (conn == null) {
+						try {
+							Class.forName("oracle.jdbc.driver.OracleDriver");
+							conn = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521:bt", "xx", "xx");
+							connectionHolder.set(conn);
+						} catch (ClassNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new java.lang.RuntimeException(e);
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new java.lang.RuntimeException(e);
+						}
+					}
+					return conn;
+				}
+			}
+				
+				/**
+				 * 关闭Connection
+				 */
+				public static void close() {
+					Connection conn = (Connection)connectionHolder.get();
+					if (conn != null) {
+						try {
+							conn.close();
+							connectionHolder.remove();
+							//connectionHolder.set(null);
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+					}
+				}</pre> 
+<p>&nbsp;</p>

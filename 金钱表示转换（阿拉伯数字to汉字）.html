@@ -1,0 +1,66 @@
+懒得写小数后的转换了，以后有时间补上 
+<br> 
+<br>
+<pre name="code" class="java">
+public class MoneyConvent {
+    
+    //不用String是因为String内部还是char数组，自己用数组用随机查找快一点
+    private static final char[] HanChar={'零','壹','贰','叁','肆','伍','陆','柒','捌','玖'};
+    private static final char[] sbq={'个','拾','佰','仟'};
+    private static final char[] wy={'亿','万'};
+    
+    
+    public static String fromArabToCharacter(String arab){
+        //预设一个较大的空间存储转换后的汉字序列     
+        char[] temp=new char[arab.length()*3];
+        int j=0;
+        //遍历每一位数字
+        for (int i = 0; i &lt; arab.length(); i++) {
+            //如果是万位或亿位并且不是零位,有可能要加万或亿字
+            if((i%4==0) &amp;&amp; i!=0){
+                //i能进来说明i只能是4的倍数,wy[(i+1)/4%2]=='亿' 看该数字位数i是否是8的倍数(输出亿) 否则就是4的倍数(有可能输出万)
+                if(wy[(i+1)/4%2]=='亿' || !isWanZero(arab, i)){
+                    temp[j++]=wy[(i+1)/4%2];
+                }
+            }
+            //如果该位上是0就什么都不加
+            if(getHanChar(arab,i)=='零'){
+                continue;
+            }
+            //如果不是4的倍数，就加上相应的 十 百 千
+            if((i%4)!=0){
+                temp[j++]=sbq[i%4];
+            }
+            //加上该位上数字的汉字
+            temp[j++]=getHanChar(arab,i);
+        }
+        //转换成StringBuffer后反转序列然后去掉空位加上圆，整数部分就完成了
+        StringBuffer sb=new StringBuffer(String.valueOf(temp));
+        return sb.reverse().toString().trim()+"圆";
+    } 
+    
+    //需不需要输出万字， 主要看万位到下一个亿位之前是否全是0
+    private static boolean isWanZero(String arab,int i){
+        if(getHanChar(arab,i)!='零'){
+            return false;
+        }else if(getHanChar(arab,i+1)!='零'){
+            return false;
+        }else if(getHanChar(arab,i+2)!='零'){
+            return false;
+        }else if(getHanChar(arab,i+3)!='零'){
+            return false;
+        }
+        return true;
+    }
+    
+    private static char getHanChar(String arab,int i){
+        return HanChar[Integer.parseInt(arab.substring(arab.length()-1-i, arab.length()-i))];
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(fromArabToCharacter("65432109876543210"));
+        System.out.println(fromArabToCharacter("10200400000000000"));
+    }
+}
+
+</pre>

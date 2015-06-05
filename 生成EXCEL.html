@@ -1,0 +1,65 @@
+<pre class="java" name="code">private HSSFWorkbook getExcel(List result) {
+        HSSFWorkbook wb = new HSSFWorkbook(); // 建立新HSSFWorkbook对象
+
+        HSSFSheet sheet = wb.createSheet();
+        sheet.setDefaultColumnWidth(15);
+
+        HSSFFont font1 = wb.createFont();
+        font1.setColor(HSSFFont.COLOR_NORMAL);
+        font1.setFontName("宋体");
+        font1.setFontHeightInPoints((short) 14);
+        font1.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+
+        HSSFFont font2 = wb.createFont();
+        font2.setColor(HSSFFont.COLOR_NORMAL);
+        font2.setFontName("宋体");
+        font2.setFontHeightInPoints((short) 12);
+
+        HSSFCellStyle normal = wb.createCellStyle();
+        normal.setFont(font2);
+        normal.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中
+
+        HSSFCellStyle head = wb.createCellStyle();
+        head.setFont(font1);
+        head.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平居中
+
+        HSSFRow row = null;
+        HSSFCell cell = null;
+
+        
+
+        for (int i = 0; i &lt; result.size(); i++) {
+            Map record = (Map) result.get(i);
+            row = sheet.createRow(i );
+
+            cell = row.createCell(0); // 建立新cell
+            cell.setCellStyle(normal);
+            cell.setCellValue(new HSSFRichTextString((String) record.get("personname")));
+
+            cell = row.createCell(1); // 建立新cell
+            cell.setCellStyle(normal);
+            cell.setCellValue((Integer) record.get("draftsman"));
+
+            cell = row.createCell(2); // 建立新cell
+            cell.setCellStyle(normal);
+            cell.setCellValue((Integer) record.get("ticketexaminer"));
+
+            cell = row.createCell(3); // 建立新cell
+            cell.setCellStyle(normal);
+            cell.setCellValue((Integer) record.get("ratifier"));
+
+            cell = row.createCell(4); // 建立新cell
+            cell.setCellStyle(normal);
+            cell.setCellValue((Integer) record.get("sendperson"));
+
+            cell = row.createCell(5); // 建立新cell
+            cell.setCellStyle(normal);
+            cell.setCellValue((Integer) record.get("guardian"));
+
+            cell = row.createCell(6); // 建立新cell
+            cell.setCellStyle(normal);
+            cell.setCellValue((Integer) record.get("total"));
+
+        }
+        return wb;
+    }</pre>

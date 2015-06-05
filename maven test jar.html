@@ -1,0 +1,47 @@
+<p>多模块的时候&nbsp; 模块之间的test代码也是互相依赖 但默认打包是不会把test文件夹里面的代码打包到jar里面的，下面就是解决方法</p> 
+<p>&nbsp;</p> 
+<p>打包test</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">
+     &lt;plugin&gt;
+
+       &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+
+       &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
+
+       &lt;executions&gt;
+
+         &lt;execution&gt;
+
+           &lt;goals&gt;
+
+             &lt;goal&gt;test-jar&lt;/goal&gt;
+
+           &lt;/goals&gt;
+
+         &lt;/execution&gt;
+
+      &lt;/executions&gt;
+
+    &lt;/plugin&gt;
+
+</pre> 
+<p>&nbsp;</p> 
+<p>添加依赖</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">
+    &lt;dependency&gt;
+
+          &lt;groupId&gt;yourGroup&lt;/groupId&gt;
+
+          &lt;artifactId&gt;yourReusableModuleArtifact&lt;/artifactId&gt;
+
+          &lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
+
+          &lt;classifier&gt;tests&lt;/classifier&gt;
+
+          &lt;scope&gt;test&lt;/scope&gt;
+
+    &lt;/dependency&gt;
+
+</pre> &nbsp;

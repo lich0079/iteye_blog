@@ -1,0 +1,15 @@
+<p>每当我要进行重构的时候，第一个步骤永远相同：我得为即将修改的代码建立一组可靠的测试环境</p> 
+<p>&nbsp;</p> 
+<p>任何一个傻瓜都能写出计算机可以理解的代码。唯有写出人类容易理解的代码，才是优秀的程序员。</p> 
+<p>&nbsp;</p> 
+<p>绝大多数情况下，函数应该放在它所使用的数据所属的object（class）内</p> 
+<p>&nbsp;</p> 
+<p>Poorly designed code usually takes more code to do the same things, often because the code<br>quite literally does the same thing in several places. Thus an important aspect of improving<br>design is to eliminate duplicate code. The importance of this lies in future modifications to the<br>code. Reducing the amount of code won't make the system run any faster, because the effect on<br>the footprint of the programs rarely is significant. Reducing the amount of code does, however,make a big difference in modification of the code. The more code there is, the harder it is to<br>modify correctly. There's more code to understand. You change this bit of code here, but the<br>system doesn't do what you expect because you didn't change that bit over there that does much<br>the same thing in a slightly different context. By eliminating the duplicates, you ensure that the<br>code says everything once and only once, which is the essence of good design.</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>What is it that makes programs hard to work with? Four things I can think<br>of as I am typing this are as follows:<br>·&nbsp; Programs that are hard to read are hard to modify.<br>·&nbsp; Programs that have duplicated logic are hard to modify.<br>·&nbsp; Programs that require additional behavior that requires you to<br>change running code are hard to modify.<br>·&nbsp; Programs with complex conditional logic are hard to modify.<br>So, we want programs that are easy to read, that have all logic specified<br>in one and only one place, that do not allow changes to endanger<br>existing behavior, and that allow conditional logic to be expressed as<br>simply as possible</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>Replace magic number with symbolic constant</p>

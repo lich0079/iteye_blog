@@ -1,0 +1,192 @@
+<p>web.xml</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;listener&gt;
+		&lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+	&lt;/listener&gt;
+</pre> &nbsp; 
+<p>public class ContextLoaderListener extends ContextLoader</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">	private ContextLoader contextLoader;
+
+	public void contextInitialized(ServletContextEvent event) {
+		this.contextLoader = createContextLoader();
+		if (this.contextLoader == null) {
+			this.contextLoader = this;
+		}
+		this.contextLoader.initWebApplicationContext(event.getServletContext());
+	}
+
+	@Deprecated
+	protected ContextLoader createContextLoader() {
+		return null;
+	}
+</pre> &nbsp; 
+<p>public class ContextLoader</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">	public WebApplicationContext initWebApplicationContext(ServletContext servletContext) {
+		if (servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE) != null) {
+			throw new IllegalStateException(
+					"Cannot initialize context because there is already a root application context present - " +
+					"check whether you have multiple ContextLoader* definitions in your web.xml!");
+		}
+
+		long startTime = System.currentTimeMillis();
+
+		try {
+			// Determine parent for root web application context, if any.
+			ApplicationContext parent = loadParentContext(servletContext);<span style="color: #ff0000;">// 这个地方一般会为null</span>
+
+
+			// Store context in local instance variable, to guarantee that
+			// it is available on ServletContext shutdown.
+			this.context = createWebApplicationContext(servletContext, parent);
+			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
+			currentContextPerThread.put(Thread.currentThread().getContextClassLoader(), this.context);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Published root WebApplicationContext as ServletContext attribute with name [" +
+						WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE + "]");
+			}
+			if (logger.isInfoEnabled()) {
+				long elapsedTime = System.currentTimeMillis() - startTime;
+				logger.info("Root WebApplicationContext: initialization completed in " + elapsedTime + " ms");
+			}
+
+			return this.context;
+		}
+		catch (RuntimeException ex) {
+			logger.error("Context initialization failed", ex);
+			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, ex);
+			throw ex;
+		}
+		catch (Error err) {
+			logger.error("Context initialization failed", err);
+			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, err);
+			throw err;
+		}
+	}
+
+
+	protected ApplicationContext loadParentContext(ServletContext servletContext) {
+		ApplicationContext parentContext = null;
+		String locatorFactorySelector = servletContext.getInitParameter(LOCATOR_FACTORY_SELECTOR_PARAM);
+		String parentContextKey = servletContext.getInitParameter(LOCATOR_FACTORY_KEY_PARAM);
+<span style="color: #ff0000;">//   public static final String LOCATOR_FACTORY_KEY_PARAM = "parentContextKey"; // 一般都没在web.xml设这个参数 所以最后会返回null</span>
+
+
+		if (parentContextKey != null) {
+			// locatorFactorySelector may be null, indicating the default "classpath*:beanRefContext.xml"
+			BeanFactoryLocator locator = ContextSingletonBeanFactoryLocator.getInstance(locatorFactorySelector);
+			Log logger = LogFactory.getLog(ContextLoader.class);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Getting parent context definition: using parent context key of '" +
+						parentContextKey + "' with BeanFactoryLocator");
+			}
+			this.parentContextRef = locator.useBeanFactory(parentContextKey);
+			parentContext = (ApplicationContext) this.parentContextRef.getFactory();
+		}
+
+		return parentContext;
+	}
+
+
+	protected WebApplicationContext createWebApplicationContext(ServletContext sc, ApplicationContext parent) {
+		Class&lt;?&gt; contextClass = determineContextClass(sc);<span style="color: #ff0000;">// 这里要好好看下</span>
+
+		if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
+			throw new ApplicationContextException("Custom context class [" + contextClass.getName() +
+					"] is not of type [" + ConfigurableWebApplicationContext.class.getName() + "]");
+		}<span style="color: #ff0000;">// 看下contextClass 是不是 ConfigurableWebApplicationContext的子类</span>
+
+		ConfigurableWebApplicationContext wac =
+				(ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass);
+
+		// Assign the best possible id value.
+		if (sc.getMajorVersion() == 2 &amp;&amp; sc.getMinorVersion() &lt; 5) {
+			// Servlet &lt;= 2.4: resort to name specified in web.xml, if any.
+			String servletContextName = sc.getServletContextName();
+			if (servletContextName != null) {
+				wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX + servletContextName);
+			}
+			else {
+				wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX);
+			}
+		}
+		else {
+			// Servlet 2.5's getContextPath available!
+			wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX + sc.getContextPath());
+		}
+
+		wac.setParent(parent);
+		wac.setServletContext(sc);
+		wac.setConfigLocation(sc.getInitParameter(CONFIG_LOCATION_PARAM));
+		customizeContext(sc, wac);
+		wac.refresh();
+		return wac;
+	}
+
+
+	protected Class&lt;?&gt; determineContextClass(ServletContext servletContext) {
+		String contextClassName = servletContext.getInitParameter(CONTEXT_CLASS_PARAM);
+<span style="color: #ff0000;">//    public static final String CONTEXT_CLASS_PARAM = "contextClass"; //你想要加载自己的扩张applicationContext类的话可以把类名写在这个参数里 </span>
+
+		if (contextClassName != null) {
+			try {
+				return ClassUtils.forName(contextClassName, ClassUtils.getDefaultClassLoader());
+			}
+			catch (ClassNotFoundException ex) {
+				throw new ApplicationContextException(
+						"Failed to load custom context class [" + contextClassName + "]", ex);
+			}
+		}
+		else {
+			contextClassName = defaultStrategies.getProperty(WebApplicationContext.class.getName());
+			try {
+				return ClassUtils.forName(contextClassName, ContextLoader.class.getClassLoader());
+			}
+			catch (ClassNotFoundException ex) {
+				throw new ApplicationContextException(
+						"Failed to load default context class [" + contextClassName + "]", ex);
+			}
+		}
+	}
+
+
+	private static final Properties defaultStrategies;
+
+	static {
+		// Load default strategy implementations from properties file.
+		// This is currently strictly internal and not meant to be customized
+		// by application developers.
+		try {
+			ClassPathResource resource = new ClassPathResource(DEFAULT_STRATEGIES_PATH, ContextLoader.class);
+<span style="color: #ff0000;">//   private static final String DEFAULT_STRATEGIES_PATH = "ContextLoader.properties";  
+//我们没有在类路径放这个文件啊 哦 原来他在spring-web.jar 的  org/springframework/web/context/ContextLoader.properties</span>
+
+			defaultStrategies = PropertiesLoaderUtils.loadProperties(resource);
+		}
+		catch (IOException ex) {
+			throw new IllegalStateException("Could not load 'ContextLoader.properties': " + ex.getMessage());
+		}
+	}
+</pre> &nbsp; 
+<p>ContextLoader.properties</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code"># Default WebApplicationContext implementation class for ContextLoader.
+# Used as fallback when no explicit context implementation has been specified as context-param.
+# Not meant to be customized by application developers.
+
+org.springframework.web.context.WebApplicationContext=org.springframework.web.context.support.XmlWebApplicationContext
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>所以最后加载出来的beanFactory 是XmlWebApplicationContext<br></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

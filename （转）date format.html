@@ -1,0 +1,451 @@
+<div class="iteye-blog-content-contain" style="font-size: 14px;">
+ <div> 
+  <div class="post"> 
+   <h1 class="postTitle"><a href="http://www.cnblogs.com/peida/archive/2013/05/31/3070790.html" class="postTitle2">深入理解Java：SimpleDateFormat安全的时间格式化</a></h1> 
+   <div class="clear">
+    &nbsp;
+   </div> 
+   <div class="postBody"> 
+    <div> 
+     <p>　　想必大家对SimpleDateFormat并不陌生。SimpleDateFormat 是 Java 中一个非常常用的类，该类用来对日期字符串进行解析和格式化输出，但如果使用不小心会导致非常微妙和难以调试的问题，因为 DateFormat 和 SimpleDateFormat 类不都是线程安全的，在多线程环境下调用 format() 和 parse() 方法应该使用同步代码来避免问题。下面我们通过一个具体的场景来一步步的深入学习和理解SimpleDateFormat类。</p> 
+     <p>　　<strong>一.引子</strong><br>　　我们都是优秀的程序员，我们都知道在程序中我们应当尽量少的创建SimpleDateFormat 实例，因为创建这么一个实例需要耗费很大的代价。在一个读取数据库数据导出到excel文件的例子当中，每次处理一个时间信息的时候，就需要创建一个SimpleDateFormat实例对象，然后再丢弃这个对象。大量的对象就这样被创建出来，占用大量的内存和 jvm空间。代码如下：</p> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.peidasoft.dateformat;
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.ParseException;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.SimpleDateFormat;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.util.Date;
+
+</span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> DateUtil {
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span>  String formatDate(Date date)<span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+         SimpleDateFormat sdf </span>= <span style="color: #0000ff;">new</span> SimpleDateFormat("yyyy-MM-dd HH:mm:ss"<span style="color: #000000;">);
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.format(date);
+    }
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> Date parse(String strDate) <span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+         SimpleDateFormat sdf </span>= <span style="color: #0000ff;">new</span> SimpleDateFormat("yyyy-MM-dd HH:mm:ss"<span style="color: #000000;">);
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.parse(strDate);
+    }
+}</span></pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <p>　　你也许会说，OK，那我就创建一个静态的simpleDateFormat实例，然后放到一个DateUtil类（如下）中，在使用时直接使用这个实例进行操作，这样问题就解决了。改进后的代码如下：</p> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.peidasoft.dateformat;
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.ParseException;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.SimpleDateFormat;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.util.Date;
+
+</span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> DateUtil {
+    </span><span style="color: #0000ff;">private</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">final</span>  SimpleDateFormat sdf = <span style="color: #0000ff;">new</span> SimpleDateFormat("yyyy-MM-dd HH:mm:ss"<span style="color: #000000;">);
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span>  String formatDate(Date date)<span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.format(date);
+    }
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> Date parse(String strDate) <span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.parse(strDate);
+    }
+}</span></pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <p>　　当然，这个方法的确很不错，在大部分的时间里面都会工作得很好。但当你在生产环境中使用一段时间之后，你就会发现这么一个事实：它不是线程安全的。在正常的测试情况之下，都没有问题，但一旦在生产环境中一定负载情况下时，这个问题就出来了。他会出现各种不同的情况，比如转化的时间不正确，比如报错，比如线程被挂死等等。我们看下面的测试用例，那事实说话：</p> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.peidasoft.dateformat;
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.ParseException;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.SimpleDateFormat;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.util.Date;
+
+</span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> DateUtil {
+    
+    </span><span style="color: #0000ff;">private</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">final</span>  SimpleDateFormat sdf = <span style="color: #0000ff;">new</span> SimpleDateFormat("yyyy-MM-dd HH:mm:ss"<span style="color: #000000;">);
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span>  String formatDate(Date date)<span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.format(date);
+    }
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> Date parse(String strDate) <span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.parse(strDate);
+    }
+}</span></pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.peidasoft.dateformat;
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.ParseException;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.util.Date;
+
+</span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> DateUtilTest {
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">class</span> TestSimpleDateFormatThreadSafe <span style="color: #0000ff;">extends</span><span style="color: #000000;"> Thread {
+        @Override
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> run() {
+            </span><span style="color: #0000ff;">while</span>(<span style="color: #0000ff;">true</span><span style="color: #000000;">) {
+                </span><span style="color: #0000ff;">try</span><span style="color: #000000;"> {
+                    </span><span style="color: #0000ff;">this</span>.join(2000<span style="color: #000000;">);
+                } </span><span style="color: #0000ff;">catch</span><span style="color: #000000;"> (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+                </span><span style="color: #0000ff;">try</span><span style="color: #000000;"> {
+                    System.out.println(</span><span style="color: #0000ff;">this</span>.getName()+":"+DateUtil.parse("2013-05-24 06:02:20"<span style="color: #000000;">));
+                } </span><span style="color: #0000ff;">catch</span><span style="color: #000000;"> (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }    
+    }
+    
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> main(String[] args) {
+        </span><span style="color: #0000ff;">for</span>(<span style="color: #0000ff;">int</span> i = 0; i &lt; 3; i++<span style="color: #000000;">){
+            </span><span style="color: #0000ff;">new</span><span style="color: #000000;"> TestSimpleDateFormatThreadSafe().start();
+        }
+            
+    }
+}</span></pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <p>　　执行输出如下：</p> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre>Exception in thread "Thread-1"<span style="color: #000000;"> java.lang.NumberFormatException: multiple points
+    at sun.misc.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:</span>1082<span style="color: #000000;">)
+    at java.lang.Double.parseDouble(Double.java:</span>510<span style="color: #000000;">)
+    at java.text.DigitList.getDouble(DigitList.java:</span>151<span style="color: #000000;">)
+    at java.text.DecimalFormat.parse(DecimalFormat.java:</span>1302<span style="color: #000000;">)
+    at java.text.SimpleDateFormat.subParse(SimpleDateFormat.java:</span>1589<span style="color: #000000;">)
+    at java.text.SimpleDateFormat.parse(SimpleDateFormat.java:</span>1311<span style="color: #000000;">)
+    at java.text.DateFormat.parse(DateFormat.java:</span>335<span style="color: #000000;">)
+    at com.peidasoft.orm.dateformat.DateNoStaticUtil.parse(DateNoStaticUtil.java:</span>17<span style="color: #000000;">)
+    at com.peidasoft.orm.dateformat.DateUtilTest$TestSimpleDateFormatThreadSafe.run(DateUtilTest.java:</span>20<span style="color: #000000;">)
+Exception in thread </span>"Thread-0"<span style="color: #000000;"> java.lang.NumberFormatException: multiple points
+    at sun.misc.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:</span>1082<span style="color: #000000;">)
+    at java.lang.Double.parseDouble(Double.java:</span>510<span style="color: #000000;">)
+    at java.text.DigitList.getDouble(DigitList.java:</span>151<span style="color: #000000;">)
+    at java.text.DecimalFormat.parse(DecimalFormat.java:</span>1302<span style="color: #000000;">)
+    at java.text.SimpleDateFormat.subParse(SimpleDateFormat.java:</span>1589<span style="color: #000000;">)
+    at java.text.SimpleDateFormat.parse(SimpleDateFormat.java:</span>1311<span style="color: #000000;">)
+    at java.text.DateFormat.parse(DateFormat.java:</span>335<span style="color: #000000;">)
+    at com.peidasoft.orm.dateformat.DateNoStaticUtil.parse(DateNoStaticUtil.java:</span>17<span style="color: #000000;">)
+    at com.peidasoft.orm.dateformat.DateUtilTest$TestSimpleDateFormatThreadSafe.run(DateUtilTest.java:</span>20<span style="color: #000000;">)
+Thread</span>-2:Mon May 24 06:02:20 CST 2021<span style="color: #000000;">
+Thread</span>-2:Fri May 24 06:02:20 CST 2013<span style="color: #000000;">
+Thread</span>-2:Fri May 24 06:02:20 CST 2013<span style="color: #000000;">
+Thread</span>-2:Fri May 24 06:02:20 CST 2013</pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <p>　　说明：Thread-1和Thread-0报<span style="color: #000000;">java.lang.NumberFormatException: multiple points</span>错误，直接挂死，没起来；<span style="color: #000000;">Thread</span>-2 虽然没有挂死，但输出的时间是有错误的，比如我们输入的时间是：2013-05-24 06:02:20 ，当会输出：Mon May 24 06:02:20 CST 2021 这样的灵异事件。</p> 
+     <p>　　<strong>二.原因</strong></p> 
+     <p>　　作为一个专业程序员，我们当然都知道，相比于共享一个变量的开销要比每次创建一个新变量要小很多。上面的优化过的静态的SimpleDateFormat版，之所在并发情况下回出现各种灵异错误，是因为SimpleDateFormat和DateFormat类不是线程安全的。我们之所以忽视线程安全的问题，是因为从SimpleDateFormat和DateFormat类提供给我们的接口上来看，实在让人看不出它与线程安全有何相干。只是在JDK文档的最下面有如下说明：<strong><br></strong></p> 
+     <p><strong>　　</strong>SimpleDateFormat中的日期格式不是同步的。推荐（建议）为每个线程创建独立的格式实例。如果多个线程同时访问一个格式，则它必须保持外部同步。</p> 
+     <p>　　JDK原始文档如下：<br>　　Synchronization：<br>　　Date formats are not synchronized. <br>　　It is recommended to create separate format instances for each thread. <br>　　If multiple threads access a format concurrently, it must be synchronized externally.</p> 
+     <p>　　下面我们通过看JDK源码来看看为什么SimpleDateFormat和DateFormat类不是线程安全的真正原因：</p> 
+     <p>　　SimpleDateFormat继承了DateFormat,在DateFormat中定义了一个protected属性的 Calendar类的对象：calendar。只是因为Calendar累的概念复杂，牵扯到时区与本地化等等，Jdk的实现中使用了成员变量来传递参数，这就造成在多线程的时候会出现错误。</p> 
+     <p>　　在format方法里，有这样一段代码：</p> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre> <span style="color: #0000ff;">private</span><span style="color: #000000;"> StringBuffer format(Date date, StringBuffer toAppendTo,
+                                FieldDelegate delegate) {
+        </span><span style="color: #008000;">//</span><span style="color: #008000;"> Convert input date to time field list</span>
+<span style="color: #000000;">        calendar.setTime(date);
+
+    </span><span style="color: #0000ff;">boolean</span> useDateFormatSymbols =<span style="color: #000000;"> useDateFormatSymbols();
+
+        </span><span style="color: #0000ff;">for</span> (<span style="color: #0000ff;">int</span> i = 0; i &lt;<span style="color: #000000;"> compiledPattern.length; ) {
+            </span><span style="color: #0000ff;">int</span> tag = compiledPattern[i] &gt;&gt;&gt; 8<span style="color: #000000;">;
+        </span><span style="color: #0000ff;">int</span> count = compiledPattern[i++] &amp; 0xff<span style="color: #000000;">;
+        </span><span style="color: #0000ff;">if</span> (count == 255<span style="color: #000000;">) {
+        count </span>= compiledPattern[i++] &lt;&lt; 16<span style="color: #000000;">;
+        count </span>|= compiledPattern[i++<span style="color: #000000;">];
+        }
+
+        </span><span style="color: #0000ff;">switch</span><span style="color: #000000;"> (tag) {
+        </span><span style="color: #0000ff;">case</span><span style="color: #000000;"> TAG_QUOTE_ASCII_CHAR:
+        toAppendTo.append((</span><span style="color: #0000ff;">char</span><span style="color: #000000;">)count);
+        </span><span style="color: #0000ff;">break</span><span style="color: #000000;">;
+
+        </span><span style="color: #0000ff;">case</span><span style="color: #000000;"> TAG_QUOTE_CHARS:
+        toAppendTo.append(compiledPattern, i, count);
+        i </span>+=<span style="color: #000000;"> count;
+        </span><span style="color: #0000ff;">break</span><span style="color: #000000;">;
+
+        </span><span style="color: #0000ff;">default</span><span style="color: #000000;">:
+                subFormat(tag, count, delegate, toAppendTo, useDateFormatSymbols);
+        </span><span style="color: #0000ff;">break</span><span style="color: #000000;">;
+        }
+    }
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> toAppendTo;
+    }</span></pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <p>　　<span style="color: #000000;">calendar.setTime(date)</span>这条语句改变了calendar，稍后，calendar还会用到（在subFormat方法里），而这就是引发问题的根源。想象一下，在一个多线程环境下，有两个线程持有了同一个SimpleDateFormat的实例，分别调用format方法：<br>　　线程1调用format方法，改变了calendar这个字段。<br>　　中断来了。<br>　　线程2开始执行，它也改变了calendar。<br>　　又中断了。<br>　　线程1回来了，此时，calendar已然不是它所设的值，而是走上了线程2设计的道路。如果多个线程同时争抢calendar对象，则会出现各种问题，时间不对，线程挂死等等。<br>　　分析一下format的实现，我们不难发现，用到成员变量calendar，唯一的好处，就是在调用subFormat时，少了一个参数，却带来了这许多的问题。其实，只要在这里用一个局部变量，一路传递下去，所有问题都将迎刃而解。<br>　　这个问题背后隐藏着一个更为重要的问题--无状态：无状态方法的好处之一，就是它在各种环境下，都可以安全的调用。衡量一个方法是否是有状态的，就看它是否改动了其它的东西，比如全局变量，比如实例的字段。format方法在运行过程中改动了SimpleDateFormat的calendar字段，所以，它是有状态的。</p> 
+     <p>　　这也同时提醒我们在开发和设计系统的时候注意下一下三点:</p> 
+     <p style="margin: 0px;"><strong>　　1.自己写公用类的时候，要对多线程调用情况下的后果在注释里进行明确说明</strong></p> 
+     <p style="margin: 0px;"><strong>　　2.对线程环境下，对每一个共享的可变变量都要注意其线程安全性</strong></p> 
+     <p style="margin: 0px;"><strong>　　3.我们的类和方法在做设计的时候，要尽量设计成无状态的<br></strong></p> 
+     <p><strong>　　三.解决办法<br></strong></p> 
+     <p><strong>　　1.需要的时候创建新实例：<br></strong></p> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.peidasoft.dateformat;
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.ParseException;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.SimpleDateFormat;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.util.Date;
+
+</span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> DateUtil {
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span>  String formatDate(Date date)<span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+         SimpleDateFormat sdf </span>= <span style="color: #0000ff;">new</span> SimpleDateFormat("yyyy-MM-dd HH:mm:ss"<span style="color: #000000;">);
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.format(date);
+    }
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> Date parse(String strDate) <span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+         SimpleDateFormat sdf </span>= <span style="color: #0000ff;">new</span> SimpleDateFormat("yyyy-MM-dd HH:mm:ss"<span style="color: #000000;">);
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.parse(strDate);
+    }
+}</span></pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <p>　　<strong>说明：</strong>在需要用到<span style="color: #000000;">SimpleDateFormat </span>的地方新建一个实例，不管什么时候，将有线程安全问题的对象由共享变为局部私有都能避免多线程问题，不过也加重了创建对象的负担。在一般情况下，这样其实对性能影响比不是很明显的。</p> 
+     <p><strong>　　2.使用同步：同步SimpleDateFormat对象</strong></p> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.peidasoft.dateformat;
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.ParseException;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.SimpleDateFormat;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.util.Date;
+
+</span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> DateSyncUtil {
+
+    </span><span style="color: #0000ff;">private</span> <span style="color: #0000ff;">static</span> SimpleDateFormat sdf = <span style="color: #0000ff;">new</span> SimpleDateFormat("yyyy-MM-dd HH:mm:ss"<span style="color: #000000;">);
+      
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> String formatDate(Date date)<span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+        </span><span style="color: #0000ff;">synchronized</span><span style="color: #000000;">(sdf){
+            </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.format(date);
+        }  
+    }
+    
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> Date parse(String strDate) <span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException{
+        </span><span style="color: #0000ff;">synchronized</span><span style="color: #000000;">(sdf){
+            </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> sdf.parse(strDate);
+        }
+    } 
+}</span></pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <p><strong>　　说明：</strong>当线程较多时，当一个线程调用该方法时，其他想要调用此方法的线程就要block，多线程并发量大的时候会对性能有一定的影响。<strong><br></strong></p> 
+     <p><strong>　　3.使用ThreadLocal：　</strong></p> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.peidasoft.dateformat;
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.DateFormat;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.ParseException;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.SimpleDateFormat;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.util.Date;
+
+</span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> ConcurrentDateUtil {
+
+    </span><span style="color: #0000ff;">private</span> <span style="color: #0000ff;">static</span> ThreadLocal&lt;DateFormat&gt; threadLocal = <span style="color: #0000ff;">new</span> ThreadLocal&lt;DateFormat&gt;<span style="color: #000000;">() {
+        @Override
+        </span><span style="color: #0000ff;">protected</span><span style="color: #000000;"> DateFormat initialValue() {
+            </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">new</span> SimpleDateFormat("yyyy-MM-dd HH:mm:ss"<span style="color: #000000;">);
+        }
+    };
+
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> Date parse(String dateStr) <span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException {
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> threadLocal.get().parse(dateStr);
+    }
+
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span><span style="color: #000000;"> String format(Date date) {
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> threadLocal.get().format(date);
+    }
+}</span></pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <p>　　另外一种写法：</p> 
+     <div class="cnblogs_code"> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+      <pre><span style="color: #0000ff;">package</span><span style="color: #000000;"> com.peidasoft.dateformat;
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.DateFormat;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.ParseException;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.text.SimpleDateFormat;
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> java.util.Date;
+
+</span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> ThreadLocalDateUtil {
+    </span><span style="color: #0000ff;">private</span> <span style="color: #0000ff;">static</span> <span style="color: #0000ff;">final</span> String date_format = "yyyy-MM-dd HH:mm:ss"<span style="color: #000000;">;
+    </span><span style="color: #0000ff;">private</span> <span style="color: #0000ff;">static</span> ThreadLocal&lt;DateFormat&gt; threadLocal = <span style="color: #0000ff;">new</span> ThreadLocal&lt;DateFormat&gt;<span style="color: #000000;">(); 
+ 
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span><span style="color: #000000;"> DateFormat getDateFormat()   
+    {  
+        DateFormat df </span>=<span style="color: #000000;"> threadLocal.get();  
+        </span><span style="color: #0000ff;">if</span>(df==<span style="color: #0000ff;">null</span><span style="color: #000000;">){  
+            df </span>= <span style="color: #0000ff;">new</span><span style="color: #000000;"> SimpleDateFormat(date_format);  
+            threadLocal.set(df);  
+        }  
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> df;  
+    }  
+
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> String formatDate(Date date) <span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException {
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> getDateFormat().format(date);
+    }
+
+    </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> Date parse(String strDate) <span style="color: #0000ff;">throws</span><span style="color: #000000;"> ParseException {
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> getDateFormat().parse(strDate);
+    }   
+}</span></pre> 
+      <div class="cnblogs_code_toolbar">
+       <span class="cnblogs_code_copy"><a title="复制代码"><img alt="复制代码" src="http://common.cnblogs.com/images/copycode.gif"></a></span>
+      </div> 
+     </div> 
+     <p>　　<strong>说明：</strong>使用ThreadLocal, 也是将共享变量变为独享，线程独享肯定能比方法独享在并发环境中能减少不少创建对象的开销。如果对性能要求比较高的情况下，一般推荐使用这种方法。</p> 
+     <p><strong>　　4.抛弃JDK，使用其他类库中的时间格式化类：<br></strong></p> 
+     <p><strong>　　</strong>1.使用Apache commons 里的FastDateFormat，宣称是既快又线程安全的SimpleDateFormat, 可惜它只能对日期进行format, 不能对日期串进行解析。</p> 
+     <p><strong>　　</strong>2.使用Joda-Time类库来处理时间相关问题</p> 
+     <p>&nbsp;　　</p> 
+     <p>　　做一个简单的压力测试，方法一最慢，方法三最快，但是就算是最慢的方法一性能也不差，一般系统方法一和方法二就可以满足，所以说在这个点很难成为你系统的瓶颈所在。从简单的角度来说，建议使用方法一或者方法二，如果在必要的时候，追求那么一点性能提升的话，可以考虑用方法三，用ThreadLocal做缓存。</p> 
+     <p>　　Joda-Time类库对时间处理方式比较完美，建议使用。</p> 
+     <p>　　参考资料：</p> 
+     <p>　　1.<a href="http://dreamhead.blogbus.com/logs/215637834.html">http://dreamhead.blogbus.com/logs/215637834.html</a></p> 
+     <p>　　2.http://www.blogjava.net/killme2008/archive/2011/07/10/354062.html</p> 
+    </div> 
+    <div> 
+     <p><br><a href="http://cam.taoke.alimama.com/event.php?pid=mm_12469580_0_0&amp;eventid=100245" target="_blank"><img alt="" src="http://img.alimama.cn/topicfile/2009-02-18/12349382855810.gif"></a></p> 
+    </div> 
+    <div class="clear">
+     &nbsp;
+    </div> 
+    <div> 
+     <div> 
+      <div>
+       分类: 
+       <a href="http://www.cnblogs.com/peida/category/309011.html">java</a> 
+      </div> 
+      <div>
+       标签: 
+       <a href="http://www.cnblogs.com/peida/tag/SimpleDateFormat/">SimpleDateFormat</a>, 
+       <a href="http://www.cnblogs.com/peida/tag/%E6%97%A0%E7%8A%B6%E6%80%81/">无状态</a>, 
+       <a href="http://www.cnblogs.com/peida/tag/ThreadLocal/">ThreadLocal</a>, 
+       <a href="http://www.cnblogs.com/peida/tag/%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E5%8C%96/">时间格式化</a> 
+      </div> 
+      <div>
+       绿色通道： 
+       <a>好文要顶</a> 
+       <a>关注我</a> 
+       <a>收藏该文</a>
+       <a href="http://space.cnblogs.com/msg/send/peida" target="_blank">与我联系</a> 
+       <a title="分享至新浪微博"><img alt="" src="http://static.cnblogs.com/images/icon_weibo_24.png"></a> 
+      </div> 
+      <div> 
+       <div> 
+        <div class="author_profile_info"> 
+         <a href="http://home.cnblogs.com/u/peida/" target="_blank"><img alt="" src="http://pic.cnitblog.com/face/u34483.jpg?id=08125237" class="author_avatar"></a> 
+         <div class="author_profile_info"> 
+          <a href="http://home.cnblogs.com/u/peida/">peida</a>
+          <br>
+          <a href="http://home.cnblogs.com/u/peida/followees">关注 - 2</a>
+          <br>
+          <a href="http://home.cnblogs.com/u/peida/followers">粉丝 - 465</a> 
+         </div> 
+        </div> 
+        <div class="clear">
+         &nbsp;
+        </div> 
+        <div>
+         &nbsp;
+        </div> 
+        <div>
+         <a>+加关注</a>
+        </div> 
+       </div> 
+       <div> 
+        <div class="diggit">
+         <span class="diggnum">0</span>
+        </div> 
+        <div class="buryit">
+         <span class="burynum">0</span>
+        </div> 
+        <div class="clear">
+         &nbsp;
+        </div> 
+        <div class="diggword">
+         (请您对文章做出评价)
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="clear">
+      &nbsp;
+     </div> 
+     <div> 
+      <a href="http://www.cnblogs.com/peida/archive/2013/04/26/3038503.html" class="p_n_p_prefix">« </a> 上一篇：
+      <a href="http://www.cnblogs.com/peida/archive/2013/04/26/3038503.html" title="发布于2013-04-26 08:30">深入理解Java：注解（Annotation）--注解处理器</a>
+      <br>
+      <a href="http://www.cnblogs.com/peida/archive/2013/06/03/3090842.html" class="p_n_p_prefix">» </a> 下一篇：
+      <a href="http://www.cnblogs.com/peida/archive/2013/06/03/3090842.html" title="发布于2013-06-03 14:57">深入理解Java：内省(Introspector)</a> 
+     </div> 
+    </div> 
+   </div> 
+   <div class="postDesc">
+    posted @ 
+    <span>2013-05-31 18:07</span> 
+    <a href="http://www.cnblogs.com/peida/">peida</a> 阅读(
+    <span>3543</span>) 评论(
+    <span>1</span>) 
+    <a href="http://www.cnblogs.com/peida/admin/EditPosts.aspx?postid=3070790">编辑</a> 
+    <a href="#">收藏</a> 
+   </div> 
+  </div> &lt;script type="text/javascript"&gt;// &lt;![CDATA[ var allowComments=true,isLogined=false,cb_blogId=38044,cb_entryId=3070790,cb_blogApp=currentBlogApp,cb_blogUserGuid='0f3e420b-63cf-dd11-9e4d-001cf0cd104b',cb_entryCreatedDate='2013/5/31 18:07:00';loadViewCount(cb_entryId); // ]]&gt;&lt;/script&gt;
+ </div>
+</div>

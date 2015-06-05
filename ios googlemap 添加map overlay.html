@@ -1,0 +1,123 @@
+<p>&nbsp;</p> 
+<p>&nbsp;<span style="font-family: Arial; font-size: medium;">画线</span></p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">        CLLocationCoordinate2D lats[2];
+        float lat = 90-i*10;
+        lats[0] = CLLocationCoordinate2DMake(lat,179);
+        lats[1] = CLLocationCoordinate2DMake(lat,-179);
+        MKPolyline *overlay = [MKPolylinepolylineWithCoordinates:lats count:2];
+        [self.mapaddOverlay:overlay];
+
+- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id &lt;MKOverlay&gt;)overlay {
+
+    MKPolylineView *polyLineView = [[[MKPolylineViewalloc] initWithOverlay:overlay] autorelease];
+    CLLocationCoordinate2D coordinate = [overlay coordinate];
+    if (coordinate.latitude == 0) {
+        polyLineView.strokeColor = [UIColorgreenColor];
+    }else{
+        polyLineView.strokeColor = [UIColorblueColor];
+    }
+    
+    if (coordinate.latitude == 0 &amp;&amp; coordinate.longitude == 0) {
+        polyLineView.strokeColor = [UIColorredColor];
+    }
+    polyLineView.lineWidth = 1.0;
+    return polyLineView;
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;<span style="font-family: Arial; font-size: medium;">自定义画字</span></p> 
+<p><span style="font-family: Arial; font-size: medium;">overlay 代码</span></p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">- (CLLocationCoordinate2D)coordinate {
+    returncoordinate;                       
+}
+
+
+- (MKMapRect)boundingMapRect
+{
+    MKMapPoint upperLeft = MKMapPointForCoordinate(coordinate);
+    
+    CLLocationCoordinate2D lowerRightCoord = 
+    CLLocationCoordinate2DMake(coordinate.latitude - 0.5,
+                               coordinate.longitude + 0.5);
+    
+    MKMapPoint lowerRight = MKMapPointForCoordinate(lowerRightCoord);
+    
+    double width = lowerRight.x - upperLeft.x;
+    double height = lowerRight.y - upperLeft.y;
+    
+    MKMapRect bounds = MKMapRectMake(upperLeft.x, upperLeft.y, width, height);
+    return bounds;
+}
+
+</pre> &nbsp; 
+<p>&nbsp;<span style="color: #01010a; font-family: Menlo; font-size: 14px;">overlayView代码</span></p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">- (void)drawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale inContext:(CGContextRef)context{
+//    float zoom = 0.000004/zoomScale;
+    MKMapRect  theMapRect = [self.overlayboundingMapRect];
+    CGRect theRect = [selfrectForMapRect:theMapRect];
+    
+    CGContextSetAlpha(context, 0.5);
+    
+//    CGContextSetFillColorWithColor(context, [[UIColor redColor] CGColor]);
+//    CGContextFillRect(context, theRect);
+
+
+//    CGContextAddRect(context, theRect);
+//    CGContextClip(context);
+    
+//    float w, h;
+//    w = theRect.size.width;
+//    h = theRect.size.height;
+//    
+//    CGContextSelectFont (context, // 3
+//                         "Helvetica-Bold",
+//                         h/10,
+//                         kCGEncodingMacRoman);
+//    CGContextSetCharacterSpacing (context, 10); // 4
+//    CGContextSetTextDrawingMode (context, kCGTextFillStroke); // 5
+//    
+//    CGContextSetRGBFillColor (context, 0, 1, 0, .5); // 6
+//    CGContextSetRGBStrokeColor (context, 0, 0, 1, 1); // 7
+//    CGAffineTransform myTextTransform =CGAffineTransformScale(CGAffineTransformIdentity, 1.f, -1.f );
+//    CGContextSetTextMatrix (context, myTextTransform); // 9
+//    CGPoint xx = [self pointForMapPoint:theMapRect.origin];
+//    CGContextShowTextAtPoint (context, xx.x, xx.y, "Quartz 2D", 9); 
+ 
+    
+    float w, h;
+    w = theRect.size.width;
+    h = theRect.size.height;
+    NSString *text = [selfgenerateText];
+
+
+
+
+//    CGContextSetAlpha(context, 0.5);
+    CGContextSetFillColorWithColor(context, [[UIColorblackColor] CGColor]);
+    
+    char *commentsMsg;
+    commentsMsg = (char *)[text UTF8String];
+    CGContextSelectFont(context, "Helvetica-Bold", h, kCGEncodingMacRoman);// the h is the height of the text, it's key, because if it's small you can't see
+    CGContextSetTextDrawingMode(context, kCGTextFill);
+    
+    CGAffineTransform myTextTransform =CGAffineTransformScale(CGAffineTransformIdentity, 1.f, -1.f );
+    CGContextSetTextMatrix (context, myTextTransform);
+    CGPoint xx = [selfpointForMapPoint:theMapRect.origin];
+    CGContextShowTextAtPoint(context,xx.x,xx.y,commentsMsg, strlen(commentsMsg));// the point must convert from mappoint to cgpoint
+    
+}
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>asdasd</p>

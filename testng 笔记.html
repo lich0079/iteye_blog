@@ -1,0 +1,942 @@
+<p>&nbsp;</p> 
+<p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<div> 
+ <p style="text-align: left; border: medium none; padding: 0cm;" class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">1.overview</span> </strong> </p> 
+</div> 
+<p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">TestNG is a testing framework inspired from JUnit and NUnit but introducing some new functionalities that make it more powerful and easier to use, such as:</span> </p> 
+<ul> 
+ <li style="text-align: left;" class="MsoNormal"> <span style="font-size: 9pt; font-family: Tahoma;">JDK 5 Annotations (JDK 1.4 is also supported with JavaDoc annotations). </span> </li> 
+ <li style="text-align: left;" class="MsoNormal"> <span style="font-size: 9pt; font-family: Tahoma;">Support for data-driven testing (with </span> <span>@DataProvider</span> <span style="font-size: 9pt; font-family: Tahoma;">). </span> </li> 
+ <li style="text-align: left;" class="MsoNormal"> <span style="font-size: 9pt; font-family: Tahoma;">Support for parameters. </span> </li> 
+ <li style="text-align: left;" class="MsoNormal"> <span style="font-size: 9pt; font-family: Tahoma;">Embeds BeanShell for further flexibility. </span> </li> 
+ <li style="text-align: left;" class="MsoNormal"> <span style="font-size: 9pt; font-family: Tahoma;">Default JDK functions for runtime and logging (no dependencies). </span> </li> 
+ <li style="text-align: left;" class="MsoNormal"> <span style="font-size: 9pt; font-family: Tahoma;">Dependent methods for application server testing. </span> </li> 
+</ul> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p><span style="font-size: 9pt; font-family: Tahoma;">Here is a very simple test:</span> </p> 
+<pre><span>package example1;</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>import org.testng.annotations.*;</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>public class SimpleTest {</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span> @BeforeClass</span>
+
+</pre> 
+<pre><span> public void setUp() {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp; </span>
+
+// code that will be invoked when this test is instantiated</span>
+
+</pre> 
+<pre><span> }</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span> @Test(groups = { "fast" })</span>
+
+</pre> 
+<pre><span> public void aFastTest() {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp; </span>
+
+System.out.println("Fast test");</span>
+
+</pre> 
+<pre><span> }</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span> @Test(groups = { "slow" })</span>
+
+</pre> 
+<pre><span> public void aSlowTest() {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+System.out.println("Slow test");</span>
+
+</pre> 
+<pre><span> }</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>ant.xml</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&lt;project default="test"&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&nbsp;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;</span> &lt;path id="cp"&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp; </span> &lt;pathelement location="lib/testng-testng-4.4-jdk15.jar"/&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp; </span> &lt;pathelement location="build"/&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;</span> &lt;/path&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&nbsp;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;</span> &lt;taskdef name="testng" classpathref="cp"</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span> classname="org.testng.TestNGAntTask" /&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&nbsp;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;</span> &lt;target name="test"&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp; </span> &lt;testng classpathref="cp" groups="fast"&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp; </span> &lt;classfileset dir="build" includes="example1/*.class"/&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp; </span> &lt;/testng&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;</span> &lt;/target&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&nbsp;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&lt;/project&gt;</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<div> 
+ <p style="text-align: left; border: medium none; padding: 0cm;" class="MsoNormal"><a name="annotations"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">2. Annotations</span> </strong> </a> <strong> </strong> </p> 
+</div> 
+<p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">Here is a quick overview of the annotations available in TestNG along with their attributes. </span> </p> 
+<table border="0" cellpadding="0" class="MsoNormalTable"> 
+ <tbody>
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span>@BeforeSuite<br> @AfterSuite<br> @BeforeTest<br> @AfterTest<br> @BeforeGroups<br> @AfterGroups<br> @BeforeClass<br> @AfterClass<br> @BeforeMethod<br> @AfterMethod</span> </strong> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span style="font-size: 9pt; font-family: Tahoma;">Configuration information for a TestNG class:</span> </strong> <span style="font-size: 9pt; font-family: Tahoma;"> <br><br><strong>@BeforeSuite: </strong> The annotated method will be run before all tests in this suite have run. <br><strong>@AfterSuite: </strong> The annotated method will be run after all tests in this suite have run. <br><strong>@BeforeTest</strong> : The annotated method will be run before the test. <br><strong>@AfterTest</strong> : The annotated method will be run after the test. <br><strong>@BeforeGroups</strong> : The list of groups that this configuration method will run before. This method is guaranteed to run shortly before the first test method that belongs to any of these groups is invoked. <br><strong>@AfterGroups</strong> : The list of groups that this configuration method will run after. This method is guaranteed to run shortly after the last test method that belongs to any of these groups is invoked. <br><strong>@BeforeClass</strong> : The annotated method will be run before the first test method in the current class is invoked. <br><strong>@AfterClass</strong> : The annotated method will be run after all the test methods in the current class have been run. <br><strong>@BeforeMethod</strong> : The annotated method will be run before each test method. <br><strong>@AfterMethod</strong> : The annotated method will be run after each test method. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>alwaysRun</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">For before methods (beforeSuite, beforeTest, beforeTestClass and beforeTestMethod, but not beforeGroups): If set to true, this configuration method will be run regardless of what groups it belongs to. <br> For after methods (afterSuite, afterClass, ...): If set to true, this configuration method will be run even if one or more methods invoked previously failed or was skipped. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>dependsOnGroups</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The list of groups this method depends on. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>dependsOnMethods</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The list of methods this method depends on. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>enabled</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">Whether methods on this class/method are enabled. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>groups</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The list of groups this class/method belongs to. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>inheritGroups</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">If true, this method will belong to groups specified in the @Test annotation at the class level. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span>@DataProvider</span> </strong> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span style="font-size: 9pt; font-family: Tahoma;">Marks a method as supplying data for a test method. The annotated method must return an Object[][] where each Object[] can be assigned the parameter list of the test method. The @Test method that wants to receive data from this DataProvider needs to use a dataProvider name equals to the name of this annotation.</span> </strong> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>name</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The name of this DataProvider. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span>@Factory</span> </strong> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span style="font-size: 9pt; font-family: Tahoma;">Marks a method as a factory that returns objects that will be used by TestNG as Test classes. The method must return Object[].</span> </strong> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span>@Parameters</span> </strong> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span style="font-size: 9pt; font-family: Tahoma;">Describes how to pass parameters to a @Test method.</span> </strong> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>value</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The list of variables used to fill the parameters of this method. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span style="font-size: 9pt; font-family: Tahoma;">@Test</span> </strong> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><strong><span style="font-size: 9pt; font-family: Tahoma;">Marks a class or a method as part of the test.</span> </strong> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>alwaysRun</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">If set to true, this test method will always be run even if it depends on a method that failed. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>dataProvider</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The name of the data provider for this test method. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>dataProviderClass</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The class where to look for the data provider. If not specified, the data provider will be looked on the class of the current test method or one of its base classes. If this attribute is specified, the data provider method needs to be static on the specified class. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>dependsOnGroups</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The list of groups this method depends on. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>dependsOnMethods</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The list of methods this method depends on. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>description</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The description for this method. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>enabled</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">Whether methods on this class/method are enabled. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>expectedExceptions</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The list of exceptions that a test method is expected to throw. If no exception or a different than one on this list is thrown, this test will be marked a failure. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>groups</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The list of groups this class/method belongs to. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>invocationCount</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The number of times this method should be invoked. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>invocationTimeOut</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The maximum number of milliseconds this test should take for the cumulated time of all the invocationcounts. This attribute will be ignored if invocationCount is not specified. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>successPercentage</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The percentage of success expected from this method </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>sequential</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">If set to true, all the methods on this test class are guaranteed to run sequentially, even if the tests are currently being run with parallel="methods". This attribute can only be used at the class level and it will be ignored if used at the method level. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>timeOut</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The maximum number of milliseconds this test should take. </span> </p> </td> 
+  </tr> 
+  <tr> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span>threadPoolSize</span> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> </td> 
+   <td style="padding: 2.25pt 3pt;"> <p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">The size of the thread pool for this method. The method will be invoked from multiple threads as specified by invocationCount. <br> Note: this attribute is ignored if invocationCount is not specified </span> </p> </td> 
+  </tr> 
+ </tbody>
+</table> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<div> 
+ <p style="text-align: left; border: medium none; padding: 0cm;" class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">3. <a name="test-groups">Test groups</a> </span> </strong> </p> 
+</div> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<pre><span>public class Test1 {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@Test(groups = { "functest", "checkintest" })</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public void testMethod1() {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@Test(groups = {"functest", "checkintest"} )</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public void testMethod2() {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@Test(groups = { "functest" })</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public void testMethod3() {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<p><span style="font-size: 9pt; font-family: Tahoma;">Invoking TestNG with </span> </p> 
+<pre><span>&lt;test name="Test1"&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;groups&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+&lt;run&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+
+&lt;include name="functest"/&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+&lt;/run&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;/groups&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;classes&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+&lt;class name="example1.Test1"/&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;/classes&gt;</span>
+
+</pre> 
+<pre><span>&lt;/test&gt;</span>
+
+</pre> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>a test method or class could be unit test, dao test, regression test at the same time.</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p><span style="font-size: 9pt; font-family: Tahoma;">Here is another example, using regular expressions this time.&nbsp; Assume that some of your test methods should not be run on Linux, your test would look like:</span> </p> 
+<pre><span>@Test</span>
+
+</pre> 
+<pre><span>public class Test1 {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@Test(groups = { "windows.checkintest" }) </span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;</span>
+
+public void testWindowsOnly() {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@Test(groups = {"linux.checkintest"} )</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public void testLinuxOnly() {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@Test(groups = { "windows.functest" )</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public void testWindowsToo() {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<p><span style="font-size: 9pt; font-family: Tahoma;">You could use the following testng.xml to launch only the Windows methods: </span> </p> 
+<pre><span>&lt;test name="Test1"&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;groups&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+&lt;run&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+
+&lt;include name="windows.*"/&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+&lt;/run&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;/groups&gt;</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;classes&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+&lt;class name="example1.Test1"/&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;/classes&gt;</span>
+
+</pre> 
+<pre><span>&lt;/test&gt;</span>
+
+</pre> 
+<p style="text-align: left;" class="MsoNormal"><em><span style="font-size: 9pt; font-family: Tahoma;">Note: TestNG uses <a href="http://en.wikipedia.org/wiki/Regular_expression"><span style="text-decoration: none;">regular expressions</span> </a> , and not <a href="http://en.wikipedia.org/wiki/Wildmat"><span style="text-decoration: none;">wildmats</span> </a> . Be aware of the difference (for example, "anything" is matched by ".*" -- dot star -- and not "*").</span> </em> <span style="font-size: 9pt; font-family: Tahoma;"> </span> </p> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">You can also exclude or include individual methods: </span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&lt;test name="Test1"&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp; </span> &lt;classes&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp; </span> &lt;class name="example1.Test1"&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span> &lt;methods&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span> &lt;include name=".*enabledTestMethod.*"/&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span> &lt;exclude name=".*brokenTestMethod.*"/&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span> &lt;/methods&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp; </span> &lt;/class&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp; </span> &lt;/classes&gt;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&lt;/test&gt;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p><span>You can define groups at the class level and then add groups at the method level:</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>@Test(groups = { "checkin-test" })</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>public class All {</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&nbsp;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp; </span> @Test(groups = { "func-test" )</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp; </span> public void method1() { ... }</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&nbsp;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp; </span> public void method2() { ... }</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>}</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">In this class, method2() is part of the group "checkin-test", which is defined at the class level, while method1() belongs to both "checkin-test" and "func-test".</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<div> 
+ <p style="text-align: left; border: medium none; padding: 0cm;" class="MsoNormal"><a name="parameters"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">4. Parameters</span> </strong> </a> <strong> </strong> </p> 
+</div> 
+<pre><span>@Parameters({ "first-name" })</span>
+
+</pre> 
+<pre><span>@Test</span>
+
+</pre> 
+<pre><span>public void testSingleString(String firstName) { </span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;</span>
+
+System.out.println("Invoked testString " + firstName);</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+assert "Cedric".equals(firstName);</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<pre><span>&lt;suite name="My suite"&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;parameter name="first-name"<span>&nbsp; </span>
+
+value="Cedric"/&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;test name="Simple example"&gt;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+&lt;-- ... --&gt;</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>The same technique can be used for @Before/After and @Factory annotations:</span>
+
+</pre> 
+<pre><span>@Parameters({ "datasource", "jdbcDriver" })</span>
+
+</pre> 
+<pre><span>@BeforeMethod</span>
+
+</pre> 
+<pre><span>public void beforeTest(String ds, String driver) {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+m_dataSource = ...;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+
+<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+// look up the value of datasource</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+m_jdbcDriver = driver;</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<p class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">&nbsp;</span> </strong> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>@Parameters("db")</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>@Test</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>public void testNonExistentParameter(@Optional("mysql") String db) { ... }</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">If no parameter named "db" is found in your </span> <span>testng.xml</span> <span style="font-size: 9pt; font-family: Tahoma;"> file, your test method will receive the default value specified inside the </span> <span>@Optional</span> <span style="font-size: 9pt; font-family: Tahoma;"> annotation: "mysql".</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<p class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">&nbsp;</span> </p> 
+<pre><span>@DataProvider(name = "test1")</span>
+
+</pre> 
+<pre><span>public Object[][] createData1() {</span>
+
+</pre> 
+<pre><span> return new Object[][] {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp; </span>
+
+{ "Cedric", new Integer(36) },</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp; </span>
+
+{ "Anne", new Integer(37)}, </span>
+
+</pre> 
+<pre><span><span>&nbsp;</span>
+
+};</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<pre><span>@Test(dataProvider = "test1")</span>
+
+</pre> 
+<pre><span>public void verifyData1(String n1, Integer n2) {</span>
+
+</pre> 
+<pre><span> System.out.println(n1 + " " + n2);</span>
+
+</pre> 
+<pre><span>} </span>
+
+</pre> 
+<p style="text-align: left;" class="MsoNormal"><span style="font-size: 9pt; font-family: Tahoma;">will print </span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>Cedric 36</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>Anne 37</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>&nbsp;</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span>@Test(dataProvider = "test1",invocationCount=3)</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp; </span> public void verifyData1(String n1, Integer n2) {</span> </p> 
+<p style="text-align: left;" class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span> System.out.println(n1 + " " + n2);</span> </p> 
+<p style="text-indent: 24pt;" class="MsoNormal"><span>}</span> </p> 
+<p style="text-indent: 24pt;" class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>Total tests run: 6, Failures: 0, Skips: 0</span> </p> 
+<p class="MsoNormal"><span style="font-size: 14pt; font-family: Consolas; color: #00ff80;">&nbsp;</span> </p> 
+<p><span style="font-size: 9pt; font-family: Tahoma;">By default, the data provider will be looked for in the current test class or one of its base classes. If you want to put your data provider in a different class, it needs to be a static method and you specify the class where it can be found in the </span> <tt><span>dataProviderClass</span> </tt> <span style="font-size: 9pt; font-family: Tahoma;"> attribute: </span> </p> 
+<pre><span>public static class StaticProvider {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@DataProvider(name = "create")</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public static Object[][] createData() {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+return new Object[][] {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+
+new Object[] { new Integer(42) }</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>public class MyTest {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@Test(dataProvider = "create", dataProviderClass = StaticProvider.class)</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public void test(Integer n) {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+// ...</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>ps. </span> <span>StaticProvider </span> <span>类</span> <span>不一定必须是<span>static， 方法必须是static</span> </span> </p> 
+<p class="MsoNormal"><span><span>&nbsp;</span> dataprovider提供的是一个二维数组，只算count一次</span> </p> 
+<pre><span>new Object[][] {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp; </span>
+
+{ "Cedric", new Integer(36) }, 一组测试数据</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp; </span>
+
+{ "Anne", new Integer(37)}, <span>&nbsp;&nbsp;&nbsp;</span>
+
+一组测试数据</span>
+
+</pre> 
+<pre><span> };</span>
+
+</pre> 
+<pre><span>@DataProvider(parallel = true)</span>
+
+</pre> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<p class="MsoNormal"><span>&nbsp;</span> </p> 
+<div> 
+ <p style="text-align: left; border: medium none; padding: 0cm;" class="MsoNormal"><a name="dependent-methods"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">5. Dependent</span> </strong> </a> <strong> </strong> </p> 
+</div> 
+<pre><span>dependent on method</span>
+
+</pre> 
+<pre><span>@Test</span>
+
+</pre> 
+<pre><span>public void serverStartedOk() {}</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>@Test(dependsOnMethods = { "serverStartedOk" })</span>
+
+</pre> 
+<pre><span>public void method1() {}</span>
+
+</pre> 
+<p class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">&nbsp;</span> </strong> </p> 
+<pre><span>dependent on group</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>@Test(groups = { "init" })</span>
+
+</pre> 
+<pre><span>public void serverStartedOk() {}</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>@Test(groups = { "init" })</span>
+
+</pre> 
+<pre><span>public void initEnvironment() {}</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span>@Test(dependsOnGroups = { "init.* })</span>
+
+</pre> 
+<pre><span>public void method1() {}</span>
+
+</pre> 
+<p class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">&nbsp;</span> </strong> </p> 
+<div> 
+ <p style="text-align: left; border: medium none; padding: 0cm;" class="MsoNormal"><a name="factories"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">6. Factories</span> </strong> </a> <strong> </strong> </p> 
+</div> 
+<pre><span>public class WebTestFactory {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@Factory</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public Object[] createInstances() {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp; </span>
+
+Object[] result = new Object[10];<span>&nbsp; </span>
+
+</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp;</span>
+
+for (int i = 0; i &lt; 10; i++) {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+
+result[i] = new WebTest(i * 10);</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+return result;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<p class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">&nbsp;</span> </strong> </p> 
+<pre><span>public class WebTest {</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+private int m_numberOfTimes;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public WebTest(int numberOfTimes) {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+m_numberOfTimes = numberOfTimes;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>&nbsp;</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+@Test</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+public void testServer() {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp; </span>
+
+for (int i = 0; i &lt; m_numberOfTimes; i++) {</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp;&nbsp; </span>
+
+// access the web page</span>
+
+</pre> 
+<pre><span><span>&nbsp;&nbsp;&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span><span>&nbsp; </span>
+
+}</span>
+
+</pre> 
+<pre><span>}</span>
+
+</pre> 
+<p class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">&nbsp;</span> </strong> </p> 
+<div> 
+ <p style="text-align: left; border: medium none; padding: 0cm;" class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">7.<a name="parallel-running"> Parallel running and time-outs</a> </span> </strong> </p> 
+</div> 
+<p class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">&nbsp;</span> </strong> </p> 
+<pre><span>@Test(threadPoolSize = 3, invocationCount = 10,<span>&nbsp; </span>
+
+timeOut = 10000)</span>
+
+</pre> 
+<pre><span>public void testServer() {</span>
+
+</pre> 
+<p class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">&nbsp;</span> </strong> </p> 
+<div> 
+ <p style="text-align: left; border: medium none; padding: 0cm;" class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">8. <a name="rerunning">Rerunning failed tests</a> </span> </strong> </p> 
+</div> 
+<pre><span>java -classpath testng.jar;%CLASSPATH% org.testng.TestNG -d test-outputs testng.xml</span>
+
+</pre> 
+<pre><span>java -classpath testng.jar;%CLASSPATH% org.testng.TestNG -d test-outputs test-outputs\testng-failed.xml</span>
+
+</pre> 
+<p class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">&nbsp;</span> </strong> </p> 
+<p class="MsoNormal"><strong><span style="font-size: 13.5pt; letter-spacing: 1.45pt; font-family: Tahoma;">&nbsp;</span> </strong> </p>

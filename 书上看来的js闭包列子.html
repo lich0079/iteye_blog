@@ -1,0 +1,40 @@
+<div style="font-size: 14px;" class="iteye-blog-content-contain"> 
+ <p>js闭包列子</p> 
+ <p>&nbsp;</p> 
+ <pre class="java" name="code">&lt;html&gt;
+&lt;head&gt;
+	&lt;title&gt;js learn&lt;/title&gt;
+&lt;script type="text/javascript"&gt;
+
+var curry = function (f) {
+	alert("1111");
+	return function(a){
+		alert("2222");
+		return function(b){
+			alert("333");
+			return f(a,b);
+		}
+	}
+}
+
+function cf(a,b){
+	alert("00");
+	alert(a);
+	alert(b);
+
+}
+
+var a1 = curry(cf);
+alert("----");
+var b1 = a1("xxx");
+alert("----");
+b1("yyy");
+
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre> 
+ <p>&nbsp;</p> 
+</div>

@@ -1,0 +1,47 @@
+<p>------------------------------------------------</p> 
+<p>hibernate多对一关联映射</p> 
+<p>关联映射的本质：<br>&nbsp;将关联关系映射到数据库表，关联关系在对象模型中体现为一个或多个引用<br>&nbsp;<br>&lt;many-to-one&gt;会在多的一端添加一个外键，指向一的一端，这个外键是由&lt;many-to-one&gt;<br>中的column属性定义的，如果忽略这个属性，默认外键与实体类的属性一致</p> 
+<p>注意：如果实体类的名称和属性与sql的关键字重复，必须重新命名</p> 
+<p>&lt;many-to-one&gt;标签定义示例：<br>&nbsp;* &lt;many-to-one name="group" column="groupid"/&gt;<br>&nbsp;<br>理解级联的含义？<br>&nbsp;对象之间的连锁操作&nbsp;<br>&nbsp;<br>------------------------------------------</p> 
+<p>hibernate一对一主键关联映射（单向关联Person----&gt;IdCard）</p> 
+<p>一对一主键关联映射:让两个实体对象的id保持相同，这样可以避免多余的字段被创建</p> 
+<p>具体映射方式：<br>&nbsp;&lt;class name="com.bjsxt.hibernate.Person" table="t_person"&gt;<br>&nbsp;&nbsp;&lt;id name="id"&gt;<br>&nbsp;&nbsp;&nbsp;&lt;!-- person的主键来源于IdCard，共享IdCard的主键 --&gt;<br>&nbsp;&nbsp;&nbsp;&lt;generator class="foreign"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;param name="property"&gt;idCard&lt;/param&gt;<br>&nbsp;&nbsp;&nbsp;&lt;/generator&gt;<br>&nbsp;&nbsp;&lt;/id&gt;<br>&nbsp;&nbsp;&lt;property name="name"/&gt;<br>&nbsp;&nbsp;&lt;!-- one-to-one标签指示hibernate如何加载其引用对象，默认根据主键加载<br>&nbsp;&nbsp;constrained="true"表明当前主键上存在一个约束，person的主键作为外键参照了IdCard<br>&nbsp;&nbsp; --&gt;<br>&nbsp;&nbsp;&lt;one-to-one name="idCard" constrained="true"/&gt;<br>&nbsp;&lt;/class&gt;</p> 
+<p>-------------------------------------------------------</p> 
+<p>hibernate一对一主键关联映射（双向关联Person&lt;----&gt;IdCard）</p> 
+<p>需要在IdCard中加入&lt;one-to-one&gt;标签指向person，指示hibernate如何加载person<br>默认根据主键加载</p> 
+<p>------------------------------------------</p> 
+<p>hibernate一对一唯一外键关联映射（单向关联Person----&gt;IdCard）</p> 
+<p>一对一唯一外键关联映射实际上就是多对一关联映射的特例</p> 
+<p>可以采用&lt;many-to-one&gt;标签，指定多的一端的unique=true，则限制了多的一端的多重性为一<br>通过这种手段来映射一对一唯一外键关联</p> 
+<p>----------------------------------------</p> 
+<p>hibernate一对一唯一外键关联映射（双向关联Person&lt;----&gt;IdCard）</p> 
+<p>一对一唯一外键双向关联映射，需要在另一端（IdCard），添加&lt;one-to-one&gt;标签，指示hibernate如何<br>加载其引用对象，默认情况下根据主键加载Person，因为外键关联映射中，因为外键关联映射中两个实体的关系<br>是通过person中的idCard维护的，所以不能根据person的主键来加载，而是根据person的外键来加载person<br>对象，如：<br>&lt;one-to-one name="person" property-ref="idCard"/&gt;</p> 
+<p>-----------------------------------------------<br>session.flush测试</p> 
+<p>session.flush主要做两件事：<br>&nbsp;* 清理缓存（脏数据对比）<br>&nbsp;* 执行sql</p> 
+<p>hibernate中sql的执行顺序：&nbsp;<br>&nbsp;hibernate按照save(insert)、update和delete顺序提交相关操作</p> 
+<p>set transaction isolation level read uncommited</p> 
+<p><br>-----------------------------------------------080701</p> 
+<p>hibernate一对多关联映射（单向关联）</p> 
+<p>这个映射的本质：采用了多对一映射原理</p> 
+<p>多对一关联映射：在多的一端加入一个外键，指向一的一端，它维护的是多到一的关系<br>一对多关联映射：在多的一端加入一个外键，指向一的一端，它维护的是一到多的关系</p> 
+<p>也就是说一对多和多对一映射策略是一致的，只是站的角度不同</p> 
+<p>一对多关联映射让hibernate在一的一端维护关系存在缺点：<br>&nbsp;* 会发出多余的update语句，建立班级和学生之间的关系，影响性能<br>&nbsp;* 如果student表中的classesid设置为非空，将无法保存数据</p> 
+<p>--------------------</p> 
+<p>hibernate一对多关联映射（双向关联）</p> 
+<p>一对多双向关联映射：<br>&nbsp;* 在一一端的集合上使用&lt;key&gt;，在对方表中加入一个外键指向一一端<br>&nbsp;* 在多一端采用&lt;many-to-one&gt;<br>&nbsp;<br>注意：&lt;key&gt;标签指定的外键字段必须和&lt;many-to-one&gt;指定的外键字段一致，否则引用字段的错误<br>&nbsp;<br>如果在”一“一端维护一对多关联关系，hibernate会发出多余的udpate语句，所以我们一般在多<br>的一端来维护关联关系</p> 
+<p>关于inverse属性：<br>&nbsp;inverse主要用在一对多和多对多双向关联上，inverse可以被设置到集合标签&lt;set&gt;上，<br>&nbsp;默认inverse为false，所以我们可以从”一“一端和”多“一端维护关联关系，<br>&nbsp;如果设置成inverse为true，则我们只能从多一端来维护关联关系<br>&nbsp;<br>&nbsp;注意：inverse属性，只影响数据的存储，也就是持久化<br>&nbsp;&nbsp;<br>inverse和cascade<br>&nbsp;* inverse是关联关系的控制方向<br>&nbsp;* cascade操作上的连锁反应 <br>&nbsp;<br>------------------------------</p> 
+<p>hibernate多对多关联映射（单向关联）</p> 
+<p>映射方法：</p> 
+<p>&lt;set name="roles" table="t_user_role"&gt;<br>&nbsp;&lt;key column="userid"/&gt;<br>&nbsp;&lt;many-to-many class="com.bjsxt.hibernate.Role" column="roleid"/&gt;<br>&lt;/set&gt;<br>-----------------------------------------</p> 
+<p>hibernate多对多关联映射（双向关联）</p> 
+<p>映射方法：<br>&nbsp;&nbsp;&lt;set name="roles" table="t_user_role"&gt;<br>&nbsp;&nbsp;&nbsp;&lt;key column="userid"/&gt;<br>&nbsp;&nbsp;&nbsp;&lt;many-to-many class="com.bjsxt.hibernate.Role" column="roleid"/&gt;<br>&nbsp;&nbsp;&lt;/set&gt;<br>table属性值必须和单向关联中的table属性值一致<br>&lt;key&gt;中column属性值要与单向关联中的&lt;many-to-many&gt;标签中的column属性值一致<br>在&lt;many-to-many&gt;中的column属性值要与单向关联中&lt;key&gt;标签的column属性值一致<br>------------------------------------------------------</p> 
+<p>lazy策略可以应用在：<br>&nbsp;* &lt;class&gt;标签上，可以取值true/false<br>&nbsp;* &lt;property&gt;标签上，可以取值true/false,需要类增强工具<br>&nbsp;* &lt;set&gt;&lt;list&gt;集合标签上，可以取值true/false/extra<br>&nbsp;* &lt;one-to-one&gt;、&lt;many-to-one&gt;单端关联上，可以取值false/proxy/noproxy<br>&nbsp;<br>lazy的概念：在正真使用的时候发出查询语句加载相应的对象</p> 
+<p>hibernate支持lazy策略只有在session打开状态下才有效</p> 
+<p>hibernate类级别的lazy只对普通属性起作用，可以控制什么时候加载这些普通属性&nbsp;</p> 
+<p>---------------------------------<br>hibernate在集合上的lazy策略：可以取值true/false/extra</p> 
+<p>true:默认取值，它的意思是只有在调用这个集合获取里面的元素对象时，才发出查询语句，加载其<br>&nbsp;&nbsp;&nbsp;&nbsp; 集合元素的数据<br>false:取消lazy特性，即在加载对象的同时，就发出第二条查询语句加载其关联集合的数据<br>extra:一种比较聪明的lazy策略，即调用集合的size等方法的时候，hibernate 并不会去<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 加载整个集合的数据，而是发出一条聪明的SQL语句，以便获得需要的值，只有在真正需<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 要用到这些集合元素对象数据的时候，才去发出查询语句加载所有对象的数据</p> 
+<p>&lt;class&gt;标签上配置的lazy不会影响到集合上的lazy特性</p> 
+<p>-----------------------------------------------</p> 
+<p>hibernate在单端关联上的lazy策略可以取值：false/proxy/noproxy</p> 
+<p>false:取消lazy策略，即在加载对象的同时，发出查询语句，加载其关联对象<br>proxy:这是hibernate对单端关联的默认lazy策略，即只有在调用到其关联对象的方法的时候<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 才真正发出查询语句查询其对象数据，其关联对象是代理类<br>no-proxy:这种lazy特性需要对类进行增强，使用no-proxy，其关联对象不是代理类</p> 
+<p>&lt;class&gt;标签上配置的lazy不会影响到单端关联对象上的lazy特性</p>

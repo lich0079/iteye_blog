@@ -1,0 +1,131 @@
+<div style="font-size: 14px;" class="iteye-blog-content-contain"> 
+ <p>jaxb想直接解析出list对象， 不用在list对象上再去包装一层对象</p> 
+ <p>&nbsp;</p> 
+ <p>首先定义一个通用的包装对象</p> 
+ <p>&lt;pre&gt;</p> 
+ <p>import java.util.*;</p> 
+ <p>import javax.xml.bind.annotation.XmlAnyElement;</p> 
+ <p>&nbsp;</p> 
+ <p>public class Wrapper&lt;T&gt; {</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; private List&lt;T&gt; items;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; public Wrapper() {</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; items = new ArrayList&lt;T&gt;();</p> 
+ <p>&nbsp; &nbsp; }</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; public Wrapper(List&lt;T&gt; items) {</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; this.items = items;</p> 
+ <p>&nbsp; &nbsp; }</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; @XmlAnyElement(lax=true)</p> 
+ <p>&nbsp; &nbsp; public List&lt;T&gt; getItems() {</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; return items;</p> 
+ <p>&nbsp; &nbsp; }</p> 
+ <p>&nbsp;</p> 
+ <p>}</p> 
+ <p>&lt;/pre&gt;</p> 
+ <p>&nbsp;</p> 
+ <p>然后是我们的xml</p> 
+ <p>&lt;pre&gt;</p> 
+ <p>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</p> 
+ <p>&nbsp;&lt;Items&gt;</p> 
+ <p>&nbsp; &nbsp; &nbsp;&lt;Item item="Check patient name, gender, age" needData="true" &gt;</p> 
+ <p>&nbsp; &nbsp; &nbsp;&lt;Book name="book1" /&gt;</p> 
+ <p>&nbsp; &nbsp; &nbsp;&lt;Book name="book2" /&gt;</p> 
+ <p>&lt;/Item&gt;</p> 
+ <p>&nbsp; &nbsp; &nbsp;&lt;Item item="Check patient name, gender, age" needData="true" &gt;</p> 
+ <p>&nbsp; &nbsp; &nbsp;&lt;Book name="book1" /&gt;</p> 
+ <p>&nbsp; &nbsp; &nbsp;&lt;Book name="book2" /&gt;</p> 
+ <p>&lt;/Item&gt;</p> 
+ <p>&nbsp;&lt;/Items&gt;</p> 
+ <p>&lt;/pre&gt;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>java类</p> 
+ <p>&lt;pre&gt;</p> 
+ <p>@XmlRootElement(name="Item")</p> 
+ <p>public class Item {</p> 
+ <p>private String item;</p> 
+ <p>private boolean needData;</p> 
+ <p>private List&lt;Book&gt; books;</p> 
+ <p>&nbsp;</p> 
+ <p>@XmlAttribute(name = "item")</p> 
+ <p>public String getItem() {</p> 
+ <p>return item;</p> 
+ <p>}</p> 
+ <p>public void setItem(String item) {</p> 
+ <p>this.item = item;</p> 
+ <p>}</p> 
+ <p>&nbsp;</p> 
+ <p>@XmlAttribute(name = "needData")</p> 
+ <p>public boolean isNeedData() {</p> 
+ <p>return needData;</p> 
+ <p>}</p> 
+ <p>public void setNeedData(boolean needData) {</p> 
+ <p>this.needData = needData;</p> 
+ <p>}</p> 
+ <p>&nbsp;</p> 
+ <p>@XmlElements(value = { @XmlElement(name = "Book", type = Book.class) })</p> 
+ <p>public List&lt;Book&gt; getBooks() {</p> 
+ <p>return books;</p> 
+ <p>}</p> 
+ <p>public void setBooks(List&lt;Book&gt; books) {</p> 
+ <p>this.books = books;</p> 
+ <p>}</p> 
+ <p>}</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>@XmlRootElement(name="Book")</p> 
+ <p>public class Book {</p> 
+ <p>&nbsp;</p> 
+ <p>private String name;</p> 
+ <p>&nbsp;</p> 
+ <p>@XmlAttribute(name = "name")</p> 
+ <p>public String getName() {</p> 
+ <p>return name;</p> 
+ <p>}</p> 
+ <p>&nbsp;</p> 
+ <p>public void setName(String name) {</p> 
+ <p>this.name = name;</p> 
+ <p>}</p> 
+ <p>}</p> 
+ <p>&lt;/pre&gt;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>jaxb代码</p> 
+ <p>&lt;pre&gt;</p> 
+ <p>&nbsp; &nbsp; private static &lt;T&gt; List&lt;T&gt; unmarshal(javax.xml.bind.Unmarshaller unmarshaller,</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Class&lt;T&gt; clazz, String xmlLocation) throws JAXBException {</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; StreamSource xml = new StreamSource(xmlLocation);</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; Wrapper&lt;T&gt; wrapper = (Wrapper&lt;T&gt;) unmarshaller.unmarshal(xml,</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Wrapper.class).getValue();</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; return wrapper.getItems();</p> 
+ <p>&nbsp; &nbsp; }</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>public static &nbsp;&lt;T&gt; List parseXmlToList(Class&lt;T&gt; topLevelClass, String xmlLocation) throws Exception {</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; JAXBContext jc = JAXBContext.newInstance(Wrapper.class,topLevelClass);</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; // Unmarshal</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; Unmarshaller unmarshaller = jc.createUnmarshaller();</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; List&lt;T&gt; list = unmarshal(unmarshaller, topLevelClass, xmlLocation);</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; return list;</p> 
+ <p>}</p> 
+ <p>&lt;/pre&gt;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>最后是客户端代码</p> 
+ <p>&lt;pre&gt;</p> 
+ <p>List&lt;Item&gt; addresses = parseXmlToList(Item.class, "WardCheck.xml");</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println(addresses);</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println(addresses.get(0).getItem());</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; List&lt;Book&gt; list = addresses.get(0).getBooks();</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println(list.size());</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; System.out.println(addresses.get(0).getBooks().get(0).getName());</p> 
+ <p>&lt;/pre&gt;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>来自link http://blog.bdoughan.com/2012/11/creating-generic-list-wrapper-in-jaxb.html</p> 
+</div>

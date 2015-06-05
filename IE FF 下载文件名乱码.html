@@ -1,0 +1,24 @@
+<pre name="code" class="java">filename=java.net.URLEncoder.encode("人员" + new Date(System.currentTimeMillis())+ ".xls", "UTF-8"); 
+        
+        response.setHeader("Content-Type", "application/octet-stream");
+        response.setHeader("Connection", "close");
+        response.setHeader("Content-Disposition", "attachment;filename=" + filename );</pre> 
+<p>上面是 IE</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>FF 的话</p> 
+<p>filename=new String(filename.getBytes("UTF-8"),"ISO8859-1");</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>判断IE ＦＦ</p> 
+<pre name="code" class="java">String agent = request.getHeader("USER-AGENT");
+if (null != agent &amp;&amp; -1 != agent.indexOf("MSIE")){
+
+}
+else if (null != agent &amp;&amp; -1 != agent.indexOf("Mozilla")){    
+
+}
+
+
+
+</pre> &nbsp;

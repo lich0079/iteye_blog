@@ -1,0 +1,112 @@
+<div class="iteye-blog-content-contain" style="font-size: 14px;"> 
+ <p>&nbsp; &nbsp;<span style="font-family: monospace; line-height: 1.5; background-color: #fafafa;">dgrid之Grid集成分页 后台rest service</span></p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <pre class="java" name="code">
+前台代码
+
+&lt;script type="text/javascript"&gt;
+define.amd.jQuery = true;
+
+require([
+        "jquery",
+        "dstore/Rest", "dstore/Cache", "dstore/Trackable",
+        "dojo/_base/lang",
+        'dgrid/extensions/Pagination',
+        "dgrid/Grid",
+        "dojo/dom-construct",
+        "dojo/dom-class",
+        "dojo/on",
+        "dstore/RequestMemory",
+        'dojo/_base/declare',
+         "dojo/request",
+         "dijit/form/Button", "dojo/io-query", "dojo/parser",
+         "dojo/domReady!"
+     ], function(jquery,  Rest, Cache, Trackable, lang, Pagination, Grid, domConstruct, domClass, on, RequestMemory, declare, request, Button, ioQuery){
+ 
+	
+    function createStore(config){
+        testStore = new declare([ Rest, Cache, Trackable ])(lang.mixin({
+            target:"listjson.do"
+        }, config));
+    }
+    createStore();
+    
+    getColumns2 = function(){
+        return  [
+                 { label: 'No.', field: 'id',
+                     formatter: function (value,obj) {
+                         return '&lt;span style="color:#0078C1" /&gt;'+value+'&lt;/span&gt;';
+                     }},
+                 { label: ' Name', field: 'name'},
+                 { label: 'Gender', field: 'gender'},
+                 { label: 'Age', field: 'age'},
+                 { label: 'type', field: 'type'
+             ];
+    };
+    
+    var CustomGrid = declare([Grid, Pagination]);
+    
+    var dgrid = new CustomGrid({
+        className: "dgrid-autoheight",
+        collection: testStore,
+        columns: getColumns2(),
+        pagingLinks: true,
+        pagingTextBox:false,
+        firstLastArrows: false,
+        previousNextArrows: false,
+        showLoadingMessage: true,
+        rowsPerPage: 7
+    }, "dgrid");
+         
+     });
+     
+
+&lt;/script&gt;
+
+
+
+&lt;div style="padding:17px 17px; width:1024px;" &gt;
+   &lt;div id="dgrid" &gt;&lt;/div&gt;
+&lt;/div&gt;
+
+
+
+后台代码
+
+
+    @RequestMapping(method = RequestMethod.GET, value = "listjson")
+    public @ResponseBody HttpEntity listjson(HttpServletRequest request) {
+        Enumeration&lt;String&gt; names=request.getParameterNames();
+        String limit = null;
+        while(names.hasMoreElements()){
+            String name = names.nextElement();
+            if(name.startsWith("limit")){
+                limit = name;
+            }
+        }
+        String limitNum = limit.substring(6, limit.length()-1);
+        
+        int offset = 0;
+        int pageSize = 0;
+        if(limitNum.contains(",")){
+            String[] pageinfo =   limitNum.split(",");
+            pageSize = Integer.parseInt(pageinfo[0]);
+            offset = Integer.parseInt(pageinfo[1]);
+        }else{
+            pageSize = Integer.parseInt(limitNum);
+        }
+        
+
+        int total = count();
+        int start = offset/pageSize +1;
+        int page = offset/pageSize + 1 ;
+        List list = getList(pageSize, page);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add( "Content-Range" , "items "+start+"-"+offset+"/"+total);
+        return new HttpEntity&lt;List&lt;User&gt;&gt;(list,headers);
+
+    }</pre> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+</div>

@@ -1,0 +1,23 @@
+<pre name="code" class="java">function closewindow(){
+	if(window.opener){
+		window.opener.location.reload(true);
+		window.close();
+	}
+}
+非模态 刷新由打开的子窗口来控制关闭 
+------------
+function closewindow(){
+	window.returnValue = true;
+	window.close();
+}
+
+function del(url,info){
+	if(openDeleteDialog(url,info)){
+		window.location.reload(true);
+	}
+}
+模态    子窗口无法对父窗口操作 ，只能返回一个值返回给父窗口，由父窗口自己刷新
+------------------------
+&lt;a href="#" onclick="openWin('org.do?method=addInput&amp;parentId=${orgForm.parentId  }','addOrg',600,200);"&gt;
+href="#" 链接不会在当前窗口打开一片白</pre> 
+<p>&nbsp;</p>

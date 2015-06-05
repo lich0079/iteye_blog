@@ -1,0 +1,15 @@
+<p>在shell编程中我们可以通过$1拿到参数&nbsp;</p> 
+<p>如 &nbsp; &nbsp;./myscript.sh &nbsp; aaaa</p> 
+<p>这时 &nbsp;$1 就是 &nbsp;aaaa</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>但假如我们想拿到通道给我们的标准输入呢？</p> 
+<p>如 &nbsp; &nbsp;ls -l &nbsp;| &nbsp;./myscript.sh &nbsp; 想拿到 ls -l 的输出呢</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>这时可以这样</p> 
+<p> </p> 
+<pre class="java" name="code">while read inputline
+do
+  echo input  = $inputline 
+done </pre> &nbsp;

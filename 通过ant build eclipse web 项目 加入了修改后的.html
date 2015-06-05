@@ -1,0 +1,270 @@
+<p>build.xml</p> 
+<pre class="java" name="code">&lt;project name="Generic Webapp" default="deploy_tomcat" basedir="."&gt;
+
+    &lt;!-- Load properties --&gt;
+    &lt;property file="build.properties" /&gt;
+
+    &lt;!-- Ensure that specified environment is valid --&gt;
+    &lt;fileset dir="${JAVA_HOME}" /&gt;
+    &lt;fileset dir="${J2EE_HOME}" /&gt;
+
+
+    &lt;property name="webapp.name" value="${project_name}" /&gt;
+    &lt;property name="webapp.src" value="src" /&gt;
+    &lt;property name="webapp.webroot" value="WebRoot" /&gt;
+    &lt;property name="webapp.dist" value="dist" /&gt;
+    &lt;property name="webapp.target" value="build" /&gt;
+    &lt;property name="webapp.war" value="${webapp.name}.war" /&gt;
+
+
+    &lt;path id="classpath"&gt;
+        &lt;fileset dir="${webapp.target}/WEB-INF/lib"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;!-- 3rd party Jars --&gt;
+        &lt;fileset dir="${JAVA_HOME}"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;fileset dir="${J2EE_HOME}"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+    &lt;/path&gt;
+
+    &lt;target name="compile" description="Compile Java sources" depends="clean"&gt;
+        &lt;echo message="compile ${webapp.name}" /&gt;
+        &lt;mkdir dir="${webapp.target}/WEB-INF/lib" /&gt;
+        &lt;mkdir dir="${webapp.target}/WEB-INF/classes" /&gt;
+        &lt;copy todir="${webapp.target}" overwrite="yes"&gt;
+            &lt;fileset dir="${webapp.webroot}"&gt;
+                &lt;exclude name="**/*.class" /&gt;
+            &lt;/fileset&gt;
+        &lt;/copy&gt;
+        &lt;javac srcdir="${webapp.src}"
+               destdir="${webapp.target}/WEB-INF/classes"
+               debug="${compile.debug}"
+               encoding="${compile.encoding}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"&gt;
+            &lt;classpath refid="classpath" /&gt;
+        &lt;/javac&gt;
+    &lt;/target&gt;
+
+    &lt;target name="dist" depends="compile" description="Create web application archive"&gt;
+        &lt;echo message="Processing webapp ${webapp.name}" /&gt;
+        &lt;mkdir dir="${webapp.dist}" /&gt;
+        &lt;jar jarfile="${webapp.dist}/${webapp.war}" basedir="${webapp.target}" /&gt;
+    &lt;/target&gt;
+
+
+    &lt;target name="clean" description="Clean build and distribution directories"&gt;
+        &lt;echo message="Processing webapp ${webapp.name}" /&gt;
+        &lt;delete dir="${webapp.target}" /&gt;
+        &lt;delete file="${webapp.dist}/${webapp.war}" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="deploy_tomcat" depends="dist" description="deploy to the server"&gt;
+        &lt;echo message="deploy to the server ${tomcat_home}/webapps/${webapp.war}" /&gt;
+        &lt;copy file="${webapp.dist}/${webapp.war}" tofile="${tomcat_home}/webapps/${webapp.war}" overwrite="yes" /&gt;
+        &lt;delete dir="${webapp.target}" /&gt;
+    &lt;/target&gt;
+&lt;/project&gt;</pre> 
+<p>&nbsp;</p> 
+<p>build.properties</p> 
+<pre class="java" name="code">J2EE_HOME=..
+JAVA_HOME=..
+project_name=..
+tomcat_home=..
+
+compile.debug=false
+compile.deprecation=false
+compile.encoding=GBK
+compile.optimize=true</pre> 
+<p>&nbsp;</p> 
+<p>上面的版本不能copy资源文件至war包 &nbsp;加个fix后的</p> 
+<p> </p> 
+<pre class="xml" name="code">&lt;project name="Generic Webapp" default="war" basedir="."&gt;
+
+    &lt;!-- Load properties --&gt;
+    &lt;property file="build.properties" /&gt;
+
+    &lt;property name="webapp.name" value="${project_name}" /&gt;
+    &lt;property name="webapp.src" value="src" /&gt;
+    &lt;property name="webapp.webroot" value="WebRoot" /&gt;
+    &lt;property name="webapp.dist" value="dist" /&gt;
+    &lt;property name="webapp.target" value="build" /&gt;
+    &lt;property name="webapp.war" value="${webapp.name}.war" /&gt;
+
+
+    &lt;path id="classpath"&gt;
+        &lt;fileset dir="${webapp.target}/WEB-INF/lib"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;fileset dir="./compile_jar"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+    &lt;/path&gt;
+
+    &lt;target name="compile" description="Compile Java sources" depends="clean"&gt;
+        &lt;echo message="compile ${webapp.name}" /&gt;
+        &lt;copy todir="${webapp.target}" overwrite="yes"&gt;
+            &lt;fileset dir="${webapp.webroot}"&gt;
+                &lt;exclude name="**/*.class" /&gt;
+            &lt;/fileset&gt;
+        &lt;/copy&gt;
+        &lt;delete dir="${webapp.target}/WEB-INF/classes" /&gt;
+        &lt;mkdir dir="${webapp.target}/WEB-INF/classes" /&gt;
+       &lt;javac srcdir="${webapp.src}"
+               destdir="${webapp.target}/WEB-INF/classes"
+               debug="${compile.debug}"
+               encoding="${compile.encoding}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"&gt;
+            &lt;classpath refid="classpath" /&gt;
+        &lt;/javac&gt;
+        &lt;copy todir="${webapp.target}/WEB-INF/classes" overwrite="true"&gt;
+             &lt;fileset dir="${webapp.src}"&gt;
+                 &lt;include name="**/*"/&gt;
+                 &lt;exclude name="**/*.java"/&gt;
+                &lt;exclude name="**/*.jar"/&gt;
+                &lt;exclude name="**/*.class"/&gt;
+             &lt;/fileset&gt;
+         &lt;/copy&gt;
+    &lt;/target&gt;
+
+    &lt;target name="war" depends="compile" description="Create web application archive"&gt;
+        &lt;echo message="create webapp ${webapp.name}" /&gt;
+        &lt;mkdir dir="${webapp.dist}" /&gt;
+        &lt;jar jarfile="${webapp.dist}/${webapp.war}" basedir="${webapp.target}" /&gt;
+        &lt;echo message="create src jar" /&gt;
+         &lt;jar jarfile="${webapp.dist}/${project_name}.jar"&gt;
+             &lt;fileset dir="${webapp.target}/WEB-INF/classes"
+                 excludes="**/*.jar"
+             /&gt;
+         &lt;/jar&gt;
+        &lt;echo message="copy scheduler-service.xml for jboss scheduler" /&gt;
+        &lt;copy file="./config/scheduler-service.xml" tofile="${webapp.dist}/scheduler-service.xml" overwrite="yes" /&gt; 
+    &lt;/target&gt;
+
+
+    &lt;target name="clean" description="Clean build and distribution directories"&gt;
+        &lt;echo message="clean ${webapp.target}, ${webapp.dist}/${webapp.war}, ${webapp.dist}/${project_name}.jar " /&gt;
+        &lt;delete dir="${webapp.target}" /&gt;
+		&lt;delete file="${webapp.dist}/${webapp.war}" /&gt;
+		&lt;delete file="${webapp.dist}/${project_name}.jar" /&gt;
+    &lt;/target&gt;
+
+&lt;/project&gt;
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>修改后的&nbsp; 可以自动部署至tomcat 并启动tomcat</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;project name="Generic Webapp" default="tomcat_start" basedir="."&gt;
+    &lt;!-- Load properties --&gt;
+    &lt;property file="build.properties" /&gt;
+
+    &lt;!-- Ensure that specified environment is valid --&gt;
+    &lt;fileset dir="${JAVA_HOME}" /&gt;
+    &lt;fileset dir="${J2EE_HOME}" /&gt;
+
+
+    &lt;property name="webapp.name" value="${project_name}" /&gt;
+    &lt;property name="webapp.src" value="${basedir}/src" /&gt;
+    &lt;property name="webapp.webroot" value="${basedir}/WebRoot" /&gt;
+    &lt;property name="webapp.dist" value="${basedir}/dist" /&gt;
+    &lt;property name="webapp.target" value="${basedir}/build" /&gt;
+    &lt;property name="webapp.war" value="${webapp.name}.war" /&gt;
+
+
+    &lt;path id="classpath"&gt;
+        &lt;fileset dir="${webapp.target}/WEB-INF/lib"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;!-- 3rd party Jars --&gt;
+        &lt;fileset dir="${JAVA_HOME}"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;fileset dir="${J2EE_HOME}"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+    &lt;/path&gt;
+
+    &lt;target name="copy" description="copy libs and webcontent" depends="clean_project"&gt;
+        &lt;echo message="copy files from ${webapp.webroot} to ${webapp.target} without *.class" /&gt;
+        &lt;mkdir dir="${webapp.target}/WEB-INF/lib" /&gt;
+        &lt;mkdir dir="${webapp.target}/WEB-INF/classes" /&gt;
+        &lt;copy todir="${webapp.target}" overwrite="yes"&gt;
+            &lt;fileset dir="${webapp.webroot}"&gt;
+                &lt;exclude name="**/*.class" /&gt;
+            &lt;/fileset&gt;
+        &lt;/copy&gt;
+    &lt;/target&gt;
+
+    &lt;target name="compile" description="Compile Java sources" depends="copy"&gt;
+        &lt;echo message="compile src in ${webapp.src} to ${webapp.target}/WEB-INF/classes" /&gt;
+        &lt;javac srcdir="${webapp.src}"
+               destdir="${webapp.target}/WEB-INF/classes"
+               debug="${compile.debug}"
+               encoding="${compile.encoding}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"&gt;
+            &lt;classpath refid="classpath" /&gt;
+        &lt;/javac&gt;
+    &lt;/target&gt;
+
+    &lt;target name="dist" depends="compile" description="Create web application archive"&gt;
+        &lt;echo message="Processing webapp ${webapp.name}" /&gt;
+        &lt;mkdir dir="${webapp.dist}" /&gt;
+        &lt;jar jarfile="${webapp.dist}/${webapp.war}" basedir="${webapp.target}" /&gt;
+        &lt;delete dir="${webapp.target}" /&gt;
+    &lt;/target&gt;
+
+
+    &lt;target name="clean_project" description="Clean build and distribution directories"&gt;
+        &lt;echo message="Clean build and distribution directories" /&gt;
+        &lt;echo message="Clean ${webapp.target}" /&gt;
+        &lt;delete dir="${webapp.target}" /&gt;
+        &lt;echo message="Clean ${webapp.dist}/${webapp.war}" /&gt;
+        &lt;delete file="${webapp.dist}/${webapp.war}" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="clean_tomcat" depends="tomcat_stop" description="Clean tomcat webapp"&gt;
+        &lt;echo message="Clean tomcat webapp" /&gt;
+        &lt;delete file="${tomcat_home}/webapps/${webapp.war}" /&gt;
+        &lt;delete dir="${tomcat_home}/webapps/${webapp.name}" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="deploy_tomcat" depends="clean_tomcat,dist" description="deploy to the server"&gt;
+        &lt;echo message="deploy to the server ${tomcat_home}/webapps/${webapp.war}" /&gt;
+        &lt;copy file="${webapp.dist}/${webapp.war}" tofile="${tomcat_home}/webapps/${webapp.war}" overwrite="yes" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="tomcat_start" depends="deploy_tomcat" description="tomcat starting....."&gt;
+        &lt;echo message="start tomcat" /&gt;
+        &lt;!--&lt;java jar="${tomcat_home}/bin/bootstrap.jar" fork="true"&gt;
+            &lt;jvmarg value="-Dcatalina.home=${tomcat_home}" /&gt;
+        &lt;/java&gt;--&gt;
+        &lt;exec dir="${tomcat_home}/bin" executable="cmd.exe" spawn="true" vmlauncher="false"&gt;
+            &lt;arg line="/c startup.bat" /&gt;
+        &lt;/exec&gt;
+    &lt;/target&gt;
+
+    &lt;target name="tomcat_stop"&gt;
+        &lt;echo message="stopping tomcat ..." /&gt;
+        &lt;java jar="${tomcat_home}/bin/bootstrap.jar" fork="true"&gt;
+            &lt;jvmarg value="-Dcatalina.home=${tomcat_home}" /&gt;
+            &lt;arg line="stop" /&gt;
+        &lt;/java&gt;
+        &lt;!--&lt;exec dir="${tomcat_home}/bin" executable="cmd.exe" spawn="true" vmlauncher="false"&gt;
+                    &lt;arg line="/c shutdown.bat" /&gt;
+                &lt;/exec&gt;--&gt;
+        &lt;echo message="wait for 5 second" /&gt;
+        &lt;waitfor maxwait="5" maxwaitunit="second"&gt;
+            &lt;available file="errors.log" /&gt;
+        &lt;/waitfor&gt;
+    &lt;/target&gt;
+&lt;/project&gt;</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

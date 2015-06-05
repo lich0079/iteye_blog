@@ -1,0 +1,444 @@
+<pre class="java" name="code">public enum Dimension implements Serializable, IntegerValuedEnum {
+    LARGE(234, 60, 0), SMALL(125, 125, 1);
+
+    private final int width;
+    private final int height;
+    private final int code;
+
+    private Dimension(int width, int height, int code) {
+        this.width = width;
+        this.height = height;
+        this.code = code;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public int getCode() {
+        return code;
+    }
+
+    public String getDisplay() {
+        return "" + this.width + "*" + this.height;
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">public class IntegerValuedEnumType&lt;T extends Enum &amp; IntegerValuedEnum&gt; implements
+        EnhancedUserType, ParameterizedType {
+
+    /**
+     * Enum class for this particular user type.
+     */
+    private Class&lt;T&gt; enumClass;
+
+    /**
+     * Value to use if null.
+     */
+    private Integer defaultValue;
+
+    public IntegerValuedEnumType() { }
+
+    public void setParameterValues(Properties parameters) {
+        String enumClassName = parameters.getProperty("enum");
+        try {
+            enumClass = (Class&lt;T&gt;) Class.forName(enumClassName).asSubclass(Enum.class)
+                    .asSubclass(IntegerValuedEnum.class); 
+        } catch (ClassNotFoundException e) {
+            throw new HibernateException("Enum class not found", e);
+        }
+        
+        String defaultValueStr = parameters.getProperty("defaultValue");
+        if (defaultValueStr != null &amp;&amp; !defaultValueStr.isEmpty()) {
+            try {
+                setDefaultValue(Integer.parseInt(defaultValueStr));
+            } catch (NumberFormatException e) {
+                throw new HibernateException("Invalid default value", e);
+            }
+        }
+    }
+
+    public Integer getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(Integer defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    /**
+     * The class returned by &lt;tt&gt;nullSafeGet()&lt;/tt&gt;.
+     * 
+     * @return Class
+     */
+    public Class returnedClass() {
+        return enumClass;
+    }
+
+    public int[] sqlTypes() {
+        return new int[] { Types.TINYINT };
+    }
+
+    public boolean isMutable() {
+        return false;
+    }
+
+    /**
+     * Retrieve an instance of the mapped class from a JDBC resultset.
+     * Implementors should handle possibility of null values.
+     * 
+     * @param rs         a JDBC result set
+     * @param names     the column names
+     * @param owner     the containing entity
+     * @return Object
+     * @throws HibernateException
+     * @throws SQLException
+     */
+    public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
+        throws SQLException {
+        
+        Integer value = rs.getInt(names[0]);
+        if (value == null) {
+            value = getDefaultValue();
+            if (value == null) { // no default value
+                return null;
+            }
+        }
+        String name = IntegerValuedEnumReflect.getNameFromValue(enumClass, value);
+        if (rs.wasNull() || name == null || name.isEmpty()) {
+        	return null;
+        } else {
+        	return Enum.valueOf(enumClass, name);
+        }
+    }
+
+    /**
+     * Write an instance of the mapped class to a prepared statement.
+     * Implementors should handle possibility of null values. A multi-column
+     * type should be written to parameters starting from &lt;tt&gt;index&lt;/tt&gt;.
+     * 
+     * @param st        a JDBC prepared statement
+     * @param value        the object to write
+     * @param index        statement parameter index
+     * @throws HibernateException
+     * @throws SQLException
+     */
+    public void nullSafeSet(PreparedStatement st, Object value, int index)
+        throws SQLException {
+        
+        if (value == null) {
+            st.setNull(index, Types.TINYINT);
+        } else {
+            st.setInt(index, ((T) value).getCode());
+        }
+    }
+
+    public Object assemble(Serializable cached, Object owner) {
+        return cached;
+    }
+
+    public Serializable disassemble(Object value) {
+        return (Enum) value;
+    }
+
+    public Object deepCopy(Object value) {
+        return value;
+    }
+
+    public boolean equals(Object x, Object y) {
+        return x == y;
+    }
+
+    public int hashCode(Object x) {
+        return x.hashCode();
+    }
+
+    public Object replace(Object original, Object target, Object owner) {
+        return original;
+    }
+
+    public String objectToSQLString(Object value) {
+        return '\'' + String.valueOf(((T) value).getCode()) + '\'';
+    }
+
+    public String toXMLString(Object value) {
+        return String.valueOf(((T) value).getCode());
+    }
+
+    public Object fromXMLString(String xmlValue) {
+        Integer value = Integer.parseInt(xmlValue);
+        String name = IntegerValuedEnumReflect.getNameFromValue(enumClass, value);
+        if (name == null || name.isEmpty()) {
+        	return null;
+        } else {
+        	return Enum.valueOf(enumClass, name);
+        }
+    }
+}</pre> &nbsp; 
+<pre class="java" name="code">public final class IntegerValuedEnumReflect {
+
+    /**
+     * Don't let anyone instantiate this class.
+     * 
+     * @throws UnsupportedOperationException
+     *             Always.
+     */
+    private IntegerValuedEnumReflect() {
+        throw new UnsupportedOperationException("This class must not be instanciated.");
+    }
+
+    /**
+     * All Enum constants (instances) declared in the specified class.
+     * 
+     * @param enumClass        Class to reflect
+     * @return Array of all declared EnumConstants (instances).
+     */
+    private static &lt;T extends Enum&gt; T[] getValues(Class&lt;T&gt; enumClass) {
+        return enumClass.getEnumConstants();
+    }
+
+    /**
+     * All possible string values of the string valued enum.
+     * 
+     * @param enumClass        Class to reflect.
+     * @return Available integer values.
+     */
+    public static &lt;T extends Enum &amp; IntegerValuedEnum&gt; int[] getStringValues(
+            Class&lt;T&gt; enumClass) {
+        T[] values = getValues(enumClass);
+        int[] result = new int[values.length];
+        for (int i = 0; i &lt; values.length; i++) {
+            result[i] = values[i].getCode();
+        }
+        return result;
+    }
+
+    /**
+     * Name of the enum instance which hold the respecified string value. If
+     * value has duplicate enum instances than returns the first occurrence.
+     * 
+     * @param enumClass        Class to inspect.
+     * @param value            The int value.
+     * @return name of the enum instance.
+     */
+    public static &lt;T extends Enum &amp; IntegerValuedEnum&gt; String getNameFromValue(
+            Class&lt;T&gt; enumClass, int value) {
+        T[] values = getValues(enumClass);
+        for (int i = 0; i &lt; values.length; i++) {
+            if (values[i].getCode() == value) {
+                return values[i].name();
+            }
+        }
+        return null;
+    }
+}
+</pre> &nbsp; 
+<pre class="java" name="code">public class IntegerValuedEnumSetType&lt;T extends Enum&lt;T&gt; &amp; IntegerValuedEnum&gt; implements
+        EnhancedUserType, ParameterizedType {
+
+    /**
+     * Enum class for this particular user type.
+     */
+    private Class&lt;T&gt; enumClass;
+
+    public IntegerValuedEnumSetType() { }
+
+    public void setParameterValues(Properties parameters) {
+        String enumClassName = parameters.getProperty("enum");
+        try {
+            enumClass = (Class&lt;T&gt;) Class.forName(enumClassName).asSubclass(Enum.class)
+                    .asSubclass(IntegerValuedEnum.class); 
+        } catch (ClassNotFoundException e) {
+            throw new HibernateException("Enum class not found", e);
+        }
+    }
+
+    /**
+     * The class returned by &lt;tt&gt;nullSafeGet()&lt;/tt&gt;.
+     * 
+     * @return Class
+     */
+    public Class returnedClass() {
+        return enumClass;
+    }
+
+    public int[] sqlTypes() {
+        return new int[] { Types.TINYINT };
+    }
+
+    public boolean isMutable() {
+        return false;
+    }
+
+    /**
+     * Retrieve an instance of the mapped class from a JDBC resultset.
+     * Implementors should handle possibility of null values.
+     * 
+     * @param rs         a JDBC result set
+     * @param names     the column names
+     * @param owner     the containing entity
+     * @return Object
+     * @throws HibernateException
+     * @throws SQLException
+     */
+    public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
+        throws SQLException {
+        
+        Integer value = rs.getInt(names[0]);
+        if (value == null) {
+            return null;
+        }
+
+        return decode(value);
+    }
+
+    /**
+     * Write an instance of the mapped class to a prepared statement.
+     * Implementors should handle possibility of null values. A multi-column
+     * type should be written to parameters starting from &lt;tt&gt;index&lt;/tt&gt;.
+     * 
+     * @param st        a JDBC prepared statement
+     * @param value        the object to write
+     * @param index        statement parameter index
+     * @throws HibernateException
+     * @throws SQLException
+     */
+    public void nullSafeSet(PreparedStatement st, Object value, int index)
+        throws SQLException {
+        
+        if (value == null) {
+            st.setNull(index, Types.TINYINT);
+        } else {
+            st.setInt(index, encode((EnumSet&lt;T&gt;)value));
+        }
+    }
+
+    public Object assemble(Serializable cached, Object owner) {
+        return cached;
+    }
+
+    public Serializable disassemble(Object value) {
+        return (Enum) value;
+    }
+
+    public Object deepCopy(Object value) {
+        return value;
+    }
+
+    public boolean equals(Object x, Object y) {
+        return x == y;
+    }
+
+    public int hashCode(Object x) {
+        return x.hashCode();
+    }
+
+    public Object replace(Object original, Object target, Object owner) {
+        return original;
+    }
+
+    public String objectToSQLString(Object value) {
+        return '\'' + String.valueOf(encode((EnumSet&lt;T&gt;)value)) + '\'';
+    }
+
+    public String toXMLString(Object value) {
+        return String.valueOf(encode((EnumSet&lt;T&gt;)value));
+    }
+
+    public Object fromXMLString(String xmlValue) {
+    	try {
+    		Integer value = Integer.parseInt(xmlValue);
+    		return decode(value);
+    	} catch (NumberFormatException e) {
+    		return EnumSet.noneOf(enumClass);
+    	}
+        
+    }
+    
+    /*
+     * Encode the EnumSet into an integer based on bit on/off
+     */
+    private int encode(EnumSet&lt;T&gt; set) {
+        int ret = 0;
+        for (T val : set) {
+            ret |= 1 &lt;&lt; val.getCode();
+        }
+        return ret;
+    }
+
+    /*
+     * Decode the integer back to a EnumSet based on bit on/off
+     */
+    private EnumSet&lt;T&gt; decode(int code) {
+		Map&lt;Integer, T&gt; codeMap = new HashMap&lt;Integer, T&gt;();
+		for (T val : EnumSet.allOf(enumClass)) {
+			codeMap.put(val.getCode(), val);
+		}
+    	  
+        EnumSet&lt;T&gt; result = EnumSet.noneOf(enumClass);
+        while (code != 0) {
+            int ordinal = Integer.numberOfTrailingZeros(code);
+            code ^= Integer.lowestOneBit(code);
+            result.add(codeMap.get(ordinal));
+        }
+        return result;
+    }
+}</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>public interface IntegerValuedEnum {&nbsp;&nbsp;&nbsp; <br> &nbsp;&nbsp;&nbsp; <br> &nbsp;&nbsp;&nbsp; /**<br> &nbsp;&nbsp;&nbsp;&nbsp; * Current int value stored in the enum.<br> &nbsp;&nbsp;&nbsp;&nbsp; * @return int value.<br> &nbsp;&nbsp;&nbsp;&nbsp; */<br> &nbsp;&nbsp;&nbsp; int getCode();<br> &nbsp;&nbsp;&nbsp; <br> }</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>maping.xml</p> 
+<pre class="java" name="code">&lt;property name="dimension" column="DIMENSION"&gt;
+            &lt;type name="com.xxx.bbb.hibernate.IntegerValuedEnumType"&gt;
+                &lt;param name="enum"&gt;com.xxx.bbb.beans.Dimension&lt;/param&gt;
+            &lt;/type&gt;
+        &lt;/property&gt;</pre> 
+<p>&nbsp;存到数据库只是 0&nbsp; 1 2</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>转换器</p> 
+<pre class="java" name="code">public class DimensionConverter extends StrutsTypeConverter {
+
+    @Override
+    public Object convertFromString(Map arg0, String[] values, Class clazz) {
+        if (values != null &amp;&amp; values.length &gt; 0 &amp;&amp; values[0] != null
+                &amp;&amp; !values[0].isEmpty()) {
+            String value = values[0];
+            if (value.equals("0")) {
+                return Dimension.LARGE;
+            } else if (value.equals("1")) {
+                return Dimension.SMALL;
+            } 
+        }
+        return null;
+    }
+
+    @Override
+    public String convertToString(Map arg0, Object o) {
+        System.out.println(o.toString());
+        Dimension dimension = (Dimension) o;
+        return String.valueOf(dimension.getCode());
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>js</p> 
+<p>$("#dimensionSelect").val(${request.dimension.code});</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&lt;s:select id="dimensionSelect" name="dimension" list="#{@beans.Dimension@LARGE.code:@beans.Dimension@LARGE.display, @beans.Dimension@SMALL.code:@beans.Dimension@SMALL.display}" tabindex="4"/&gt;</p>

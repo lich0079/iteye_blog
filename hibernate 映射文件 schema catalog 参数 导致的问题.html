@@ -1,0 +1,12 @@
+<p>&lt;hibernate-mapping&gt;<br>&nbsp;&nbsp;&nbsp; &lt;class name="com.lich.User" table="t_user" schema="erp" catalog="ERP"&gt;</p> 
+<p>&nbsp;</p> 
+<p>假如你在hibernate映射文件中设置了 schema catalog这些参数 的话 </p> 
+<p>&nbsp;</p> 
+<p>那么即使你把总映射文件的</p> 
+<p>&lt;property name="hibernate.connection.url"&gt;<br>&nbsp;&nbsp;&nbsp;jdbc:jtds:sqlserver://localHost:1433/<span style="color: #ff0000;">ERP</span><br>&nbsp;&nbsp;&lt;/property&gt;</p> 
+<p>&nbsp;</p> 
+<p>改成</p> 
+<p>&nbsp;</p> 
+<p>&lt;property name="hibernate.connection.url"&gt;<br>&nbsp;&nbsp;&nbsp;jdbc:jtds:sqlserver://localHost:1433/<span style="color: #ff0000;">ERP2&nbsp;</span><br>&nbsp;&nbsp;&lt;/property&gt;&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>他仍然会去查找ERP库&nbsp; 所以最好不要设置</p>

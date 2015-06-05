@@ -1,0 +1,120 @@
+<p>&nbsp;</p> 
+<div class="module"> 
+ <div class="layout"> 
+  <div class="layoutregion"> 
+   <div> 
+    <p style="margin: 0px;">在mvn.bat中很有用的一段 说了可以设置哪些参数 怎么debug</p> 
+    <p style="margin: 0px;">&nbsp;</p> 
+    <pre class="java" name="code">@REM ----------------------------------------------------------------------------
+@REM Maven2 Start Up Batch script
+@REM
+@REM Required ENV vars:
+@REM JAVA_HOME - location of a JDK home dir
+@REM
+@REM Optional ENV vars
+@REM M2_HOME - location of maven2's installed home dir
+@REM MAVEN_BATCH_ECHO - set to 'on' to enable the echoing of the batch commands
+@REM MAVEN_BATCH_PAUSE - set to 'on' to wait for a key stroke before ending
+@REM MAVEN_OPTS - parameters passed to the Java VM when running Maven
+@REM     e.g. to debug Maven itself, use
+@REM set MAVEN_OPTS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+@REM ----------------------------------------------------------------------------</pre> &nbsp; 
+    <p style="margin: 0px;">&nbsp;</p> 
+    <p style="margin: 0px;">需要灵活的时候</p> 
+    <p style="margin: 0px;">&nbsp;</p> 
+    <pre><span style="color: #0000ff;">maven-artifact-ant</span></pre> 
+    <p>&nbsp;</p> 
+    <p style="margin: 0px;"><a href="http://www.gbsou.com/2009/11/19/1510.html">http://www.gbsou.com/2009/11/19/1510.html</a></p> 
+    <p style="margin: 0px;">&nbsp;</p> 
+    <p style="margin: 0px;"><span style="font-size: 14px; color: #383838; line-height: 24px; font-family: Arial, Helvetica, sans-serif;">maven-antrun-plugin</span></p> 
+    <p style="margin: 0px;"><a href="http://dev.firnow.com/course/3_program/java/javajs/20090306/158332.html">http://dev.firnow.com/course/3_program/java/javajs/20090306/158332.html</a></p> 
+    <p style="margin: 0px;"><a href="http://hi.baidu.com/yafengyouxia/blog/item/44dfb1a19c22ac8146106479.html">http://hi.baidu.com/yafengyouxia/blog/item/44dfb1a19c22ac8146106479.html</a></p> 
+    <p style="margin: 0px;">&nbsp;</p> 
+    <p style="margin: 0px;">=========================================</p> 
+    <p style="margin: 0px;">mvn help:effective-pom &nbsp;查看项目的有效配置</p> 
+    <p style="margin: 0px;">mvn dependency:analyze &nbsp;分析依赖</p> 
+    <p style="margin: 0px;"><span style="line-height: 18px; font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace;">mvn&nbsp;dependency:copy-dependencies &nbsp; copy 依赖jar</span></p> 
+    <p style="margin: 0px;">&nbsp;</p> 
+    <p style="margin: 0px;">国内的maven镜像，欢迎大家使用！<br>访问地址：<br>release镜像库访问地址：<a style="color: #0000cc;" href="http://58.20.54.58/content/groups/treleases">http://58.20.54.58/content/groups/treleases</a><br>snapshot镜像库访问地址：<a style="color: #0000cc;" href="http://58.20.54.58/content/groups/tsnapshots/">http://58.20.54.58/content/groups/tsnapshots/</a></p> 
+    <p style="margin: 0px;"><br>目前加入到镜像库的远程仓库有：<br>&nbsp;<a style="color: #0000cc;" href="http://svn.apache.org/repos/asf/servicemix/m2-repo">http://svn.apache.org/repos/asf/servicemix/m2-repo</a><br>&nbsp;<a style="color: #0000cc;" href="http://repository.apache.org/snapshots">http://repository.apache.org/snapshots</a><br>&nbsp;<a style="color: #0000cc;" href="https://repository.apache.org/content/groups/public">https://repository.apache.org/content/groups/public</a><br>&nbsp;<a style="color: #0000cc;" href="http://www.aqute.biz/repo/">http://www.aqute.biz/repo/</a><br>&nbsp;<a style="color: #0000cc;" href="http://snapshots.repository.codehaus.org/">http://snapshots.repository.codehaus.org/</a><br>&nbsp;<a style="color: #0000cc;" href="http://download.eclipse.org/rt/eclipselink/maven.repo">http://download.eclipse.org/rt/eclipselink/maven.repo</a><br>&nbsp;<a style="color: #0000cc;" href="http://el4.elca-services.ch/el4j/maven2repository">http://el4.elca-services.ch/el4j/maven2repository</a><br>&nbsp;<a style="color: #0000cc;" href="http://maven.glassfish.org/content/groups/glassfish">http://maven.glassfish.org/content/groups/glassfish</a><br>&nbsp;<a style="color: #0000cc;" href="http://repository.jboss.com/maven2">http://repository.jboss.com/maven2</a><br>&nbsp;<a style="color: #0000cc;" href="http://repo1.maven.org/maven2/">http://repo1.maven.org/maven2/</a><br>&nbsp;<a style="color: #0000cc;" href="http://maven.objectweb.org/maven2/">http://maven.objectweb.org/maven2/</a><br>&nbsp;<a style="color: #0000cc;" href="http://deadlock.netbeans.org/maven2">http://deadlock.netbeans.org/maven2</a><br>&nbsp;<a style="color: #0000cc;" href="http://maven.objectweb.org/maven2-snapshot">http://maven.objectweb.org/maven2-snapshot</a><br>&nbsp;<a style="color: #0000cc;" href="http://developer.ja-sig.org/maven2-snapshot">http://developer.ja-sig.org/maven2-snapshot</a></p> 
+    <p style="margin: 0px;"><br>如在使用中发现某些jar包不在此镜像中或想使用某个仓库请与我联系<br>我将即时将其加入到本镜像中<br>联系方式：<br><a style="color: #0000cc;" href="mailto:lsw_fly@hotmail.com">lsw_fly@hotmail.com</a></p> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<p>===============================================================</p> 
+<p><span>MVN:指定编译时的文字编码和语法级别</span></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p style="line-height: 24px; color: #383838; font-size: 14px; padding: 0px; margin: 0px;">方法1，</p> 
+<blockquote style="padding: 0px; margin: 0px;"> 
+ <p style="line-height: 24px; color: #383838; font-size: 14px; padding: 0px; margin: 0px;">&lt;build&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp; &lt;defaultGoal&gt;package&lt;/defaultGoal&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp; &lt;plugins&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp; &lt;plugin&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp;&nbsp; &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp;&nbsp; &lt;configuration&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp;&nbsp;&nbsp; &lt;source&gt;1.6&lt;/source&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp;&nbsp;&nbsp; &lt;target&gt;1.6&lt;/target&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp;&nbsp;&nbsp; &lt;encoding&gt;UTF-8&lt;/encoding&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp;&nbsp; &lt;/configuration&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp; &lt;/plugin&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp; &lt;/plugins&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&lt;/build&gt;</p> 
+</blockquote> 
+<p style="line-height: 24px; color: #383838; font-size: 14px; padding: 0px; margin: 0px;">方法2，</p> 
+<blockquote style="padding: 0px; margin: 0px;"> 
+ <p style="line-height: 24px; color: #383838; font-size: 14px; padding: 0px; margin: 0px;">&lt;properties&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp;&nbsp; &lt;maven.compiler.encoding&gt;UTF-8&lt;/maven.compiler.encoding&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp;&nbsp; &lt;maven.compiler.target&gt;1.6&lt;/maven.compiler.target&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&nbsp;&nbsp;&nbsp; &lt;maven.compiler.source&gt;1.6&lt;/maven.compiler.source&gt;&nbsp;<br style="padding: 0px; margin: 0px;">&lt;/properties&gt;</p> 
+</blockquote> 
+<p>&nbsp;</p> 
+<p>忽略单元测试失败：</p> 
+<p>&lt;build&gt;<br>&nbsp;&nbsp;&nbsp; &lt;plugins&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;plugin&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;configuration&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;testFailureIgnore&gt;true&lt;/testFailureIgnore&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/configuration&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/plugin&gt;<br>&nbsp;&nbsp;&nbsp; &lt;/plugins&gt;<br>&lt;/build&gt;</p> 
+<p>&nbsp;</p> 
+<p>跳过单元测试：</p> 
+<p>&lt;build&gt;<br>&nbsp;&nbsp;&nbsp; &lt;plugins&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;plugin&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;configuration&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;skip&gt;true&lt;/skip&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/configuration&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/plugin&gt;<br>&nbsp;&nbsp;&nbsp; &lt;/plugins&gt;<br>&lt;/build&gt;</p> 
+<p>为自定义JSP标签添加JSP 2.0规格说明：</p> 
+<p>&lt;dependency&gt;<br>&nbsp;&nbsp;&nbsp; &lt;groupId&gt;org.apache.geronimo.specs&lt;/groupId&gt;<br>&nbsp;&nbsp;&nbsp; &lt;artifactId&gt;geronimo-jsp_2.0_spec&lt;/artifactId&gt;<br>&nbsp;&nbsp;&nbsp; &lt;version&gt;1.1&lt;/version&gt;<br>&nbsp;&nbsp;&nbsp; &lt;scope&gt;provided&lt;/scope&gt;<br>&lt;/dependency&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>管理依赖 </p> 
+<p class="lurs2"><span>在</span> <span>pom</span> <span>中指明</span> <span><span class="hilite1"><span style="background-color: #ffff00;">dependency</span></span> <span class="hilite2"><span style="background-color: #55ff55;">management</span></span> </span><span>元素的方式</span> <span>maven</span> <span>结合项目继承来管理依赖。在多模块应用中，可能多个子项目会有共同的依赖。此时为了正确运行，必须让所有的子项目使用依赖项的同一版本。必须确保应用的各个项目的依赖项和版本一致，才能保证测试的和发布的是相同的成果。因此，应在顶层的</span> <span>pom</span> <span>中定义共同的依赖关系。</span> </p> 
+<p>&nbsp;</p> 
+<p class="lurs2"><span>顶层</span> <span>pom</span> <span>中的</span> <span><span class="hilite3"><span style="background-color: #aaffaa;">dependencies</span></span> </span><span>与</span> <span>dependencyManagement</span> <span>中的</span> <span><span class="hilite3"><span style="background-color: #aaffaa;">dependencies</span></span> </span><span>元素有一个重要的区别：</span> </p> 
+<p class="lurs2"><span>dependencyManagement</span> <span>中的</span> <span><span class="hilite3"><span style="background-color: #aaffaa;">dependencies</span></span> </span><span>元素只表明依赖项版本的优先选择，并不影响项目的依赖项；而</span> <span><span class="hilite3"><span style="background-color: #aaffaa;">dependencies</span></span> </span><span>元素则影响项目的依赖项。</span> </p> 
+<p>&nbsp;</p> 
+<p>===================================================================</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><a href="http://www.sonatype.com/books/maven-book/reference_zh/public-book.html">http://www.sonatype.com/books/maven-book/reference_zh/public-book.html</a></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<h1 style="font-size: 16px !important; line-height: 1.5em; margin-top: 25px; margin-right: 0px; margin-bottom: 10px; margin-left: 10px; padding-top: 0px; padding-right: 0px; padding-bottom: 5px; padding-left: 5px; color: black; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #cccccc;"><a style="color: #006699; text-decoration: none;" href="http://www.iteye.com/wiki/hudson_ci/1680-maven-best-practices-for-continuous-integration">Maven持续集成最佳实践</a></h1> 
+<div class="content" style="padding-top: 5px; padding-right: 0px; padding-bottom: 0px; padding-left: 5px;"> 
+ <p style="padding: 0px; margin: 0px;"><span style="color: #ff0000;">译自：<a target="_blank" style="color: #006699; text-decoration: none;" href="http://blogs.sonatype.com/people/2009/01/maven-continuous-integration-best-practices/">http://blogs.sonatype.com/people/2009/01/maven-continuous-integration-best-practices/</a></span></p> 
+ <p style="padding: 0px; margin: 0px;">&nbsp;</p> 
+ <p style="padding: 0px; margin: 0px;">持续集成是你在开发过程中经常会用到的一个最佳实践，它是高效软件开发生命周期（SLDC）至关重要的一部分。如果还没使用这一实践，那么应该立刻就开始使用。持续集成最大的好处是，它能帮你立刻找出引入到系统中的错误，而不是在很多天之后看到测试失败，或者在QA阶段再发现重大错误。本文并不是要介绍CI的优点，本文是介绍如何建立一个最佳的使用Maven的CI环境。这里是一些关于如何在一个CI系统（如Hudson）中运行Maven构建的贴士。</p> 
+ <p style="padding: 0px; margin: 0px;">&nbsp;</p> 
+ <h3 style="font-size: 1.2em; line-height: 1.5em; margin-top: 0px; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; color: black; padding: 0px;">#1 自动化Snapshot部署</h3> 
+ <p style="padding: 0px; margin: 0px;">按照我的经验，最好让CI系统部署你的snapshot。这是保证仓库内容和源码控制系统保持同步的最可靠的方法。要在实践中使用这种方法，你需要结合CI和仓库管理器，如<a target="_blank" style="color: #006699; text-decoration: none;" href="http://www.sonatype.com/products/nexus">Nexus</a>&nbsp;，它能自动的清除snapshot。我管理过一个项目，它在不到一周的时间内生成了&gt;300gb的snapshot。使用一个仓库管理器会让你保持稳健。</p> 
+ <h3 style="font-size: 1.2em; line-height: 1.5em; margin-top: 0px; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; color: black; padding: 0px;">#2 隔离本地仓库</h3> 
+ <p style="padding: 0px; margin: 0px;">另一个CI设置至关重要的组成部分是本地仓库隔离。Maven中的本地仓库是放置所有Maven下载和生成的构件的地方，并且当前它不是多线程安全的。虽然产生冲突的可能性很小，但它还是会发生的。</p> 
+ <p style="padding: 0px; margin: 0px;">让每个项目有一个本地仓库最主要的原因是，这是测试你的项目是否基于公司仓库可构建的唯一方法。如果你没有单独的本地仓库，那么一个构建的产品即使不在公司仓库中，也还会被CI上另一个构建看到。这里说的很重要，因为CI的一个功能是，它应该能够验证代码对于一个真实的开发者来说是可构建的。</p> 
+ <p style="padding: 0px; margin: 0px;"><em style="font-style: italic;">提示：使用 -Dmaven.repo.local=xxx 来为每个构建定义唯一的本地仓库。</em></p> 
+ <h3 style="font-size: 1.2em; line-height: 1.5em; margin-top: 0px; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; color: black; padding: 0px;">#3 周期性的清除本地仓库</h3> 
+ <p style="padding: 0px; margin: 0px;">为了进一步的验证仓库的内容，以及管理硬盘空间，我每晚都清除本地仓库。如果仓库有变化或者构件被移除了，CI系统会检测到。为了方便的清除所有本地仓库，我倾向于将所有本地仓库组织到同一个目录下，如 /opt/repos/*。</p> 
+ <p style="padding: 0px; margin: 0px;">很显然拥有多个本地仓库比起一个仓库来说需要更多的硬盘空间，因为有很多依赖的重复，但即使在我们的<a target="_blank" style="color: #006699; text-decoration: none;" href="http://grid.sonatype.org/ci">大型grid</a>&nbsp;上，所有的仓库的总大小也不到10gb。当你不控制snapshot，也不每晚清除仓库，不保持对它的控制，本地仓库就会慢慢的变得巨大。</p> 
+ <p style="padding: 0px; margin: 0px;"><em style="font-style: italic;">提示：使用你的CI系统本身来安排本地仓库清理。这样当Maven糊涂的时候，任何人都可以手动的从UI上清理仓库。</em></p> 
+ <p style="padding: 0px; margin: 0px;"><em style="font-style: italic;">久而久之，我也发现了一些更简单的技巧：</em></p> 
+ <h3 style="font-size: 1.2em; line-height: 1.5em; margin-top: 0px; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; color: black; padding: 0px;">#4 开启批处理模式</h3> 
+ <p style="padding: 0px; margin: 0px;"><em style="font-style: italic;">提示：在构建中开启 -B（batch，批处理）模式。这会让日志变短，因为这避免了依赖下载过程的日志。这也能确保构建不会因为等待用户输入而挂起。</em></p> 
+ <h3 style="font-size: 1.2em; line-height: 1.5em; margin-top: 0px; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; color: black; padding: 0px;">#5 开启完全堆栈跟踪</h3> 
+ <p style="padding: 0px; margin: 0px;"><em style="font-style: italic;">提示：开启 -e 能让Maven在遇到构建异常的时候产生完全的堆栈跟踪信息。这让我们更容易根据构建失败结构的日志或者email中理解问题，而不用重新构建一次。</em></p> 
+ <h3 style="font-size: 1.2em; line-height: 1.5em; margin-top: 0px; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; color: black; padding: 0px;">#6 打印测试失败至标准输出</h3> 
+ <p style="padding: 0px; margin: 0px;"><em style="font-style: italic;">提示：开启 -Dsurefire.useFile=false 。这是我最喜欢的选项之一，因为它能让surefire打印测试失败到标准输出，因此也就能被包含在构建失败日志或email中。这样就节省了你的时间，不用再为了一个简单的堆栈日志去机器上寻找surefire报告。</em></p> 
+ <h3 style="font-size: 1.2em; line-height: 1.5em; margin-top: 0px; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; color: black; padding: 0px;">#7 总是检查Snapshot</h3> 
+ <p style="padding: 0px; margin: 0px;"><em style="font-style: italic;">提示：开启 -U 让Maven总是最检查新的snapshot。该选项同样也可以在CI系统的setting.xml中开启。（提示4和6同样也可以在settings.xml中声明）</em></p> 
+ <h3 style="font-size: 1.2em; line-height: 1.5em; margin-top: 0px; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; color: black; padding: 0px;">小结</h3> 
+ <p style="padding: 0px; margin: 0px;">使用上述的设置和过程会让每次build都将构件推入仓库中。接下来下游的build会有其自己的干净的本地仓库，然后检测仓库管理器以获取最新的snapshot。然后每天至少一次，本地所有的东西都被清除，所有的依赖都从仓库管理器抓取。</p> 
+ <p style="padding: 0px; margin: 0px;">自然的，所有这些更新的清除工作都会给CI和仓库管理器之间的网络带来一些负荷。如果它们共享一个高速的网络，那么没什么问题。但如果你的仓库管理器和CI系统并不靠近，那么你应该在CI系统旁放一个仓库管理器，它代理远处的仓库，并能消除网络对每日本地仓库清理的影响。</p> 
+ <p style="padding: 0px; margin: 0px;"><strong style="font-weight: bold;">注意：</strong>&nbsp;如果你想要遵循这些提示，那么很重要的一点是下载一个<a target="_blank" style="color: #006699; text-decoration: none;" href="http://nexus.sonatype.org/">Nexus</a>&nbsp;。清除你本地仓库的内容，每天每个项目都从中央仓库下载所有依赖，会造成中央Maven仓库的网络拥堵。</p> 
+ <p style="padding: 0px; margin: 0px;">&nbsp;</p> 
+ <p style="padding: 0px; margin: 0px;"><strong style="font-weight: bold;">注：</strong>&nbsp;在settings.xml中开启4,6,7：</p> 
+ <p style="padding: 0px; margin: 0px;">#4: &lt;interactiveMode&gt;false&lt;/interactiveMode&gt;</p> 
+ <p style="padding: 0px; margin: 0px;">#6: &lt;properties&gt;&lt;surefire.useFile&gt;true&lt;/surefire.useFile&gt;&lt;/properties&gt; —— 在actived profile中</p> 
+ <p style="padding: 0px; margin: 0px;">#7: &lt;updatePolicy&gt;always&lt;/updatePolicy&gt; —— 在repository定义中</p> 
+</div> 
+<p>&nbsp;</p>

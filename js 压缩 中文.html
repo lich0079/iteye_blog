@@ -1,0 +1,8 @@
+今天试用了几个压缩js的工具，尤其是dojo的shrinksafe以及yuicompressor，以及jsmin ，测试以后个人觉得压缩效果差不多，但是yuicompressor在解决utf8编码的乱码问题上更加容易。 
+<br> 
+<br>如果你的js脚本是utf8的，那么在转换的时候要加上 charset 
+<br> 
+<br>java -jar yuicompressor-2.4.2.jar&nbsp; --charset utf-8 editor_bbs_src_utf8.js -o 1.js 
+<br> 
+<br>这样就不会出现问题了，否则会转换为ansi编码。 
+<br>

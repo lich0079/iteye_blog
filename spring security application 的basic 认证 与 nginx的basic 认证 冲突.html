@@ -1,0 +1,9 @@
+<p>今天本来是给nginx的访问加个认证需求的，用的是auth_basic&nbsp; ，结果认证的时候不但弹出了我自己的认证框，在我输入完自己的认证信息后，又弹出了一个提示未“spring security application”的认证框，输入什么都不对</p> 
+<p>&nbsp;</p> 
+<p>后来google下，发现时因为配置spring security的时候使用了 auto-config="true"</p> 
+<p>auto-config="true"实际上是</p> 
+<p>&lt;http&gt; <br> &lt;intercept-url pattern="/**" access="ROLE_USER" /&gt; <br> &lt;form-login /&gt; <br> &lt;anonymous /&gt; <br> &lt;http-basic /&gt; <br> &lt;logout /&gt; <br> &lt;remember-me /&gt; <br> &lt;/http&gt; 的缩写 ，里面配置了http-basic认证，所以相对于nginx做认证的时候，激活了spring security的basic认证，但实际上我的应用中没配， 所以这里只要把auto-config设成false，并补上其余的</p> 
+<p>&lt;form-login /&gt; <br> &lt;anonymous /&gt; <br> &lt;logout /&gt; <br> &lt;remember-me /&gt; </p> 
+<p>就OK了</p> 
+<p>&nbsp;</p> 
+<p>google的时候看到别人说在用apache用basic认证的时候也会出现这个问题</p>

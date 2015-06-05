@@ -1,0 +1,102 @@
+<p style="margin: 0px 0px 10px;">jquery取得 text,areatext,radio,checkbox,select的值,以及其他一些操作;<br> 1.假如我们有如下页面</p> 
+<div style="overflow: auto; margin: 0px 0px 5px; width: auto; height: auto; background-color: #f9fbfc; text-align: left; border: 1px solid #c3ced9;" class="hl-surround">
+ <ol style="padding: 0px 12px 0px 56px; background-position: 5px 5px; margin: 0px; background-color: transparent;" title="Double click to hide 
+line number." class="hl-main ln-show"> 
+  <li class="hl-firstline"> <span style="color: olive;">&lt;</span> <span style="color: green;">input</span> <span style="color: gray;"><span> </span> </span> <span style="color: #00008b;">type</span> <span style="color: gray;">=</span> <span style="color: #8b0000;">"</span> <span style="color: red;">text</span> <span style="color: #8b0000;">"</span> <span style="color: gray;"><span> </span> </span> <span style="color: #00008b;">name</span> <span style="color: gray;">=</span> <span style="color: #8b0000;">"</span> <span style="color: red;">textname</span> <span style="color: #8b0000;">"</span> <span style="color: gray;"><span> </span> </span> <span style="color: #00008b;">id</span> <span style="color: gray;">=</span> <span style="color: #8b0000;">"</span> <span style="color: red;">text_id</span> <span style="color: #8b0000;">"</span> <span style="color: gray;"><span> </span> </span> <span style="color: #00008b;">value</span> <span style="color: gray;">=</span> <span style="color: #8b0000;">""</span> <span style="color: olive;">&gt;</span> </li> 
+  <li> <span style="color: #ffa500;">&lt;!--其余的请自行添加.重要的是要有 TYPE.NAME.ID等,一般情况这些都是有的--&gt;</span> </li> 
+ </ol>
+</div> 
+<p style="margin: 0px 0px 10px;"><br> 2.下面来看怎么取得FORM中的各种值等等;</p> 
+<div style="overflow: auto; margin: 0px 0px 5px; width: auto; height: auto; background-color: #f9fbfc; text-align: left; border: 1px solid #c3ced9;" class="hl-surround">
+ <ol style="padding: 0px 12px 0px 56px; background-position: 5px 5px; margin: 0px; background-color: transparent;" title="Double click to hide 
+line number." class="hl-main ln-show"> 
+  <li class="hl-firstline"> <span style="color: green;">function</span> <span style="color: gray;"><span> </span> </span> <span style="color: blue;">get_form_value</span> <span style="color: olive;">(){</span> </li> 
+  <li> <span style="color: #ffa500;">/*获得TEXT.AREATEXT的值*/</span> </li> 
+  <li> <span style="color: gray;">&nbsp;&nbsp;<span> </span> </span> <span style="color: green;">var</span> <span style="color: gray;"> </span> <span style="color: blue;">textval</span> <span style="color: gray;"><span> </span> = $</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#text_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">attr</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">value</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">;</span> <span style="color: #ffa500;">//或 者</span> </li> 
+  <li> <span style="color: gray;">&nbsp;&nbsp;<span> </span> </span> <span style="color: green;">var</span> <span style="color: gray;"> </span> <span style="color: blue;">textval</span> <span style="color: gray;"><span> </span> = $</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#text_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">val</span> <span style="color: olive;">()</span> <span style="color: gray;">;</span> </li> 
+  <li> <span style="color: #ffa500;">/*获取单选按钮的值*/</span> </li> 
+  <li> <span style="color: gray;">&nbsp;&nbsp;<span> </span> </span> <span style="color: green;">var</span> <span style="color: gray;"> </span> <span style="color: blue;">valradio</span> <span style="color: gray;"><span> </span> = $</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">input[@type=radio][@checked]</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">val</span> <span style="color: olive;">()</span> <span style="color: gray;">;</span> </li> 
+  <li> <span style="color: #ffa500;">/*获取复选框的值*/</span> </li> 
+  <li> <span style="color: green;">var</span> <span style="color: gray;"> </span> <span style="color: blue;">checkboxval</span> <span style="color: gray;"><span> </span> = $</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#checkbox_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">attr</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">value</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">；</span> </li> 
+  <li> <span style="color: #ffa500;">/*获取下拉列表的值*/</span> </li> 
+  <li> <span style="color: gray;">&nbsp;&nbsp;<span> </span> </span> <span style="color: green;">var</span> <span style="color: gray;"> </span> <span style="color: blue;">selectval</span> <span style="color: gray;"><span> </span> = $</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">'</span> <span style="color: red;">#select_id</span> <span style="color: #8b0000;">'</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">val</span> <span style="color: olive;">()</span> <span style="color: gray;">;</span> </li> 
+  <li> <span style="color: olive;">}</span> </li> 
+ </ol>
+</div> 
+<p style="margin: 0px 0px 10px;">3.另外对表单的其他处理:</p> 
+<div style="overflow: auto; margin: 0px 0px 5px; width: auto; height: auto; background-color: #f9fbfc; text-align: left; border: 1px solid #c3ced9;" class="hl-surround">
+ <ol style="padding: 0px 12px 0px 56px; background-position: 5px 5px; margin: 0px; background-color: transparent;" title="Double click to hide 
+line number." class="hl-main ln-show"> 
+  <li class="hl-firstline"> <span style="color: #ffa500;">//控制表单元 素：</span> </li> 
+  <li> <span style="color: #ffa500;">//文本框，文本区域：</span> </li> 
+  <li> <span style="color: gray;">$</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#text_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">attr</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">value</span> <span style="color: #8b0000;">"</span> <span style="color: gray;">,</span> <span style="color: #8b0000;">''</span> <span style="color: olive;">)</span> <span style="color: gray;">;</span> <span style="color: #ffa500;">//清空内容</span> </li> 
+  <li> <span style="color: gray;">$</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#text_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">attr</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">value</span> <span style="color: #8b0000;">"</span> <span style="color: gray;">,</span> <span style="color: #8b0000;">'</span> <span style="color: red;">test</span> <span style="color: #8b0000;">'</span> <span style="color: olive;">)</span> <span style="color: gray;">;</span> <span style="color: #ffa500;">//填充内容</span> </li> 
+  <li> <span style="color: #ffa500;">//多选框checkbox：</span> </li> 
+  <li> <span style="color: gray;">$</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#chk_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">attr</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">checked</span> <span style="color: #8b0000;">"</span> <span style="color: gray;">,</span> <span style="color: #8b0000;">''</span> <span style="color: olive;">)</span> <span style="color: gray;">;</span> <span style="color: #ffa500;">//未选中的值</span> </li> 
+  <li> <span style="color: gray;">$</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#chk_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">attr</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">checked</span> <span style="color: #8b0000;">"</span> <span style="color: gray;">,</span> <span style="color: green;">true</span> <span style="color: olive;">)</span> <span style="color: gray;">;</span> <span style="color: #ffa500;">//选中的值</span> </li> 
+  <li> <span style="color: green;">if</span> <span style="color: olive;">(</span> <span style="color: gray;">$</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#chk_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">attr</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">'</span> <span style="color: red;">checked</span> <span style="color: #8b0000;">'</span> <span style="color: olive;">)</span> <span style="color: gray;">==</span> <span style="color: blue;">undefined</span> <span style="color: olive;">)</span> <span style="color: gray;"> </span> <span style="color: #ffa500;">//判 断是否已经选中</span> </li> 
+  <li> <span style="color: #ffa500;">//单选组radio：</span> </li> 
+  <li> <span style="color: gray;">$</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">input[@type=radio]</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">attr</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">checked</span> <span style="color: #8b0000;">"</span> <span style="color: gray;">,</span> <span style="color: #8b0000;">'</span> <span style="color: red;">10</span> <span style="color: #8b0000;">'</span> <span style="color: olive;">)</span> <span style="color: gray;">;</span> <span style="color: #ffa500;">//设置value=10的单选按钮为当前选中项</span> </li> 
+  <li> <span style="color: #ffa500;">//下拉框select：</span> </li> 
+  <li> <span style="color: gray;">$</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#select_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">attr</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">value</span> <span style="color: #8b0000;">"</span> <span style="color: gray;">,</span> <span style="color: #8b0000;">'</span> <span style="color: red;">test</span> <span style="color: #8b0000;">'</span> <span style="color: olive;">)</span> <span style="color: gray;">;</span> <span style="color: #ffa500;">//设置value=test的项目为当前选中项</span> </li> 
+  <li> <span style="color: gray;">$</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">&lt;option value='test'&gt;test&lt;/option&gt;&lt;option value='test2'&gt;test2&lt;/option&gt;</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">appendTo</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#select_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: #ffa500;">//添加下拉框的option</span> </li> 
+  <li> <span style="color: gray;">$</span> <span style="color: olive;">(</span> <span style="color: #8b0000;">"</span> <span style="color: red;">#select_id</span> <span style="color: #8b0000;">"</span> <span style="color: olive;">)</span> <span style="color: gray;">.</span> <span style="color: blue;">empty</span> <span style="color: olive;">()</span> <span style="color: gray;">；</span> <span style="color: #ffa500;">//清空下拉框</span> </li> 
+ </ol>
+</div> 
+<p>4.获取一组radio被选中项的值</p> 
+<p> </p> 
+<pre name="code" class="js">$(function(){
+	$('#tijiao').click(function(){
+		if ($("input:[name=study]:radio:checked").length == 0){
+			alert("请选择您想学习的知识");
+			return false;
+		}
+		var study = $("input:[name=study]:radio:checked").val();
+		alert("谢谢！您选择的是" + study);
+	})
+	$("#set_jqeury_study").click(function(){
+		var $button = $(this);
+		$("input:[name=study]:radio").each(function(){
+			if (this.value == $button.attr('title')){
+				this.checked=true;
+			}
+		})
+	})
+	$("#view_input_text").click(function(){
+		alert($("input[name=study]:text").val());
+	})
+})</pre> &nbsp; 
+<p>&nbsp;</p> 
+<div class="dp-highlighter"> 
+ <div class="bar"> 
+  <div class="tools"> 
+   <a href="http://blog.csdn.net/sws8327/archive/2009/01/24/3852540.aspx">view plain</a> 
+   <a href="http://blog.csdn.net/sws8327/archive/2009/01/24/3852540.aspx">copy to clipboard</a> 
+   <a href="http://blog.csdn.net/sws8327/archive/2009/01/24/3852540.aspx">print</a> 
+   <a href="http://blog.csdn.net/sws8327/archive/2009/01/24/3852540.aspx">?</a> 
+  </div> 
+ </div> 
+ <ol class="dp-c"> 
+  <li class="alt"> <span><span class="comment">//获取 一组radio被选中项的值</span> <span>&nbsp;&nbsp;</span> </span> </li> 
+  <li> <span><span class="keyword">var</span> <span>&nbsp;item&nbsp;=&nbsp;$(</span> <span class="string">'input[@name=items][@checked]'</span> <span>).val();&nbsp;&nbsp;</span> </span> </li> 
+  <li class="alt"> <span><span class="comment">//获取select被选中项的文本</span> <span>&nbsp;&nbsp;</span> </span> </li> 
+  <li> <span><span class="keyword">var</span> <span>&nbsp;item&nbsp;=&nbsp;$(</span> <span class="string">"select[@name=items]&nbsp;option[@selected]"</span> <span>).text();&nbsp;&nbsp;</span> </span> </li> 
+  <li class="alt"> <span><span class="comment">//select下拉框的第二个元素为当前选中值</span> <span>&nbsp;&nbsp;</span> </span> </li> 
+  <li> <span>$(<span class="string">'#select_id'</span> <span>)[0].selectedIndex&nbsp;=&nbsp;1;&nbsp;&nbsp;</span> </span> </li> 
+  <li class="alt"> <span><span class="comment">//radio单选组的第二个元素为当前选中值</span> <span>&nbsp;&nbsp;</span> </span> </li> 
+  <li> <span>$(<span class="string">'input[@name=items]'</span> <span>).get(1).checked&nbsp;=&nbsp;</span> <span class="keyword">true</span> <span>;&nbsp;&nbsp;</span> </span> </li> 
+ </ol> 
+</div> 
+<p><textarea style="display: none;" name="code" class="javascript">//获取一组radio被选中项的值
+var item = $('input[@name=items][@checked]').val();
+//获取select被选中项的文本
+var item = $("select[@name=items] option[@selected]").text();
+//select下拉框的第二个元素为当前选中值
+$('#select_id')[0].selectedIndex = 1;
+//radio单选组的第二个元素为当前选中值
+$('input[@name=items]').get(1).checked = true;
+</textarea></p> 
+<p><span style="font-family: Verdana;">文本框，文本区域：$("#txt").attr("value")；<br> 多 选框checkbox：$("#checkbox_id").attr("value")；<br> 单选组radio： $("input[@type=radio][@checked]").val();<br> 下拉框select： $('#sel').val();</span> </p> 
+<p><span style="font-family: Verdana;">控制表单元素：<br> 文本框，文本区 域：$("#txt").attr("value",'');//清空内容<br> $("#txt").attr("value",'11');//填充 内容</span> </p> 
+<p><span style="font-family: Verdana;">多选框checkbox： $("#chk1").attr("checked",'');//不打勾<br> $("#chk2").attr("checked",true);// 打勾<br> if($("#chk1").attr('checked')==undefined) //判断是否已经打勾</span> </p> 
+<p><span style="font-family: Verdana;">单选组radio： $("input[@type=radio]").attr("checked",'2');//设置value=2的项目为当前选中项<br> 下拉框 select： $("#sel").attr("value",'-sel3');//设置value=-sel3的项目为当前选中项<br> $("&lt;option value='1'&gt;1111&lt;/option&gt;&lt;option value='2'&gt;2222&lt;/option&gt;").appendTo("#sel")//添加下拉框的option<br> $("#sel").empty()；// 清空下拉框</span> </p>

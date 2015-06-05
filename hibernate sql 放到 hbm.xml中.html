@@ -1,0 +1,30 @@
+<pre class="java" name="code">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd"&gt;
+&lt;hibernate-mapping&gt;
+	&lt;class name="com.User" table="user"&gt;
+		&lt;id name="id" column="id_ID" &gt;
+			&lt;generator class="increment"&gt;&lt;/generator&gt;
+		&lt;/id&gt;
+		&lt;property name="url" column="URL" /&gt;
+		&lt;property name="encoding" column="ENCODING" /&gt;
+	&lt;/class&gt;
+	&lt;sql-query name="user.getUpdated"&gt;
+	   &lt;return-scalar column="id" type="integer"/&gt;
+	   &lt;return-scalar column="count" type="long"/&gt;
+	   &lt;![CDATA[
+	   select * from user
+	   ]]&gt;
+	&lt;/sql-query&gt;
+        &lt;query name="Daily.getDailyByIdAndDate"&gt;
+            from Daily
+            where Id = :Id
+                and date between :startDate and :endDate
+    &lt;/query&gt;
+&lt;/hibernate-mapping&gt;</pre> 
+<p>&nbsp;java code</p> 
+<pre class="java" name="code">Query query = getSession().getNamedQuery("Daily.getDailyByIdAndDate");
+		query.setInteger("id", adOrderId);
+		return (List&lt;AdEntry&gt;) query.list();</pre> 
+<p>&nbsp;这里在代码中getSession().getNamedQuery返回的都是query接口对象， 但在内部回根据映射文件中sql-query 或query返回对应的query实现</p>

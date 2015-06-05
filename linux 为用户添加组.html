@@ -1,0 +1,2 @@
+<p style="margin: 0px; padding: 0px;"><span style="font-size: 14px;">将一个用户添加到用户组中，千万不能直接用： <br> usermod -G groupA <br><br> 这样做会使你离开其他用户组，仅仅做为 这个用户组 groupA 的成员。 <br> 应该用 加上 -a 选项： <br> usermod -a -G wheel lich0079<br></span> </p> 
+<p style="margin: 0px; padding: 0px;"><span style="font-size: 14px;">(FC4: usermod -G groupA,groupB,groupC user)<br> -a 代表 append， 也就是 将lich0079添加到 用户组wheel 中，而不必离开 其他用户组。</span> </p>

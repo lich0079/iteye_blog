@@ -1,0 +1,4 @@
+<p>&nbsp;sql injection<br>&nbsp;password :'or '1'='1</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;RunTimeException 不用throws<br>&nbsp;public User login(String userId,String password){<br>&nbsp;&nbsp;User user=findUserById(userId);<br>&nbsp;&nbsp;if(user==null){<br>&nbsp;&nbsp;&nbsp;throw new UserNotFoundException("用户不存在");<br>&nbsp;&nbsp;}<br>&nbsp;&nbsp;if(!user.getPassword().equals(password)){<br>&nbsp;&nbsp;&nbsp;throw new PasswordNotCorrectException("密码不对");<br>&nbsp;&nbsp;}<br>&nbsp;&nbsp;return user;<br>&nbsp;}</p>

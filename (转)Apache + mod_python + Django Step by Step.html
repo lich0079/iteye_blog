@@ -1,0 +1,41 @@
+<p>鉴于网上关于 Python 框架 Django 的 Apache + mod_python + Django 环境详细安装加实例文档还是比较难找到，所以石头在这边写一个文档与初学 Django 的同志们以共勉：）</p> 
+<p>1、下载需要模块。</p> 
+<p>a、apache (httpd-2.0.54.tar.gz or later)<br>b、mod_python (mod_python-3.3.1.tgz)<br>c、Django (Django-0.96.tar.gz)</p> 
+<p>默认已安装 Python (<a href="http://www.python.org">http://www.python.org</a>)</p> 
+<p>2、安装配置环境。</p> 
+<p>首先，正常安装 apache 和 mod_python (<a href="http://www.modpython.org/">http://www.modpython.org/</a>),注意要打开 apache 的 DSO 功能，执行：</p> 
+<p>#...<br>#tar -zxvf httpd-2.0.54.tar.gz<br>#cd httpd-2.0.54<br>#./configure --prefix=/usr/local/apache2 --enable-so --enable-mods-shared=all<br>#make install clean<br>#...<br>#tar -zxvf mod_python-3.3.1.tgz<br>#cd mod_python-3.3.1<br>#./configure --with-apxs=/usr/local/apache2/bin/apxs --with-python=/usr/local/bin/python<br>#make install clean<br>#...<br>#tar -zxvf Django-0.96.tar.gz<br>#cd Django-0.96<br>#python setup.py install (If you installed Django using setup.py install, uninstalling is as simple as deleting the django directory from your Python site-packages.)<br>#...</p> 
+<p>这样我们就安装好 Apache + mod_python + Django 了，你可以执行 apachectl start 测试一下能不能成功。然后我们开始配置环境，首先配置 httpd.conf 加入 LoadModule python_module modules/mod_python.so (在安装 mod_python 的时候安装程序会自动把 mod_python.so 拷贝到 apache 的 modules 目录下)，接着配置虚拟主机。</p> 
+<p>到这里你就可以利用 mod_python 来进行编程了，然后我们来配置一下 Django 并通过一个实例来让大家对这个现今最 HOT 的 python web 框架有一个大体的了解：首先，我们来学习一下用 django-admin.py 工具来简化你的工作 (当我们安装 Django 的时候，安装程序会自动把 django-admin.py 拷贝到 系统 PATH 下，所以我们可以直接使用它)。首先进入到我们的 python 程序目录 (我用的是：{DOCUMENT_ROOT}/python),执行：</p> 
+<p>#django-admin.py startproject newtest</p> 
+<p>这样就可以生成我们的测试工程了默认情况下会生成 {DOCUMENT_ROOT}/python/newtest 目录，该目录下会有如下文件：</p> 
+<p>__init__.py (表示这是一个 Python 的包)<br>manage.py (提供简单化的 django-admin.py 命令，特别是可以自动进行 DJANGO_SETTINGS_MODULES 和 PYTHONPATH 的处理，而没有这个命令，处理上面环境变量是件麻烦的事情)<br>settings.py (它是django的配置文件)<br>uls.py (url映射处理文件， Karrigell 没有这种机制，它通过目录/文件/方法来自动对应，而 Django 的url映射是url对于某个模块方法的映射，目前不能自动完成)</p> 
+<p>然后我们在 apache 的虚拟主机配置文件里面加上：</p> 
+<p>&lt;Location "/newtest/"&gt;<br>SetHandler python-program<br>PythonPath "sys.path+['{DOCUMENT_ROOT}/python']"<br>PythonHandler django.core.handlers.modpython<br>SetEnv DJANGO_SETTINGS_MODULE newtest.settings<br>#PythonInterpreter mysite<br>PythonDebug On<br>&lt;/Location&gt;</p> 
+<p>这里要注意的是对于 PythonPath，必须设置成工程目录 ({DOCUMENT_ROOT}/python/newtest) 的上一级目录！这样我们就完成了 Django 和 apache 的整合了，赶快试一下吧，我们写一个 action 来测试一下 Django 的功能：</p> 
+<p>3、编写测试程序。</p> 
+<p>1&gt; 首先，创建 ./list.py :</p> 
+<p>#coding=utf-8<br>from django.shortcuts import render_to_response</p> 
+<p>address = [<br>{'name':'张三', 'address':'地址一'},<br>{'name':'李四', 'address':'地址二'}<br>]</p> 
+<p>def index(request):<br>return render_to_response('list.html', {'address': address})</p> 
+<p>2&gt; 然后，创建一个模版文件 ./templates/list.html :</p> 
+<p>&lt;h2&gt;通讯录&lt;/h2&gt;<br>&lt;table border="1"&gt;<br>&lt;tr&gt;&lt;th&gt;姓名&lt;/th&gt;&lt;th&gt;地址&lt;/th&gt;&lt;/tr&gt;<br>{% for user in address %}<br>&lt;tr&gt;<br>&lt;td&gt;{{ user.name }}&lt;/td&gt;<br>&lt;td&gt;{{ user.address }}&lt;/td&gt;<br>&lt;/tr&gt;<br>{% endfor %}<br>&lt;/table&gt;</p> 
+<p>3&gt; 设置模版目录 (编辑 ./settings.py) :</p> 
+<p>TEMPLATE_DIRS = (<br># Put strings here, like "/home/html/django_templates".<br># Always use forward slashes, even on Windows.<br>'./templates',<br>)</p> 
+<p>4&gt; 修改 urls.py :</p> 
+<p>from django.conf.urls.defaults import *</p> 
+<p>urlpatterns = patterns('',<br># Example:<br># (r'^newtest/', include('newtest.foo.urls')),<br>(r'^newtest/list/$', 'newtest.list.index'),</p> 
+<p># Uncomment this for admin:<br># (r'^admin/', include('django.contrib.admin.urls')),<br>)</p> 
+<p>5&gt; 重启 Apache 并访问相应 url (<a href="http://localhost/newtest/list/">http://localhost/newtest/list/</a>) 即可看到结果页面了：</p> 
+<p>通讯录<br>姓名 地址<br>张三 地址一<br>李四 地址二</p> 
+<p><br>到这里，你已经掌握了 Django 框架的基本内容了，就可以进一步学习 Django 的其他内容了，Enjoy It ：）</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>-----------------------------------</p> 
+<p>shagoo 发表于2007年10月15日 11:00:18&nbsp; IP:举报删除<br>补充一下：<br>如果启动 python manage.py syncdb 后报错，提示：<br>django.core.exceptions.ImproperlyConfigured:Error loading MySQLdb module: ... 必须安装 MySQL-python: <a href="http://sourceforge.net/projects/mysql-python">http://sourceforge.net/projects/mysql-python</a></p> 
+<p>错误处理：<br>1、如果安装 mysql-python 的时候出现 mysql_config: command not found ... 可以修改setup_posix.py文件，显示地设定 mysql_config :<br>mysql_config.path = "/data/mysql/bin/mysql_config" 保存，再次运行 python setup.py install 安装成功：）</p> 
+<p>2、如果遇到错误：<br>/usr/bin/ld: cannot find -lmysqlclient_r<br>你可以试一试：<br>#cd /usr/lib<br>#ln -s /usr/local/mysql/lib/mysql/libmysqlclient.so libmysqlclient_r.so<br>然后再 python setup.py install 安装成功：）</p> 
+<p>3、如果出现 /.python-eggs 目录没权限此类的提示的话 建立该目录并赋予权限就可以了 python 中有一些 package 是必须建立 cache 的 特别是 MySQLdb ：）</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>本文来自CSDN博客，转载请标明出处：<a href="http://blog.csdn.net/shagoo/archive/2007/10/10/1818686.aspx">http://blog.csdn.net/shagoo/archive/2007/10/10/1818686.aspx</a></p>

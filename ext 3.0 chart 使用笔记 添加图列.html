@@ -1,0 +1,66 @@
+<pre name="code" class="js">function getWorkloadPanel(id) {
+	var store = new Ext.data.JsonStore({
+		url : 'WorkloadChartServlet',
+		root : 'results',
+		autoLoad : true,
+		fields : ['personname', 'draftsman', 'ticketexaminer', 'ratifier',
+				'cancelperson', 'cancelorderperson']
+		});
+	var panel = new Ext.Panel({
+				id : id,
+				// width : 600,
+				// height : 400,
+				closable : true,
+				autoScroll : true,
+				title : '工作量统计',
+				items : {
+					xtype : 'stackedbarchart',
+					store : store,
+					yField : 'personname',
+                    //图列  下面2个属性要一起使用 来自列子
+                    categoryField : 'personname',
+                    extraStyle : {
+                        legend : {
+                            display : 'bottom',
+                            padding : 5,
+                            font : {
+                                family : 'Tahoma',
+                                size : 13
+                            }
+                        }
+                    },
+                    //----------------
+					xAxis : new Ext.chart.NumericAxis({
+								stackingEnabled : true,
+								title : "票  数"
+							}),
+					yAxis : new Ext.chart.CategoryAxis({
+								title : '工作人员'
+							}),
+					series : [{
+								xField : 'draftsman',
+								displayName : '拟票'
+							}, {
+								xField : 'ticketexaminer',
+								displayName : '审核'
+							}, {
+								xField : 'ratifier',
+								displayName : '批准'
+							}, {
+								xField : 'cancelperson',
+								displayName : '作废下令'
+							}, {
+								xField : 'cancelorderperson',
+								displayName : '作废记录'
+							}]
+				}
+
+			});
+
+	return panel;
+}</pre> 
+<p>&nbsp;</p> 
+<p>关于新的chart,docs上介绍的不是很清楚，extraStyle这个具体怎么设置也没说，搜索src文件夹都没找到，就找到唯一一个example，照着试了下，把图列弄出来了</p> 
+<p>&nbsp;</p> 
+<p><img src="/upload/attachment/123499/4b8e8544-cc14-33da-8084-38dcc4f1fce2.bmp" height="501" width="963" alt=""></p> 
+<p>&nbsp;</p>

@@ -1,0 +1,18 @@
+<p>想要禁止 struts2 应用中 &nbsp;部分jsp &nbsp;的 直接访问</p> 
+<p>&nbsp;</p> 
+<p>简单的做法是放到WEB-INF 下&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>然后</p> 
+<p>&nbsp;</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;"><span style="color: #2d9192;">&lt;</span><span style="color: #599191;">result</span> <span style="color: #8e0d93;">name</span>=<span style="color: #4f03ff;">"success"</span><span style="color: #2d9192;">&gt;</span>/WEB-INF/<span style="text-decoration: underline;">jsp</span>/LoginSuccess.jsp<span style="color: #2d9192;">&lt;/</span><span style="color: #599191;">result</span><span style="color: #2d9192;">&gt;</span></p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">&nbsp;</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">这里注意几点</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">1. &nbsp;return type&nbsp;只能 forward, 不能redirect</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">2. &nbsp;WEB-INF 下的jsp和webRoot下的资源的访问路径问题</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">假设在/WEB-INF/<span style="text-decoration: underline;">jsp</span>/LoginSuccess.jsp 中要引用个图片在WebRoot/img/01.jpg</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">那么要这么写 &nbsp;<span style="color: #4f03ff;"><span style="color: #2d9192;">&lt;</span><span style="color: #599191;">img</span><span style="color: #000000;"> </span><span style="color: #8e0d93;">src</span><span style="color: #000000;">=</span>"../img/01.jpg"<span style="color: #2d9192;">/&gt;</span></span></p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">&nbsp;</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">更奇怪的是假如是/WEB-INF/<span style="text-decoration: underline;">jsp</span>/test/LoginSuccess.jsp &nbsp;注意多了个test目录</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">也是这么写 &nbsp;<span style="color: #4f03ff;"><span style="color: #2d9192;">&lt;</span><span style="color: #599191;">img</span><span style="color: #000000;">&nbsp;</span><span style="color: #8e0d93;">src</span><span style="color: #000000;">=</span>"../img/01.jpg"<span style="color: #2d9192;">/&gt;</span></span></p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">&nbsp;</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px;">jsp同理&nbsp;<span style="color: #4f03ff;"><span style="color: #2d9192;">&lt;</span><span style="color: #599191;">a</span><span style="color: #000000;"> </span><span style="color: #8e0d93;">href</span><span style="color: #000000;">=</span>"../test.jsp"<span style="color: #2d9192;">&gt;</span><span style="color: #000000;">test.jsp</span><span style="color: #2d9192;">&lt;/</span><span style="color: #599191;">a</span><span style="color: #2d9192;">&gt;</span></span></p>

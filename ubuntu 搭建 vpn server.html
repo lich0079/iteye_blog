@@ -1,0 +1,23 @@
+<p><strong>安装服务端</strong> ： <strong># apt-get install pptpd</strong> </p> 
+<p><strong>设置ip地址</strong> ： <strong># vi /etc/pptpd.conf</strong> 去掉相关注释</p> 
+<pre>localip 192.168.0.1
+remoteip 192.168.0.234-238,192.168.0.245</pre> 
+<p><strong>增加用户</strong> ： <strong># vi /etc/ppp/chap-secrets</strong> </p> 
+<p>user1 pptpd password *&nbsp; #最后的*表示允许任意ip连接</p> 
+<p><strong>设置dns解析支持：# vi /etc/ppp/options</strong> </p> 
+<pre>ms-dns 8.8.8.8</pre> 
+<p><strong>打开转发：# vi /etc/sysctl.conf</strong> </p> 
+<p>net.ipv4.ip_forward=1</p> 
+<p><strong>检查/dev/ppp设备是否存在，不存在则执行：mknod /dev/ppp c 108 0</strong> </p> 
+<p><strong>重启pptpd服务：# /etc/init.d/pptpd restart</strong> </p> 
+<p><strong>激活转发参数： sysctl -p</strong> </p> 
+<p> <strong>配置iptables：iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE </strong> </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>link:</p> 
+<p>http://www.satwe.com/archives/999.html</p> 
+<p>http://www.51testing.com/?uid-214454-action-viewspace-itemid-207677</p> 
+<p>http://citycatcher.info/?p=39</p> 
+<p>http://hi.baidu.com/51cmdshell/blog/item/e2370113089e75c5c3fd78f3.html</p> 
+<p>http://publish.it168.com/2006/0119/20060119109101.shtml</p> 
+<p>http://www.chinaunix.net/jh/50/371743.html</p>

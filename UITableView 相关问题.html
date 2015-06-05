@@ -1,0 +1,100 @@
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="font-size: 18px; font-family: Times;"><strong>动态调整cell高度</strong></span></p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+    }
+    if (self.tweets) {
+        NSDictionary *tweet =  (NSDictionary *)[self.tweets objectAtIndex:indexPath.row];
+        cell.textLabel.text = [NSString stringWithFormat:@"%@", [tweet objectForKey:@"text"]];
+        cell.textLabel.lineBreakMode = UILineBreakModeWordWrap;
+        cell.textLabel.numberOfLines = 0;
+        cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:14.0];
+    }
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.tweets) {
+        NSDictionary *tweet =  (NSDictionary *)[self.tweets objectAtIndex:indexPath.row];
+        NSString *cellText = [NSString stringWithFormat:@"%@", [tweet objectForKey:@"text"]];
+        UIFont *cellFont = [UIFont fontWithName:@"Helvetica" size:14.0];
+        CGSize constraintSize = CGSizeMake(280.0f, MAXFLOAT);
+        CGSize labelSize = [cellText sizeWithFont:cellFont constrainedToSize:constraintSize lineBreakMode:UILineBreakModeWordWrap];
+        return labelSize.height + 20;
+    }else{
+        return 20;
+    }
+}
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 18px; line-height: 18px;"><strong><span style="color: #01010a;">取消tableview 选中时的颜色</span></strong></span></p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code"> cell.selectionStyle = UITableViewCellSelectionStyleNone;</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;<span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 18px; line-height: 18px;"><strong><span style="color: #01010a;">tableView &nbsp;删除row 时要先删除datasource的数据</span></strong></span></p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">[self.fileList removeObjectAtIndex:indexPath.row];
+[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationBottom];
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;<span style="border-collapse: collapse; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; font-size: 18px; line-height: 24px;"><strong><span style="color: #01010a;">TableView &nbsp;move cell的问题</span></strong></span></p> 
+<div>
+ <span style="border-collapse: collapse; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; line-height: 24px; font-size: 14px;"><span style="color: #01010a;">一定要实现</span></span>
+</div> 
+<p> <span style="font-family: Arial; font-size: medium;"><span><span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif; font-size: 14px;"> </span></span></span></p> 
+<ul style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0.5em; padding-top: 0px; padding-right: 0px; padding-bottom: 0.5em; padding-left: 0px; white-space: nowrap;"> 
+ <span style="color: #01010a;"> <li style="margin-right: 0px; margin-bottom: 0px; margin-left: 0px;"><span><code style="font-family: Courier, Consolas, monospace;"><a style="text-decoration: none;">–&nbsp;tableView:canMoveRowAtIndexPath:</a></code></span></li> <li style="margin-right: 0px; margin-bottom: 0px; margin-left: 0px;"><span><code style="font-family: Courier, Consolas, monospace;"><a style="text-decoration: none;">–&nbsp;tableView:moveRowAtIndexPath:toIndexPath:</a></code></span></li> <li style="margin-right: 0px; margin-bottom: 0px; margin-left: 0px;"> <code style="font-family: Courier, Consolas, monospace;"><a style="text-decoration: none;">2个方法 &nbsp;edit时cell里面的那个move按钮才会出现, 光有</a></code><span style="font-family: Courier, Consolas, monospace;"><a style="text-decoration: none;">–&nbsp;tableView:canMoveRowAtIndexPath:返回YES不行</a></span> </li> </span> 
+</ul> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;<span style="border-collapse: collapse; color: #01010a; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; font-size: 18px; line-height: 24px;"><strong>禁用tableview cell的横扫 删除</strong></span></p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">- (UITableViewCellEditingStyle)tableView:(UITableView *)aTableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.editing == NO || !indexPath) returnUITableViewCellEditingStyleNone;  //this
+    if (indexPath.row == [datacount]) {
+        returnUITableViewCellEditingStyleInsert;
+    } else {
+        returnUITableViewCellEditingStyleDelete;
+    }
+}
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="border-collapse: collapse; color: #01010a; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; font-size: 18px; line-height: 24px;"><strong>tableview 多选</strong></span></p> 
+<p>&nbsp;</p> 
+<pre class="c" name="code">- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
+}
+关于如何取得所选择的行，两个办法1）通过delegate方法didselect和diddeselect来获取记录
+2）通过运行时拿到UITableView的私有成员变量_selectedIndexPaths来获取
+用第二种不会被封，但属于进阶用法，不建议新手使用。
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>xzzxz</p>

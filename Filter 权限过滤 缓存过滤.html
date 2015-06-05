@@ -1,0 +1,26 @@
+<pre name="code" class="java">	--------------------权限过滤
+		public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
+			FilterChain filterChain) throws IOException, ServletException {
+			HttpServletRequest req=(HttpServletRequest)servletRequest;
+			HttpServletResponse res=(HttpServletResponse)servletResponse;
+			String uri=req.getRequestURI();
+			String s=uri.substring(uri.indexOf("/", 1), uri.length());
+			if(!"/login.jsp".equals(s)){
+				if(req.getSession(false)==null || req.getSession(false).getAttribute("user") == null){
+					System.out.println("rrrrrrrrrrrrr");
+					res.sendRedirect(req.getContextPath()+"/login.jsp");
+					return;
+				}
+			}
+			filterChain.doFilter(req, res);
+		}
+
+		-------------------缓存过滤
+		public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
+			FilterChain filterChain) throws IOException, ServletException {
+			HttpServletRequest req=(HttpServletRequest)servletRequest;
+			HttpServletResponse res=(HttpServletResponse)servletResponse;
+			res.setHeader("Cache-Control", "max-age=10000");
+			filterChain.doFilter(req, res);
+		}</pre> 
+<p>&nbsp;</p>

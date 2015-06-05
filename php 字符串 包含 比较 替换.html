@@ -1,0 +1,45 @@
+<p>if(strpos($str,&nbsp;&nbsp;'ok') !== false) {&nbsp;</p> 
+<p>&nbsp;&nbsp; //包含</p> 
+<p> } </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>//错误的方法</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<div class="UBBContent">
+ if(strpos($str,&nbsp;&nbsp;'ok')) { ...&nbsp;&nbsp;} 
+</div> 
+<p>来判断字符串$str内是否含有'ok'在内，但最近发现用这个方式判断一个带'ok'的字符串却没有查找 成功，郁闷的是，这个字符串就是以'ok'开头，怎么可能查找不到呢？<br> 　　找到strpos函数的定义介绍，srtpos返回查找字符串第一个出 现的位子，这个位置是从0开始算的，比如在'It's ok!'中，'ok'的位置是5。如果找不到，则返回false。发现问题了：PHP的变量类型都是弱类型的可以随便转换变量类型，0可以看作是整数类 型，也可以看作是布尔类型的false，加入strpos判断到字符串查找位置出现在0这个位置，函数返回0，if语句是把它当0看还是当false看？ 看来这正是问题所在。<br> 　　找到问题，解决方法也就有了，给被查找字符串前面补一位<strong>不包含在</strong> 关键字内的字符就可 以了，这样只要匹配到，返回结果总会&gt;=1。</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;?php
+
+
+$url1="http://www.163.com";
+$url2="www.163.com";
+$url3="xxxxhttp://www.163.com";
+
+$rooturl="xxx";
+echo "".strrpos($url1,"http://")."\n";
+echo "".strrpos($url2,"http://")."\n";
+echo "".strrpos($url3,"http://")."\n";
+
+if(strrpos($url1,"http://")!==false &amp;&amp; strrpos($url1,"http://")==0){
+echo str_ireplace("http://","",$url1)."__1 have \n";
+}
+
+if(strrpos($url2,"http://")!==false &amp;&amp; strrpos($url2,"http://")==0){
+echo "2 have  \n";
+}
+
+if(strrpos($url3,"http://")!==false &amp;&amp; strrpos($url3,"http://")==0){
+echo "3 have  \n";
+}
+
+
+echo  "".$rooturl."\n";
+
+?&gt;
+</pre> &nbsp;

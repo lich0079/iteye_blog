@@ -1,0 +1,20 @@
+<p><br>hibernate抓取策略（单端代理的批量抓取）</p> 
+<p>保持&lt;many-to-one&gt;中的fetch属性默认，也即是fetch="select"</p> 
+<p>fetch="select",会另外发送一条sql语句加载当前对象的关联实体<br>---------------------------------------------------------</p> 
+<p>hibernate抓取策略（单端代理的批量抓取）</p> 
+<p>设置&lt;many-to-one&gt;中的fetch="join"</p> 
+<p>fetch="join",hibernate会使用一个外连接该对象的关联实体</p> 
+<p>会导致lazy失效<br>--------------------------------------<br>hibernate抓取策略（集合代理的批量抓取）</p> 
+<p>保持&lt;set&gt;中的fetch属性默认，也即是fetch="select"</p> 
+<p>fetch="select",会另外发送一条sql语句加载当前对象的关联实体或集合<br>-------------------------------------------<br>hibernate抓取策略（集合代理的批量抓取）</p> 
+<p>设置&lt;set&gt;中的fetch=join</p> 
+<p>fetch="join",hibernate会使用一个外连接该对象的关联实体</p> 
+<p>会导致lazy失效<br>---------------------------------------<br>hibernate抓取策略（集合代理的批量抓取）</p> 
+<p>设置&lt;set&gt;中的fetch=subselect</p> 
+<p>fetch="subselect",另外发送一条select语句抓取前面查询到的所有实体对象的关联集合</p> 
+<p>------------------------------------------------</p> 
+<p>对fetch="select"的优化</p> 
+<p>batch-size属性，可以批量加载实体类，参见Classes.hbm.xml<br>&nbsp;&lt;set name="students" inverse="true" batch-size="5"&gt;</p> 
+<p>----------------------------------------------</p> 
+<p><br>对fetch="select"的优化</p> 
+<p>batch-size属性，可以批量加载实体类，参见Classes.hbm.xml<br>&lt;class name="com.bjsxt.hibernate.Classes" table="t_classes" batch-size="3"&gt;<br>&nbsp;<br>----</p>

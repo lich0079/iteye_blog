@@ -1,0 +1,87 @@
+<pre name="code" class="java">//打开查看流程图片的界面
+	public ActionForward viewImage(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		
+		WorkflowActionForm waf = (WorkflowActionForm)form;
+		Workflow workflow = workflowManager.findWorkflow(waf.getId());
+		request.setAttribute("workflow", workflow);
+		return mapping.findForward("view_image");
+	}
+	
+	//获取流程图片信息进行显示
+	public ActionForward image(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		
+		WorkflowActionForm waf = (WorkflowActionForm)form;
+		Workflow workflow = workflowManager.findWorkflow(waf.getId());
+		
+		byte[] processImage = workflow.getProcessImage();
+		
+		response.setContentType("image/jpeg");
+		response.getOutputStream().write(processImage);
+		
+		return null;
+	}
+	
+	//查看流程定义界面
+	public ActionForward viewDef(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+
+		WorkflowActionForm waf = (WorkflowActionForm)form;
+		Workflow workflow = workflowManager.findWorkflow(waf.getId());
+		request.setAttribute("workflow", workflow);
+		byte[] processDef = workflow.getProcessDef();
+		
+		String def = new SAXReader().read(new ByteArrayInputStream(processDef)).asXML();
+		
+		request.setAttribute("def", def);
+		
+		return mapping.findForward("view_def");
+	}
+
+	public void setWorkflowManager(WorkflowManager workflowManager) {
+		this.workflowManager = workflowManager;
+	}
+
+
+		struts-config.xml
+
+		&lt;action 
+			path="/workflow"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			parameter="method"
+			name="workflowForm"
+			scope="request"
+		&gt;
+			&lt;forward name="index" path="/workflow/index.jsp"&gt;&lt;/forward&gt;
+			&lt;forward name="add_success" path="/workflow.do" redirect="true"&gt;&lt;/forward&gt;
+			&lt;forward name="view_image" path="/workflow/view_image.jsp"&gt;&lt;/forward&gt;
+			&lt;forward name="view_def" path="/workflow/view_def.jsp"&gt;&lt;/forward&gt;
+		&lt;/action&gt;	
+
+	jsp 
+
+	显示2进制xml 文件 
+
+		&lt;TR&gt;
+			&lt;td align="left"&gt;
+			&lt;!-- 主输入域开始 --&gt;
+				&lt;pre&gt;&lt;c:out value="${def }" escapeXml="true" /&gt;&lt;/pre&gt;
+			&lt;!-- 主输入域结束 --&gt;
+			&lt;/td&gt;
+		&lt;/TR&gt;
+	
+	显示2进制图片
+
+		&lt;TR&gt;
+			&lt;td&gt;
+			&lt;!-- 主输入域开始 --&gt;
+				&lt;img src="workflow.do?method=image&amp;id=${workflow.id }"&gt;
+			&lt;!-- 主输入域结束 --&gt;
+			&lt;/td&gt;
+		&lt;/TR&gt;
+</pre> 
+<p>&nbsp;</p>

@@ -1,0 +1,47 @@
+<p>{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;header : '发送时间',<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sortable : true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataIndex : 'sendTime',<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width : 150,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;renderer : function(date) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return date&nbsp;&nbsp;//这个date是一个时间戳<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;? new Date(parseInt(date))<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.toLocaleString()<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: '';<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</p> 
+<p>还可以改css</p> 
+<p>css代码</p> 
+<div class="bar"> 
+ <div class="tools">
+  Java代码 
+ </div> 
+</div> 
+<pre name="code" class="java">.x-grid-back-red {
+	background: #FF0000;
+}
+</pre> 
+<p>&nbsp;</p> 
+<div class="bar"> 
+ <div class="tools">
+  Js代码 
+ </div> 
+</div> 
+<pre name="code" class="js">{
+			header : '分成类型',
+			dataIndex : 'divideType',
+			renderer : function(v,m){
+				m.css='x-grid-back-red';
+				return v;
+			},
+			width : 60
+		}
+</pre> 
+<p><br><br>或者直接这样写也可以</p> 
+<div class="bar"> 
+ <div class="tools">
+  Js代码 
+ </div> 
+</div> 
+<p class="dp-highlighter">&nbsp;</p> 
+<pre name="code" class="js">{
+			header : '编号',
+			dataIndex : 'fcId',
+			css : 'background: #FF0000;',
+			width : 40
+		}
+</pre> 
+<p>改变行的css</p> 
+<p>.x-grid-record-red table{<br>&nbsp;color: #FF0000;<br>}</p> 
+<p>&nbsp;</p> 
+<p>viewConfig : {<br>&nbsp;&nbsp;&nbsp;&nbsp;forceFit : true,<br>&nbsp;&nbsp;&nbsp;&nbsp;getRowClass : function(record,rowIndex,rowParams,store){<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//禁用数据显示红色<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(record.data.zt==0){<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 'x-grid-record-red';<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return '';<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;},&nbsp;</p> 
+<p>&nbsp;</p>

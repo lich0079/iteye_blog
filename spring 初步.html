@@ -1,0 +1,61 @@
+<pre class="java" name="code">1、spring普通属性注入
+	参见spring文档3.3.3章节
+	
+什么属性编辑器，作用？
+	* 自定义属性编辑器，时将spring配置文件中的字符串转换成对象进行注入
+	  spring已经有内置的属性编辑器，我们可以自定义属性编辑器
+
+public class Trans extends PropertyEditorSupport {
+	private String format;
+	@Override
+	public void setAsText(String arg0) throws IllegalArgumentException {
+		SimpleDateFormat s=new SimpleDateFormat(format);
+		try {
+			Date d=s.parse(arg0);
+			this.setValue(d);
+		} catch (ParseException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	public void setFormat(String format) {
+		this.format = format;
+	}
+}
+	  
+如何自定义属性编辑器?
+	* 继承PropertyEditorSupport类，覆写setAsText()，参见：UtilDatePropertyEditor.java
+	* 将属性编辑器注入到spring中，参见：applicationContext-editor.xml
+	
+	&lt;bean id="trans" class="org.springframework.beans.factory.config.CustomEditorConfigurer"&gt;
+		&lt;property name="customEditors"&gt;
+			&lt;map&gt;
+				&lt;entry key="java.util.Date" &gt;
+					&lt;bean class="com.bjsxt.spring.Trans"&gt;
+						&lt;property name="format"&gt;
+							&lt;value&gt;yyyy-MM-dd&lt;/value&gt;
+						&lt;/property&gt;
+					&lt;/bean&gt;
+				&lt;/entry&gt;
+			&lt;/map&gt;
+		&lt;/property&gt;
+	&lt;/bean&gt;
+		
+---------------------------
+
+	
+依赖对象的注入，可以采用：
+	* ref属性
+	* &lt;ref/&gt;标签
+	* 内部&lt;bean&gt;的定义
+	
+如何注入定义描述出来？
+	* 通过&lt;bean&gt;标签将公共的部分定义出来，并指定abstract="true"
+	* 具有相同属性的类指定其parent属性即可
+	参见：applicationContext-other.xml		
+</pre> 
+<p>&nbsp;</p> 
+<p>Myeclipse</p> 
+<p>E:\192.168.0.150\11_Spring\spring-framework-2.0\dist\resources\spring-tx-2.0.xsd<br><a href="http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">http://www.springframework.org/schema/tx/spring-tx-2.0.xsd</a></p> 
+<p><br>E:\192.168.0.150\11_Spring\spring-framework-2.0\dist\resources\spring-beans-2.0.xsd<br><a href="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">http://www.springframework.org/schema/beans/spring-beans-2.0.xsd</a></p> 
+<p><br>E:\192.168.0.150\11_Spring\spring-framework-2.0\dist\resources\spring-aop-2.0.xsd<br><a href="http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">http://www.springframework.org/schema/aop/spring-aop-2.0.xsd</a></p>

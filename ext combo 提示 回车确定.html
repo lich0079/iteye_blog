@@ -1,0 +1,22 @@
+<pre class="java" name="code">{
+									xtype : 'combo',
+									hiddenName : 'selFuncForUnit',
+									fieldLabel : '选择岗位',
+									triggerAction : 'all',
+                                    forceSelection: true, //保证combo的value只能是下拉框里的
+									mode : 'local',
+									store : UnitFuncDS,
+									displayField : 'funcName',
+									valueField : 'funcId',
+                                    enableKeyEvents :true,  //让keypress事件能触发
+                                    listeners: {
+                                        keypress :function(thisfiled,e){
+                                            if(e.getKey()==13){  //回车 
+                                                addFuncToUnit();
+                                            
+                                            }
+                                        
+                                        }
+                                    }
+								}</pre> 
+<p>&nbsp;</p>

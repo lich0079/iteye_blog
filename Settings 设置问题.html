@@ -1,0 +1,141 @@
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<div style="font-size: 18px; font-family: Arial;">
+ <span style="font-weight: normal; font-size: medium;">1. setting面板的设置只有当用户去了设置面板后才会产生，所以程序要假设用户没有去过的时候设置默认值</span>
+</div> 
+<div style="font-size: 18px; font-family: Arial;"> 
+ <span style="font-weight: normal; font-size: medium;">2.&nbsp;</span> 
+ <div style="display: inline !important;"> 
+  <div style="display: inline !important;"> 
+   <div style="display: inline !important;"> 
+    <div style="display: inline !important;"> 
+     <div style="display: inline !important;"> 
+      <div style="display: inline !important;"> 
+       <div style="display: inline !important;"> 
+        <div style="display: inline !important;">
+         <strong><span style="font-size: large;"><span style="font-size: 18px;"><span style="font-size: large;"><span style="font-size: large;"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: large;"><span style="font-size: large;"><span style="color: #000000;"><span style="color: #01010a; font-size: medium;"><span style="font-size: 14px; font-weight: normal;">拿到[NSUserDefaultsstandardUserDefaults];取值之前要 [userDefault synchronize]</span></span></span></span></span></span></span></span></span></span></span></strong>
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<div style="font-size: 18px; font-family: Arial;"> 
+ <span style="font-weight: normal; font-size: medium;">3</span> 
+ <div style="display: inline !important;">
+  <strong><span style="font-size: large;"><span style="font-size: 18px;"><span style="font-weight: normal; font-size: medium;">. 假如从设置面板取回的是bool值，当你用代码 &nbsp;</span></span></span></strong>
+ </div> 
+</div> 
+<div style="font-size: 18px; font-family: Arial;"> 
+ <div style="display: inline !important;"> 
+  <div style="display: inline !important;"> 
+   <div style="display: inline !important;"> 
+    <div style="display: inline !important;">
+     <span style="font-weight: normal; font-size: medium;"><strong><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">[userDefault boolForKey:@"mapautozoom"];</span></span></span></span></span></span></span></strong></span>
+    </div> 
+   </div> 
+  </div> 
+  <div> 
+   <div style="display: inline !important;"> 
+    <div style="display: inline !important;"> 
+     <div style="display: inline !important;">
+      <span style="font-weight: normal; font-size: medium;"><strong><span style="font-size: large;"><span style="font-size: large;"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">做判断的话， 假如得到了NO, 这时你无法判断 1.是用户设置了NO 2.还是用户从来没设置过所以是NO</span></span></span></span></span></span></strong></span>
+     </div> 
+    </div> 
+   </div> 
+   <br> 
+  </div> 
+  <div>
+   <span style="color: #01010a; font-size: medium;"><span style="font-size: 14px; font-weight: normal;">这时要先用个 &nbsp;</span></span>
+  </div> 
+  <div style="display: inline !important;"> 
+   <div style="display: inline !important;"> 
+    <div style="display: inline !important;"> 
+     <div> 
+      <div style="display: inline !important;"> 
+       <div style="display: inline !important;"> 
+        <div style="display: inline !important;"> 
+         <div style="display: inline !important;"> 
+          <div style="display: inline !important;"> 
+           <div style="display: inline !important;"> 
+            <div style="display: inline !important;">
+             <span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: 14px;"><strong><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">if([userDefault objectForKey:@"mapautozoom"]){</span></span></span></span></span></span></span></span></span></span></span></strong></span></span></span>
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+      <br> 
+     </div> 
+     <div> 
+      <span style="font-size: medium;"><span style="font-size: 14px; font-weight: normal;">// 进来了说明用户设置过 然后再用 &nbsp;</span></span> 
+      <div style="display: inline !important;"> 
+       <div style="display: inline !important;"> 
+        <div style="display: inline !important;"> 
+         <div style="display: inline !important;"> 
+          <div style="display: inline !important;"> 
+           <div style="display: inline !important;"> 
+            <div style="display: inline !important;"> 
+             <div style="display: inline !important;"> 
+              <div style="display: inline !important;"> 
+               <div style="display: inline !important;"> 
+                <div style="display: inline !important;"> 
+                 <div style="display: inline !important;"> 
+                  <div style="display: inline !important;"> 
+                   <div style="display: inline !important;"> 
+                    <div style="display: inline !important;"> 
+                     <div style="display: inline !important;"> 
+                      <div style="display: inline !important;"> 
+                       <div style="display: inline !important;"> 
+                        <div style="display: inline !important;"> 
+                         <div style="display: inline !important;">
+                          <span style="color: #000000; font-weight: normal; font-size: medium;"><strong><span style="font-size: large;"><span style="font-size: large;"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: medium;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">boolForKey</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></strong></span>
+                         </div> 
+                        </div> 
+                       </div> 
+                      </div> 
+                     </div> 
+                    </div> 
+                   </div> 
+                  </div> 
+                 </div> 
+                </div> 
+               </div> 
+              </div> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div style="display: inline !important;"> 
+      <div style="display: inline !important;"> 
+       <div style="display: inline !important;"> 
+        <div style="display: inline !important;"> 
+         <div style="display: inline !important;"> 
+          <div style="display: inline !important;"> 
+           <div style="display: inline !important;">
+            <span style="color: #000000; font-weight: normal; font-size: medium;"><strong><span style="font-size: large;"><span style="font-size: large;"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">}</span></span></span></span></span></span></span></span></span></strong></span>
+           </div> 
+           <div style="display: inline !important;">
+            <br>
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+ </div> 
+</div>

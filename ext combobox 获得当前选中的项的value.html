@@ -1,0 +1,27 @@
+<pre class="java" name="code">{
+													id : 'sstatus',
+													xtype : 'combo',
+													fieldLabel : '状态',
+													name : 'status',
+													hiddenName : 'status',
+													anchor : '90%',
+													mode : 'local',
+													store : statusDS,
+													typeAhead : true,
+													triggerAction : 'all',
+													displayField : 'text',
+													emptyText : '请选择',
+													valueField : 'param',
+													editable : false
+									}
+
+
+var statusDS = new Ext.data.SimpleStore({
+			fields : ['text', 'param'],
+			data : [['...', ''], ['aaa', '1'], ['bbb', '2'], ['cc', '3'],
+					['ddd', '4'], ['eee', '5'], ['fff', '6']]
+		});&nbsp;			
+
+这样就可以提交1，2，3，4，5
+
+要想获得当前选中的项的value         Ext.get('status').dom.value//从hiddenName处获得</pre>

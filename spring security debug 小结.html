@@ -1,0 +1,28 @@
+<p><br> 有时需要在默认的filter之前定义自己的filter来改变原来的实现&nbsp; 但假如知道原来的filter的bean的默认名字之后 往往可以直接配置原来的filter<br><br> &lt;beans:bean id="logoutFilter" class="org.springframework.security.ui.logout.LogoutFilter"&gt;<br> &nbsp;&nbsp;&nbsp; &lt;custom-filter before="LOGOUT_FILTER" /&gt;<br> &nbsp;&nbsp;&nbsp; &lt;beans:constructor-arg index="0" value="/"/&gt;<br> &nbsp;&nbsp;&nbsp; &lt;beans:constructor-arg index="1"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;beans:list&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;beans:bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;beans:ref bean="_rememberMeServices"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;beans:bean class="com.lich0079.CustomLogoutHandler"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/beans:list&gt;<br> &nbsp;&nbsp;&nbsp; &lt;/beans:constructor-arg&gt;<br> &lt;/beans:bean&gt;<br><br><br> 现在只要<br> &lt;beans:bean id="_logoutFilter" class="org.springframework.security.ui.logout.LogoutFilter"&gt;<br> &nbsp; &lt;beans:constructor-arg index="0" value="/" /&gt;<br> &nbsp; &lt;beans:constructor-arg index="1"&gt;<br> &nbsp;&nbsp; &lt;beans:list&gt;<br> &nbsp;&nbsp;&nbsp; &lt;beans:bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler" /&gt;<br> &nbsp;&nbsp;&nbsp; &lt;beans:ref bean="_rememberMeServices" /&gt;<br> &nbsp;&nbsp;&nbsp; &lt;beans:bean class="lich0079.CustomLogoutFilter" /&gt;<br> &nbsp;&nbsp; &lt;/beans:list&gt;<br> &nbsp; &lt;/beans:constructor-arg&gt;<br> &nbsp; &lt;beans:property name="filterProcessesUrl" value="/logout"/&gt;<br> &nbsp;&lt;/beans:bean&gt;<br><br> 去掉了&nbsp; &lt;custom-filter before="LOGOUT_FILTER" /&gt;&nbsp; </p> 
+<p>ID变为 _logoutFilter 这是默认名字</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>改变rememberMe的一些默认配置&nbsp; 这些都是命名空间配置不了的</p> 
+<p>&lt;beans:bean id="_rememberMeServices" class="org.springframework.security.ui.rememberme.TokenBasedRememberMeServices"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;beans:property name="userDetailsService" ref="userDetailsServiceWrapper" /&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;beans:property name="parameter" value="rememberMe" /&gt;&lt;!-- form input name --&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;beans:property name="key" value="keyss" /&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;beans:property name="tokenValiditySeconds" value="2147483647" /&gt;&lt;!-- the left valid time, about 68 year, max int--&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;beans:property name="cookieName" value="cookieCode" /&gt;<br> &nbsp;&nbsp;&nbsp; &lt;/beans:bean&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>但首先你要知道这些bean的默认名字，试了半天 在applicationContext的beanFactory里找出来了</p> 
+<pre class="java" name="code">[_sessionFixationProtectionFilter, _rememberMeServices, _accessManager, org.springframework.aop.config.internalAutoProxyCreator, _basicAuthenticationFilter, _formLoginEntryPoint, 
+_filterSecurityInterceptor, _filterChainProxy, 
+_anonymousAuthenticationProvider, _filterChainProxyPostProcessor, 
+_rememberMeAuthenticationProvider, 
+_basicAuthenticationEntryPoint, _methodDefinitionSourceAdvisor, 
+org.springframework.security.config.AuthenticationProviderBeanDefinitionParser$AuthenticationProviderCacheResolver#0, 
+_exceptionTranslationFilter, _httpSessionContextIntegrationFilter, 
+_methodSecurityInterceptorPostProcessor, 
+_entryPointInjectionBeanPostProcessor, _logoutFilter, _portMapper, 
+_securityContextHolderAwareRequestFilter, _rememberMeFilter, 
+org.springframework.security.providers.dao.DaoAuthenticationProvider#0, _rememberMeServicesInjectionBeanPostProcessor, 
+_anonymousProcessingFilter, _filterChainList, 
+org.springframework.security.userdetails.memory.InMemoryDaoImpl#0, _delegatingMethodDefinitionSource, _authenticationManager, 
+_userServiceInjectionPostProcessor, _formLoginFilter, 
+_methodSecurityInterceptor]</pre> 
+<p>&nbsp;</p> 
+<p>有时候你配置了自己的filter不知道到底work了没有，可以去FilterChainProxy这个类里面设个断点，在里面可以看到整个filter链的对象，看你自己加的在不在里面，配置的属性是不是你想要的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

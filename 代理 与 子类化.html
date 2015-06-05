@@ -1,0 +1,146 @@
+<p>最近看一个斯坦福的视频， 里面的Cocoa框架大量使用了代理模式，定制类的行为，</p> 
+<p>&nbsp;</p> 
+<p>学生就发问了，为什么不采用子类化的策略呢，</p> 
+<p>&nbsp;</p> 
+<p>老师就说了 子类化 和 代理都是起到代码分离的作用。无所谓对错，有人喜欢子类化，有人喜欢代理，这是一个需要综合考虑的设计决策</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>自己写点东西记一下</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package delegate.subclass;
+
+public class UIApplication {
+
+    Object view = new Object();
+
+    public String draw() {
+        return "draw a button on view" + view;
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package delegate.subclass;
+
+public class UIApplicationSubclassA extends UIApplication {
+
+    public String draw() {
+        return "draw a text on view " + view;
+    }
+}</pre> &nbsp; 
+<pre class="java" name="code">package delegate.subclass;
+
+public class UIApplicationSubclassB extends UIApplication {
+    
+    public String draw() {
+        return "draw a label on view " + view;
+    }
+    
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package delegate.delegate;
+
+public class UIApplcation {
+    
+    Object view;
+
+    IViewController delegate;
+    
+
+    public void setDelegate (IViewController delegate ){
+        this.delegate = delegate;
+        view=delegate.getView();
+    }
+    
+    public String draw(){
+        return delegate.draw();
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package delegate.delegate;
+
+public interface IViewController {
+    String draw();
+    Object getView();
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package delegate.delegate;
+
+public class AppDelegateA implements IViewController {
+
+    Object view = new Object();
+
+    @Override
+    public String draw() {
+        return "draw a text on view " + view;
+    }
+
+    @Override
+    public Object getView() {
+        return view;
+    }
+
+}</pre> &nbsp; 
+<pre class="java" name="code">package delegate.delegate;
+
+public class AppDelegateB implements IViewController {
+
+    Object view = new Object();
+
+    @Override
+    public String draw() {
+        return "draw a label on view " + view;
+    }
+
+    @Override
+    public Object getView() {
+        return view;
+    }
+
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package delegate;
+
+import delegate.delegate.AppDelegateA;
+import delegate.delegate.AppDelegateB;
+import delegate.subclass.UIApplication;
+import delegate.subclass.UIApplicationSubclassA;
+import delegate.subclass.UIApplicationSubclassB;
+
+public class Client {
+    public static void main(String[] args) {
+        System.out.println("test subclass---------------------");
+        UIApplication sub1 =new UIApplicationSubclassA();
+        System.out.println(sub1.draw());
+        
+        UIApplication sub2 =new UIApplicationSubclassB();
+        System.out.println(sub2.draw());
+        
+        
+        System.out.println("test delegate---------------------");
+        delegate.delegate.UIApplcation app1 =new  delegate.delegate.UIApplcation();
+        AppDelegateA delegateA= new AppDelegateA();
+        app1.setDelegate(delegateA);
+        System.out.println(app1.draw());
+        
+        delegate.delegate.UIApplcation app2 =new  delegate.delegate.UIApplcation();
+        AppDelegateB delegateB= new AppDelegateB();
+        app2.setDelegate(delegateB);
+        System.out.println(app2.draw());
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>console</p> 
+<pre class="java" name="code">test subclass---------------------
+draw a text on view java.lang.Object@14318bb
+draw a label on view java.lang.Object@ca0b6
+test delegate---------------------
+draw a text on view java.lang.Object@1b67f74
+draw a label on view java.lang.Object@173a10f</pre> &nbsp;

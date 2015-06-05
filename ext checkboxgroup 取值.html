@@ -1,0 +1,66 @@
+<pre class="java" name="code">DoctorWorkStation_CommonDoctorAdvice.CreateYZCheckBoxWin = function(store, colnum,title) {
+	var count = store.getCount();
+	var myCheckboxItems = [];
+	for (var i = 0; i &lt; count; i++) {
+		var boxLabel = store.getAt(i).get("name");
+		var name = store.getAt(i).get("id");
+		myCheckboxItems.push({
+					boxLabel : boxLabel,
+					name : name
+				});
+	}
+	var myCheckboxGroup = new Ext.form.CheckboxGroup({
+				xtype : 'checkboxgroup',
+				itemCls : 'x-check-group-alt',
+				columns : colnum,
+				items : myCheckboxItems
+			});
+	var form = new Ext.FormPanel({
+				border : true,
+				frame : true,
+				labelAlign : "right",
+				buttonAlign : 'right',
+				layout : 'column',
+				width : 500,
+				items : [myCheckboxGroup],
+				buttons : [{
+					xtype : 'button',
+					text : '确定',
+					handler : function() {
+						var ids = [];
+						var cbitems = myCheckboxGroup.items;
+						for (var i = 0; i &lt; cbitems.length; i++) {
+							if (cbitems.itemAt(i).checked) {
+								ids.push(cbitems.itemAt(i).name);
+							}
+						}
+						win.destroy();
+						if (ids.length) {
+							Ext.Msg.alert("消息", "选中状态的id组合字符串为:"
+											+ ids.toString());
+						}
+					}
+
+				}, {
+					xtype : 'button',
+					text : '取消',
+					handler : function() {
+						win.destroy();
+					}
+
+				}]
+
+			});
+	var win = new Ext.Window({
+				modal : true,
+				layout : 'fit',
+				title : title,
+				width : 500,
+				height : 300,
+				plain : true,
+				items : [form]
+			});
+	win.show();
+
+}</pre> 
+<p>&nbsp;</p>

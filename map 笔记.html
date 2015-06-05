@@ -1,0 +1,681 @@
+<p>pic</p> 
+<p><img height="554" alt="" src="http://dl.iteye.com/upload/attachment/162214/d2ab7dc5-4eb1-383c-aa12-e57a83f29eb2.png" width="900"></p> 
+<p>&nbsp;</p> 
+<p>text</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package map;
+
+public class Edge implements Comparable&lt;Edge&gt; {
+    private Point start;
+    private Point end;
+    private int weight;
+    private boolean d;
+
+    public boolean isD() {
+        return d;
+    }
+
+    public void setD(boolean d) {
+        this.d = d;
+    }
+
+    public Edge() {
+    }
+
+    public Edge(Point start, Point end, int weight) {
+        super();
+        this.start = start;
+        this.end = end;
+        this.weight = weight;
+    }
+
+    public Point getStart() {
+        return start;
+    }
+
+    public void setStart(Point start) {
+        this.start = start;
+    }
+
+    public Point getEnd() {
+        return end;
+    }
+
+    public void setEnd(Point end) {
+        this.end = end;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public int compareTo(Edge o) {
+        return o.getWeight() &gt; this.getWeight() ? -1 : o.getWeight() == this.getWeight() ? 0 : 1;
+    }
+
+    @Override
+    public String toString() {
+        return "edge : "+this.getStart().getLabel()+" to "+this.getEnd().getLabel()+" weight: "+this.getWeight();
+    }
+
+    
+}
+</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package map;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class Gragh {
+    private List&lt;Point&gt; points=new ArrayList&lt;Point&gt;();
+    private List&lt;Edge&gt; edges=new ArrayList&lt;Edge&gt;();
+    public List&lt;Point&gt; getPoints() {
+        return points;
+    }
+    public void setPoints(List&lt;Point&gt; points) {
+        this.points = points;
+    }
+    public List&lt;Edge&gt; getEdges() {
+        return edges;
+    }
+    public void setEdges(List&lt;Edge&gt; edges) {
+        this.edges = edges;
+    }
+    
+    
+}
+</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package map;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Path {
+    @Override
+    public String toString() {
+        return path.get(path.size()-1).getLabel()+" "+distance;
+    }
+    private int distance;
+    private List&lt;Point&gt; path=new ArrayList&lt;Point&gt;();
+    private Point start;
+    private Point end;
+    
+    public Point getStart() {
+        return start;
+    }
+    public void setStart(Point start) {
+        this.start = start;
+    }
+    public Point getEnd() {
+        return end;
+    }
+    public void setEnd(Point end) {
+        this.end = end;
+    }
+    public int getDistance() {
+        return distance;
+    }
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+    public List&lt;Point&gt; getPath() {
+        return path;
+    }
+    public void setPath(List&lt;Point&gt; path) {
+        this.path = path;
+    }
+}
+</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package map;
+
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
+
+public class Point {
+    private int index;
+    private String label;
+    private boolean visted;
+    
+    public Point(String label) {
+        this.label=label;
+    }
+    public Point() {
+    }
+    public String getLabel() {
+        return label;
+    }
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    public boolean isVisted() {
+        return visted;
+    }
+    public void setVisted(boolean visted) {
+        this.visted = visted;
+    }
+    public int getIndex() {
+        return index;
+    }
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    public static void main(String[] args) {
+        Queue q=new PriorityQueue();
+        q.add(5);
+        q.add(3);
+        q.add(1);
+        q.add(2);
+        q.add(7);
+        q.add(8);
+        System.out.println(q.poll());
+        System.out.println(q.poll());
+        System.out.println(q.poll());
+        System.out.println(q.poll());
+        System.out.println(q.poll());
+        System.out.println(q.poll());
+    }
+    @Override
+    public String toString() {
+        return "point : "+this.getLabel()+"  index: "+this.getIndex();
+    }
+    
+    
+}
+</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package map;
+
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Random;
+import java.util.Stack;
+
+public class Client {
+    public static void main(String[] args) {
+        // graghN(6);//无向图的相关计算
+        graghD(4);//有向图的相关计算
+//        graghNW(4);
+    }
+
+    public static void graghNW(int num) {
+        Point[] pointsArray = initPoints(num);
+        int[][] matrix = initMatrix(num);
+        deployMatrixNW(matrix);
+        print(pointsArray, matrix);
+        mstw(pointsArray, matrix);
+    }
+    
+    public static void mstw(Point[] points, int[][] matrix) {
+        int start = 0;
+        System.out.println("dfs \nstart mstw with " + points[start].getLabel());
+
+        Stack stack = new Stack();
+        Point p=points[start];
+        stack.push(p);
+        p.setVisted(true);
+        
+        Queue q=new PriorityQueue();
+        for (int i = 0; i &lt; matrix[p.getIndex()].length; i++) {
+            if(matrix[p.getIndex()][i]!=0 &amp;&amp; !stack.contains(points[i])){
+                q.add(matrix[p.getIndex()][i]);
+            }
+        }
+    }
+    
+    
+    public static void graghD(int num) {
+        Point[] pointsArray = initPoints(num);
+        int[][] matrix = initMatrix(num);
+        deployMatrixD(matrix);
+        print(pointsArray, matrix);
+        int[][] result = Warshall(pointsArray, matrix);
+        print(pointsArray, result);
+        // 拓扑排序无法处理环图
+    }
+
+    public static int[][] Warshall(Point[] points, int[][] matrix) {
+        for (int p = 0; p &lt; points.length; p++) {
+            for (int x = 0; x &lt; points.length; x++) {
+                for (int y = 0; y &lt; points.length; y++) {
+                    if (matrix[x][p] == 1 &amp;&amp; matrix[p][y] == 1 &amp;&amp; x != y) {
+                        matrix[x][y] = 1;
+                        // 每次计算一层是否连通 计算n次 每次刷新连通表 最后就成为了n层的连通表
+                    }
+                }
+            }
+        }
+        return matrix;
+    }
+
+    public static void deployMatrixD(int[][] matrix) {
+        Random r = new Random(System.currentTimeMillis());
+        for (int i = 0; i &lt; matrix.length; i++) {
+            for (int j = 0; j &lt; matrix[i].length; j++) {
+                if (i == j) {
+                    continue;
+                }
+                int value = r.nextBoolean() ? 1 : 0;
+                matrix[i][j] = value;
+            }
+        }
+    }
+
+    public static void graghN(int num) {
+        Point[] pointsArray = initPoints(num);
+        int[][] matrix = initMatrix(num);
+        deployMatrix(matrix);
+        print(pointsArray, matrix);
+
+        dfs(pointsArray, matrix);
+        for (int i = 0; i &lt; pointsArray.length; i++) {
+            pointsArray[i].setVisted(false);
+        }
+        bfs(pointsArray, matrix);
+    }
+
+    public static Point[] initPoints(int num) {
+        Point[] pointsArray = new Point[num];
+        for (int i = 0; i &lt; pointsArray.length; i++) {
+            pointsArray[i] = new Point(String.valueOf((char) (65 + i)));
+            pointsArray[i].setIndex(i);
+        }
+        return pointsArray;
+    }
+
+    public static int[][] initMatrix(int num) {
+        int[][] matrix = new int[num][num];
+        for (int i = 0; i &lt; matrix.length; i++) {
+            for (int j = 0; j &lt; matrix[i].length; j++) {
+                // matrix[i][j] = 0;
+            }
+        }
+        return matrix;
+    }
+
+    public static void deployMatrix(int[][] matrix) {
+        Random r = new Random(System.currentTimeMillis());
+        for (int i = 0; i &lt; matrix.length; i++) {
+            for (int j = i + 1; j &lt; matrix[i].length; j++) {
+                int value = r.nextBoolean() ? 1 : 0;
+                matrix[i][j] = value;
+                matrix[j][i] = value;
+            }
+        }
+    }
+    
+    public static void deployMatrixNW(int[][] matrix) {
+        Random r = new Random(System.currentTimeMillis());
+        for (int i = 0; i &lt; matrix.length; i++) {
+            for (int j = i + 1; j &lt; matrix[i].length; j++) {
+                int value = r.nextInt(5);
+                matrix[i][j] = value;
+                matrix[j][i] = value;
+            }
+        }
+    }
+
+    public static void print(Point[] points, int[][] matrix) {
+        System.out.print("   ");
+        for (int i = 0; i &lt; points.length; i++) {
+            System.out.print(points[i].getLabel() + "  ");
+        }
+        System.out.println();
+        for (int i = 0; i &lt; matrix.length; i++) {
+            System.out.print(points[i].getLabel() + "  ");
+            for (int j = 0; j &lt; matrix[i].length; j++) {
+                System.out.print(matrix[i][j] + "  ");
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * dfs算法走过整个图的路径必定是最小生成树
+     */
+    public static void dfs(Point[] points, int[][] matrix) {
+        int start = 0;
+        System.out.println("dfs \nstart with " + points[start].getLabel());
+
+        Stack stack = new Stack();
+        stack.push(points[start]);
+        points[start].setVisted(true);
+        move(points, matrix, stack);
+    }
+
+    public static void move(Point[] points, int[][] matrix, Stack stack) {
+        Point top = (Point) stack.peek();
+        boolean flag = false;
+        for (int i = 0; i &lt; matrix[top.getIndex()].length; i++) {
+            if (matrix[top.getIndex()][i] == 1 &amp;&amp; !points[i].isVisted()) {// 说明相连
+                stack.push(points[i]);
+                points[i].setVisted(true);
+                flag = true;// rule No.1
+                System.out.println("move from " + top.getLabel() + " to " + points[i].getLabel());
+                move(points, matrix, stack);
+                break;
+            }
+        }
+        if (!flag) {
+            Point p = (Point) stack.pop();
+            if (!stack.isEmpty()) {// rule No.2
+                System.out.println("there is no unvisted point connect to " + p.getLabel() + ",return to " + ((Point) stack.peek()).getLabel());
+                move(points, matrix, stack);
+            } else {
+                System.out.println("stack is null,end search");// rule No.3
+            }
+        }
+    }
+
+    public static void bfs(Point[] points, int[][] matrix) {
+        int start = 0;
+        System.out.println("bfs \nstart with " + points[start].getLabel());
+
+        Queue queue = new LinkedList();
+        queue.add(points[start]);
+        points[start].setVisted(true);
+        move(points, matrix, queue);
+    }
+
+    public static void move(Point[] points, int[][] matrix, Queue queue) {
+        while (!queue.isEmpty()) {
+            Point top = (Point) queue.poll();
+            System.out.println("stand at " + top.getLabel());
+            for (int i = 0; i &lt; matrix[top.getIndex()].length; i++) {
+                if (matrix[top.getIndex()][i] == 1 &amp;&amp; !points[i].isVisted()) {// 说明相连
+                    queue.add(points[i]);
+                    points[i].setVisted(true);
+                    System.out.println("from " + top.getLabel() + " visit " + points[i].getLabel());
+                }
+            }
+        }
+        System.out.println("queue is null,end search");
+    }
+}
+</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package map;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Random;
+
+public class Client2 {
+    public static void main(String[] args) {
+        int num = 6;
+        Gragh g = new Gragh();
+        initPoints(g, num);
+        initEdges(g, num);
+        int[][] matrix = initMatrix(g);
+        print(g, matrix);
+        mstw(g, matrix);
+
+    }
+
+    public static void mstw(Gragh g, int[][] matrix) {
+        int start = 0;
+        System.out.println("mstw \nstart  with " + g.getPoints().get(start).getLabel());
+
+        List set = new ArrayList();
+        Point p = g.getPoints().get(start);
+        set.add(p);
+        g.getPoints().remove(p);
+        System.out.println("put "+p);
+
+        // 查找与起点所有关联的终点不在集合中的边放到优先列表，找到最小的边，把他的终点放到集合中，把和他相关的
+        // 边也放到优先列表 在找一个最小的边。。。。。
+        //最小权值的生成树不是唯一的
+        Queue q = new PriorityQueue();
+        while (g.getPoints().size() &gt; 0) {
+            for (Iterator iterator = g.getEdges().iterator(); iterator.hasNext();) {
+                Edge edge = (Edge) iterator.next();
+                if(edge.getStart()==p &amp;&amp; !set.contains(edge.getEnd())){//和p相连 但又不在set中
+                    q.add(edge);
+                }
+                if (edge.getEnd()==p &amp;&amp; !set.contains(edge.getStart())) {
+                    q.add(edge);
+                }
+            }
+            Edge low = (Edge) q.poll();
+            if(!(set.contains(low.getStart()) &amp;&amp; set.contains(low.getEnd()))){
+                set.add(low);
+                System.out.println("put "+low);
+                if (set.contains(low.getStart())) {
+                    set.add(low.getEnd());
+                    System.out.println("put "+low.getEnd());
+                    g.getPoints().remove(low.getEnd());
+                    p = low.getEnd();
+                } else {
+                    set.add(low.getStart());
+                    System.out.println("put "+low.getStart());
+                    g.getPoints().remove(low.getStart());
+                    p = low.getStart();
+                }
+            }
+            
+        }
+
+//        for (Iterator iterator = set.iterator(); iterator.hasNext();) {
+//            Object object = (Object) iterator.next();
+//            System.out.println(object);
+//        }
+    }
+
+    public static void initPoints(Gragh g, int num) {
+        for (int i = 0; i &lt; num; i++) {
+            Point p = new Point(String.valueOf((char) (65 + i)));
+            p.setIndex(i);
+            g.getPoints().add(p);
+        }
+    }
+
+    public static void initEdges(Gragh g, int num) {
+        Random r = new Random(System.currentTimeMillis());
+        for (int i = 0; i &lt; g.getPoints().size(); i++) {
+            for (int j = i + 1; j &lt; g.getPoints().size(); j++) {
+                int weight = r.nextInt(5);
+                if (weight &gt; 0) {
+                    Edge e = new Edge();
+                    e.setStart(g.getPoints().get(i));
+                    e.setEnd(g.getPoints().get(j));
+                    e.setWeight(weight);
+                    g.getEdges().add(e);
+                }
+            }
+        }
+    }
+
+    public static int[][] initMatrix(Gragh g) {
+        int[][] matrix = new int[g.getPoints().size()][g.getPoints().size()];
+        for (Iterator iterator = g.getEdges().iterator(); iterator.hasNext();) {
+            Edge edge = (Edge) iterator.next();
+            matrix[edge.getStart().getIndex()][edge.getEnd().getIndex()] = edge.getWeight();
+            matrix[edge.getEnd().getIndex()][edge.getStart().getIndex()] = edge.getWeight();
+        }
+        return matrix;
+    }
+
+    public static void print(Gragh g, int[][] matrix) {
+        System.out.print("   ");
+        for (int i = 0; i &lt; g.getPoints().size(); i++) {
+            System.out.print(g.getPoints().get(i).getLabel() + "  ");
+        }
+        System.out.println();
+        for (int i = 0; i &lt; matrix.length; i++) {
+            System.out.print(g.getPoints().get(i).getLabel() + "  ");
+            for (int j = 0; j &lt; matrix[i].length; j++) {
+                System.out.print(matrix[i][j] + "  ");
+            }
+            System.out.println();
+        }
+        for (Iterator iterator = g.getEdges().iterator(); iterator.hasNext();) {
+            Edge edge = (Edge) iterator.next();
+            System.out.println(edge);
+        }
+    }
+}
+</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package map;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Random;
+
+public class ClientDW {
+    public static void main(String[] args) {
+        int num = 6;
+        Gragh g = new Gragh();
+        initPoints(g, num);
+        initEdges(g, num);
+        int[][] matrix = initMatrix(g);
+        print(g, matrix);
+        path(g, matrix);
+    }
+
+    public static void path(Gragh g, int[][] matrix) {
+        //此算法首先是选一个起点（当前点）A 在他的连接点里找最小的边 把边的终点B加入树（第一次无需刷新路径表）
+        //然后把B做为起点 看他连接着的不在树上的点x中， 点x到B(当前点)的距离 + B到A的距离（确定了的当前点的最短路径） 是否比 路径表里（A到x）的距离近 
+        //如果近 就刷新 A到x的距离 并把B作为x的路径上的最后一个点
+        //把所有B连接着的点 刷新后 ，然后统计路径表 找出最小的一个点C 加入树，把C做为起点。。。比x+C  是否比路径表里的近
+        int start = 0;
+        System.out.println("path \nstart  with " + g.getPoints().get(start).getLabel());
+        Path[] pArray = new Path[g.getPoints().size()];
+        List tree = new ArrayList();
+        tree.add(g.getPoints().get(start));
+        System.out.println("put " + g.getPoints().get(start));
+        Point curentPoint = g.getPoints().get(start);
+
+        while (tree.size() &lt; g.getPoints().size()) {
+            for (int i = 0; i &lt; matrix[curentPoint.getIndex()].length; i++) {
+                if (pArray[i] == null) {
+                    pArray[i] = new Path();
+                    pArray[i].getPath().add(curentPoint);
+                    pArray[i].setDistance(999);
+                }
+                if (!tree.contains(g.getPoints().get(i))) {
+                    int newD = matrix[curentPoint.getIndex()][i] + (pArray[curentPoint.getIndex()].getDistance() == 999 ? 0 : pArray[curentPoint.getIndex()].getDistance());
+                    int oldD = pArray[i].getDistance();
+                    System.out.println("old " + oldD + "   new " + newD);
+                    if (newD &lt; oldD) {
+                        pArray[i].setDistance(newD);
+                        pArray[i].getPath().add(curentPoint);
+                    }
+
+                }
+
+            }
+            printPathArray(pArray);
+            Queue q = new PriorityQueue();
+            int index = 0;
+            int min = 9999;
+            for (int i = 0; i &lt; pArray.length; i++) {
+                if (!tree.contains(g.getPoints().get(i))) {
+                    if (pArray[i].getDistance() &lt; min) {
+                        min = pArray[i].getDistance();
+                        index = i;
+                    }
+                }
+            }
+            tree.add(g.getPoints().get(index));
+            curentPoint = g.getPoints().get(index);
+            System.out.println("mininum distance is " + pArray[index].getDistance() + " from "
+                    + pArray[index].getPath().get(pArray[index].getPath().size() - 1) + ", to " + g.getPoints().get(index).getLabel());
+            System.out.println("put " + g.getPoints().get(index).getLabel());
+        }
+        for (int i = 0; i &lt; pArray.length; i++) {
+            System.out.print(pArray[i].getDistance() + "   ");
+            for (int j = 1; j &lt; pArray[i].getPath().size(); j++) {
+                System.out.print(pArray[i].getPath().get(j).getLabel() + " ");
+                System.out.print(g.getPoints().get(i).getLabel());
+            }
+            System.out.println();
+        }
+    }
+
+    public static void printPathArray(Path[] pArray) {
+        for (int i = 0; i &lt; pArray.length; i++) {
+            System.out.print(pArray[i].getDistance() + "  ");
+        }
+        System.out.println();
+    }
+
+    public static void initPoints(Gragh g, int num) {
+        for (int i = 0; i &lt; num; i++) {
+            Point p = new Point(String.valueOf((char) (65 + i)));
+            p.setIndex(i);
+            g.getPoints().add(p);
+        }
+    }
+
+    public static void initEdges(Gragh g, int num) {
+        Random r = new Random(System.currentTimeMillis());
+        for (int i = 0; i &lt; g.getPoints().size(); i++) {
+            for (int j = 0; j &lt; g.getPoints().size(); j++) {
+                if (i == j) {
+                    continue;
+                }
+                int weight = r.nextInt(3);
+                if (weight &gt; 0) {
+                    Edge e = new Edge();
+                    e.setStart(g.getPoints().get(i));
+                    e.setEnd(g.getPoints().get(j));
+                    e.setWeight(weight);
+                    g.getEdges().add(e);
+                } else {
+                    Edge e = new Edge();
+                    e.setStart(g.getPoints().get(i));
+                    e.setEnd(g.getPoints().get(j));
+                    e.setWeight(999);
+                    g.getEdges().add(e);
+                }
+            }
+        }
+    }
+
+    public static int[][] initMatrix(Gragh g) {
+        int[][] matrix = new int[g.getPoints().size()][g.getPoints().size()];
+        for (Iterator iterator = g.getEdges().iterator(); iterator.hasNext();) {
+            Edge edge = (Edge) iterator.next();
+            matrix[edge.getStart().getIndex()][edge.getEnd().getIndex()] = edge.getWeight();
+        }
+        return matrix;
+    }
+
+    public static void print(Gragh g, int[][] matrix) {
+        System.out.print("   ");
+        for (int i = 0; i &lt; g.getPoints().size(); i++) {
+            System.out.print(g.getPoints().get(i).getLabel() + "  ");
+        }
+        System.out.println();
+        for (int i = 0; i &lt; matrix.length; i++) {
+            System.out.print(g.getPoints().get(i).getLabel() + "  ");
+            for (int j = 0; j &lt; matrix[i].length; j++) {
+                System.out.print(matrix[i][j] + "  ");
+            }
+            System.out.println();
+        }
+        for (Iterator iterator = g.getEdges().iterator(); iterator.hasNext();) {
+            Edge edge = (Edge) iterator.next();
+            System.out.println(edge);
+        }
+    }
+}
+</pre> 
+<p>&nbsp;</p>

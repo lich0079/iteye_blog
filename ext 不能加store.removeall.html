@@ -1,0 +1,27 @@
+<pre name="code" class="js">handler : function() {
+                            var countType=Ext.get('countType').dom.value;
+                    
+							if (countType == 'xxxx') {
+								
+                                Ext.getCmp('workload_count-TabPanel').layout
+                                        .setActiveItem(personWorkloadpanel);
+//                                        store.removeAll();//这里加了程序就不往下执行了
+								store.load({
+									params : {
+										countType : 'personWorkloadCount',
+										startTime : Ext.get('stimeb').dom.value,
+										endTime : Ext.get('stimee').dom.value
+									},
+									callback : function(r, options, success) {
+										chart.setHeight(store.getTotalCount()* 30);
+									}
+								});
+                                
+								
+                                        
+							} else {
+								Ext.getCmp('workload_count-TabPanel').layout
+										.setActiveItem('otherPanel');
+							}
+
+						}</pre> &nbsp;

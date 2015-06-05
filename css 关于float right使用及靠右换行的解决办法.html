@@ -1,0 +1,7 @@
+1、float: right的简单用法：使用代码<span style="float: right"> ******  </SPAN>，其中******就是你调用的元素，比如发布日期：{dateline}，如果想让此元素靠右，则相应为：<span style="float: right">{dateline}  </SPAN>；
+2、当使用span时，很多站长反映：靠右的元素和前面的元素被自动换行了，即不再在同一行内，原因是：当非float的元素和float的元素在一起的时候，如果非float元素在先，那么float的元素将被排斥。
+
+也就是说：如果你在设置span是float:right时，把他放在所有元素的最前面就正常了，以下为举例（攻击调用三个元素，想让第三个元素靠右显示）：
+按顺序输入的方法是错误的： {forum}{subject}<span style="float: right">{dateline}  </SPAN> <br />
+正确的方法：<span style="float: right">{dateline} </SPAN>{forum}{subject}<br />
+

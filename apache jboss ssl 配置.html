@@ -1,0 +1,115 @@
+<p>httpd.conf</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">Include "conf/mod_jk.conf"
+
+Include "conf/vhosts.conf"    
+Include "conf/vhosts-s.conf"</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;如果使用httpd-vhosts.conf 启动服务会失败， 因为 apache 自己引入过？！ 但是在不同目录下啊</p> 
+<p>&nbsp;</p> 
+<p>Include "conf/extra/httpd-vhosts.conf"</p> 
+<p>&nbsp;</p> 
+<p>mod_jk.conf</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code"># Load mod_jk module
+# Specify the filename of the mod_jk lib
+LoadModule jk_module modules/mod_jk.so
+
+# Where to find workers.properties
+JkWorkersFile conf/workers.properties
+
+# Where to put jk logs
+JkLogFile logs/mod_jk.log
+
+# Set the jk log level [debug/error/info]
+JkLogLevel debug
+
+# Select the log format
+JkLogStampFormat "[%a %b %d %H:%M:%S %Y]"
+
+# JkOptions indicates to send SSK KEY SIZE
+# Notes: 
+# 1) Changed from +ForwardURICompat. 
+# 2) For mod_rewrite compatibility, use +ForwardURIProxy (default since 1.2.24)
+# See http://tomcat.apache.org/security-jk.html  
+JkOptions +ForwardKeySize +ForwardURICompatUnparsed -ForwardDirectories
+
+# JkRequestLogFormat
+JkRequestLogFormat "%w %V %T"</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>workers.properties</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">workers.tomcat_home =C:/dev/jboss-5.1.0.GA/server/default/deploy/jbossweb.sar
+workers.java_home=C:/dev/jre160
+ps=\
+# Defining a worker named worker1 and of type ajp13
+worker.list=worker1
+
+# Set properties for worker1
+worker.worker1.type=ajp13
+worker.worker1.host=localhost
+worker.worker1.port=8009
+worker.worker1.lbfactor=50
+worker.worker1.cachesize=10
+worker.worker1.cache_timeout=600
+worker.worker1.socket_keepalive=1
+worker.worker1.socket_timeout=300
+</pre> &nbsp; 
+<p>vhosts.conf</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">NameVirtualHost *:80
+
+
+&lt;VirtualHost www.h2.com:80&gt;
+ServerName www.h2.com
+Alias /beta "C:/project/beta/www_root"
+  DocumentRoot  "C:/project/beta/www_root"
+        &lt;Directory   "C:/project/beta/www_root"&gt;
+                Options FollowSymLinks Includes ExecCGI
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        &lt;/Directory&gt;
+
+
+
+JkUnMount /beta /*.htm worker1
+JkMount /beta /* worker1
+JkUnMount /beta /*.php worker1
+JkUnMount /beta /*.js worker1
+&lt;/VirtualHost&gt;
+ 
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>vhosts-s.conf</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">NameVirtualHost *:443
+
+&lt;VirtualHost www.h2.com:443&gt;
+        ServerName www.h2.com:443
+ErrorLog "logs/error443.log"
+         
+
+JkMount /beta/* worker1
+
+
+    SSLEngine on
+    SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+    SSLCertificateFile "conf/ssl.crt/server.crt"
+    SSLCertificateKeyFile "conf/ssl.key/server.key"
+
+ #  BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
+    CustomLog "logs/ssl_request.log" "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+
+    
+
+&lt;/VirtualHost&gt;</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

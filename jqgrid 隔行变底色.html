@@ -1,0 +1,49 @@
+<p>jgrid默认配置没有 隔行变底色的选项</p> 
+<p>查看源码 &nbsp;看他怎么给row添加class的&nbsp;</p> 
+<p>找到了<span style="white-space: pre;">addRowData 方法</span></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">addRowData : function(rowid,rdata,pos,src) {
+                                       。。。。。。。。。。
+					row = "&lt;tr id=\""+rowid+"\" role=\"row\" tabindex=\"-1\" class=\"ui-widget-content jqgrow ui-row-"+t.p.direction+" "+cna+"\"&gt;" + row+"&lt;/tr&gt;";
+					。。。。。。。
+		return success;
+	},
+</pre> 
+<p>&nbsp;这里就有一句是给tr设置 class的 &nbsp;底色就在<span style="white-space: pre;">ui-widget-content 这个class里</span></p> 
+<p>&nbsp;</p> 
+<p>接下来最理想的就是找到行号 &nbsp;奇数设一个class 偶数设一个class</p> 
+<p>&nbsp;</p> 
+<p>但这个函数中找不到行号， &nbsp;</p> 
+<p>&nbsp;</p> 
+<p>于是设置一个全局变量 changeColor = false;，</p> 
+<p>在根据changeColor来给tr设置不用的class,</p> 
+<p>设置完一行就 &nbsp;&nbsp;changeColor=!&nbsp;changeColor; 那么就保证下一次肯定颜色不一样</p> 
+<p>上面那个是加载localdata 用的&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>下面是加载jsondata的</p> 
+<p> </p> 
+<pre class="java" name="code">	addJSONData = function(data,t, rcnt, more, adjust) {
+。。。。。。。。
+			while (i&lt;len) {
+。。。。。。。。
+		                    if(i%2==0){
+                                        $.push("&lt;tr" + Ga + ' id="' + T + '" tabindex="-1" role="row" class= "ui-widget-content jqgrow ui-row-' + b.p.direction + "" + O + '"&gt;');
+                                    }else{
+                                    	$.push("&lt;tr" + Ga + ' id="' + T + '" tabindex="-1" role="row" class= "ui-widget-content2 jqgrow ui-row-' + b.p.direction + "" + O + '"&gt;');
+                                    }
+。。。。。。。。。。。。。。。。
+		},
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

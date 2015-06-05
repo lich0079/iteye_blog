@@ -1,0 +1,19 @@
+<div class="iteye-blog-content-contain" style="font-size: 14px;"> 
+ <p>&nbsp;</p> 
+ <p>不确定这是 angular的还是浏览器的， chrome&nbsp;<span style="color: #303942; font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 12px; line-height: normal;">Version 41.0.2272.118 m, &nbsp; &nbsp;</span><span style="color: #303942; font-family: 'Segoe UI', Tahoma, sans-serif;"><span style="font-size: 12px; line-height: normal;">angular 1.3.15</span></span></p> 
+ <p>&nbsp;</p> 
+ <p>有个表达式{{pageindex+1}} &nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>一般情况好的，当pageindex=1111的时候 &nbsp;这个计算出来就会变成11111， 而不是需要的1112</p> 
+ <p>&nbsp;</p> 
+ <p>解决办法</p> 
+ <p>&nbsp;</p> 
+ <p>{{parseInt(pageindex)+parseInt(1)}}</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>这里注意因为express里面不能访问全局变量， 只能访问scope内的函数， 所以要在scope里面定义一个</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; $scope.parseInt = function(num){</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; return parseInt(num);//scope里面可以访问全局函数</p> 
+ <p>&nbsp; &nbsp; }</p> 
+</div>

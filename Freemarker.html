@@ -1,0 +1,478 @@
+<h3>Dealing with missing variables</h3> 
+<p>In practice the data-model often has variables that are optional (i.e., sometimes missing). To spot some typical human mistakes, FreeMarker doesn't tolerate the referring to missing variables unless you tell them explicitly what to do if the variable is missing. Here we will show the two most typical ways of doing that.</p> 
+<p><span style="color: #333399;"><em>Note for programmers: A non-existent variable and a variable with <tt style="color: #a03d10;">null</tt> value is the same for FreeMarker, so the "missing" term used here covers both cases.</em> </span> </p> 
+<p>Wherever you refer to a variable, you can specify a default value for the case the variable is missing, by followin the variable name with a <tt style="color: #a03d10;">!</tt> and the default value. Like in the following example, when <tt style="color: #a03d10;">user</tt> is missing from data model, the template will behave like if <tt style="color: #a03d10;">user</tt> 's value were the string <tt style="color: #a03d10;">"Anonymous"</tt> . (When <tt style="color: #a03d10;">user</tt> isn't missing, this template behaves exactly like if <tt style="color: #a03d10;">!"Anonymous"</tt> were not there):</p> 
+<div> 
+ <table border="0" cellspacing="0" cellpadding="0"> 
+  <tbody>
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td> 
+     <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+      <tbody>
+       <tr> 
+        <td> <pre>&lt;h1&gt;Welcome ${user<strong>!"Anonymous"</strong>
+
+
+}!&lt;/h1&gt;&nbsp;<span style="font-size: 1pt;"> </span>
+
+
+</pre> </td> 
+       </tr>
+      </tbody>
+     </table> </td> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+  </tbody>
+ </table> 
+</div> 
+<p>You can ask whether a variable isn't missing by putting <tt style="color: #a03d10;">??</tt> after its name. Combining this with the already introduced <tt style="color: #a03d10;">if</tt> directive you can skip the whole greeting if the <tt style="color: #a03d10;">user</tt> variable is missing:</p> 
+<div> 
+ <table border="0" cellspacing="0" cellpadding="0"> 
+  <tbody>
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td> 
+     <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+      <tbody>
+       <tr> 
+        <td> <pre>&lt;#if <strong>user??</strong>
+
+
+&gt;&lt;h1&gt;Welcome ${user}!&lt;/h1&gt;&lt;/#if&gt;&nbsp;<span style="font-size: 1pt;"> </span>
+
+
+</pre> </td> 
+       </tr>
+      </tbody>
+     </table> </td> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+  </tbody>
+ </table> 
+</div> 
+<p>Regarding variable accessing with multiple steps, like <tt style="color: #a03d10;">animals.python.price</tt> , writing <tt style="color: #a03d10;">animals.python.price!0</tt> is correct only if <tt style="color: #a03d10;">animals.python</tt> is never missing and only the last subvariable, <tt style="color: #a03d10;">price</tt> , is possibly missing (in which case here we assume it's <tt style="color: #a03d10;">0</tt> ). If <tt style="color: #a03d10;">animals</tt> or <tt style="color: #a03d10;">python</tt> is missing, the template processing will stop with an "undefined variable" error. To prevent that, you have to write <tt style="color: #a03d10;">(animals.python.price)!0</tt> . In that case the expression will be <tt style="color: #a03d10;">0</tt> even if <tt style="color: #a03d10;">animals</tt> or <tt style="color: #a03d10;">python</tt> is missing. Same logic goes for <tt style="color: #a03d10;">??</tt> ; <tt style="color: #a03d10;">animals.python.price??</tt> versus <tt style="color: #a03d10;">(animals.python.price)??</tt> .</p> 
+<p>&nbsp;</p> 
+<p>-----------------------------------------------------------------------------------------------------------------------</p> 
+<p>&nbsp;</p> 
+<h4>Function/method versus user-defined directive</h4> 
+<p>This is for advanced users again (so ignore it if you don't understand). It's a frequent dilemma if you should use a function/method or an user-defined directive to implement something. The rule of thumb is: Implement the facility as user-defined directive instead of as function/method if:</p> 
+<div class="itemizedlist"> 
+ <ul> 
+  <li> <p>... the output (the return value) is markup (HTML, XML, etc.). The main reason is that the result of functions are subject to automatic XML-escaping (due to the nature of <tt style="color: #a03d10;">${<em style="color: #dd4400;">...</em> }</tt> ), while the output of user-defined directives are not (due to the nature of <tt style="color: #a03d10;">&lt;@<em style="color: #dd4400;">...</em> &gt;</tt> ; its output is assumed to be markup, and hence already escaped).</p> </li> 
+  <li> <p>... it's the side-effect that is important and not the return value. For example, a directive whose purpose is to add an entry to the server log is like that. (In fact you can't have a return value for a user-defined directive, but some kind of feedback is still possible by setting non-local variables.)</p> </li> 
+  <li> <p>... it will do flow control (like for example <tt style="color: #a03d10;">list</tt> or <tt style="color: #a03d10;">if</tt> directives do). You just can't do that with a function/method anyway.</p> </li> 
+ </ul> 
+</div> 
+<p>The Java methods of FreeMarker-unaware Java objects are normally visible as methods in templates, regardless of the nature of the Java method. That said, you have no choice there.</p> 
+<p>----------------------------------------------------------------------------------------------------------------------------------</p> 
+<p>An <span style="background-color: #dbfe5e;">FTL tag</span> can't be inside another <span style="background-color: #dbfe5e;">FTL tag</span> nor inside an <span style="background-color: #ffb85d;">interpolation</span> . For example this is <em>WRONG</em> : <tt style="color: #a03d10;">&lt;#if &lt;#include 'foo'&gt;='bar'&gt;...&lt;/#if&gt;</tt> </p> 
+<p>----------------------------------------------------------------</p> 
+<div style="margin-left: 0.5in; margin-right: 0.5in;" class="warning"> 
+ <h3>Warning!</h3> 
+ <p>A frequent mistake of users is the usage of interpolations in places where it shouldn't/can't be used. Interpolations work <em>only</em> in <a><span style="background-color: #8acbfa;">text</span> sections</a> (e.g. <tt style="color: #a03d10;">&lt;h1&gt;Hello ${name}!&lt;/h1&gt;</tt> ) and in string literals (e.g. <tt style="color: #a03d10;">&lt;#include "/footer/${company}.html"&gt;</tt> ). A typical bad usage is <tt style="color: #a03d10;">&lt;#if ${isBig}&gt;Wow!&lt;/#if&gt;</tt> , which is syntactically <em>WRONG</em> . You should simply write <tt style="color: #a03d10;">&lt;#if isBig&gt;Wow!&lt;/#if&gt;</tt> . Also, <tt style="color: #a03d10;">&lt;#if "${isBig}"&gt;Wow!&lt;/#if&gt;</tt> is <em>WRONG</em> too, since the parameter value will be a string, and the <tt style="color: #a03d10;">if</tt> directive wants a boolean value, so it will cause a runtime error.</p> 
+</div> 
+<p>-----------------------------------------------------------------</p> 
+<p>You can concatenate hashes in the same way as strings, with <tt style="color: #a03d10;">+</tt> . If both hashes contain the same key, the hash on the right-hand side of the <tt style="color: #a03d10;">+</tt> takes precedence.</p> 
+<p>-----------------------------------------------------------------------------------</p> 
+<p>Generally, FreeMarker never converts a string to a number automatically, but it may convert a number to a string automatically.</p> 
+<p>---------------------------------------------------------------------------------</p> 
+<table border="0" cellspacing="0" cellpadding="0"> 
+ <tbody>
+  <tr> 
+   <td> 
+    <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+     <tbody>
+      <tr> 
+       <td> <pre>${(x/2)?int}
+${1.1?int}
+${1.999?int}
+${-1.1?int}
+${-1.999?int}&nbsp;<span style="font-size: 1pt;"> </span>
+
+
+</pre> </td> 
+      </tr>
+     </tbody>
+    </table> </td> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+  <tr> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+ </tbody>
+</table> 
+<p>Assuming that <tt style="color: #a03d10;">x</tt> is 5, it will print:</p> 
+<table border="0" cellspacing="0" cellpadding="0"> 
+ <tbody>
+  <tr> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+  <tr> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td> 
+    <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+     <tbody>
+      <tr> 
+       <td> <pre>2
+1
+1
+-1
+-1&nbsp;<span style="font-size: 1pt;"> </span>
+
+
+</pre> </td> 
+      </tr>
+     </tbody>
+    </table> </td> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+ </tbody>
+</table> 
+<p>--------------------------------------------------------------------------</p> 
+<p>User-defined directives can have multiple parameters. For example, add a new parameter <tt style="color: #a03d10;">color</tt> :</p> 
+<div> 
+ <table border="0" cellspacing="0" cellpadding="0"> 
+  <tbody>
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td> 
+     <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+      <tbody>
+       <tr> 
+        <td> <pre>&lt;#macro greet person <strong>color</strong>
+
+&gt;
+  &lt;font size="+2" color="${color}"&gt;Hello ${person}!&lt;/font&gt;
+&lt;/#macro&gt;&nbsp;<span style="font-size: 1pt;"> </span>
+
+</pre> </td> 
+       </tr>
+      </tbody>
+     </table> </td> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+  </tbody>
+ </table> 
+</div> 
+<p>and then you can use this macro like:</p> 
+<table border="0" cellspacing="0" cellpadding="0"> 
+ <tbody>
+  <tr> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+  <tr> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td> 
+    <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+     <tbody>
+      <tr> 
+       <td> <pre>&lt;@greet person="Fred" color="black"/&gt;&nbsp;<span style="font-size: 1pt;"> </span>
+
+</pre> </td> 
+      </tr>
+     </tbody>
+    </table> </td> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+  <tr> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+ </tbody>
+</table> 
+<p>---------------------------------------------------------------------------------------</p> 
+<table border="0" cellspacing="0" cellpadding="0"> 
+ <tbody>
+  <tr> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+  <tr> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td> 
+    <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+     <tbody>
+      <tr> 
+       <td> <pre>&lt;#macro border&gt;
+  &lt;table border=4 cellspacing=0 cellpadding=4&gt;&lt;tr&gt;&lt;td&gt;
+    <strong>&lt;#nested&gt;</strong>
+
+
+  &lt;/tr&gt;&lt;/td&gt;&lt;/table&gt;
+&lt;/#macro&gt;&nbsp;<span style="font-size: 1pt;"> </span>
+
+</pre> </td> 
+      </tr>
+     </tbody>
+    </table> </td> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+  <tr> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+ </tbody>
+</table> 
+<p>The <tt style="color: #a03d10;">&lt;#nested&gt;</tt> directive executes the template fragment between the start-tag and end-tags of the directive. So if you do this:</p> 
+<div> 
+ <table border="0" cellspacing="0" cellpadding="0"> 
+  <tbody>
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td> 
+     <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+      <tbody>
+       <tr> 
+        <td> <pre>&lt;@border&gt;The bordered text&lt;/@border&gt;&nbsp;<span style="font-size: 1pt;"> </span>
+
+</pre> </td> 
+       </tr>
+      </tbody>
+     </table> </td> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+  </tbody>
+ </table> 
+</div> 
+<p>the output will be:</p> 
+<table border="0" cellspacing="0" cellpadding="0"> 
+ <tbody>
+  <tr> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+  <tr> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td> 
+    <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+     <tbody>
+      <tr> 
+       <td> <pre>  &lt;table border=4 cellspacing=0 cellpadding=4&gt;&lt;tr&gt;&lt;td&gt;
+    The bordered text
+  &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&nbsp;<span style="font-size: 1pt;"> </span>
+
+</pre> </td> 
+      </tr>
+     </tbody>
+    </table> </td> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+ </tbody>
+</table> 
+<p>---------------------------------------------------------------------------------------------</p> 
+<p>The expressions on both sides of the <tt style="color: #a03d10;">=</tt> or <tt style="color: #a03d10;">!=</tt> must evaluate to a scalar. Furthermore, the two scalars must have the same type (i.e. strings can only be compared to strings and numbers can only be compared to numbers, etc.)</p> 
+<p>--------------------------------------------------------------------------------</p> 
+<p>There is a little problem with <tt style="color: #a03d10;">&gt;=</tt> and <tt style="color: #a03d10;">&gt;</tt> . FreeMarker interprets the <tt style="color: #a03d10;">&gt;</tt> as the closing character of the FTL tag. To prevent this, you have to put the expression into <a>parenthesis</a> : <tt style="color: #a03d10;">&lt;#if (x &gt; y)&gt;</tt> . Or, you can use <tt style="color: #a03d10;">&amp;gt;</tt> and <tt style="color: #a03d10;">&amp;lt;</tt> on the place of the problematic relation marks: <tt style="color: #a03d10;">&lt;#if x &amp;gt; y&gt;</tt> . </p> 
+<p>------------------------------------------------------------------------------------------------------</p> 
+<div class="itemizedlist"> 
+ <ul> 
+  <li> <p>Built-ins to use with strings: </p> 
+   <div class="itemizedlist"> 
+    <ul> 
+     <li> <p><tt style="color: #a03d10;">html</tt> : The string with all special HTML characters replaced with entity references (E.g. <tt style="color: #a03d10;">&lt;</tt> with <tt style="color: #a03d10;">&amp;lt;</tt> )</p> </li> 
+     <li> <p><tt style="color: #a03d10;">cap_first</tt> : The string with the first letter converted to upper case</p> </li> 
+     <li> <p><tt style="color: #a03d10;">lower_case</tt> : The lowercase version of the string</p> </li> 
+     <li> <p><tt style="color: #a03d10;">upper_case</tt> : The uppercase version of the string</p> </li> 
+     <li> <p><tt style="color: #a03d10;">trim</tt> : The string without leading and trailing <a>white-spaces</a> </p> </li> 
+    </ul> 
+   </div> </li> 
+  <li> <p>Built-ins to use with sequences: </p> 
+   <div class="itemizedlist"> 
+    <ul> 
+     <li> <p><tt style="color: #a03d10;">size</tt> : The number of elements in the sequence</p> </li> 
+    </ul> 
+   </div> </li> 
+  <li> <p>Built-ins to use with numbers: </p> 
+   <div class="itemizedlist"> 
+    <ul> 
+     <li> <p><tt style="color: #a03d10;">int</tt> : The integer part of a number (e.g. <tt style="color: #a03d10;">-1.9?int</tt> is <tt style="color: #a03d10;">-1</tt> )</p> </li> 
+    </ul> 
+    <table border="0" cellspacing="0" cellpadding="0"> 
+     <tbody>
+      <tr> 
+       <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+       <td> 
+        <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+         <tbody>
+          <tr> 
+           <td> <pre>${test?html}
+${test?upper_case?html}&nbsp;<span style="font-size: 1pt;"> </span>
+
+
+</pre> </td> 
+          </tr>
+         </tbody>
+        </table> </td> 
+       <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+      </tr> 
+      <tr> 
+       <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+       <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+       <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+      </tr> 
+     </tbody>
+    </table> 
+    <p>Assuming that <tt style="color: #a03d10;">test</tt> stores the string ``Tom &amp; Jerry'', the output will be:</p> 
+    <table border="0" cellspacing="0" cellpadding="0"> 
+     <tbody>
+      <tr> 
+       <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+       <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+       <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+      </tr> 
+      <tr> 
+       <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+       <td> 
+        <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+         <tbody>
+          <tr> 
+           <td> <pre>Tom &amp;amp; Jerry
+TOM &amp;amp; JERRY&nbsp;<span style="font-size: 1pt;"> </span>
+
+
+</pre> </td> 
+          </tr>
+         </tbody>
+        </table> </td> 
+       <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+      </tr> 
+      <tr> 
+       <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+       <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+       <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+      </tr> 
+     </tbody>
+    </table> ----------------------------------------------------------------------------------------
+   </div> </li> 
+  <li> <p>Synopsis: <tt style="color: #a03d10;"><em style="color: #dd4400;">unsafe_expr</em> !<em style="color: #dd4400;">default_expr</em> </tt> or <tt style="color: #a03d10;"><em style="color: #dd4400;">unsafe_expr</em> !</tt> or <tt style="color: #a03d10;">(<em style="color: #dd4400;">unsafe_expr</em> )!<em style="color: #dd4400;">default_expr</em> </tt> or <tt style="color: #a03d10;">(<em style="color: #dd4400;">unsafe_expr</em> )!</tt> </p> <p>This operator allows you to specify a default value for the case when the value is missing.</p> </li> 
+ </ul> 
+</div> 
+<div class="itemizedlist">
+ ----------------------------------------------------------------------------------------------------------------
+</div> 
+<div class="itemizedlist">
+ However, you can convert booleans to strings with the 
+ <a><tt>?string</tt> built-in</a> . For example, to print the value of the "married" variable (assuming it's a boolean), you could write 
+ <tt style="color: #a03d10;">${married?string("yes", "no")}</tt> .
+</div> 
+<div class="itemizedlist">
+ ----------------------------------------------------------------------------------------------------------------
+ <br> 
+</div> 
+<p>&nbsp;</p> 
+<p>A special kind of string literals is the raw string literals. In raw string literals, backslash and <tt style="color: #a03d10;">${</tt> have no special meaning, they are considered as plain characters. To indicate that a string literal is a raw string literal, you have to put an <tt style="color: #a03d10;">r</tt> directly before the opening quotation mark or apostrophe-quote. Example:</p> 
+<div> 
+ <table border="0" cellspacing="0" cellpadding="0"> 
+  <tbody>
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td> 
+     <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+      <tbody>
+       <tr> 
+        <td> <pre>${r"${foo}"}
+${r"C:\foo\bar"}&nbsp;<span style="font-size: 1pt;"> </span>
+
+
+</pre> </td> 
+       </tr>
+      </tbody>
+     </table> </td> 
+    <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+   <tr> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+    <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   </tr> 
+  </tbody>
+ </table> 
+</div> 
+<p>will print:</p> 
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<table border="0" cellspacing="0" cellpadding="0"> 
+ <tbody>
+  <tr> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td height="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td width="1" height="1"><img border="0" width="1" height="1" alt=""></td> 
+  </tr> 
+  <tr> 
+   <td width="1"><img border="0" width="1" height="1" alt=""></td> 
+   <td> 
+    <table style="margin: 0px;" border="0" width="100%" cellspacing="0" cellpadding="4">
+     <tbody>
+      <tr> 
+       <td> <pre>${foo}
+C:\foo\bar&nbsp;<span style="font-size: 1pt;"> </span>
+
+
+</pre> </td> 
+      </tr>
+     </tbody>
+    </table> </td>  
+   <td width="1"><br></td>     
+  </tr> 
+ </tbody>
+</table>

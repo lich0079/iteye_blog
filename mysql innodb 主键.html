@@ -1,0 +1,16 @@
+<p><span style="font-family: helvetica, arial, sans-serif; color: #51555c; line-height: 18px;"> </span></p>
+<ul style="margin-top: 0px; margin-right: 0px; margin-bottom: 18px; margin-left: 0px; font-size: 12px; vertical-align: baseline; background-color: transparent; padding: 0px;"> 
+ <li style="margin-top: 0px; margin-right: 0px; margin-bottom: 9px; margin-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 12px; font-size: 12px; vertical-align: baseline; background-color: initial; background-position: 0% 0%;"><a href="http://blog.johnjosephbachir.org/2006/10/22/everything-you-need-to-know-about-designing-mysql-innodb-primary-keys/">http://blog.johnjosephbachir.org/2006/10/22/everything-you-need-to-know-about-designing-mysql-innodb-primary-keys/</a></li> 
+ <li style="margin-top: 0px; margin-right: 0px; margin-bottom: 9px; margin-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 12px; font-size: 12px; vertical-align: baseline; background-color: initial; background-position: 0% 0%;">The primary key determines the order in which the data is physically stored in the main data file, aka “the clustered index”. Another way of saying this: the main data file is a B-tree index that directly contains all of a table’s columns, and the key on this B-tree is the primary key. This can result in one less I/O operation (compared to MyISAM) on many queries.</li> 
+ <li style="margin-top: 0px; margin-right: 0px; margin-bottom: 9px; margin-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 12px; font-size: 12px; vertical-align: baseline; background-color: initial; background-position: 0% 0%;">The primary key is what is used to associate&nbsp;<em style="font-size: 12px; vertical-align: baseline; background-color: transparent; padding: 0px; margin: 0px;">all</em>&nbsp;of a table’s indexes with the main data file. So the primary key is replicated in every row of every index.</li> 
+</ul> 
+<div>
+ 如果不显示的指定主键的话，mysql会默认指定一个隐式的主键，而且是6字节的，
+</div> 
+<div>
+ 主键应该是有序的
+</div> 
+<div>
+ 主键应该越小越好，Because the primary key is replicated in every entry of every index,&nbsp;
+</div> 
+<p></p>

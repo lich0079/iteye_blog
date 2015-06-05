@@ -1,0 +1,28 @@
+<p>mysql的DISTINCT的关键字有很多你想不到的用处<br> 1.在count 不重复的记录的时候能用到<br> 比如SELECT COUNT( DISTINCT id ) FROM tablename;<br> 就是计算talbebname表中id不同的记录有多少条 </p> 
+<p>2,在需要返回记录不同的id的具体值的时候可以用<br> 比如SELECT DISTINCT id FROM tablename;<br> 返回talbebname表中不同的id的具体的值</p> 
+<p>3.上面的情况2对于需要返回mysql表中2列以上的结果时会有歧义<br> 比如SELECT DISTINCT id, type FROM tablename;<br><span style="color: #ff0000;">实际上返回的是 id与type同时不相同的结果,也就是DISTINCT同时作用了两个字段，必须得id与tyoe都相同的才被排除了,与我们期望的结果不一样 // <span style="color: #0000ff;">但这里是我希望的</span> <br></span> </p> 
+<p>4.这时候可以考虑使用group_concat函数来进行排除,不过这个mysql函数是在mysql4.1以上才支持的</p> 
+<p>5.其实还有另外一种解决方式,就是使用<br> SELECT id, type, count(DISTINCT id) FROM tablename<br> 虽然这样的返回结果多了一列无用的count数据(或许你就需要这个我说的无用数据)<br> 返回的结果是 只有id不同的所有结果和上面的4类型可以互补使用,就是看你需要什么样的数据了</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span class="t18"> </span></p>
+<p>id name </p> 
+<p>1 a </p> 
+<p>2 b </p> 
+<p>3 c </p> 
+<p>4 c </p> 
+<p>5 b </p> 
+<p>&nbsp;</p> 
+<p><span class="top11"><span class="t18">select *, count(distinct name) from table group by name </span> </span> </p> 
+<p>&nbsp;</p> 
+<p><span class="t18"> </span></p>
+<p>id name count(distinct name) </p> 
+<p>1 a 1 </p> 
+<p>2 b 1 </p> 
+<p>3 c 1 </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>个人认为这是上面的查询结果中&nbsp;&nbsp; id 为 4,5的重复了name的记录行 没有被显示出来， 但这是怎么决定的呢， 为什么被抛弃的是 4，5 而不是 2，3呢？？</p>  
+<p></p>  
+<p></p> 
+<p>&nbsp;</p>

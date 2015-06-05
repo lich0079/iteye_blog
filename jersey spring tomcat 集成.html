@@ -1,0 +1,101 @@
+<p>首先把jersey的相关jar放到WEB-INF/lib目录下</p> 
+<p>&nbsp;</p> 
+<p>web.xml</p> 
+<pre class="java" name="code">	&lt;servlet&gt;
+        &lt;servlet-name&gt;Jersey Spring&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.sun.jersey.spi.spring.container.servlet.SpringServlet&lt;/servlet-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;com.sun.jersey.config.property.packages&lt;/param-name&gt;
+            &lt;param-value&gt;com.axisspring.api&lt;/param-value&gt;//你的web service类所在的包
+        &lt;/init-param&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;Jersey Spring&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/api/*&lt;/url-pattern&gt;//你想匹配的路径
+    &lt;/servlet-mapping&gt;</pre> &nbsp; 
+<p>application-context.xml</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">	&lt;context:annotation-config /&gt;
+	&lt;context:component-scan base-package="com.axisspring.api" /&gt;
+
+    &lt;bean id="apiDao" class="com.axisspring.dao.ApiDao"&gt;
+    &lt;/bean&gt;
+    
+    &lt;bean id="apiService" class="com.axisspring.api.ApiService" &gt;
+    &lt;/bean&gt;
+    
+    &lt;bean id="apiService2" class="com.axisspring.api.ApiService2"&gt;
+    &lt;/bean&gt;
+    
+    &lt;bean id="apiService3" class="com.axisspring.api.ApiService3"&gt;
+    &lt;/bean&gt;</pre> &nbsp; 
+<p>ApiDao</p> 
+<pre class="java" name="code">public class ApiDao {
+    public String getName() {
+        return "mock";
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>ApiService</p> 
+<pre class="java" name="code">@Path("s1")
+@Component
+@Scope("request")
+public class ApiService {
+
+    private int count;
+    @Autowired
+    private ApiDao apiDao;
+
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public List&lt;City&gt; getCity(@DefaultValue("shanghai") @QueryParam("cname") String cityName) {
+        count++;//这里虽然scope设置的是request，但实际上只有一个对象count会一直累加 ????
+        List&lt;City&gt; a = new ArrayList&lt;City&gt;();
+        for (int i = 0; i &lt; 10; i++) {
+            City c = new City();
+            c.setName(cityName+ " " + i+" "+count);
+            c.setZone("zone " + i + apiDao.getName());
+            a.add(c);
+        }
+        return a;
+    }</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>City</p> 
+<pre class="java" name="code">@XmlRootElement     //加上这个才能解析成json 或 xml
+public class City { 
+    private String name;
+    private String zone;</pre> &nbsp; 
+<p>ApiService2</p> 
+<pre class="java" name="code">@Path("s2")
+@Component
+@Scope("request")
+public class ApiService2 {
+
+    @Autowired
+    private ApiDao apiDao;
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Person getCity(@DefaultValue("shanghai") @QueryParam("cname") String cityName) {
+        Person p = new Person();
+        p.setAge(22);
+        p.setName("lich");
+        City c = new City();
+        c.setName(cityName);
+        c.setZone("zone " + apiDao.getName());
+        p.setCity(c);
+        return p;
+    }</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>输出</p> 
+<p>&nbsp;</p> 
+<p>http://localhost:8080/axisspring/api/s1</p> 
+<pre class="java" name="code">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;&lt;cities&gt;&lt;city&gt;&lt;name&gt;shanghai 0 1&lt;/name&gt;&lt;zone&gt;zone 0mock&lt;/zone&gt;&lt;/city&gt;&lt;city&gt;&lt;name&gt;shanghai 1 1&lt;/name&gt;&lt;zone&gt;zone 1mock&lt;/zone&gt;&lt;/city&gt;&lt;city&gt;&lt;name&gt;shanghai 2 1&lt;/name&gt;&lt;zone&gt;zone 2mock&lt;/zone&gt;&lt;/city&gt;&lt;city&gt;&lt;name&gt;shanghai 3 1&lt;/name&gt;&lt;zone&gt;zone 3mock&lt;/zone&gt;&lt;/city&gt;&lt;city&gt;&lt;name&gt;shanghai 4 1&lt;/name&gt;&lt;zone&gt;zone 4mock&lt;/zone&gt;&lt;/city&gt;&lt;city&gt;&lt;name&gt;shanghai 5 1&lt;/name&gt;&lt;zone&gt;zone 5mock&lt;/zone&gt;&lt;/city&gt;&lt;city&gt;&lt;name&gt;shanghai 6 1&lt;/name&gt;&lt;zone&gt;zone 6mock&lt;/zone&gt;&lt;/city&gt;&lt;city&gt;&lt;name&gt;shanghai 7 1&lt;/name&gt;&lt;zone&gt;zone 7mock&lt;/zone&gt;&lt;/city&gt;&lt;city&gt;&lt;name&gt;shanghai 8 1&lt;/name&gt;&lt;zone&gt;zone 8mock&lt;/zone&gt;&lt;/city&gt;&lt;city&gt;&lt;name&gt;shanghai 9 1&lt;/name&gt;&lt;zone&gt;zone 9mock&lt;/zone&gt;&lt;/city&gt;&lt;/cities&gt;</pre> 
+<p>&nbsp;http://localhost:8080/axisspring/api/s2</p> 
+<pre class="java" name="code">{"age":"22","city":{"name":"shanghai","zone":"zone mock"},"name":"lich"}</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

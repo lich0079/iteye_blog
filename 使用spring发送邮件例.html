@@ -1,0 +1,329 @@
+使用javamail來發送信件的主要流程是由 web server 將 email 先傳送至 SMTP server 
+<br>接著再由 smtp server 將此信件傳送出去 
+<br>所以email會發送失敗主要可分為兩個情況 
+<br>一是由web server 到 smtp server 這一段發生錯誤 
+<br>二是由smtp server 到destination po 這一段發生錯誤 
+<br>而使用javamail可以控制的就只有由 web server 到 smtp server 這一段的傳送 
+<br>如果 smtp server 能夠正確的接收由 web server 傳送過來的 email 
+<br>對使用javamail 的 web server 來說就是發送成功了 
+<br>在第一種情況中主要會發生發送失敗的原因主要可能是web server 和 smtp server間的網路不通或是smtp server 需要authentication才能幫你發信 
+<br> 
+<br>但一般來說email發送失敗的原因主要都是由第二種情況所產生的 
+<br>像是錯誤的email address , 信箱爆滿, 防火牆或是防毒的blocking....等等 
+<br>這些錯誤訊息只有smtp server端才會知道 
+<br>使用javamail是沒有辦法得知這類形的發送錯誤 
+<br>如果你真需要知道這類形的錯誤訊息 
+<br>有一個做法就是去作退信處理 
+<br> 
+<br>good luck 
+<br> 
+<br> 
+<br> 
+<br> 
+<br>做了个spring发送纯文本文件以及发送带附件的邮件的例子，共享之。 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. SpringMail类 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; import org.springframework.context.ApplicationContext; 
+<br>import org.springframework.context.support.FileSystemXmlApplicationContext; 
+<br>import org.springframework.mail.SimpleMailMessage; 
+<br>import org.springframework.mail.javamail.JavaMailSender; 
+<br>import org.springframework.mail.javamail.MimeMessagePreparator; 
+<br> 
+<br>import javax.mail.internet.MimeMessage; 
+<br>import javax.mail.MessagingException; 
+<br>import javax.mail.Message; 
+<br>import javax.mail.internet.InternetAddress; 
+<br>import javax.activation.FileDataSource; 
+<br>import javax.activation.DataHandler; 
+<br>import javax.mail.internet.MimeMultipart; 
+<br>import javax.mail.internet.MimeBodyPart; 
+<br>import javax.mail.Multipart; 
+<br> 
+<br>import java.util.List; 
+<br>import java.util.ArrayList; 
+<br>import java.util.Date; 
+<br>import java.util.Iterator; 
+<br> 
+<br>/** *//** 
+<br> * spring的邮件发送例子 
+<br> * @author Amigo Xie(xiexingxing1121@126.com) 
+<br> * @since 2007/04/28 11:30 
+<br> */ 
+<br>public class SpringMail { 
+<br> 
+<br>&nbsp;&nbsp;&nbsp; public static void main(String[] args) throws Exception { 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ApplicationContext ctx = new FileSystemXmlApplicationContext( 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "src/applicationContext.xml"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JavaMailSender sender = (JavaMailSender) ctx.getBean("mailSender"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SpringMail springMail = new SpringMail(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //测试发送只有文本信息的简单测试 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; springMail.sendTextMail(sender); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //测试发送带附件的邮件 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; springMail.sendMimeMessage(sender); 
+<br>&nbsp;&nbsp;&nbsp; } 
+<br>&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp; /** *//** 
+<br>&nbsp;&nbsp;&nbsp;&nbsp; * 测试发送只有文本信息的简单测试 
+<br>&nbsp;&nbsp;&nbsp;&nbsp; * @param sender 邮件发送器 
+<br>&nbsp;&nbsp;&nbsp;&nbsp; * @throws Exception 
+<br>&nbsp;&nbsp;&nbsp;&nbsp; */ 
+<br>&nbsp;&nbsp;&nbsp; private void sendTextMail(JavaMailSender sender) throws Exception { 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SimpleMailMessage mail = new SimpleMailMessage(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mail.setTo("xiexingxing1121@126.com"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mail.setFrom("xiexingxing1121@126.com"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mail.setSubject("test by amigo"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mail.setText("spring Mail的简单测试"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sender.send(mail); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println("成功发送文本文件！"); 
+<br>&nbsp;&nbsp;&nbsp; } 
+<br>&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp; /** *//** 
+<br>&nbsp;&nbsp;&nbsp;&nbsp; * 发送带附件的邮件 
+<br>&nbsp;&nbsp;&nbsp;&nbsp; * @param sender 邮件发送器 
+<br>&nbsp;&nbsp;&nbsp;&nbsp; * @throws Exception 
+<br>&nbsp;&nbsp;&nbsp;&nbsp; */ 
+<br>&nbsp;&nbsp;&nbsp; private void sendMimeMessage(final JavaMailSender sender) throws Exception { 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //附件文件集合 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; final List files = new ArrayList(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MimeMessagePreparator mimeMail = new MimeMessagePreparator() { 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void prepare(MimeMessage mimeMessage) throws MessagingException { 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mimeMessage.setRecipient(Message.RecipientType.TO, 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new InternetAddress("xiexingxing1121@126.com")); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mimeMessage.setFrom(new InternetAddress("xiexingxing1121@126.com")); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mimeMessage.setSubject("Spring发送带附件的邮件", "gb2312"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Multipart mp = new MimeMultipart(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //向Multipart添加正文 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MimeBodyPart content = new MimeBodyPart(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; content.setText("内含spring邮件发送的例子，请查收!"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //向MimeMessage添加（Multipart代表正文） 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mp.addBodyPart(content); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; files.add("src/SpringMail.java"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; files.add("src/applicationContext.xml"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //向Multipart添加附件 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Iterator it = files.iterator(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while(it.hasNext()) { 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MimeBodyPart attachFile = new MimeBodyPart(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String filename = it.next().toString(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FileDataSource fds = new FileDataSource(filename); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; attachFile.setDataHandler(new DataHandler(fds)); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; attachFile.setFileName(fds.getName()); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mp.addBodyPart(attachFile); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; files.clear(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //向Multipart添加MimeMessage 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mimeMessage.setContent(mp); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mimeMessage.setSentDate(new Date()); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }; 
+<br> 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //发送带附件的邮件 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sender.send(mimeMail); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println("成功发送带附件邮件!"); 
+<br>&nbsp;&nbsp;&nbsp; } 
+<br>} 
+<br> 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. spring的配置文件 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;?xml version="1.0" encoding="UTF-8"?&gt; 
+<br>&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt; 
+<br> 
+<br>&lt;beans&gt; 
+<br>&nbsp;&nbsp;&nbsp; &lt;bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="host"&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;value&gt;smtp.126.com&lt;/value&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/property&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="javaMailProperties"&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;props&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;prop key="mail.smtp.auth"&gt;true&lt;/prop&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;prop key="mail.smtp.timeout"&gt;25000&lt;/prop&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/props&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/property&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="username"&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;value&gt;xiexingxing1121&lt;/value&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/property&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="password"&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;value&gt;&lt;!-- 此处填写密码 --&gt;&lt;/value&gt; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/property&gt; 
+<br>&nbsp;&nbsp;&nbsp; &lt;/bean&gt; 
+<br>&lt;/beans&gt; 
+<br>&nbsp;&nbsp;&nbsp; 刚才发现一bug，当附件名为中文时，会出现中文乱码问题，对sendMimeMessage方法进行了部分修改，如下： 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sun.misc.BASE64Encoder enc = new sun.misc.BASE64Encoder(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; files.add("src/SpringMail.java"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; files.add("src/applicationContext.xml"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; files.add("src/谢星星.xml"); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //向Multipart添加附件 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Iterator it = files.iterator(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (it.hasNext()) { 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MimeBodyPart attachFile = new MimeBodyPart(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String filename = it.next().toString(); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FileDataSource fds = new FileDataSource(filename); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; attachFile.setDataHandler(new DataHandler(fds)); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; attachFile.setFileName("=?GBK?B?"+enc.encode(fds.getName().getBytes())+"?="); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mp.addBodyPart(attachFile); 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } 
+<br>posted on 2007-04-28 13:23 阿蜜果 阅读(3995) 评论(6)&nbsp; 编辑&nbsp; 收藏 所属分类: Spring 
+<br> 
+<br> 
+<br> 
+<br> 
+<br>FeedBack: 
+<br># re: 使用spring发送邮件例 
+<br>2007-04-28 14:07 | 王凌华 
+<br> 
+<br>:) 我直接用javamail也写了一个类似的东西。(ThreadPool实现的压力测试小工具),这里我有几问题： 
+<br>a. 
+<br>但是我用126的mailserver的时候，出现这样的错误： 
+<br> 
+<br>javax.mail.MessagingException: Could not connect to SMTP host: smtp.126.com, port: 25 
+<br>at com.sun.mail.smtp.SMTPTransport.openServer(SMTPTransport.java:855) 
+<br>at com.sun.mail.smtp.SMTPTransport.protocolConnect(SMTPTransport.java:156) 
+<br>at javax.mail.Service.connect(Service.java:256) 
+<br>at javax.mail.Service.connect(Service.java:135) 
+<br>at javax.mail.Service.connect(Service.java:87) 
+<br>at com.sun.mail.smtp.SMTPTransport.connect(SMTPTransport.java:93) 
+<br>at MailSender.run(MailSender.java:172) 
+<br>at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source) 
+<br>at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source) 
+<br>at java.lang.Thread.run(Unknown Source) 
+<br> 
+<br> 
+<br>我用我公司的的两台mailserver都可以顺畅的发mail。 
+<br> 
+<br>&nbsp; 回复&nbsp; 更多评论 
+<br>&nbsp; 
+<br># re: 使用spring发送邮件例[未登录] 
+<br>2007-04-28 15:03 | ronghai 
+<br> 
+<br>看看是不是需要SSl验证&nbsp; 回复&nbsp; 更多评论 
+<br>&nbsp; 
+<br># re: 使用spring发送邮件例 
+<br>2007-04-29 12:47 | 王凌华 
+<br> 
+<br>据我所知,gmail的发送和接受是需要ssl验证的. 
+<br> 
+<br>所以我刚才花了点时间去看了一下javamail里面ssl里面是怎么写的. 
+<br>这是代码片段: 
+<br> 
+<br>---------------------------------------------------------------------------------- 
+<br>prop.put("mail.smtp.starttls.enable", "true"); 
+<br>prop.put("mail.smtp.socketFactory.fallback", "false"); 
+<br>// props.put("mail.smtp.debug", "true"); 
+<br>prop.put("mail.smtp.socketFactory.class", 
+<br>"javax.net.ssl.SSLSocketFactory"); 
+<br>prop.put("mail.smtp.port", "465"); 
+<br>prop.put("mail.smtp.socketFactory.port", "465"); 
+<br>prop.put("mail.smtps.auth", needAuth); 
+<br>prop.put("mail.transport.protocol", "smtp"); 
+<br>prop.put("mail.smtp.host", mailServer); 
+<br>---------------------------------------------------------------------------------- 
+<br> 
+<br>---------------------------------------------------------------------------------- 
+<br>SMTPTransport transport = (SMTPTransport) session 
+<br>.getTransport("smtps"); 
+<br>---------------------------------------------------------------------------------- 
+<br>我的努力换来的是发送期间的TimeOut, 没有任何迹象表明代码哪里有问题. 
+<br>... ... ... 
+<br> 
+<br>最后我终于明白这里用到了465 port. 而我在公司内网内,这个port默认情况下是禁用的.
+<img src="/images/smiles/icon_smile.gif"> -真倒霉.&nbsp; 回复&nbsp; 更多评论 
+<br>&nbsp; 
+<br># re: 使用spring发送邮件例 
+<br>2007-04-29 12:50 | 王凌华 
+<br> 
+<br>顺便贴出gmail的配置URL. 大家有兴趣也可以试试: 
+<br> 
+<br>http://mail.google.com/support/bin/answer.py?answer=13287&nbsp; 回复&nbsp; 更多评论 
+<br>&nbsp; 
+<br># spring发送内嵌邮件的图片无法正常显示的问题 
+<br>2007-09-14 08:27 | LG 
+<br> 
+<br>import java.io.File; 
+<br>import javax.mail.MessagingException; 
+<br>import javax.mail.internet.*; 
+<br>import org.springframework.context.ApplicationContext; 
+<br>import org.springframework.context.support.FileSystemXmlApplicationContext; 
+<br>import org.springframework.core.io.FileSystemResource; 
+<br>import org.springframework.mail.MailException; 
+<br>import org.springframework.mail.javamail.JavaMailSenderImpl; 
+<br>import org.springframework.mail.javamail.MimeMessageHelper; 
+<br> 
+<br> 
+<br> 
+<br>public class SpringMail { 
+<br>public static void main(String[] args) throws Exception{ 
+<br> 
+<br>ApplicationContext ctx=new FileSystemXmlApplicationContext("src/applicationContext.xml"); 
+<br> 
+<br>JavaMailSenderImpl sender = (JavaMailSenderImpl)ctx.getBean("mailSender"); 
+<br> 
+<br> 
+<br>SpringMail springMail=new SpringMail(); 
+<br> 
+<br>springMail.sendInit(sender); 
+<br>} 
+<br> 
+<br>private void sendInit(JavaMailSenderImpl sender) throws MessagingException { 
+<br> 
+<br>MimeMessage message = sender.createMimeMessage(); 
+<br>MimeMessageHelper helper = new MimeMessageHelper(message,true,"GB2312"); 
+<br>helper.setFrom("dongweiyi1125@sina.com"); 
+<br>helper.setTo("dongweiyi1125@sina.com"); 
+<br>helper.setSubject("Test"); 
+<br>helper.setText("&lt;html&gt;&lt;head&gt;&lt;meta http-equiv=\"Content-Type\" content=\"text/html; charset=gb2312\"&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;&lt;a href='#'&gt;郁闷!" 
+<br>+ "&lt;img src=\"cid:identifier\"&gt;&lt;/body&gt;&lt;/html&gt;", true); 
+<br> 
+<br>FileSystemResource res = new FileSystemResource(new File("c:/weiyi.jpg")); 
+<br>helper.addInline("identifier", res); 
+<br> 
+<br> 
+<br>try { 
+<br>sender.send(message); 
+<br>} catch (MailException e) { 
+<br>e.printStackTrace(); 
+<br>} 
+<br>System.out.println("成功发送内嵌文件"); 
+<br>} 
+<br>} 
+<br> 
+<br> 
+<br>&lt;?xml version="1.0" encoding="UTF-8"?&gt; 
+<br>&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt; 
+<br> 
+<br> 
+<br>&lt;beans&gt; 
+<br>&lt;bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"&gt; 
+<br>&lt;property name="host"&gt; 
+<br>&lt;value&gt;smtp.sina.com&lt;/value&gt; 
+<br>&lt;/property&gt; 
+<br>&lt;property name="javaMailProperties"&gt; 
+<br>&lt;props&gt; 
+<br>&lt;prop key="mail.smtp.auth"&gt;true&lt;/prop&gt; 
+<br>&lt;prop key="mail.smtp.timeout"&gt;25000&lt;/prop&gt; 
+<br>&lt;/props&gt; 
+<br>&lt;/property&gt; 
+<br>&lt;property name="username"&gt; 
+<br>&lt;value&gt;dongweiyi1125&lt;/value&gt; 
+<br>&lt;/property&gt; 
+<br>&lt;property name="password"&gt; 
+<br>&lt;value&gt;邮箱密码&lt;/value&gt; 
+<br>&lt;/property&gt; 
+<br>&lt;/bean&gt; 
+<br>&lt;/beans&gt; 
+<br> 
+<br> 
+<br>以上代码给新浪邮箱发送邮件时图片总不能正常显示，但是给QQ邮箱发送邮件时却可以正常显示，不知什么原因，请大虾出来帮忙……&nbsp; 回复&nbsp; 更多评论 
+<br>&nbsp; 
+<br># re: 使用spring发送邮件例 AuthenticationFailedException 
+<br>2008-07-12 08:51 | Jayden 
+<br> 
+<br>和上面的代码一样 怎么老是报AuthenticationFailedException 异常啊&nbsp; 回复&nbsp; 更多评论 
+<br>

@@ -1,0 +1,40 @@
+<pre class="java" name="code">xdoclet2的网址：
+
+http://xdoclet.codehaus.org
+
+请注意：
+
+由于xdoclet有些bug，所以本版本是修正版。
+其中的docs目录，是原始xdoclet2下载版没有的。
+
+修正的地方包括：
+
+1、可以直接在实体类的attribute(或者说field)上定义xdoclet，而生成的映射文件是基于property的
+2、可以使用lazy="extra",lazy="proxy",lazy="no-proxy"等定义属性
+3、支持合并第二个映射文件，即在有些情况下，希望在自动生成hibernate映射文件的时候，能够自动合并
+   其它映射文件中的内容，那么就可以使用这个特性。
+   只需要在定义HibernateConfigPlugin的时候，加上mergecfgxml属性即可，如：
+
+	&lt;target name="测试生成Hibernate配置文件"&gt;
+		&lt;xdoclet&gt;
+			&lt;fileset dir="${src.test.dir}/com/bjsxt/oa/model"&gt;
+				&lt;include name="**/*.java"/&gt;
+			&lt;/fileset&gt;			
+			&lt;component
+				classname="org.xdoclet.plugin.hibernate.HibernateConfigPlugin"
+				destdir="${src.test.dir}"
+				version="3.0"
+				jdbcurl="jdbc:mysql://127.0.0.1/oa"
+				jdbcdriver="com.mysql.jdbc.Driver"
+				jdbcusername="root"
+				jdbcpassword="root"
+				dialect="org.hibernate.dialect.MySQLDialect"
+				showsql="true"
+				mergecfgxml="${src.test.dir}/hibernate_other.cfg.xml"
+			/&gt;
+		&lt;/xdoclet&gt;
+	&lt;/target&gt;
+    注意到在上述配置中，加上了一个mergecfgxml的属性，这个就是合并属性。
+
+</pre> 
+<p>&nbsp;</p>

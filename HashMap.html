@@ -1,0 +1,17 @@
+<p>对于任意给定的对象，只要它的 hashCode() 返回值相同，那么程序调用 hash(int h) 方法所计算得到的 Hash 码值总是相同的。接下来程序会调用 indexFor(int h, int length) 方法来计算该对象应该保存在 table 数组的哪个索引处。indexFor(int h, int length) 方法的代码如下：</p> 
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+ <tbody>
+  <tr> 
+   <td class="code-outline"> <pre class="displaycode">static int indexFor(int h, int length) 
+{ 
+    return h &amp; (length-1); 
+}
+</pre> </td> 
+  </tr>
+ </tbody>
+</table> 
+<p>&nbsp;</p> 
+<p>这个方法非常巧妙，它总是通过 h <code>&amp;</code>(table.length -1) 来得到该对象的保存位置——而 HashMap 底层数组的长度总是 2 的 n 次方，这一点可参看后面关于 HashMap 构造器的介绍。</p> 
+<p>当 length 总是 2 的倍数时，h <code>&amp; (length-1)</code> <code>将是一个非常巧妙的设计：假设 h=5,length=16, 那么 h &amp; length - 1 将得到 5；如果 h=6,length=16, 那么 h &amp; length - 1 将得到 6 ……如果 h=15,length=16, 那么 h &amp; length - 1 将得到 15；但是当 h=16 时 , length=16 时，那么 h &amp; length - 1 将得到 0 了；当 h=17 时 , length=16 时，那么 h &amp; length - 1 将得到 1 了……这样保证计算得到的索引值总是位于 table 数组的索引之内。</code> </p> 
+<p>根据上面 put 方法的源代码可以看出，当程序试图将一个 key-value 对放入 HashMap 中时，程序首先根据该 key 的 hashCode() 返回值决定该 Entry 的存储位置：如果两个 Entry 的 key 的 hashCode() 返回值相同，那它们的存储位置相同。如果这两个 Entry 的 key 通过 equals 比较返回 true，新添加 Entry 的 value 将覆盖集合中原有 Entry 的 value，但 key 不会覆盖。如果这两个 Entry 的 key 通过 equals 比较返回 false，新添加的 Entry 将与集合中原有 Entry 形成 Entry 链，而且新添加的 Entry 位于 Entry 链的头部——具体说明继续看 addEntry() 方法的说明。</p> 
+<p>当向 HashMap 中添加 key-value 对，由其 key 的 hashCode() 返回值决定该 key-value 对（就是 Entry 对象）的存储位置。当两个 Entry 对象的 key 的 hashCode() 返回值相同时，将由 key 通过 eqauls() 比较值决定是采用覆盖行为（返回 true），还是产生 Entry 链（返回 false）。</p>

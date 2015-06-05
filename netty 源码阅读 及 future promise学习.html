@@ -1,0 +1,200 @@
+<div class="iteye-blog-content-contain" style="font-size: 14px;"> 
+ <p>&nbsp;</p> 
+ <p>netty文档说明netty的网络操作都是async的， 在源码上大量使用了future, promise这种类，自己在js框架中也看到了很多future的使用，以前不太明白，这次好好学学。</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>wiki里面写到 &nbsp;a future is a read-only placeholder view of a variable, while a promise is a writable</p> 
+ <p>&nbsp;</p> 
+ <p>在netty里面也是这样定义的，&nbsp;</p> 
+ <p>future接口定义了isSuccess(),isCancellable(),cause(),这些判断异步执行状态的方法。（read-only）</p> 
+ <p>Promise接口在extneds future的基础上增加了setSuccess(), setFailure()这些方法。（writable）</p> 
+ <p>&nbsp;</p> 
+ <p>future接口就是用来封装异步操作的执行状态的，在执行异步操作时，可以立马返回一个future，future可以sync来等待执行结果，如果有些操作要等到future代表的异步操作完了才能执行，可以通过future.addListener()的方式来在之前的异步操作完成的时候执行新的操作。</p> 
+ <p>&nbsp;</p> 
+ <p>外界看到的是future，内部其实是promise，异步的时候一般是初始线程代码里封装一个runnable，new一个promise, &nbsp;把runnable放到其他线程池去执行，执行的时候把promise对象传进去（通过final关键字），在run()方法里结束时去改变promise的状态或设置result value。初始线程在设置异步操作时可以立马返回future（其实是promise），可以根据情况选择future.sync()来同步等待结果或者future.addListener()来设置异步操作。&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>下面结合netty的源码来具体看一个列子， netty version 4.0.27</p> 
+ <p>&nbsp;</p> 
+ <pre class="java" name="code">	public void start() throws Exception {
+		EventLoopGroup group = new NioEventLoopGroup(); // 3
+		try {
+			ServerBootstrap b = new ServerBootstrap();
+			b.group(group) // 4
+					.channel(NioServerSocketChannel.class) // 5
+					.localAddress(new InetSocketAddress(port)) // 6
+					.childHandler(new ChannelInitializer&lt;SocketChannel&gt;() {// 7
+								@Override
+								public void initChannel(SocketChannel ch)
+										throws Exception {
+									ch.pipeline().addLast(
+											new EchoServerHandler());
+								}
+							});
+			ChannelFuture f = b.bind().sync(); // 8
+			f.channel().closeFuture().sync(); // 9
+		} finally {
+			group.shutdownGracefully().sync(); // 10
+		}
+	}
+
+	这段代码用过netty的应该很熟悉了，服务器启动的代码， 其中注释8的地方返回了一个future对象。来看看里面发生了什么：
+	几番跳转来到了AbstractBootstrap的doBind方法。
+
+
+    private ChannelFuture doBind(final SocketAddress localAddress) {
+        final ChannelFuture regFuture = initAndRegister();  //1
+        final Channel channel = regFuture.channel();
+        if (regFuture.cause() != null) {         //2
+            return regFuture;
+        }
+
+        if (regFuture.isDone()) {         //3
+            // At this point we know that the registration was complete and successful.
+            ChannelPromise promise = channel.newPromise();  //5
+            doBind0(regFuture, channel, localAddress, promise);
+            return promise;
+        } else {
+            // Registration future is almost always fulfilled already, but just in case it's not.
+            final PendingRegistrationPromise promise = new PendingRegistrationPromise(channel);  //5
+            regFuture.addListener(new ChannelFutureListener() {    //4
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    Throwable cause = future.cause();
+                    if (cause != null) {
+                        // Registration on the EventLoop failed so fail the ChannelPromise directly to not cause an
+                        // IllegalStateException once we try to access the EventLoop of the Channel.
+                        promise.setFailure(cause);
+                    } else {
+                        // Registration was successful, so set the correct executor to use.
+                        // See https://github.com/netty/netty/issues/2586
+                        promise.executor = channel.eventLoop();
+                    }
+                    doBind0(regFuture, channel, localAddress, promise);  //1
+                }
+            });
+            return promise;
+        }
+    }
+
+    上面这段代码里
+    1.开始会去注册initAndRegister()， 后面才会去bind  doBind0()。
+    2.最开始拿到注册操作的future时就做了一次失败的判断，因为假如注册失败后面就没必要做了。
+    3.这里检查了下future有没有做完，假如做完了这里就可以顺序执行，不用异步了。
+    4.在没有做完，必须异步的情况下，因为之前的future就是异步的，没做完的，这时接下来的bind操作也只能是异步的，采用Listener的方式，最后也是返回个future（promise）
+    5.同步执行和异步执行的情况下都返回的是promise,  promise只是个result的placeholder，所以同步的情况下可以用。
+
+
+    final ChannelFuture initAndRegister() {
+        final Channel channel = channelFactory().newChannel();
+        try {
+            init(channel);
+        } catch (Throwable t) {
+            channel.unsafe().closeForcibly();
+            // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
+            return new DefaultChannelPromise(channel, GlobalEventExecutor.INSTANCE).setFailure(t);
+        }
+
+        ChannelFuture regFuture = group().register(channel);
+        if (regFuture.cause() != null) {
+            if (channel.isRegistered()) {
+                channel.close();
+            } else {
+                channel.unsafe().closeForcibly();
+            }
+        }
+
+        // If we are here and the promise is not failed, it's one of the following cases:
+        // 1) If we attempted registration from the event loop, the registration has been completed at this point.
+        //    i.e. It's safe to attempt bind() or connect() now because the channel has been registered.
+        // 2) If we attempted registration from the other thread, the registration request has been successfully
+        //    added to the event loop's task queue for later execution.
+        //    i.e. It's safe to attempt bind() or connect() now:
+        //         because bind() or connect() will be executed *after* the scheduled registration task is executed
+        //         because register(), bind(), and connect() are all bound to the same thread.
+
+        return regFuture;
+    }
+
+
+    public final void register(EventLoop eventLoop, final ChannelPromise promise) {
+        if (eventLoop == null) {
+            throw new NullPointerException("eventLoop");
+        }
+        if (isRegistered()) {
+            promise.setFailure(new IllegalStateException("registered to an event loop already"));
+            return;
+        }
+        if (!isCompatible(eventLoop)) {
+            promise.setFailure(
+                    new IllegalStateException("incompatible event loop type: " + eventLoop.getClass().getName()));
+            return;
+        }
+
+        AbstractChannel.this.eventLoop = eventLoop;
+
+        if (eventLoop.inEventLoop()) {  //1
+            register0(promise);
+        } else {
+            try {
+                eventLoop.execute(new OneTimeTask() {
+                    @Override
+                    public void run() {
+                        register0(promise);
+                    }
+                });
+            } catch (Throwable t) {
+                logger.warn(
+                        "Force-closing a channel whose registration task was not accepted by an event loop: {}",
+                        AbstractChannel.this, t);
+                closeForcibly();
+                closeFuture.setClosed();
+                safeSetFailure(promise, t);
+            }
+        }
+    }
+
+    上面这段
+    1. 判断eventloop是不是当前运行线程，是就直接做。不是就放到队列里异步做。
+
+
+
+    private void register0(ChannelPromise promise) {
+        try {
+            // check if the channel is still open as it could be closed in the mean time when the register
+            // call was outside of the eventLoop
+            if (!promise.setUncancellable() || !ensureOpen(promise)) {
+                return;
+            }
+            boolean firstRegistration = neverRegistered;
+            doRegister();
+            neverRegistered = false;
+            registered = true;
+            safeSetSuccess(promise);
+            pipeline.fireChannelRegistered();
+            // Only fire a channelActive if the channel has never been registered. This prevents firing
+            // multiple channel actives if the channel is deregistered and re-registered.
+            if (firstRegistration &amp;&amp; isActive()) {
+                pipeline.fireChannelActive();
+            }
+        } catch (Throwable t) {
+            // Close the channel directly to avoid FD leak.
+            closeForcibly();
+            closeFuture.setClosed();
+            safeSetFailure(promise, t);
+        }
+    }
+
+    上面的代码就是真正做Register操作的代码了，这里全是同步的代码，做完了后设置promise的状态(safeSetSuccess(promise))。
+
+注册操作 和 bind操作 都可能放到eventloop里面去异步执行， 但他们之间是有顺序的， 因为他们做为task是放到同一个eventloop的queue里去，是一个一个fifo的执行的，注册先进去先执行。
+这样异步模型就简单了，不用考虑竞争，锁啊，变成串行执行。</pre> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+</div>

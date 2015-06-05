@@ -1,0 +1,24 @@
+<p>静态方法</p> 
+<p>&lt;s:property value="@org.springframework.security.context.SecurityContextHolder@getContext().authentication.principal.username"/&gt;</p> 
+<p>假如访问静态方法 方法名带有get要写get 如 @getContext()&nbsp; 这是一个静态方法</p> 
+<p>后面的.authentication.principal.username&nbsp; 都是实例的get方法&nbsp; 不要写get</p> 
+<p>&nbsp;</p> 
+<p>静态属性</p> 
+<p>&lt;s:property value="@com.lich.Level@STATICFIELD"/&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>还要注意struts2版本 如下</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">使用struts, 在jsp页面中，可以通过ognl访问类的静态方法。
+
+ 
+
+表达式的格式为@[类全名（包括包路径）]@[方法名 |  值名]，例如：@java.lang.String@format('foo %s', 'bar') 。页面的输出结果就是：foo bar
+
+ 
+
+在目前的项目中，我们使用了struts最新的版本2.1.2,当我在jsp页面中使用ognl访问类的静态方法时，发现不起作用。也没报错信息，找不到原因。网上搜了一下，也未发现相同经历的人。当我把struts的版本降到2.0.11时，发现是可以访问静态方法的，困惑！
+
+ 
+
+最后终于发现了原因，原来是在2.1.2中，如果要通过ognl访问静态方法，必须在struts.properties或者struts.xml 中将选项struts.ognl.allowStaticMethodAccess设置为true .</pre> &nbsp;

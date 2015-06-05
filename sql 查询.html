@@ -1,0 +1,28 @@
+<pre name="code" class="sql">SELECT
+    A.username,
+    SUM(CASE WHEN B.flag = 'colA' THEN 1 ELSE 0 END) AS count_A,
+    SUM(CASE WHEN B.flag = 'colB' THEN 1 ELSE 0 END) AS count_B,
+    SUM(CASE WHEN B.flag = 'colC' THEN 1 ELSE 0 END) AS count_C,
+    SUM(CASE WHEN B.flag = 'colD' THEN 1 ELSE 0 END) AS count_D,
+    SUM(CASE WHEN B.flag = 'colE' THEN 1 ELSE 0 END) AS count_E
+FROM @tb1 AS A
+    LEFT JOIN (
+        SELECT colA AS name,'colA' AS flag FROM @tb2 WHERE colA IS NOT NULL
+        UNION ALL
+        SELECT colB,'colB' FROM @tb2 WHERE colB IS NOT NULL
+        UNION ALL
+        SELECT colC,'colC' FROM @tb2 WHERE colC IS NOT NULL
+        UNION ALL
+        SELECT colD,'colD' FROM @tb2 WHERE colD IS NOT NULL
+        UNION ALL
+        SELECT colE,'colE' FROM @tb2 WHERE colE IS NOT NULL
+    ) AS B
+ON A.username = B.name
+GROUP BY A.username;
+</pre> 
+<p>&nbsp; </p> 
+<p>有2个表 <br>表A <br>username <br>-------- <br>刘丽娜 <br>刘更胜 <br>王英 <br>吴洪波 <br>王玉江 <br>薛静 <br>王前进 <br>武文明 <br>胡家和 <br><br><br>表B <br>colA&nbsp; &nbsp; colB&nbsp; &nbsp; colC&nbsp; &nbsp; coLD&nbsp; &nbsp; colE <br>----------------------------------------- <br>苏凤林 李拥军 NULL 刘丽娜 靳文礼 <br>王英 李拥军 宋建刚 NULL 刘更胜 <br>任小东 李拥军 NULL NULL 刘丽娜 <br>姚玉刚 NULL 姚玉刚 宋建刚 姚玉刚 <br>宋建刚 NULL NULL 靳文礼 任小东 <br>姚玉刚 NULL 任小东 NULL 刘丽娜 <br>NULL NULL 任小东 姚玉刚 刘丽娜 <br>NULL NULL NULL NULL 刘丽娜 <br>NULL NULL 宋建刚 NULL 刘丽娜 <br>靳文礼 NULL NULL 刘丽娜 刘丽娜 <br>任小东 NULL NULL 宋建刚 靳文礼 <br>刘丽娜 NULL 姚玉刚 NULL 宋建刚 <br>NULL NULL NULL 姚玉刚 宋建刚 <br>NULL NULL NULL NULL 宋建刚 <br>NULL NULL 任小东 NULL 靳文礼 <br>刘丽娜 NULL NULL 宋建刚 靳文礼 <br>NULL NULL 任小东 NULL <br><br>最后想要的结果是 <br><br>username countA countB countC countD countE <br>--------------------------------------------- <br>刘丽娜&nbsp; &nbsp; &nbsp; &nbsp; 0&nbsp; &nbsp; 11&nbsp; &nbsp; 22&nbsp; &nbsp; &nbsp; 0&nbsp; &nbsp; &nbsp; 15 <br>刘更胜&nbsp; &nbsp; &nbsp; &nbsp; 10&nbsp; &nbsp; 11&nbsp; &nbsp; 22&nbsp; &nbsp; &nbsp; 0&nbsp; &nbsp; &nbsp; 45 <br>王英&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 30&nbsp; &nbsp; 11&nbsp; &nbsp; 12&nbsp; &nbsp; &nbsp; 0&nbsp; &nbsp; &nbsp; 22 <br>任小东&nbsp; &nbsp; &nbsp; &nbsp; 0&nbsp; &nbsp; 0&nbsp; &nbsp; &nbsp; 0&nbsp; &nbsp; &nbsp; 0&nbsp; &nbsp; &nbsp; 17 <br>....&nbsp; &nbsp; &nbsp; &nbsp; ...&nbsp; ...&nbsp; &nbsp; ...&nbsp; &nbsp; ...&nbsp; &nbsp; ... </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

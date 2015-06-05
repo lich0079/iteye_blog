@@ -1,0 +1,20 @@
+<p>一个note对象下面有多个comment&nbsp; 显示的时候希望按comment的create date排序</p> 
+<p>在hbm.xml中这样配置</p> 
+<p>&nbsp;</p> 
+<pre class="xml" name="code">        &lt;set name="commentses" inverse="true" lazy="false" order-by="created_date asc" &gt;
+            &lt;key&gt;
+                &lt;column name="note_id" /&gt;
+            &lt;/key&gt;
+            &lt;one-to-many class="com.xxx.NoteComments" /&gt;
+        &lt;/set&gt;</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><br> 这里唯一要注意的一点是</p> 
+<pre class="xml" name="code">order-by="created_date asc"   的  created_date       
+</pre> 
+<p>&nbsp; 是comment表中列名&nbsp; 而 不是comment的属性名</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

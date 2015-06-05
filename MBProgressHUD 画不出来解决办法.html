@@ -1,0 +1,20 @@
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];    hud.dimBackground = YES;
+//block main线程 代码原本在此， 但因为这个方法(块)执行完之前， 画图的代码没有机会执行，所以MBProgressHUD没法被画出来， 
+//所以要想办法 让这段代码执行完，有画图的机会，然后在回到主线程去执行 那种必须在主线程执行的代码（pushViewController）
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+
+          dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *filename = [[self fileList]objectAtIndex:indexPath.row];
+            ViewController *browserController = [[ViewController alloc] initWithFileName:filename];
+            browserController.title =  filename ;
+            [[self navigationController] pushViewController:browserController animated:YES];
+            [browserController release];
+            [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+        });
+     });
+
+}
+</pre>

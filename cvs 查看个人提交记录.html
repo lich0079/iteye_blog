@@ -1,0 +1,26 @@
+<p>eclipse的cvs插件不能看自己在整个项目的提交历史</p> 
+<p>但cvs的命令行可以实现这点</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">mkdir ttt
+
+CVSROOT=:ext:lich0079@1.2.3.4:/var/cvsroot
+export CVSROOT
+
+cvs checkout -d ./ttt -r project_branch_name  project_name
+
+cd ttt
+
+cvs history -ca | grep lich0079 | grep 06-22</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>以上的命令就可以查出我在06-22提交的文件了</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>*cvs annotate 查看详细的文件修改记录<br> -l本地目录，不递归<br> -R递归查看目录<br> -f如果没有日期和标记显示最新版本<br> -r查看某个标记的修改记录<br> -D查看某日期的修改记录</p> 
+<p>*cvs history <br> -c(commit)报告所有提交的历史记录<br> -e(everything)报告所有历史记录<br> -m(module)报告某个模块的历史记录<br> -o(check out)报告已捡出模块的历史记录<br> -T(tag)报告版本标签的历史记录<br> -x(x)报告某个操作对应的历史记录<br> -a(all)报告所有用户的历史记录，默认只报告执行命令者自己的历史记录</p> 
+<p>O Checkout（捡出的代码）<br> T Tag（贴了版本标签）<br> F Release（清除了工作拷贝）<br> W Update（仓库中的文件被删除，导致用户更新时文件被删除）<br> U Update（从仓库中拷贝文件到工作拷贝中）<br> G Update（更新时合并成功）<br> C Update（更新时合并冲突）<br> A Commit（文件第一次添加）<br> M Commit（文件被修改后提交）<br> R Commit（文件被删除）</p> 
+<p>*更改日志信息 cvs admin -m 版本：内容 文件名称<br> *输出源代码 cvs export<br> -N Don't shorten module paths if -d specified. <br> -f 如果没有标记和日期责导出最新的 <br> -l 不递归导出目录 <br> -R 递归导出目录<br> -n Do not run module program (if any). <br> -r 按版本和标记导出<br> -D 按日期导出 <br> -d 输出到这个目录中 <br> -k kopt Use RCS kopt -k option on checkout. </p> 
+<p>*cvs admin -s 改变用户状态<br> Exp--experimental 试验<br> Stab--stable 稳定<br> Rel--released 发布</p> 
+<p>*cvs release 清除工作拷贝<br> -d 清除特定的目录 <br> -f 清除指定目录，及时有非cvs文件<br> -e 仅仅清除cvs管理的目录</p> 
+<p>*cvs watch cvs监视机制<br> on/off 打开/关闭使捡出成为只读的功能 <br> add/remove 添加删除对某些动作的通知操作. <br> -l (on/off/add/remove): 当前目录不包括子目录<br> -R (on/off/add/remove): 递归，包括所有子目录 <br> -a (add/remove): 几个不同动作集edit,unedit,commit,all,none之一 </p> 
+<p>&nbsp;</p>

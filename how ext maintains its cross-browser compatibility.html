@@ -1,0 +1,15 @@
+<p>&nbsp;</p> 
+<p>Spacer image</p> 
+<p>Before we proceed any further, we should provide Ext with something it needs—a</p> 
+<p>spacer image. Ext needs a 1 pixel by 1 pixel, transparent, GIF image to stretch in</p> 
+<p>different ways, giving a fixed width to its widgets. We need to set the location of this</p> 
+<p>spacer image using the following line:</p> 
+<p>Ext.onReady(function(){</p> 
+<p>Ext.BLANK_IMAGE_URL = 'images/s.gif';</p> 
+<p>});</p> 
+<p>You're probably wondering why we need a spacer image at all. The user interface of</p> 
+<p>Ext is created using CSS, but the CSS needs underlying HTML elements to style so</p> 
+<p>that it can create the look and feel of Ext components. The one HTML element that</p> 
+<p>is an exact, predictable size across all browsers is an image. So an image is used</p> 
+<p>to define how an Ext component is drawn. This is a part of how Ext maintains its</p> 
+<p>cross-browser compatibility.</p>

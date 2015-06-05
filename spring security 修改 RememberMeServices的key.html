@@ -1,0 +1,22 @@
+<p>用RememberMe的时候想改一些RememberMeServices的默认属性</p> 
+<p>比如</p> 
+<pre class="java" name="code">private String cookieName = SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY;
+    private String parameter = DEFAULT_PARAMETER;
+    private boolean alwaysRemember;
+    private String key;
+    private int tokenValiditySeconds = 1209600; // 14 days</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;但修改了之后发现cookie失效了 </p> 
+<p>&nbsp;</p> 
+<p>后来debug了半天才发现在 RememberMeAuthenticationProvider 也有一个key</p> 
+<pre class="java" name="code">public class RememberMeAuthenticationProvider implements AuthenticationProvider, InitializingBean, MessageSourceAware {
+    //~ Static fields/initializers =====================================================================================
+
+    private static final Log logger = LogFactory.getLog(RememberMeAuthenticationProvider.class);
+
+    //~ Instance fields ================================================================================================
+
+    protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
+    private String key;</pre> 
+<p>&nbsp;</p> 
+<p>在验证过程中会判断他们是否相等 假如只改了一个地方。。。</p>

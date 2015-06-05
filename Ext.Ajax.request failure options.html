@@ -1,0 +1,21 @@
+<p>failure : function(response, options) {</p> 
+<p>failure有2个参数，第一个是XHR 的response对象，第2个有意思，是Ext.Ajax.request（config）的那个config参数,</p> 
+<p>于是可以这样实现</p> 
+<pre name="code" class="js">Ext.Ajax.request({
+								url : '../message.do?method=sendMessage',
+								method : 'POST',
+								params : {
+																		msg : smessage,
+																	},
+								success : function(response, options) {
+																	},
+								failure : function(response, options) {
+									Ext.Msg.confirm('发送失败  ' + response.status,
+											'是否要重新发送', function(btn) {
+												if (btn == 'yes') {
+                                                    Ext.Ajax.request(options);
+												}
+											})
+								}
+							});</pre> 
+<p>&nbsp;这样的话会一直不停的发送，直到发送成功</p>

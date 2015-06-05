@@ -1,0 +1,77 @@
+<p>------</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<pre class="java" name="code">解析json成dic对象
+
+-(void)fetchedData:(NSData*)responseData {//parse out the json dataNSError* error;
+    NSDictionary* json =[NSJSONSerialization 
+        JSONObjectWithData:responseData //1
+ 
+        options:kNilOptions 
+        error:&amp;error];
+ 
+    NSArray* latestLoans =[json objectForKey:@"loans"]; //2
+ 
+    NSLog(@"loans: %@", latestLoans); //3
+}
+
+把对象生成json string
+//build an info object and convert to json
+NSDictionary* info =[NSDictionary dictionaryWithObjectsAndKeys:[loan objectForKey:@"name"], 
+    @"who",
+  [(NSDictionary*)[loan objectForKey:@"location"] 
+    objectForKey:@"country"], 
+    @"where",
+  [NSNumber numberWithFloat: outstandingAmount], 
+    @"what",
+  nil];
+ 
+//convert object to data
+NSData* jsonData =[NSJSONSerialization dataWithJSONObject:info 
+  options:NSJSONWritingPrettyPrinted error:&amp;error];
+
+//print out the data contents
+jsonSummary.text =[[NSString alloc] initWithData:jsonData                                        
+  encoding:NSUTF8StringEncoding];
+
+添加json方法至dic
+@interfaceNSDictionary(JSONCategories)
++(NSDictionary*)dictionaryWithContentsOfJSONURLString:(NSString*)urlAddress;
+-(NSData*)toJSON;
+@end
+ 
+@implementationNSDictionary(JSONCategories)
++(NSDictionary*)dictionaryWithContentsOfJSONURLString:(NSString*)urlAddress{
+    NSData* data =[NSData dataWithContentsOfURL:[NSURL URLWithString: urlAddress]];
+    __autoreleasing NSError* error =nil;
+    id result =[NSJSONSerialization JSONObjectWithData:data 
+      options:kNilOptions error:&amp;error];
+    if(error !=nil)returnnil;
+    return result;
+}
+ 
+-(NSData*)toJSON{
+    NSError* error =nil;
+    id result =[NSJSONSerialization dataWithJSONObject:self 
+      options:kNilOptions error:&amp;error];
+    if(error !=nil)returnnil;
+    return result;    
+}@end
+
+使用列子
+NSDictionary* myInfo =[NSDictionary dictionaryWithContentsOfJSONURLString:@"http://www.yahoo.com/news.json"];
+NSDictionary* information =[NSDictionary dictionaryWithObjectsAndKeys:@"orange",@"apple",@"banana",@"fig",nil];
+NSData* json =[information toJSON];
+
+判断是否可json化
+
+BOOL isTurnableToJSON =[NSJSONSerialization isValidJSONObject: object]
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>---------</p> 
+<p>&nbsp;</p>

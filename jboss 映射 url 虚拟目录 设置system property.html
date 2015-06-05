@@ -1,0 +1,23 @@
+<p>jboss 4.2.3</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>在[jboss home]\server\default\deploy\jboss-web.deployer下找到server.xml</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&lt;Host name="localhost"<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; autoDeploy="false" deployOnStartup="false" deployXML="false"<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; configClass="org.jboss.web.tomcat.security.config.JBossContextConfig"<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &gt;</p> 
+<p>&nbsp;</p> 
+<p>之中加入</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&lt;Context path="/upload" docBase="D:/uploadfile" reloadable="true" override="true" crossContext="true"/&gt;</p> 
+<p>&nbsp;</p> 
+<p>另外，若想在tomcat中创建虚拟目录： <br><br> 在[tomcat home]\conf\Catalina\localhost下创建一个upload.xml，内容为：</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br> &lt;Context<br> &nbsp;&nbsp;&nbsp; docBase="D:/uploadfile"<br> &nbsp;&nbsp;&nbsp; reloadable="true"<br> &nbsp;&nbsp;&nbsp; debug="0"&gt;<br> &lt;/Context&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>jboss 设置system property</p> 
+<p>在[jboss home]\server\default\deploy\properties-service.xml</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &lt;mbean code="org.jboss.varia.property.SystemPropertiesService" <br> &nbsp;&nbsp;&nbsp; &nbsp;name="jboss:type=Service,name=SystemProperties"&gt;<br> &nbsp;&nbsp;&nbsp; &lt;attribute name="Properties"&gt;<br> &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; MY_DIR=c:/xxxxxx<br> &nbsp;&nbsp;&nbsp; &lt;/attribute&gt;<br> &nbsp; &lt;/mbean&gt;</p>

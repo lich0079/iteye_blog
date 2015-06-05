@@ -1,0 +1,27 @@
+<pre name="code" class="java">uniInfoPanel.on('contextmenu', function(node, e) {
+        if (node.attributes.JBtype == 'station' || node.attributes.JBtype == 'person') {
+            return;
+        }
+				node.select();
+				var coords = e.getXY();
+				var menu = new Ext.menu.Menu({});
+				if (node.attributes.JBtype == 'unit') {
+					if (node.attributes.unitlevel == '01') {
+						menu.add(Info_addItem);
+//						menu.add(Info_deleteItem);
+					} else if (node.attributes.unitlevel == '02') {
+						menu.add(Info_addStationItem);
+						menu.add(Info_removeStationItem);
+						menu.add(Info_addFuncItem);
+						menu.add(Info_removeFuncItem);
+					}
+				} else if (node.attributes.JBtype == 'stations') {
+					menu.add(Info_addStationItem);
+					menu.add(Info_removeStationItem);
+				} else if (node.attributes.JBtype == 'func') {
+                    menu.add(Info_addPersonItem);
+                    menu.add(Info_removePersonItem);
+				}
+				menu.showAt([coords[0], coords[1]]);
+			});</pre> 
+<p>&nbsp;uniInfoPanel是个treepanel，还有个方法，是根据每种类型构造一个固定的menu，根据不同的node类型显示不同的menu，这样就不用每次都构造一个menu了，但是假如一个item被同时添加到了多个menu时会出错，只会在最后添加的menu里显示，不知怎么解决</p>

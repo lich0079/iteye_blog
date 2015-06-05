@@ -1,0 +1,96 @@
+<p>将oracle-ds.xml 放到&nbsp; jboss_home\server\default\deploy下</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;datasources&gt;
+  &lt;local-tx-datasource&gt;
+    &lt;jndi-name&gt;MYDS&lt;/jndi-name&gt;
+    &lt;connection-url&gt;jdbc:oracle:thin:@1.18.18.137:1522:NAME&lt;/connection-url&gt;
+    &lt;driver-class&gt;oracle.jdbc.driver.OracleDriver&lt;/driver-class&gt;
+    &lt;user-name&gt;dcx&lt;/user-name&gt;
+    &lt;password&gt;dcx&lt;/password&gt;
+    &lt;exception-sorter-class-name&gt;org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter&lt;/exception-sorter-class-name&gt;
+	  &lt;min-pool-size&gt;10&lt;/min-pool-size&gt;  
+      &lt;max-pool-size&gt;30&lt;/max-pool-size&gt;
+	  &lt;idle-timeout-minutes&gt;5&lt;/idle-timeout-minutes&gt;
+      &lt;metadata&gt;
+         &lt;type-mapping&gt;Oracle9i&lt;/type-mapping&gt;
+      &lt;/metadata&gt;
+  &lt;/local-tx-datasource&gt;
+&lt;/datasources&gt;</pre> 
+<p>&nbsp;</p> 
+<p>oracle jar放到&nbsp; jboss_home\server\default\lib 下</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>java 代码 获得连接</p> 
+<pre class="java" name="code">import java.sql.SQLException;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+public class DS {
+    public static DataSource ds = null;
+    
+    public static java.sql.Connection getConnection() throws SQLException{
+        if(ds == null){
+            Context ctx;
+            try {
+                ctx = new InitialContext();
+                ds = (DataSource) ctx.lookup("java:MYDS");
+            } catch (NamingException e) {
+                e.printStackTrace();
+                throw new RuntimeException("init data source error");
+            }
+        }
+        return ds.getConnection();
+    }
+}</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>查看运行时的连接池状态</p> 
+<p>&nbsp;</p> 
+<p>http://localhost:8080/web-console/</p> 
+<p>&nbsp;</p> 
+<p>System</p> 
+<p>--JMS MBeans</p> 
+<p>----jboss.jca</p> 
+<p>------jboss.jca:service=ManagedConnectionPool,name=MYDS</p> 
+<p>--------这下面有很多属性（如 ConnectionCount）， 可以选中 右键&nbsp; graph查看图示</p> 
+<p>&nbsp;</p> 
+<p>！！！！</p> 
+<p>如果把jboss-common.jar 放到WEB-INF/lib 下， 最后被部署到jboss上，</p> 
+<p>会导致</p> 
+<pre class="java" name="code">ds = (DataSource) ctx.lookup("java:MYDS");</pre> 
+<p>得到的ds == null, 所以不要这么做</p> 
+<p>！！！！</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>jboss scheduler docs</p> 
+<p>http://docs.jboss.org/jbossas/jboss4guide/r1/html/ch10.html</p> 
+<p>&nbsp;</p> 
+<p>http://hi.baidu.com/trstones/blog/item/b8f25416d43c9e49f2de32ac.html</p> 
+<p>写一个 实现&nbsp;import org.jboss.varia.scheduler.Schedulable 的类</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>1. export the project's src to a jar file mysrc.jar</p> 
+<p><span>2. put the&nbsp;</span> mysrc.jar<span>, dependcy.jar in jboss_home/server/default/lib</span> </p> 
+<p>3. put scheduler-service.xml in jboss_home/server/default/deploy</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp;&lt;mbean code="org.jboss.varia.scheduler.Scheduler"</p> 
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; name=":service=estoretestItem"&gt;</p> 
+<p>&nbsp; &nbsp; &nbsp; &lt;attribute name="StartAtStartup"&gt;true&lt;/attribute&gt;</p> 
+<p>&nbsp; &nbsp; &nbsp; &lt;attribute name="SchedulableClass"&gt;com.lich.MySrcSchedulable&lt;/attribute&gt;</p> 
+<p>&nbsp; &nbsp; &nbsp; &lt;attribute name="SchedulableArguments"&gt;64039,64039,01&lt;/attribute&gt; //传给构造器的参数</p> 
+<p>&nbsp; &nbsp; &nbsp; &lt;attribute name="SchedulableArgumentTypes"&gt;java.lang.String,java.lang.String,java.lang.String&lt;/attribute&gt; //参数类型</p> 
+<p>&nbsp; &nbsp; &nbsp; &lt;attribute name="InitialStartDate"&gt;0&lt;/attribute&gt; &nbsp;//开始时间 &nbsp;，0是马上</p> 
+<p>&nbsp; &nbsp; &nbsp; &lt;attribute name="SchedulePeriod"&gt;90000&lt;/attribute&gt; &nbsp;//运行频率</p> 
+<p>&nbsp; &nbsp; &nbsp; &lt;attribute name="InitialRepetitions"&gt;-1&lt;/attribute&gt;</p> 
+<p>&nbsp; &nbsp; &nbsp; &lt;attribute name="FixedRate"&gt;true&lt;/attribute&gt; &nbsp; &nbsp;</p> 
+<p>&nbsp; &nbsp;&lt;/mbean&gt;</p> 
+<p>&nbsp;</p> 
+<p>scheduler 任务是server级别的， 和war是无关的</p>

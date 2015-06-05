@@ -1,0 +1,92 @@
+<p>这里phpmyadmin是用apt-get默认安装的 安装路径在/usr/share/phpmyadmin下</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java"> # server for phpmyadmin
+    server{
+       listen  80;
+       server_name www.yours.com;
+       location /phpmyadmin {
+        index  index.html index.php;
+	root /usr/share;
+       }
+       location ~ ^/phpmyadmin.+\.php$ {
+            root /usr/share;
+	    fastcgi_pass   127.0.0.1:9000;
+            fastcgi_index  index.php;
+            fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+            include        /websites/nginx/conf/fastcgi_params;
+#            fastcgi_param HTTPS on;
+
+        }
+
+        location /phpMyAdmin {
+                rewrite  ^/*  /phpmyadmin last;
+
+        }</pre> 
+<p>要注意的几点 </p> 
+<p>要改下 /etc/phpmyadmin/下的文件的可读权限</p> 
+<p>&nbsp;</p> 
+<p>改下 /etc/phpmyadmin/config.inc.php</p> 
+<pre name="code" class="java">if (!empty($dbname)) {
+     /* Authentication type */
+   $cfg['Servers'][$i]['auth_type'] = 'cookie';
+
+//假如登录不行 加入以下
+$cfg['blowfish_secret'] = 'cookie';
+
+<span><span style="color: #ff0000;">//加入以下的 可以省去你很多很多很多麻烦</span>
+</span>
+
+//$cfg['Servers'][$i]['user']          = 'username';
+  //$cfg['Servers'][$i]['password']      = 'pwd'; // use here your password
+  //$cfg['Servers'][$i]['auth_type']     = 'config';
+</pre> 
+<p> &nbsp; In <tt>config.inc.php</tt> , try to leave the <a href="http://www.1wofeng.com/phpmyadmin/Documentation.html#cfg_PmaAbsoluteUri" class="configrule">$cfg['PmaAbsoluteUri']</a> directive empty.</p> 
+<p>&nbsp;</p> 
+<p>参考链接：</p> 
+<p>http://www.ruby-forum.com/topic/183232 </p> 
+<p>http://www.howtoforge.com/lemp_nginx_mysql_php_ubuntu_debian</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>其他的几个配置文件</p> 
+<p>spawn-fcgi是在编译lighttpd的过程中产生的</p> 
+<pre name="code" class="java">wget http://www.lighttpd.net/download/lighttpd-1.4.18.tar.bz2
+tar -xvjf lighttpd-1.4.18.tar.bz2
+cd lighttpd-1.4.18
+./configure
+make
+cp src/spawn-fcgi /usr/bin/spawn-fcgi
+
+注意：并没有安装 lighttpd，只是拿出里面的 spawn-fcgi。（make 而没有 install）</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>php-fastcgi</p> 
+<pre name="code" class="java">/websites/nginx/sbin/spawn-fcgi -a 127.0.0.1 -p 9000 -u www-data -f /websites/php/bin/php-cgi</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>init-fastcgi</p> 
+<pre name="code" class="java">#!/bin/bash
+PHP_SCRIPT=/websites/nginx/sbin/php-fastcgi
+RETVAL=0
+case "$1" in
+start)
+$PHP_SCRIPT
+RETVAL=$?
+;;
+stop)
+killall -9 php-cgi
+RETVAL=$?
+;;
+restart)
+killall -9 php-cgi
+$PHP_SCRIPT
+RETVAL=$?
+;;
+*)
+echo "Usage: php-fastcgi {start|stop|restart}"
+exit 1
+;;
+esac
+exit $RETVAL</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

@@ -1,0 +1,18 @@
+<pre class="java" name="code">	上传文件  
+		相对路径的 写法 
+			1. File uploadPath =new File("D:\\addnetFile\\tmp\\")  绝对路径
+			2. req.getSession().getServletContext().getRealPath("images/item/")
+				获得相对路径，会随webapp位置的改变而改变,但一定在webapp的位置之下，不会在它之外（缺点）
+			3. 由servlet初始化参数获得,也是绝对路径,但可通过改变xml文件改变
+				public void init() throws ServletException {
+					this.uploadPath = this.getServletConfig().getInitParameter("upload-path");
+				 }
+				&lt;servlet&gt;
+					&lt;servlet-name&gt;FileUpload&lt;/servlet-name&gt;
+					&lt;servlet-class&gt;com.bjsxt.drp.util.servlet.FileUpload&lt;/servlet-class&gt;
+					&lt;init-param&gt;
+						&lt;param-name&gt;upload-path&lt;/param-name&gt;
+						&lt;param-value&gt;C:\\apache-tomcat-5.5.17\\webapps\\drp1.9\\images\\item\\&lt;/param-value&gt;
+					&lt;/init-param&gt;
+				&lt;/servlet&gt;</pre> 
+<p>&nbsp;</p>

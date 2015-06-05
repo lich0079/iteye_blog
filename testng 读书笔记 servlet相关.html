@@ -1,0 +1,178 @@
+<p>只有知道测试方法被调用的顺序时，共享可修改的状态才有意义</p> 
+<p>&nbsp;只关注测试驱动开发将是程序员忽视大范围或中范围设计的实践</p> 
+<p>理想情况下，当您编写测试时，需要确保不论底层代码如何改动，这些测试仍然有效。&nbsp;&nbsp;&nbsp; //在稍高的层面写测试？</p> 
+<p>如何创建测试不重要，重要的是确实要创建测试。</p> 
+<p>测试私有方法的方式就是利用反射&nbsp;&nbsp; 在method对象上调用setAccessible() 通知JVM跳过安全性检查</p> 
+<p>绝大多数时候，&nbsp;可测试性应该胜过封装</p> 
+<p>第一点也是最重要的一点，就是尽量避免使用commons-logging。他是没有意义的，只是增加了复杂性。 page。276</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>测试servlet</p> 
+<pre class="java" name="code">@Test(testName="function test")
+public class TestRequest {
+
+    /**
+     * 简单测试servlet 模拟出 request response
+     * 对servelt执行前后的数据进行检查,没有检查out输出
+     * 
+     */
+    @Test(groups = { "function" })
+    public void testComputerServlet() throws ServletException, IOException {
+        ComputerServlet cs = new ComputerServlet();
+        MockServletContext application = new MockServletContext();
+        MockServletConfig config = new MockServletConfig(application);
+        cs.init(config);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        int a = 233, b = 23241;
+        request.setParameter("num1", a+"");
+        request.setParameter("num2", b+"");
+        cs.doGet(request, response);
+        int sum = Integer.valueOf((String) request.getAttribute("num3"));
+        Assert.assertEquals(sum, a + b);
+
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>==================================================================================</p> 
+<p>&nbsp;</p> 
+<p>容器内testng测试</p> 
+<pre class="java" name="code">/**
+ * 以一个servlet的形式执行testng测试
+ * 这样的好处是这个servlet是在容器中运行的
+ * 测试的环境和实际使用的生产环境是一样的（相比与容器外的测试）
+ */
+public class TestServlet extends HttpServlet {
+
+    /**
+     * The doGet method of the servlet. &lt;br&gt;
+     */
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doPost(request, response);
+    }
+
+    /**
+     * The doPost method of the servlet. &lt;br&gt;
+     */
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        Runtime runtime = Runtime.getRuntime();
+        out.println("totalMemory = " + runtime.totalMemory() / 1024.0 / 1024);// 看下测试对jvm内存的影响
+        TestNG tester = new TestNG();
+        tester.setDefaultSuiteName("container-tests");
+        String root = request.getSession().getServletContext().getRealPath("/WEB-INF/classes");
+        ClassScanner scanner = new ClassScanner(new File(root));
+        scanner.setLoader(getClass().getClassLoader());
+        scanner.setFilter(new FileFilter() {
+            public boolean accept(File pathname) {
+                return pathname.getPath().indexOf("Test") &gt; -1;
+            }
+        });
+        Class[] classesTobeTest = scanner.getClasses();
+        tester.setTestClasses(classesTobeTest);
+        IReporter reporter = new SinglePageReporter(out);
+        tester.addListener(reporter);
+        tester.run();
+        System.out.println("totalMemory = " + Runtime.getRuntime().totalMemory() / 1024.0 / 1024);
+        out.println("totalMemory = " + Runtime.getRuntime().totalMemory() / 1024.0 / 1024);
+        out.println("===============");
+        // out.close();
+    }
+
+}</pre> 
+<p>&nbsp;铺助类</p> 
+<pre class="java" name="code">public class SinglePageReporter extends EmailableReporter {
+    private Writer writer;
+
+    /**
+     * 
+     */
+    public SinglePageReporter(Writer writer) {
+        this.writer = writer;
+    }
+
+    @Override
+    protected PrintWriter createWriter(String outdir) throws IOException {
+        return new PrintWriter(writer);
+    }
+
+}</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">public class ClassScanner {
+    private File root;
+    private FileFilter filter;
+    private ClassLoader loader;
+
+    private static final Logger log = Logger.getLogger(ClassScanner.class);
+    private static final String CLASS_EXT = ".class";
+
+    /**
+     * @param root
+     */
+    public ClassScanner(File root) {
+        super();
+        this.root = root;
+    }
+
+    public void setFilter(FileFilter filter) {
+        this.filter = filter;
+    }
+
+    public void setLoader(ClassLoader loader) {
+        this.loader = loader;
+    }
+
+    public Class[] getClasses() {
+        List&lt;Class&gt; list = new ArrayList&lt;Class&gt;();
+        loadClasses(list, root);
+        return list.toArray(new Class[list.size()]);
+    }
+
+    /**
+     * @param list
+     * @param root2
+     */
+    private void loadClasses(List&lt;Class&gt; list, File dir) {
+        if (dir == null || !dir.isDirectory()) {
+            return;
+        }
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            log.debug("scan "+file.getAbsolutePath());
+            if (file.isDirectory()) {
+                loadClasses(list, file);
+            } else if (filter == null || filter.accept(file)) {
+                if (file.getName().endsWith(CLASS_EXT)) {
+                    int trim = root.toString().length();
+                    String name = file.toString().substring(trim + 1);
+                    name = name.substring(0, name.length() - CLASS_EXT.length());
+                    name = name.replace(File.separatorChar, '.');
+                    try {
+                        Class clazz = loader == null ? Class.forName(name) : loader.loadClass(name);
+                        log.info("loaded "+file.getAbsolutePath());
+                        list.add(clazz);
+                    } catch (Exception e) {
+                        log.warn("error loading class " + name, e);
+                    }
+                }
+            }
+        }
+    }
+
+}</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;classpath&gt;
+	&lt;classpathentry kind="src" path="src"/&gt;
+	&lt;classpathentry kind="src" path="test"/&gt;
+	&lt;classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/&gt;
+	&lt;classpathentry kind="con" path="melibrary.com.genuitec.eclipse.j2eedt.core.MYECLIPSE_JAVAEE_5_CONTAINER"/&gt;
+	&lt;classpathentry kind="lib" path="WebRoot/WEB-INF/lib/testng-5.11-jdk15.jar"/&gt;
+	&lt;classpathentry kind="lib" path="WebRoot/WEB-INF/lib/log4j-1.2.15.jar"/&gt;
+	&lt;classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring-test.jar" sourcepath="D:/openSource/spring-framework-2.5.6/mock"/&gt;
+	&lt;classpathentry kind="lib" path="WebRoot/WEB-INF/lib/spring.jar"/&gt;
+	&lt;classpathentry kind="output" path="WebRoot/WEB-INF/classes"/&gt;
+&lt;/classpath</pre> 
+<p>&nbsp;</p>

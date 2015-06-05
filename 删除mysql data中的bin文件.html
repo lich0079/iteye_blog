@@ -1,0 +1,30 @@
+<p>装mysql,运行一段时间后，在mysql目录下出现一堆类似 mysql-bin.000***，从mysql-bin.000001开始一直排列下来，而且占用了大量硬盘空间，高达几十个G.&nbsp;&nbsp;对于这些超大空间 占用量的文件我们应该怎么办呢?<br><a target="_blank" title="mysql" href="http://imcat.in/wp-content/uploads/2010/05/mysql.jpg"></a> </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>我 的数据库加起来大概100M吧..但/usr/local/mysql/var这个目录竟然有548M,MySql-bin.0000文件大概占 了400+M,真浪费空间啊<br><br><strong>那么mysql数据库文件夹 中的mysql-bin.00001是什么文件？</strong> </p> 
+<blockquote> 
+ <p>mysql-bin.000001、 mysql- bin.000002等文件是数据库的操作日志，例如UPDATE一个表，或者DELETE一些数据，即使该语句没有匹配的数据，这个命令也会存储到日志 文件中，还包括每个语句执行的时间，也会记录进去的。</p> 
+</blockquote> 
+<p><strong>那么这些文件该怎么删除和禁止呢?</strong> <br> 禁止方法: vi /etc/my.cnf把里面的<br> #log-bin=mysql-bin<br> #binlog_format=mixed<br> 注释掉,重启mysql服务即可.</p> 
+<p>删除方法:</p> 
+<p>输入命令:</p> 
+<div style="overflow: auto; white-space: nowrap; width: 600px;" class="codecolorer-container text default"> 
+ <div class="text codecolorer">
+  /usr/local/mysql/bin/mysql -u root -p
+ </div> 
+</div> 
+<p><a target="_blank" title="mysql1" href="http://imcat.in/wp-content/uploads/2010/05/mysql1.jpg"><br></a> </p> 
+<p>输入密码登陆 mysql后,运行命令:</p> 
+<div style="overflow: auto; white-space: nowrap; width: 600px;" class="codecolorer-container text default"> 
+ <div class="text codecolorer">
+  reset master;
+ </div> 
+</div> 
+<p>(包括;号)</p> 
+<p>清空日志文 件.再查看Mysql文件的大小,已经小了很多了.</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>还有方法</p> 
+<p>&nbsp;</p> 
+<p>PURGE MASTER LOGS TO 'mysql-bin.000120';<br> 即可删除120之前的bin log<br><br> 所以另 外还有个方法定期删除bin log<br> PURGE MASTER LOGS BEFORE DATE_SUB( NOW( ), INTERVAL 3 DAY);<br> 删除3天前的LOG文件. </p>

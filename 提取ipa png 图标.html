@@ -1,0 +1,34 @@
+<p><span style=""> </span></p>
+<p style="color: #333333; font-family: 'Lucida Sans Unicode', 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 21px; background-color: transparent; margin-top: 8px; margin-right: 0px; margin-bottom: 8px; margin-left: 0px; vertical-align: baseline; white-space: normal; padding: 0px;"><span style="background-color: transparent; vertical-align: baseline; color: #333333; font-size: 14px; line-height: 25px; font-family: 'Lucida Grande', Geneva, Arial, Verdana, sans-serif; padding: 0px; margin: 0px;">Apple 对 iPhone 应用程序中的 png 图片进行了特殊的处理，在 png 文件头之后加了一个非标准的 CgBI 数据段，IDAT 段图像数据也没有传统的压缩数据头和尾，并且红色和蓝色是反的，这样就无法在 Mac 或 Windows 下不能正常使用了。</span></p> 
+<p style="color: #333333; font-family: 'Lucida Sans Unicode', 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 21px; background-color: transparent; margin-top: 8px; margin-right: 0px; margin-bottom: 8px; margin-left: 0px; vertical-align: baseline; white-space: normal; padding: 0px;">网上找滴解决办法：</p> 
+<ol style="color: #333333; font-family: 'Lucida Sans Unicode', 'Lucida Grande', Helvetica, Arial, sans-serif; line-height: 21px; background-color: transparent; margin-top: 0px; margin-right: 0px; margin-bottom: 1.6em; margin-left: 2em; vertical-align: baseline; clear: both; padding: 0px;"> 
+ <li style="background-color: transparent; vertical-align: baseline; padding: 0px; margin: 0px;"> <span style="background-color: transparent; vertical-align: baseline; color: #242020; font-family: 'Microsoft YaHei', Helvetica, Arial; font-size: 14px; line-height: 28px; padding: 0px; margin: 0px;">先把ipa软件后缀改成zip，然后用winrar解压，然后下载iphone – fixpng.exe这个软件。把</span><span style="background-color: transparent; vertical-align: baseline; color: #242020; font-family: 'Microsoft YaHei', Helvetica, Arial; font-size: 14px; line-height: 28px; padding: 0px; margin: 0px;">需要转换的png拷贝到主程序目录下的png目录，运行程序，点击convert，转换完成后即可在fixed文件夹找到转换后的png。</span> </li> 
+</ol> 
+<div>
+ <span style="font-family: 'Microsoft YaHei', Helvetica, Arial; color: #242020;"><span style="font-size: 14px; line-height: 28px;">2. &nbsp;http://www.axelbrz.com.ar/?mod=iphone-png-images-normalizer</span></span>
+</div> 
+<span style="color: #242020; font-family: 'Microsoft YaHei', Helvetica, Arial; font-size: 14px; line-height: 28px;"> <p style="padding: 0px; margin: 0px;">这里是采用python对png进行转换，大家如果有兴趣，可以仔细读一下源代码，如果只是想获取可读的png文件，请在上述网站进行下载或在本地下载<a style="text-decoration: none; color: #3f3faf;" href="http://www.iphone-geek.cn/wp-content/uploads/2011/01/ipin.py.zip">ipin.py.zip</a>。</p> <p style="padding: 0px; margin: 0px;">此python程序的使用方法很简单，当然首先系统中要求安装了python。解压ipin.py.zip后，将ipin.py文件复制到刚才解压的包括所有png文件的目录下，然后运行：</p> 
+ <blockquote style="background-color: #dedede; padding: 15px; margin: 10px;"> 
+  <p style="padding: 0px; margin: 0px;">python ipin.py</p> 
+ </blockquote> <p style="padding: 0px; margin: 0px;">回答Y，所有的png将被转换成通常的png格式，这样你使用预览程序就可以看到了。</p> </span>
+<span style=""> 
+ <div>
+  <br>
+ </div> 
+ <div>
+  <br>
+ </div> </span>
+<span style="color: #32312f; font-family: 'Lucida Grande', Lucida, Verdana, sans-serif; font-size: 13px; line-height: 20px;">3.&nbsp;<a style="border-top-width: 0px; border-right-width: 0px; border-bottom-width: 1px; border-left-width: 0px; border-color: initial; font-size: 13px; vertical-align: baseline; background-color: transparent; text-decoration: none; color: #42403d; border-bottom-style: dotted; border-bottom-color: #524f4b; padding: 0px; margin: 0px;" href="http://acquisition.dreamhosters.com/iPhonePNG.zip" target="_blank">http://acquisition.dreamhosters.com/iPhonePNG.zip</a></span>
+<p></p> 
+<p>&nbsp;</p> 
+<p><span style="color: #32312f; font-family: 'Lucida Grande', Lucida, Verdana, sans-serif; font-size: 13px; line-height: 20px;"> </span></p>
+<p style="margin-top: 0px; margin-right: 0px; margin-bottom: 20px; margin-left: 0px; font-size: 13px; vertical-align: baseline; background-color: transparent; padding: 0px;">假设你的图片在./img目录下，想转换到 ./decode 目录，</p> 
+<p style="margin-top: 0px; margin-right: 0px; margin-bottom: 20px; margin-left: 0px; font-size: 13px; vertical-align: baseline; background-color: transparent; padding: 0px;">在终端执行：</p> 
+<blockquote style="margin-top: 0px; margin-right: 0px; margin-bottom: 20px; margin-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 13px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 2px; border-color: initial; font-size: 13px; vertical-align: baseline; background-color: transparent; border-left-style: solid; border-left-color: #d2d2d2;"> 
+ <p style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px !important; margin-left: 0px; font-size: 13px; vertical-align: baseline; background-color: transparent; padding: 0px;">$ find ./img -name "*.png" -exec /Applications/iPhonePNG {} \;</p> 
+</blockquote> 
+<p style="margin-top: 0px; margin-right: 0px; margin-bottom: 20px; margin-left: 0px; font-size: 13px; vertical-align: baseline; background-color: transparent; padding: 0px;">默认将转换后的图片添加后缀后放在原图片相同目录，把他批量移动出来：</p> 
+<blockquote style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px !important; margin-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 13px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 2px; border-color: initial; font-size: 13px; vertical-align: baseline; background-color: transparent; border-left-style: solid; border-left-color: #d2d2d2;">
+ $ find ./img -name "*Decoded.png" -exec mv {} ./decode \;
+</blockquote> 
+<p></p>

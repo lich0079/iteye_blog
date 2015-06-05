@@ -1,0 +1,22 @@
+<pre class="java" name="code">非断点下载2进制文件
+
+		//下载公文附件
+	public ActionForward download(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		DocumentActionForm daf = (DocumentActionForm)form;
+		
+		Document document = documentManager.findDocument(daf.getId());
+		
+		response.reset();
+		response.setContentType("application/x-download;charset=GBK");
+		response.setHeader("Content-Disposition", "attachment;filename=temp.doc");
+		
+		response.getOutputStream().write(document.getContent());
+		
+		response.getOutputStream().flush();
+		response.getOutputStream().close();
+		
+		//指示struts，不要对返回值进行处理
+		return null;
+	}</pre> 
+<p>&nbsp;</p>

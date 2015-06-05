@@ -1,0 +1,35 @@
+<p>export PATH=/opt/local/bin:/opt/local/sbin:$PATH</p> 
+<p>&nbsp;</p> 
+<p><span style="line-height: 13px; font-family: Consolas,Monaco,'Bitstream Vera Sans Mono','Courier New',Courier,monospace; color: #b9bdb6;"><code class="functions" style="background-image: none !important; background-color: initial !important; text-align: left !important; float: none !important; vertical-align: baseline !important; height: auto !important; width: auto !important; line-height: 1.1em !important; font-family: Consolas, Monaco, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; font-weight: normal !important; font-style: normal !important; font-size: 1em !important; display: inline !important; color: #ffaa3e !important; padding: 0px !important; margin: 0px !important;">sudo</code> &nbsp;<code class="plain" style="background-image: none !important; background-color: initial !important; text-align: left !important; float: none !important; vertical-align: baseline !important; height: auto !important; width: auto !important; line-height: 1.1em !important; font-family: Consolas, Monaco, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace !important; font-weight: normal !important; font-style: normal !important; font-size: 1em !important; display: inline !important; color: #b9bdb6 !important; padding: 0px !important; margin: 0px !important;">port selfupdate</code> </span> </p> 
+<p>&nbsp;</p> 
+<p><span style="font-family: 'lucida grande','liberation sans',verdana,arial,helvetica,sans-serif;">port install cdrtools</span> </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="font-size: 13px; font-family: 'trebuchet ms'; color: #333333;"> </span></p>
+<div class="asset-content entry-content" style="margin-top: 5px; margin-right: 0px; margin-bottom: 5px; margin-left: 0px; clear: both; padding: 0px;"> 
+ <div class="asset-body" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0.75em; margin-left: 0px; clear: both; height: 333px; padding: 0px;"> 
+  <p style="margin-top: 0px; margin-right: 0px; margin-bottom: 0.75em; margin-left: 0px; padding: 0px;"><code style="padding: 0px; margin: 0px;">macport</code> 是BSDer们在Mac下无法或缺的工具之一，其使用时支持的命令很多。罗列如下：</p> 
+  <pre>activate, archive, build, cat, cd, checksum, clean, compact, configure,
+contents, deactivate, dependents, deps, destroot, dir, distcheck, dmg,
+dpkg, echo, ed, edit, exit, extract, fetch, file, gohome, help, info,
+install, installed, lint, list, livecheck, location, mdmg, mirror, mpkg,
+outdated, patch, pkg, provides, quit, rpm, search, selfupdate, srpm,
+submit, sync, test, trace, unarchive, uncompact, uninstall, upgrade,
+url, usage, variants, version, work</pre> 
+  <p style="margin-top: 0px; margin-right: 0px; margin-bottom: 0.75em; margin-left: 0px; padding: 0px;">但是最常用也就无非是<code style="padding: 0px; margin: 0px;">install,selfupdate,upgrade,uninstall,search,list</code> 这几个。</p> 
+  <p style="margin-top: 0px; margin-right: 0px; margin-bottom: 0.75em; margin-left: 0px; padding: 0px;">其实<code style="padding: 0px; margin: 0px;">macport</code> 还有一种叫伪名称的东东，罗列如下：</p> 
+  <pre>all, current, active, inactive, installed, uninstalled, and outdated.</pre> 
+  <p style="margin-top: 0px; margin-right: 0px; margin-bottom: 0.75em; margin-left: 0px; padding: 0px;">以下是我常用的一些macport命令</p> 
+  <pre>port -d selfupdate #升级macport, 如同：cd /usr/ports &amp;&amp; make update
+port install xxx #安装xxx软件, 如同：cd /usr/ports/kkk/xxx &amp;&amp; make install
+port upgrade outdated #升级所有已过时的软件，作用如portupgrade -a
+port installed #列出已经安装的软件，如pkg_info
+port search xxx #列出与xxx条件相符的软件，如cd /usr/ports/ &amp;&amp; make search name=xxx
+
+
+
+
+</pre> 
+ </div> 
+</div>  
+<p></p>

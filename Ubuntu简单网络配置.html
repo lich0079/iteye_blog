@@ -1,0 +1,42 @@
+<p><span style="line-height: 19px; font-family: 'Trebuchet MS'; color: #363636;"> </span></p>
+<div style="margin-top: 0px; font-size: 14px; padding-top: 0px; padding-right: 6px; padding-bottom: 0px; padding-left: 6px; border-left-width: 3px; border-left-style: solid; border-left-color: #cccccc;" class="post-title"> 
+ <h3 style="font-family: Tahoma, Arial, sans-serif; font-size: 16px; color: #7cbaff; margin: 0px;"> <a title="固定链接" style="color: #0063dc; text-decoration: none;" href="http://ubuntu.osgeeker.com/2008/03/ubuntu.html">Ubuntu简单网络配置</a> </h3> 
+ <p style="padding-top: 5px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; font-size: 11px; text-align: left; color: #666666; margin: 0px;" class="post-footer">&nbsp;</p> 
+</div> 
+<div class="post-body"> 
+ <p style="margin-top: 20px; margin-right: auto; margin-bottom: 20px; margin-left: auto; font-size: 13px; padding: 0px;">我在某台机子安装Ubuntu Server时，安装过程跳过了网络配置的步骤，回头在另一台机子SSH登录这台机子的时候始终不能连接，通过路由器DHCP Client Table列表中查看发现安装Ubuntu Server的这台机子并未加入网络，很是奇怪。于是在这台机子上执行命令：<br> $ifconfig<br> 返回结果中只有lo，没有eth0，这才联想到可能和安装时跳过网络配置有关，只需要简单配置一下即可让这台机子正常加入网络。<br> $sudo pico /etc/network/interfaces<br> 这就会启动简单文本编辑器来编辑Linux网络配置文件<br> 在这里你应该会看到如下内容：</p> 
+ <blockquote style="font-size: 1em; line-height: 1.5em; color: #666666; margin-top: 5px; margin-right: 0px; margin-bottom: 5px; margin-left: 0px; border-top-color: #e5e5e5; border-right-color: #e5e5e5; border-bottom-color: #e5e5e5; border-left-color: #43b300; background-color: #f7f7f7; border-width: 1px; border-style: solid; padding: 10px;">
+  auth lo
+  <br> iface lo inet loopback
+ </blockquote> 
+ <br> 这个正是lo回环，我需要让这台运行Ubuntu Server的机子通过DHCP获得IP来加入网络，那么我只需要在上面的lo回环的配置内容下面加入：
+ <br>
+ <blockquote style="font-size: 1em; line-height: 1.5em; color: #666666; margin-top: 5px; margin-right: 0px; margin-bottom: 5px; margin-left: 0px; border-top-color: #e5e5e5; border-right-color: #e5e5e5; border-bottom-color: #e5e5e5; border-left-color: #43b300; background-color: #f7f7f7; border-width: 1px; border-style: solid; padding: 10px;">
+  auth eth0
+  <br> iface eth0 inet dhcp
+ </blockquote> 
+ <br> 按下Ctrl+O组合键即可保存，按下Ctrl+X退出。
+ <br> 让网络配置文件生效有两个办法：
+ <br> 1、重启Ubuntu：
+ <br> $sudo reboot
+ <br> 2、重启网络组件：
+ <br> $sudo /etc/init.d/networkding restart
+ <br> 只要显示Reconfiguring network interfaces... [OK]
+ <br> 即成功重启网络组件。
+ <br> 如果并不是通过DHCP来获得IP而是需要手动指定IP（比如192.168.1.1）并且指定网关（如192.168.1.254），那么如此配置：
+ <br>
+ <blockquote style="font-size: 1em; line-height: 1.5em; color: #666666; margin-top: 5px; margin-right: 0px; margin-bottom: 5px; margin-left: 0px; border-top-color: #e5e5e5; border-right-color: #e5e5e5; border-bottom-color: #e5e5e5; border-left-color: #43b300; background-color: #f7f7f7; border-width: 1px; border-style: solid; padding: 10px;">
+  auth eth0
+  <br> iface eth0 inet static
+  <br> address 192.168.1.1
+  <br> netmask 255.255.255.0
+  <br> gateway 192.168.1.254
+ </blockquote> 
+ <br>
+ <br> 如果是手动指定IP并且还需要访问互联网，比如wget下载，那么还需要设置DNS：
+ <br> $sudo pico /etc/resolv.conf
+ <br> 向这里添加配置内容：
+ <br> nameserver xxx.xxx.xxx.xxx
+ <br> 保存即可。
+</div>  
+<p></p>

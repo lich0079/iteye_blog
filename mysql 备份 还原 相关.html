@@ -1,0 +1,106 @@
+<div class="content">
+ btw, phpmyadmin也可以方便的导出数据结构
+ <br> 
+</div> 
+<div class="content">
+ <br>
+</div> 
+<div class="content">
+ 在网上下了一个java编程的例子想看看，有数据库和源码， 自带使用说明对数据库描述是这样的 
+ <br>
+ <br>
+ <br>
+ <span class="hilite1"><span style="background-color: #ffff00;">mysql</span> </span>-u root -p databasename&lt;microerp-
+ <span class="hilite1"><span style="background-color: #ffff00;">mysql</span> </span>.sql&nbsp; 导入表结构及数据 
+ <br>
+ <br>
+ <br> 
+</div> 
+<div class="solutions"> 
+ <div class="solution"> 
+  <div> 
+   <span class="hilite1"><span style="background-color: #ffff00;">mysql</span> </span>数据备份与还原命令: 
+   <br>
+   <br>备份:mysqldump -u root -p&nbsp; dbcurr&gt; 20090219.sql 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; mysqldump&nbsp; 备份命令 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; root&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 用户名(root管理员) 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; dbcurr&nbsp;&nbsp; 备份的数据库名; 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; &gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 备份符号 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; 20090219.sql&nbsp;&nbsp;&nbsp; 备份的文件名 
+   <br>
+   <br>还原: 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; 
+   <span class="hilite1"><span style="background-color: #ffff00;">mysql</span> </span>-u root -p dbcurr&lt; d:\bbb.sql 
+   <br>
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; 
+   <span class="hilite1"><span style="background-color: #ffff00;">mysql</span> </span>&nbsp;&nbsp; 还原命令 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; root&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 用户名(root管理员) 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; dbcurr&nbsp;&nbsp; 备份的数据库名; 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; &lt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 还原符号 
+   <br>&nbsp;&nbsp;&nbsp;&nbsp; 20090219.sql&nbsp;&nbsp;&nbsp; 还原的文件名 
+   <br> 
+  </div> 
+  <div class="info"> 
+   <br>首先要确保你的
+   <span class="hilite1"><span style="background-color: #ffff00;">mysql</span> </span>中有 microerp这个库，还原命令是不会自动建库了。 
+   <br>
+   <br>全过程： 
+   <br>
+   <span class="hilite1"><span style="background-color: #ffff00;">mysql</span> </span>-uroot -pyoupwd 
+   <br>create database microerp; 
+   <br>use microerp; 
+   <br>source d:/microerp-
+   <span class="hilite1"><span style="background-color: #ffff00;">mysql</span> </span>.sql; 
+   <br> 
+  </div> 
+  <div class="info">
+   <br>
+  </div> 
+  <div class="info">
+   <br>
+  </div> 
+  <div class="info">
+   --all-databases, -A： 备份所有数据库
+   <br>--databases, -B： 用于备份多个数据库，如果没有该选项，
+   <a class="blue2 b" target="_blank" href="http://www.huomo.cn/t/mysqldump/"><span class="highlight">mysql</span> dump</a> 把第一个名字参数作为数据库名，后面的作为表名。使用该选项，
+   <span class="highlight">mysql</span> dum把每个名字都当作为数据库名。 
+   <p>--force, -f：即使发现sql错误，仍然继续备份<br>--host=host_name, -h host_name：备份主机名，默认为localhost<br>--no-data, -d：只导出<span class="highlight">表结构</span> <br>--password[=password], -p[password]：密码<br>--port=port_num, -P port_num：制定TCP/IP连接时的端口号<br>--quick, -q：快速导出<br>--tables：覆盖 --databases or -B选项，后面所跟参数被视作表名<br>--user=user_name, -u user_name：用户名<br>--xml, -X：导出为xml文件</p> 
+   <p>1.备份全部数据库的数据和结构</p> 
+   <p><span class="highlight">mysql</span> dump -uroot -p123456 -A &gt;F:\all.sql</p> 
+   <p>2.备份全部数据库的结构（加 -d 参数）</p> 
+   <p><span class="highlight">mysql</span> dump -uroot -p123456 -A -d&gt;F:\all_struct.sql</p> 
+   <p>3.备份全部数据库的数据(加 -t 参数)</p> 
+   <p><span class="highlight">mysql</span> dump -uroot -p123456 -A -t&gt;F:\all_data.sql</p> 
+   <p>4.备份单个数据库的数据和结构(,数据库名mydb)</p> 
+   <p><span class="highlight">mysql</span> dump -uroot -p123456&nbsp;mydb&gt;F:\mydb.sql</p> 
+   <p>5.备份单个数据库的结构</p> 
+   <p><span class="highlight">mysql</span> dump -uroot -p123456&nbsp;mydb -d&gt;F:\mydb.sql</p> 
+   <p>6.备份单个数据库的数据</p> 
+   <p><span class="highlight">mysql</span> dump -uroot -p123456&nbsp;mydb -t&gt;F:\mydb.sql</p> 
+   <p>7.备份多个表的数据和结构（数据，结构的单独备份方法与上同）</p> 
+   <p><span class="highlight">mysql</span> dump -uroot -p123456 &nbsp;mydb t1 t2 &gt;f:\multables.sql</p> 
+   <p>8.一次备份多个数据库</p> 
+   <p><span class="highlight">mysql</span> dump -uroot -p123456 --databases db1 db2 &gt;f:\muldbs.sql</p> 
+   <p>&nbsp;</p> 
+   <p>&nbsp;</p> 
+   <p>mysqldump 加 选项 -R&nbsp;&nbsp; 导出 函数<br></p> 
+   <p>&nbsp;</p> 
+   <p>&nbsp;</p> 
+   <p>还原部分分（1）<span class="highlight">mysql</span> 命令行source方法 &nbsp;和&nbsp;（2）系统命令行方法</p> 
+   <p>1.还原全部数据库:</p> 
+   <p>(1) <span class="highlight">mysql</span> 命令行：<span class="highlight">mysql</span> &gt;source f:\all.sql</p> 
+   <p>(2) 系统命令行： <span class="highlight">mysql</span> -uroot -p123456 &lt;f:\all.sql</p> 
+   <p>2.还原单个数据库(需指定数据库)</p> 
+   <p>(1) <span class="highlight">mysql</span> &gt;use mydb</p> 
+   <p><span class="highlight">mysql</span> &gt;source f:\mydb.sql</p> 
+   <p>(2) <span class="highlight">mysql</span> -uroot -p123456 mydb &lt;f:\mydb.sql</p> 
+   <p>3.还原单个数据库的多个表(需指定数据库)</p> 
+   <p>(1) <span class="highlight">mysql</span> &gt;use mydb</p> 
+   <p><span class="highlight">mysql</span> &gt;source f:\multables.sql</p> 
+   <p>(2) <span class="highlight">mysql</span> -uroot -p123456 mydb &lt;f:\multables.sql</p> 
+   <p>4.还原多个数据库，（一个备份文件里有多个数据库的备份，此时不需要指定数据库）</p> 
+   <p>(1) <span class="highlight">mysql</span> 命令行：<span class="highlight">mysql</span> &gt;source f:\muldbs.sql</p> 
+   <p>(2) 系统命令行： <span class="highlight">mysql</span> -uroot -p123456 &lt;f:\muldbs.sql</p> 
+  </div> 
+ </div> 
+</div>

@@ -1,0 +1,91 @@
+<pre name="code" class="java">可以解决下载文件乱码问题(诸如:DOC,XSL文件等等).
+后来发现,遇到中文名的文件的时候,文件下载将会报错~~~~
+今天,通过改写原Download.jsp文件已经彻底解决了这个问题~
+现在,把一整套的文件上传下载的方法给贴出来~~~以便大家借鉴!~!~!~!~! 
+作者:古埃及法老
+
+download.jsp文件
+---------------------------------------------------------
+&lt;%
+  java.io.BufferedInputStream bis=null;
+  java.io.BufferedOutputStream  bos=null;
+try{
+ String filename=request.getParameter("filename");
+             filename=new String(filename.getBytes("iso8859-1"),"gb2312");
+ response.setContentType("application/x-msdownload");
+ response.setHeader("Content-disposition","attachment; filename="+new String(filename.getBytes("gb2312"),"iso8859-1"));
+ bis =new java.io.BufferedInputStream(new java.io.FileInputStream(config.getServletContext().getRealPath("files/" + filename)));
+ bos=new java.io.BufferedOutputStream(response.getOutputStream()); 
+ byte[] buff = new byte[2048];
+ int bytesRead;
+ while(-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+  bos.write(buff,0,bytesRead);
+ }
+}
+catch(Exception e){
+ e.printStackTrace();
+}
+finally {
+ if (bis != null)bis.close();
+ if (bos != null)bos.close();
+}
+%&gt; 
+
+
+注意，关键就是setHeader里的filename需要重新编码,格式是ISO-8859-1就ＯＫ了
+
+以下是我自己项目中用到的代码片断，供参考:
+
+list.jsp: 显示附件名称的页面
+&lt;tr&gt;
+            &lt;td height="25" class="tdcor"&gt;附&amp;nbsp;&amp;nbsp;件&amp;nbsp;&lt;/td&gt;
+            &lt;td colspan="3" height=50&gt;
+                &lt;%
+                    if (null != publish.getAttatchFilename() &amp;&amp;
+publish.getAttatchFilename().length() &gt; 0) {
+                %&gt;
+                &lt;a href="publish_do.jsp?method=download&amp;fileName=
+&lt;%=URLEncoder.encode(publish.getAttatchFilename(),"GBK")%&gt;"&gt;
+&lt;%=URLDecoder.decode(publish.getAttatchFilename(),"GBK")%&gt;&lt;/a&gt;
+                &lt;%
+                    }
+                %&gt;
+            &lt;/td&gt;
+&lt;/tr&gt;
+
+download.jsp:下载页面
+else if (null != method &amp;&amp; method.equals("download")) {//下载附件
+
+        String fileName = request.getParameter("fileName");
+        File file = new File(Constants.PUBLISH_FILE_PATH + "/" + URLDecoder.decode(fileName,"GBK"));
+        response.reset();
+        response.setContentType("application/octet-stream; charset=GBK");
+        response.addHeader("Content-Disposition", "attachment; filename=" + CourseDetailBusiness.transfer(URLDecoder.decode(fileName,"GBK"),"GBK","ISO-8859-1"));
+        response.setContentLength((int) file.length());
+
+        byte[] buffer = new byte[4096];
+        BufferedOutputStream output = null;
+        BufferedInputStream input = null;
+
+        // 写缓冲区：
+        try {
+            output = new BufferedOutputStream(response.getOutputStream());
+            input = new BufferedInputStream(new FileInputStream(file));
+
+            int n = (-1);
+            while ((n = input.read(buffer, 0, 4096)) &gt; -1) {
+                output.write(buffer, 0, n);
+            }
+            response.flushBuffer();
+        }
+        catch (Exception e) {
+        } // maybe user cancelled download
+        finally {
+            if (input != null) input.close();
+            if (output != null) output.close();
+        }
+
+
+说明:
+１。文件名在数据库中保存的编码为URLEncode
+2.在list.jsp显示的时候多了一次encode,不知为什么，不encode一次还不行，实际上是第二次编码了</pre>

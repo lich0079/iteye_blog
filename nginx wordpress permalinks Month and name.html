@@ -1,0 +1,62 @@
+<p>在nginx下搭建wordpress 并使用permalinks 功能， 设置为&nbsp; Month and name</p> 
+<p>&nbsp;</p> 
+<p>Month and name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>http://www.goog.cn/blog/index.php/2010/09/sample-post/</code> </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>在这个方式下访问不正常，遂google,答案如下</p> 
+<p>&nbsp;</p> 
+<p>http://www.cnblogs.com/HCOONa/archive/2010/08/22/enable-permalink-for-wordpress-3-in-nginx.html</p> 
+<pre name="code" class="java">安装完成后准备启用友好形式的永久链接，但是经过种种尝试和查资料后，都不能成功。
+
+Nginx没有Apache特有的mod_rewrite，因此不能由WordPress自动配置。
+
+查资料时发现网上流传广泛的解决方案都不管用。
+
+ 
+
+下面给出我的解决方案。
+
+首先参照Apache2的.htaccess文件：
+view source
+print?
+1	RewriteEngine On
+2	RewriteBase /wordpress/
+3	RewriteRule ^index\.php$ - [L]
+4	 
+5	RewriteCond %{REQUEST_FILENAME} !-f [OR]
+6	RewriteCond %{REQUEST_FILENAME} !-d
+7	RewriteRule . /wordpress/index.php [L]
+
+翻译成Nginx的rewrite规则如下：
+
+ 
+view source
+print?
+1	location /wordpress/ {
+2	    rewrite ^index\.php$ - last;
+3	 
+4	    if ( !-e $request_filename ) {
+5	            rewrite . /wordpress/index.php last;
+6	    }
+7	}
+
+已经经过实践验证了。:-)</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>在wordpress文件目录下</p> 
+<p>&nbsp;vi .htaccess&nbsp;&nbsp; 可以看到</p> 
+<pre name="code" class="java">&lt;IfModule mod_rewrite.c&gt;
+RewriteEngine On
+RewriteBase /blog/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /blog/index.php [L]
+&lt;/IfModule&gt;
+
+</pre> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">if ( !-e $request_filename ) {
+5	            rewrite . /wordpress/index.php last;
+6	    }</pre> 
+<p> 就相当于翻译了一下apache的规则</p>

@@ -1,0 +1,402 @@
+<pre class="java" name="code">-----------------------------------
+		&lt;%@ taglib prefix="bean" uri="http://struts.apache.org/tags-bean"%&gt; 
+
+		&lt;h1&gt;测试beanWrite标签&lt;/h1&gt;
+	&lt;hr&gt;
+	&lt;li&gt;普通字符串&lt;/li&gt;&lt;br&gt;
+	hello(jsp脚本):&lt;%=request.getAttribute("hello") %&gt;&lt;br&gt;
+	hello(采用标签):&lt;bean:write name="hello"/&gt;&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;html文本&lt;/li&gt;&lt;br&gt;
+	bj(default):&lt;bean:write name="bj"/&gt;	&lt;br&gt;
+	bj(filter="true"):&lt;bean:write name="bj" filter="true"/&gt;	&lt;br&gt;
+	bj(filter="false"):&lt;bean:write name="bj" filter="false"/&gt;&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;日期&lt;/li&gt;&lt;br&gt;
+	today(default):&lt;bean:write name="today"/&gt;	&lt;br&gt;
+	today(format="yyyy-MM-dd HH:mm:ss"):&lt;bean:write name="today" format="yyyy-MM-dd HH:mm:ss"/&gt;&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;数字&lt;/li&gt;&lt;br&gt;
+	n(default):&lt;bean:write name="n"/&gt;	&lt;br&gt;
+	n(format="###,###.###"):&lt;bean:write name="n" format="###,###.###"/&gt;&lt;br&gt;
+	n(format="###,###.###"):&lt;bean:write name="n" format="###,###.000"/&gt;&lt;br&gt;
+
+
+	&lt;%@ taglib prefix="logic" uri="http://struts.apache.org/tags-logic"%&gt;  
+
+		&lt;h1&gt;测试emtpy,notEmpty,present,notPresent&lt;/h1&gt;
+	&lt;hr&gt;
+	&lt;logic:empty name="attr1"&gt;
+		attr1为空&lt;br&gt;
+	&lt;/logic:empty&gt;
+	&lt;logic:notEmpty name="attr1"&gt;
+		attr1不为空&lt;br&gt;
+	&lt;/logic:notEmpty&gt;
+	&lt;logic:present name="attr1"&gt;
+		attr1存在&lt;br&gt;
+	&lt;/logic:present&gt;
+	&lt;logic:notPresent name="attr1"&gt;
+		attr1不存在&lt;br&gt;
+	&lt;/logic:notPresent&gt;
+	&lt;p&gt;
+	&lt;logic:empty name="attr2"&gt;
+		attr2为空&lt;br&gt;
+	&lt;/logic:empty&gt;
+	&lt;logic:notEmpty name="attr2"&gt;
+		attr2不为空&lt;br&gt;
+	&lt;/logic:notEmpty&gt;
+	&lt;logic:present name="attr2"&gt;
+		attr2存在&lt;br&gt;
+	&lt;/logic:present&gt;
+	&lt;logic:notPresent name="attr2"&gt;
+		attr2不存在&lt;br&gt;
+	&lt;/logic:notPresent&gt;
+	
+	&lt;p&gt;
+	&lt;logic:empty name="attr3"&gt;
+		attr3为空&lt;br&gt;
+	&lt;/logic:empty&gt;
+	&lt;logic:notEmpty name="attr3"&gt;
+		attr3不为空&lt;br&gt;
+	&lt;/logic:notEmpty&gt;
+	&lt;logic:present name="attr3"&gt;
+		attr3存在&lt;br&gt;
+	&lt;/logic:present&gt;
+	&lt;logic:notPresent name="attr3"&gt;
+		attr3不存在&lt;br&gt;
+	&lt;/logic:notPresent&gt;
+
+
+	&lt;h1&gt;测试Iterate标签&lt;/h1&gt;
+	&lt;hr&gt;
+	&lt;li&gt;jsp脚本&lt;/li&gt;&lt;br&gt;
+	&lt;table border="1"&gt;
+		&lt;tr&gt;
+			&lt;td&gt;姓名&lt;/td&gt;
+			&lt;td&gt;年龄&lt;/td&gt;
+			&lt;td&gt;所属组&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;%
+			List userList = (List)request.getAttribute("userlist");
+			if (userList == null || userList.size() == 0) {
+		%&gt;
+			&lt;tr&gt;
+				&lt;td colspan="3"&gt;没有符合条件的数据&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;%
+			}else {
+				for (Iterator iter=userList.iterator(); iter.hasNext(); ) {
+					User user = (User)iter.next();
+		%&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;%=user.getUsername() %&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;%=user.getAge() %&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;%=user.getGroup().getName() %&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;%
+				}
+			}
+		%&gt;
+	&lt;/table&gt;
+	&lt;p&gt;
+	&lt;li&gt;标签&lt;/li&gt;
+	&lt;table border="1"&gt;
+		&lt;tr&gt;
+			&lt;td&gt;姓名&lt;/td&gt;
+			&lt;td&gt;年龄&lt;/td&gt;
+			&lt;td&gt;所属组&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;logic:empty name="userlist"&gt;
+			&lt;tr&gt;
+				&lt;td colspan="3"&gt;没有符合条件的数据&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/logic:empty&gt;
+		&lt;logic:notEmpty name="userlist"&gt;
+			&lt;logic:iterate id="u" name="userlist"&gt;
+			&lt;tr&gt;
+				&lt;td&gt;
+					&lt;bean:write name="u" property="username"/&gt;
+				&lt;/td&gt;
+				&lt;td&gt;
+					&lt;bean:write name="u" property="age"/&gt;
+				&lt;/td&gt;
+				&lt;td&gt;
+					&lt;bean:write name="u" property="group.name"/&gt;
+				&lt;/td&gt;
+			&lt;/tr&gt;	
+			&lt;/logic:iterate&gt;	
+		&lt;/logic:notEmpty&gt;
+	&lt;/table&gt;	
+
+---------------------------------------------------------------
+	&lt;%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%&gt;  
+
+	&lt;h1&gt;测试jstl核心库&lt;/h1&gt;
+	&lt;hr&gt;
+	&lt;li&gt;测试c:out&lt;/li&gt;&lt;br&gt;
+	hello(default):&lt;c:out value="${hello}"/&gt;&lt;br&gt;
+	abcd(default):&lt;c:out value="${abcd}"/&gt;&lt;br&gt;
+	abcd(default="empty"):&lt;c:out value="${abcd}" default="empty"/&gt;&lt;br&gt;
+	abcd(default="empty"):&lt;c:out value="${abcd}"/&gt;empty&lt;/out&gt;&lt;br&gt;
+	bj(default):&lt;c:out value="${bj}"/&gt;&lt;br&gt;
+	bj(el):${bj }&lt;br&gt;
+	bj(escapeXml="true"):&lt;c:out value="${bj}" escapeXml="true"/&gt;&lt;br&gt;
+	bj(escapeXml="false"):&lt;c:out value="${bj}" escapeXml="false"/&gt;&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;测试c:set,c:remove&lt;/li&gt;&lt;br&gt;
+	&lt;c:set var="temp" value="123"/&gt;
+	temp:${temp }&lt;br&gt;
+	&lt;c:remove var="temp"/&gt;
+	temp:${temp }&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;测试条件控制标签c:if&lt;/li&gt;&lt;br&gt;
+	&lt;c:if test="${ v1 lt v2}" var="v"&gt;
+		v1小于v2,${v }&lt;br&gt;
+	&lt;/c:if&gt;
+	&lt;c:if test="${ v2 gt v1}" var="v"&gt;
+		v2大于于v1,${v }&lt;br&gt;
+	&lt;/c:if&gt;
+	&lt;c:if test="${ empty v3}"&gt;
+		v3为空&lt;br&gt;
+	&lt;/c:if&gt;
+	&lt;li&gt;测试条件控制标签c:choose,c:when,c:otherwise&lt;/li&gt;&lt;br&gt;
+	&lt;c:choose&gt;
+		&lt;c:when test="${v1 lt v2}"&gt;
+			v1小于v2&lt;br&gt;
+		&lt;/c:when&gt;
+	&lt;/c:choose&gt;
+	&lt;c:choose&gt;
+		&lt;c:when test="${v1 gt v2}"&gt;
+			v1小于v2&lt;br&gt;
+		&lt;/c:when&gt;
+		&lt;c:otherwise&gt;
+			v2大于等于v1&lt;br&gt;
+		&lt;/c:otherwise&gt;
+	&lt;/c:choose&gt;
+	&lt;p&gt;
+	&lt;li&gt;测试循环控制标签c:forEach&lt;/&lt;li&gt;&gt;&lt;br&gt;
+	&lt;table border="1"&gt;
+		&lt;tr&gt;
+			&lt;td&gt;姓名&lt;/td&gt;
+			&lt;td&gt;年龄&lt;/td&gt;
+			&lt;td&gt;所属组&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;c:choose&gt;
+			&lt;c:when test="${empty userlist}"&gt;
+				&lt;tr&gt;
+					&lt;td colspan="3"&gt;没有符合条件的数据&lt;/td&gt;
+				&lt;/tr&gt;
+			&lt;/c:when&gt;
+			&lt;c:otherwise&gt;
+				&lt;c:forEach items="${userlist}" var="usr"&gt;
+					&lt;tr&gt;
+						&lt;td&gt;${usr.username }&lt;/td&gt;
+						&lt;td&gt;${usr.age }&lt;/td&gt;
+						&lt;td&gt;${usr.group.name }&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/c:forEach&gt;
+			&lt;/c:otherwise&gt;
+		&lt;/c:choose&gt;
+	&lt;/table&gt;	
+	&lt;p&gt;
+	&lt;li&gt;测试循环控制标签c:forEach,varstatus&lt;/&lt;li&gt;&gt;&lt;br&gt;
+	&lt;table border="1"&gt;
+		&lt;tr&gt;
+			&lt;td&gt;姓名&lt;/td&gt;
+			&lt;td&gt;年龄&lt;/td&gt;
+			&lt;td&gt;所属组&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;c:choose&gt;
+			&lt;c:when test="${empty userlist}"&gt;
+				&lt;tr&gt;
+					&lt;td colspan="3"&gt;没有符合条件的数据&lt;/td&gt;
+				&lt;/tr&gt;
+			&lt;/c:when&gt;
+			&lt;c:otherwise&gt;
+				&lt;c:forEach items="${userlist}" var="usr" varStatus="v"&gt;
+					&lt;c:choose&gt;
+						&lt;c:when test="${v.count % 2 == 0 }"&gt;
+							&lt;tr bgcolor="red"&gt;
+						&lt;/c:when&gt;
+						&lt;c:otherwise&gt;
+							&lt;tr&gt;
+						&lt;/c:otherwise&gt;
+					&lt;/c:choose&gt;
+						&lt;td&gt;
+							&lt;c:out value="${usr.username}"/&gt;
+						&lt;/td&gt;
+						&lt;td&gt;
+							&lt;c:out value="${usr.age}"/&gt;
+						&lt;/td&gt;
+						&lt;td&gt;
+							&lt;c:out value="${usr.group.name}"/&gt;
+						&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/c:forEach&gt;
+			&lt;/c:otherwise&gt;
+		&lt;/c:choose&gt;
+	&lt;/table&gt;	
+	&lt;p&gt;
+	&lt;li&gt;测试循环控制标签c:forEach,begin,end,step&lt;/&lt;li&gt;&gt;&lt;br&gt;
+	&lt;table border="1"&gt;
+		&lt;tr&gt;
+			&lt;td&gt;姓名&lt;/td&gt;
+			&lt;td&gt;年龄&lt;/td&gt;
+			&lt;td&gt;所属组&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;c:choose&gt;
+			&lt;c:when test="${empty userlist}"&gt;
+				&lt;tr&gt;
+					&lt;td colspan="3"&gt;没有符合条件的数据&lt;/td&gt;
+				&lt;/tr&gt;
+			&lt;/c:when&gt;
+			&lt;c:otherwise&gt;
+				&lt;c:forEach items="${userlist}" var="usr" begin="2" end="8" step="2"&gt;
+					&lt;tr&gt;
+						&lt;td&gt;${usr.username }&lt;/td&gt;
+						&lt;td&gt;${usr.age }&lt;/td&gt;
+						&lt;td&gt;${usr.group.name }&lt;/td&gt;
+					&lt;/tr&gt;
+				&lt;/c:forEach&gt;
+			&lt;/c:otherwise&gt;
+		&lt;/c:choose&gt;
+	&lt;/table&gt;	
+	&lt;p&gt;
+	&lt;li&gt;测试循环控制标签c:forEach，普通循环&lt;/li&gt;&lt;br&gt;
+	&lt;c:forEach begin="1" end="5"&gt;
+		a&lt;br&gt;
+	&lt;/c:forEach&gt;
+	&lt;p&gt;
+	&lt;li&gt;测试循环控制标签c:forEach，输出map&lt;/li&gt;&lt;br&gt;
+	&lt;c:forEach items="${mapValues}" var="v"&gt;
+		${v.key }=${v.value }&lt;br&gt;
+	&lt;/c:forEach&gt;
+	&lt;p&gt;
+	&lt;li&gt;测试循环控制标签c:fortokens&lt;/li&gt;&lt;br&gt;
+	&lt;c:forTokens items="${tokenstr}" delims="," var="v"&gt;
+		${v }&lt;br&gt;
+	&lt;/c:forTokens&gt;
+	&lt;p&gt;
+	&lt;li&gt;测试c:catch&lt;/li&gt;&lt;br&gt;
+	&lt;%
+		try {
+			Integer.parseInt("abcde");
+		}catch(Exception e) {
+			out.println(e.getMessage());
+		}	
+	 %&gt;
+	 &lt;p&gt;
+	 &lt;c:catch var="e"&gt;
+	 	&lt;%
+	 		Integer.parseInt("abcde");
+	 	 %&gt;
+	 &lt;/c:catch&gt;
+	 ${e }&lt;br&gt;
+	 &lt;p&gt;
+	 &lt;li&gt;测试c:import&lt;/li&gt;&lt;br&gt;
+	 &lt;c:import url="http://localhost:8080/struts_login"/&gt;
+	 &lt;p&gt;
+	 &lt;li&gt;测试c:url,c:param&lt;/li&gt;&lt;br&gt;
+	 &lt;c:url value="http://localhost:8080/drp/user_maint.jsp" var="vurl"&gt;
+	 	&lt;c:param name="username" value="Jack"/&gt;
+	 	&lt;c:param name="age" value="18"/&gt;
+	 &lt;/c:url&gt;
+	 ${vurl }&lt;br&gt;
+	 &lt;p&gt;
+	 &lt;li&gt;测试c:redirect&lt;/li&gt;&lt;br&gt;
+	 &lt;c:redirect context="/struts_login" url="/index.jsp"/&gt;
+
+
+
+	 &lt;h1&gt;测试EL表达式&lt;/h1&gt;
+	&lt;hr&gt;
+	&lt;li&gt;普通字符串,EL表达式的使用方法$和{},EL表达式的隐含对象pageScope/requestScope/sessionScope/applicationScope等等
+		如果为指定scope，它的搜索顺序是pageScope~applicationScope
+	&lt;/li&gt;&lt;br&gt;
+	hello(jsp脚本):&lt;%=request.getAttribute("hello") %&gt;&lt;br&gt;
+	hello(el表达式):${hello }&lt;br&gt;
+	hello(el表达式,scope=request):${requestScope.hello }&lt;br&gt;
+	hello(el表达式,scope=session):${sessionScope.hello }&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;输出结构,使用.进行导航，也称存取器&lt;/li&gt;&lt;br&gt;
+	姓名：${user.username }&lt;br&gt;
+	年龄：${user.age }&lt;br&gt;
+	所属组：${user.group.name }&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;输出map,使用.进行导航&lt;/li&gt;&lt;br&gt;
+	mapvalues.key1:${mapvalues.key1 }&lt;br&gt;
+	mapvalues.key2:${mapvalues.key2 }&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;输出数组,采用[]&lt;/li&gt;&lt;br&gt;
+	strarray[2]:${strarray[2] }&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;输出对象数组,采用[]&lt;/li&gt;&lt;br&gt;
+	users[6].username:${users[6].username }&lt;br&gt; 
+	&lt;p&gt;
+	&lt;li&gt;输出list中指定的元素,采用[]&lt;/li&gt;&lt;br&gt;
+	userlist[8].username=${userlist[8].username }&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;EL表达式对运算符的支持&lt;/li&gt;&lt;br&gt;
+	1+1=${1+1 }&lt;br&gt;
+	10/5=${10/5 }&lt;br&gt;
+	10 div 5=${10 div 5 }&lt;br&gt;
+	10%3=${10%3 }&lt;br&gt;
+	10 mod 3=${10 mod 3}&lt;br&gt;
+	&lt;!-- 
+		==/eq
+		!=/ne
+		&gt;/gt
+		&lt;/lt
+		&lt;=/le
+		&gt;=/ge
+		&amp;&amp;/and
+		||/or
+		!/not
+		//div
+		%/mod
+		.....
+	 --&gt;
+	 &lt;p&gt;
+	 &lt;li&gt;测试empy&lt;/li&gt;&lt;br&gt;
+	 value0:${empty value0 }&lt;br&gt;
+	 value1:${empty value1 }&lt;br&gt;
+	 value2:${empty value2 }&lt;br&gt;
+	 value3:${empty value3 }&lt;br&gt;
+	 value3:${!empty value3 }&lt;br&gt;
+------------------
+	&lt;h1&gt;测试格式化标签库&lt;/h1&gt;
+	&lt;hr&gt;
+	&lt;li&gt;格式化日期&lt;/li&gt;&lt;br&gt;
+	today(default):&lt;fmt:formatDate value="${today}"/&gt;&lt;br&gt;
+	today(type="time"):&lt;fmt:formatDate value="${today}" type="time"/&gt;&lt;br&gt;
+	today(type="date"):&lt;fmt:formatDate value="${today}" type="date"/&gt;&lt;br&gt;
+	today(type="both"):&lt;fmt:formatDate value="${today}" type="both"/&gt;&lt;br&gt;
+	today(dateStyle="short"):&lt;fmt:formatDate value="${today}" dateStyle="short"/&gt;&lt;br&gt;
+	today(dateStyle="medium"):&lt;fmt:formatDate value="${today}" dateStyle="medium"/&gt;&lt;br&gt;
+	today(dateStyle="long"):&lt;fmt:formatDate value="${today}" dateStyle="long"/&gt;&lt;br&gt;
+	today(dateStyle="full"):&lt;fmt:formatDate value="${today}" dateStyle="full"/&gt;&lt;br&gt;
+	today(pattern="yyyy/MM/dd HH:mm:ss"):&lt;fmt:formatDate value="${today}" pattern="yyyy/MM/dd HH:mm:ss"/&gt;&lt;br&gt;
+	today(pattern="yyyy/MM/dd HH:mm:ss"):&lt;fmt:formatDate value="${today}" pattern="yyyy/MM/dd HH:mm:ss" var="vdate"/&gt;&lt;br&gt;
+	vdate:${vdate }&lt;br&gt;
+	&lt;p&gt;
+	&lt;li&gt;格式化数字&lt;/li&gt;&lt;br&gt;
+	n(default):&lt;fmt:formatNumber value="${n}"/&gt;&lt;br&gt;
+	n(maxFractionDigits="5"):&lt;fmt:formatNumber value="${n}" maxFractionDigits="5"/&gt;&lt;br&gt;
+	n(pattern="###,###.######"):&lt;fmt:formatNumber value="${n}" pattern="###,###.######"/&gt;&lt;br&gt;
+	n(pattern="###,###.000000"):&lt;fmt:formatNumber value="${n}" pattern="###,###.000000"/&gt;&lt;br&gt;
+	n(groupingUsed="true"):&lt;fmt:formatNumber value="${n}" groupingUsed="true"/&gt;&lt;br&gt;
+	n(groupingUsed="false"):&lt;fmt:formatNumber value="${n}" groupingUsed="false"/&gt;&lt;br&gt;
+	n(type="currency"):&lt;fmt:formatNumber value="${n}" type="currency"/&gt;&lt;br&gt;
+	n(type="currency" currencySymbol="$"):&lt;fmt:formatNumber value="${n}" type="currency" currencySymbol="$"/&gt;&lt;br&gt;
+	n(type="percent"):&lt;fmt:formatNumber value="${p}" type="percent" maxFractionDigits="2"/&gt;&lt;br&gt;
+---------------------------------------</pre> 
+<p>http://archive.cnblogs.com/a/2048653/</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>gae 使用jstl 添加jstl.jar&nbsp; standard.jar</p> 
+<p>&nbsp;</p> 
+<p>使用</p> 
+<p>&lt;web-app version="2.4"<br> &nbsp;xmlns="http://java.sun.com/xml/ns/j2ee"<br> &nbsp;xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"<br> &nbsp;xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"&gt;</p> 
+<p>&nbsp;</p> 
+<p>jsp中</p> 
+<p>&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%&gt; <br> &lt;%@ taglib prefix='fmt' uri="http://java.sun.com/jsp/jstl/fmt" %&gt;</p>

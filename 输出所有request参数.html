@@ -1,0 +1,7 @@
+<pre name="code" class="java">private void printAllParam(HttpServletRequest request){
+        Enumeration paramNames = request.getParameterNames();
+        while(paramNames.hasMoreElements()) {
+            String paramName = (String)paramNames.nextElement();
+            System.out.println(paramName+": "+request.getParameter(paramName));
+        }
+    }</pre>

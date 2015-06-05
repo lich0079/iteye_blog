@@ -1,0 +1,73 @@
+<p>替换命令&nbsp; :%s/four/4/g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; four是要查找的&nbsp;&nbsp; 4是替换后的文字</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>列编辑&nbsp;&nbsp; ctrl+q&nbsp; 进入列编辑模式&nbsp; 选中 在删除或 插入 esc</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>my setting</p> 
+<p>&nbsp;</p> 
+<p>set number<br> set nobackup<br> set co=120&nbsp;&nbsp; " set the window width<br> set lines=50 " set the window height<br> colors murphy <br> " set guioptions-=m "To Remove menubar 不显示菜单栏<br> set guioptions-=T&nbsp; "To&nbsp; Remove toolbar&nbsp;&nbsp; 不显示工具栏<br> set guioptions-=r "Uncomment this line to Remove v_scroll bar 不显示右侧的滚动条<br> set guifont=consolas:h12&nbsp;&nbsp;&nbsp; "设置字体为Courier New,大小10</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; k</p> 
+<p>h&nbsp;&nbsp;&nbsp; l</p> 
+<p>&nbsp;&nbsp; j</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;光标</p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>：q 推出 :wq保存退出</p> 
+<p>u&nbsp;==ctrl+z&nbsp;&nbsp;&nbsp; &nbsp; ctrl+r&nbsp; == ctrl+y</p> 
+<p>&nbsp;</p> 
+<p>dd 删除一行 进入缓冲区 p粘贴</p> 
+<p>&nbsp;</p> 
+<p>w 下一个词头&nbsp;&nbsp; b前一个&nbsp;&nbsp; e下一个词尾&nbsp;&nbsp; ge 前一个&nbsp;&nbsp;</p> 
+<p>&nbsp; 2 dd 删除2行&nbsp;&nbsp;&nbsp;&nbsp; x删除&nbsp;&nbsp; dw删除到下一个词头&nbsp; 不包括光标所在的词头&nbsp; </p> 
+<p>d3w&nbsp; 删除到第3个词头 光标在词头</p> 
+<p>d3e&nbsp; 删除到第3个词尾 光标在词尾之后</p> 
+<p>&nbsp;</p> 
+<p>d$ 从光标删除到行尾&nbsp; 包括光标</p> 
+<p>&nbsp;d^ 删除光标之前到行头 不包括光标</p> 
+<p>&nbsp;</p> 
+<p>r&nbsp; 替换 只能替换一个字</p> 
+<p>&nbsp;</p> 
+<p>cw ==de + i</p> 
+<p>c == d + i</p> 
+<p>&nbsp;</p> 
+<p>/wow&nbsp; 查找 wow&nbsp; n 下一个&nbsp; shift+n 上一个&nbsp; /向下找 ?向上找</p> 
+<p>%&nbsp; 查找配对的括号</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>在一行内替换头一个字符串 old 为新的字符串 new，请输入&nbsp; :s/old/new<br> &nbsp;&nbsp;&nbsp;&nbsp; 在一行内替换所有的字符串 old 为新的字符串 new，请输入&nbsp; :s/old/new/g<br> &nbsp;&nbsp;&nbsp;&nbsp; 在两行内替换所有的字符串 old 为新的字符串 new，请输入&nbsp; :#,#s/old/new/g<br> &nbsp;&nbsp;&nbsp;&nbsp; 在文件内替换所有的字符串 old 为新的字符串 new，请输入&nbsp; :%s/old/new/g<br> &nbsp;&nbsp;&nbsp;&nbsp; 进行全文替换时询问用户确认每个替换需添加 c 选项，请输入 :%s/old/new/gc</p> 
+<p>&nbsp;</p> 
+<p>J 合并行</p> 
+<p>gg&nbsp; begin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w word begin&nbsp;&nbsp;&nbsp;&nbsp; ^ line&nbsp; begin</p> 
+<p>shift+g&nbsp; end&nbsp;&nbsp; e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>":e!"命令放弃所有修改并重新载入该文件的原始内容</p> 
+<p>&nbsp;</p> 
+<p>CTRL-]&nbsp; (跳转到一个标签的命令)</p> 
+<p>，CTRL-T(弹出标签)可<br> 以回到前一个位置。用命令CTRL-O(跳转到较早的位置)也可以</p> 
+<p>&nbsp;</p> 
+<p>fx&nbsp; tx&nbsp; Fx Tx</p> 
+<p>&nbsp;</p> 
+<p>H&nbsp; M&nbsp; L&nbsp; 屏幕的上面&nbsp; 中间&nbsp; 下面</p> 
+<p>&nbsp;</p> 
+<p>CTRL-U命令会使显示文本的窗口向上滚动了半屏。<br> CTRL-D命令将窗口向下移动半屏</p> 
+<p>&nbsp;</p> 
+<p>CTRL-F是向前滚动，CTRL-B是向后滚动</p> 
+<p>&nbsp;</p> 
+<p>"zz"命令会把当前行置为屏幕正中央：</p> 
+<p>"zt"命令会把当前行置于屏幕顶端1，"zb"则把当前行置于屏幕底端2</p> 
+<p>&nbsp;</p> 
+<p>ma&nbsp; mz&nbsp; 记位置&nbsp; `a&nbsp; `z&nbsp; 回去&nbsp; :marks&nbsp; 列出位置</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>设置gvim的窗口大小 </p> 
+<p>set co=120&nbsp;&nbsp; " set the window width<br> set lines=50 " set the window height</p>

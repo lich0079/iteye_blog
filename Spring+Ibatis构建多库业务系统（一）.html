@@ -1,0 +1,460 @@
+<p><a href="http://244369.blog.chinajavaworld.com/entry/4974/0/">http://244369.blog.chinajavaworld.com/entry/4974/0/</a> </p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">Spring+Ibatis构建多库业务系统 
+
+一、前言 
+听说Spring的功能如何强大已经很久了，甚至自己非常擅长使用的Ibatis，也从V2.3以后完全拿掉了自身的Dao实现，转而推荐使用Spring的Bean实现了。于是怀着很激动地心情开始了Spring+Ibatis的整合之旅。原以为按照Spring的说明书，以及参考网友们的实践经验，一定也能很快搭建出全新的开发架构。然而，遇见的问题之多，确实也让自己始料未及。下面把一步步的构建过程记录下来，一方面是对前一阶段工作的一个总结，另外一方面也期望更多的高手能够指点一二。 
+
+二、此架构适用的范围 
+此架构基于Spring+Ibatis整合而成，在最初的设计中，我期望这个架构能够不仅仅做基本的SQL操作，而且能够比较方便地扩展更多的数据库进入这个架构，并且能够实现单库或多库的事务处理。基于很多应用服务器并不支持JTATransactionManager(如Tomcat), 我采用JdbcTransactionManager实现单库或多库的事务处理。所以这个架构适用于基于JdbcTransactionManager实现单库或多库事务处理的情况。 
+
+三、搭建架构过程 
+1． 确定搭建成功的目标 
+下面的搭建过程已实现多库的事务处理成功为目标。为了验证这个目标是否完成，我们将使用Oracle和mysql两个数据库。我们将假设一个业务，业务的步骤是同时向oracle库中的offered表和test表写入测试数据，向mysql库中的contact表写入数据。如果此业务的每一个步骤都执行成功，数据将写入数据库。如果此业务的任何一个步骤出错，那么两个数据库都将执行回滚，数据将不写入数据库。 
+2． 初始化数据库 
+1)初始化oracle 
+1234567891011121314151617181920212223 --创建offered表主键所需的序列
+create sequence SEQ_FA_ID minvalue 1 maxvalue 9999999999
+start with 1 increment by 1 cache 20;
+--创建表offered 
+create table OFFERED
+(
+  ID            NUMBER not null,
+  CONTACTMAN    VARCHAR2(64) not null,
+  CONTACTTEL    VARCHAR2(64),
+  CONTACTEMAIL  VARCHAR2(128),
+  ORGANIZATION  VARCHAR2(128),
+  LOCATION      VARCHAR2(128),
+  OFFEREDAMOUNT NUMBER default 0,
+  OFFEREDWISH   VARCHAR2(512),
+primary key(ID)
+);
+--创建表test
+create table TEST
+(
+  NAME      VARCHAR2(128),
+  INPUTTIME DATE default sysdate,
+  CONTENT   CLOB
+);
+ 
+
+2）初始化mysql 
+需要注意的是，mysql数据库的InnoDB类型库才支持事务处理。 
+1234567891011 CREATE TABLE contact(                                
+           id int(11) NOT NULL auto_increment,                 
+           contactMan varchar(64) NOT NULL,                    
+           contactTel varchar(64) default NULL,                
+           contactEmail varchar(128) default NULL,             
+           organization varchar(128) default NULL,             
+           location text,                                      
+           offeredAmount int(11) default 0,                  
+           offeredWish text,                                   
+           PRIMARY KEY  (id)                                   
+         ) ENGINE=InnoDB
+ 
+
+
+3．创建数据对象DataObject 
+1）结构图 
+ 
+2）创建抽象类DataObject 
+123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566 /**
+ * DataObject.java
+ * Abstract class for all DataObject
+ * Copyright 2008 
+ * $Author: Lawrence Lin $
+ */
+package supercms.domain;
+import java.util.Date;
+import supercms.util.Message;
+ 
+public abstract class DataObject{
+    protected boolean checked;
+    protected String inputbyman;
+    protected Date inputDate;
+    protected String modifiedby;
+    protected Date modifiedDate;
+    protected String ipAddress;
+    protected Message echoMessage;
+ 
+                public Message getEchoMessage() {
+		return echoMessage;
+	}
+	public void setEchoMessage(Message echoMessage) {
+		this.echoMessage = echoMessage;
+	}
+	public Date getInputDate() {
+		return inputDate;
+	}
+	public void setInputDate(Date inputDate) {
+		this.inputDate = inputDate;
+	}
+	public DataObject(){
+                               checked = false;
+               }
+	public boolean isChecked() {
+		return checked;
+	}
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
+ 
+	public String getInputbyman() {
+		return inputbyman;
+	}
+	public void setInputbyman(String inputbyman) {
+		this.inputbyman = inputbyman;
+	}
+	public String getModifiedby() {
+		return modifiedby;
+	}
+	public void setModifiedby(String modifiedby) {
+		this.modifiedby = modifiedby;
+	}
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+	public String getIpAddress() {
+		return ipAddress;
+	}
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+}
+ 
+
+
+3）创建数据对象Offered 
+12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273 package supercms.domain;
+ 
+public class Offered extends DataObject{
+	private int id;
+	private String contactMan;
+	private String contactTel; 
+	private String contactEmail; 
+	private String organization;
+	private String location;
+	private int offeredAmount;
+	private String offeredWish;
+	
+	public Offered(){
+		super();
+	}
+	
+	public void init(){
+		
+	}
+	
+	public void copy(Offered source){
+		
+	}
+	
+	public String getContactEmail() {
+		return contactEmail;
+	}
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
+	}
+	public String getContactMan() {
+		return contactMan;
+	}
+	public void setContactMan(String contactMan) {
+		this.contactMan = contactMan;
+	}
+	public String getContactTel() {
+		return contactTel;
+	}
+	public void setContactTel(String contactTel) {
+		this.contactTel = contactTel;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	public int getOfferedAmount() {
+		return offeredAmount;
+	}
+	public void setOfferedAmount(int offeredAmount) {
+		this.offeredAmount = offeredAmount;
+	}
+	public String getOfferedWish() {
+		return offeredWish;
+	}
+	public void setOfferedWish(String offeredWish) {
+		this.offeredWish = offeredWish;
+	}
+	public String getOrganization() {
+		return organization;
+	}
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+}
+ 
+
+
+4）创建数据对象 Test 
+1234567891011121314151617181920 package supercms.domain;
+ 
+public class Test extends DataObject {
+    private String name;
+    private String content;
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+}
+ 
+ 
+ 
+
+5）创建数据对象 Contact 
+为了方便，我们使用和Offered一样的数据结构 
+123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172 package supercms.domain;
+ 
+public class Contact extends DataObject{
+	private int id;
+	private String contactMan;
+	private String contactTel; 
+	private String contactEmail; 
+	private String organization;
+	private String location;
+	private int offeredAmount;
+	private String offeredWish;
+	
+	public Contact(){
+		super();
+	}
+	
+	public void init(){
+	}
+	
+	public void copy(Contact source){
+		
+	}
+	
+	public String getContactEmail() {
+		return contactEmail;
+	}
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
+	}
+	public String getContactMan() {
+		return contactMan;
+	}
+	public void setContactMan(String contactMan) {
+		this.contactMan = contactMan;
+	}
+	public String getContactTel() {
+		return contactTel;
+	}
+	public void setContactTel(String contactTel) {
+		this.contactTel = contactTel;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	public int getOfferedAmount() {
+		return offeredAmount;
+	}
+	public void setOfferedAmount(int offeredAmount) {
+		this.offeredAmount = offeredAmount;
+	}
+	public String getOfferedWish() {
+		return offeredWish;
+	}
+	public void setOfferedWish(String offeredWish) {
+		this.offeredWish = offeredWish;
+	}
+	public String getOrganization() {
+		return organization;
+	}
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+}
+ 
+
+
+4．编写Ibatis的sqlmap文件 
+1) 配置oracle数据库对应的sqlmap文件； 
+文件offered.xml 
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768 &lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-2.dtd"&gt;
+ 
+&lt;sqlMap namespace="Oracle"&gt;
+	&lt;typeAlias alias="Offered" type="supercms.domain.Offered"/&gt;
+	&lt;typeAlias alias="Test" type="supercms.domain.Test"/&gt;
+ 
+	&lt;insert id="insertOffered" parameterClass="Offered"&gt;
+	    &lt;selectKey resultClass="int" keyProperty="id" &gt; 
+	        SELECT SEQ_FA_ID.nextval AS id FROM DUAL 
+	    &lt;/selectKey&gt;		
+		INSERT INTO offered(
+		   id,contactMan,contactTel,contactEmail,
+                                   organization,location,offeredAmount,offeredWish
+		)VALUES(
+		  #id#,#contactMan#,#contactTel#,#contactEmail#,
+                                  #organization#,#location#,#offeredAmount#,#offeredWish#
+		)
+	&lt;/insert&gt;
+ 
+	&lt;update id="updateOffered" parameterClass="Offered"&gt;
+	     UPDATE offered set 
+                         contactMan=#contactMan#,
+                         contactTel=#contactTel#,
+                         contactEmail=#contactEmail#,
+                         organization=#organization#,
+                         location=#location#,
+                         offeredAmount=#offeredAmount#,
+                         offeredWish=#offeredWish#
+	     WHERE id=#id#
+	&lt;/update&gt;
+ 
+	&lt;delete id="deleteOffered" parameterClass="java.lang.Integer"&gt;
+		delete from offered WHERE id = #id#
+	&lt;/delete&gt;
+	
+	&lt;select id="QueryOneOffered" resultClass="Offered" parameterClass="java.lang.Integer"&gt;
+	        SELECT id,contactMan,contactTel,contactEmail,
+                             organization,location,offeredAmount,offeredWish
+	         FROM offered 
+	        WHERE id = #id# 
+	&lt;/select&gt;
+	
+ 
+	&lt;select id="QueryOffered" resultClass="Offered" parameterClass="Offered"&gt;
+                    SELECT id,contactMan,contactTel,contactEmail,
+                          organization,location,offeredAmount,offeredWish
+	    FROM offered where 1=1 
+	    &lt;isNotEmpty prepend="AND" property="contactMan"&gt;
+	         contactMan = #contactMan# 
+	   &lt;/isNotEmpty&gt;			
+		ORDER BY id
+	&lt;/select&gt;
+	
+	&lt;select id="CountOffered" parameterClass="Offered" resultClass="int"&gt;
+		SELECT count(*) as  rowsnum 
+		FROM offered where 1=1 
+		&lt;isNotEmpty prepend="AND" property="contactMan"&gt;
+		   contactMan = #contactMan# 
+		&lt;/isNotEmpty&gt;
+	&lt;/select&gt;		
+	
+	&lt;insert id="insertTest" parameterClass="Test"&gt;
+	   insert into test(name,inputtime,content) 
+	   values(#name#,sysdate,#content,javaType=java.lang.String,jdbcType=CLOB#)
+	&lt;/insert&gt;
+&lt;/sqlMap&gt;
+ 
+
+
+文件sqlmapconfig.xml 
+123456789 &lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-config-2.dtd"&gt;
+ 
+ 
+&lt;sqlMapConfig&gt;
+	&lt;!-- SQL Map XML configuration --&gt;
+	&lt;sqlMap resource="supercms/resource/sqlmap/ora/offered.xml"/&gt;
+&lt;/sqlMapConfig&gt;
+ 
+
+
+2）配置mysql数据库对应的sqlmap文件 
+文件contact.xml 
+12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061 &lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-2.dtd"&gt;
+ 
+&lt;sqlMap namespace="mysql"&gt;
+	&lt;typeAlias alias="Contact" type="supercms.domain.Contact"/&gt;
+ 
+ 
+	&lt;insert id="insertContact" parameterClass="Contact"&gt;
+		INSERT INTO contact(
+		   id,contactMan,contactTel,contactEmail,
+           organization,location,offeredAmount,offeredWish
+		)VALUES(
+		  #id#,#contactMan#,#contactTel#,#contactEmail#,
+          #organization#,#location#,#offeredAmount#,#offeredWish#
+		)
+	&lt;/insert&gt;
+ 
+	&lt;update id="updateContact" parameterClass="Contact"&gt;
+	    UPDATE contact set 
+                         contactMan=#contactMan#,
+                         contactTel=#contactTel#,
+                         contactEmail=#contactEmail#,
+                         organization=#organization#,
+                         location=#location#,
+                         offeredAmount=#offeredAmount#,
+                         offeredWish=#offeredWish#
+	     WHERE id=#id#
+	&lt;/update&gt;
+ 
+	&lt;delete id="deleteContact" parameterClass="java.lang.Integer"&gt;
+		delete from contact WHERE id = #id#
+	&lt;/delete&gt;
+	
+	&lt;select id="QueryOneContact" resultClass="Contact" parameterClass="java.lang.Integer"&gt;
+		SELECT id,contactMan,contactTel,contactEmail,
+                                organization,location,offeredAmount,offeredWish
+		FROM contact 
+		WHERE id = #id# 
+	&lt;/select&gt;
+	
+ 
+	&lt;select id="QueryContacts" resultClass="Contact" parameterClass="Contact"&gt;
+                   SELECT id,contactMan,contactTel,contactEmail,
+                       organization,location,offeredAmount,offeredWish
+	   FROM offered where 1=1 
+	   &lt;isNotEmpty prepend="AND" property="contactMan"&gt;
+	      contactMan = #contactMan# 
+	    &lt;/isNotEmpty&gt;			
+	    ORDER BY id
+	&lt;/select&gt;
+	
+	&lt;select id="CountContacts" parameterClass="Contact" resultClass="int"&gt;
+		SELECT count(*) as  rowsnum 
+		FROM offered where 1=1 
+		&lt;isNotEmpty prepend="AND" property="contactMan"&gt;
+		   contactMan = #contactMan# 
+		&lt;/isNotEmpty&gt;
+	&lt;/select&gt;		
+	
+&lt;/sqlMap&gt;
+ 
+
+</pre> 
+<p>&nbsp;</p>

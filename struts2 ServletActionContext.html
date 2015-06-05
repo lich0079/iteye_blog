@@ -1,0 +1,12 @@
+<p>structs2 中提供了ServletActionContext.getRequest()来获得当前请求的对象</p> 
+<p>看了下源码</p> 
+<pre class="java" name="code">public static HttpServletRequest getRequest() {
+        return (HttpServletRequest) ActionContext.getContext().get(HTTP_REQUEST);
+    }</pre> &nbsp; 
+<p>他是去ActionContext的Context里面拿了，那这个Context是什么呢</p> 
+<pre class="java" name="code">static ThreadLocal actionContext = new ThreadLocal();</pre> 
+<p>&nbsp;果然是ThreadLocal</p> 
+<p>&nbsp;</p> 
+<p>有人问</p> 
+<p>ServletActionContext.getRequest() 没有参数，又是静态方法，怎么能得到属于我的Request，线程安全吗？</p> 
+<p> 其实参数就是你在服务器里的那个线程</p>

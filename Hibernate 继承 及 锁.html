@@ -1,0 +1,19 @@
+<p>&nbsp;</p> 
+<p>每个类继承树映射成一张表</p> 
+<p>、理解如何映射<br>&nbsp;&nbsp;因为类继承树肯定是对应多个类，要把多个类的信息存放在一张表中，必须有某种机制来区分哪些记录是属于哪个类的。<br>&nbsp;这种机制就是，在表中添加一个字段，用这个字段的值来进行区分。用hibernate实现这种策略的时候，有如下步骤：<br>&nbsp;父类用普通的&lt;class&gt;标签定义<br>&nbsp;在父类中定义一个discriminator，即指定这个区分的字段的名称和类型<br>&nbsp;如：&lt;discriminator column=”XXX” type=”string”/&gt;<br>&nbsp;子类使用&lt;subclass&gt;标签定义，在定义subclass的时候，需要注意如下几点：<br>&nbsp;Subclass标签的name属性是子类的全路径名<br>&nbsp;在Subclass标签中，用discriminator-value属性来标明本子类的discriminator字段（用来区分不同类的字段）<br>&nbsp;的值Subclass标签，既可以被class标签所包含（这种包含关系正是表明了类之间的继承关系），也可以与class标<br>&nbsp;签平行。 当subclass标签的定义与class标签平行的时候，需要在subclass标签中，添加extends属性，里面的值<br>&nbsp;是父类的全路径名称。子类的其它属性，像普通类一样，定义在subclass标签的内部。</p> 
+<p>2、理解如何存储<br>&nbsp;存储的时候hibernate会自动将鉴别字段值插入到数据库中，在加载数据的时候，hibernate能根据这个鉴别值<br>&nbsp;正确的加载对象<br>&nbsp;<br>多态查询：在hibernate加载数据的时候能鉴别出其真正类型（instanceof）</p> 
+<p>get支持多态查询<br>load只有把lazy设置为false才支持多态查询<br>hql支持多态查询<br>----------------------------------</p> 
+<p>每个子类映射成一张表</p> 
+<p>1、理解如何映射<br>&nbsp;&nbsp;这种策略是使用joined-subclass标签来定义子类的。父类、子类，每个类都对应一张数据库表。<br>&nbsp;在父类对应的数据库表中，实际上会存储所有的记录，包括父类和子类的记录；在子类对应的数据库表中，<br>&nbsp;这个表只定义了子类中所特有的属性映射的字段。子类与父类，通过相同的主键值来关联。实现这种策略的时候，<br>&nbsp;有如下步骤：<br>&nbsp;父类用普通的&lt;class&gt;标签定义即可<br>&nbsp;父类不再需要定义discriminator字段<br>&nbsp;子类用&lt;joined-subclass&gt;标签定义，在定义joined-subclass的时候，需要注意如下几点：<br>&nbsp;Joined-subclass标签的name属性是子类的全路径名<br>&nbsp;Joined-subclass标签需要包含一个key标签，这个标签指定了子类和父类之间是通过哪个字段来关联的。<br>&nbsp;如：&lt;key column=”PARENT_KEY_ID”/&gt;，这里的column，实际上就是父类的主键对应的映射字段名称。<br>&nbsp;Joined-subclass标签，既可以被class标签所包含（这种包含关系正是表明了类之间的继承关系），<br>&nbsp;也可以与class标签平行。 当Joined-subclass标签的定义与class标签平行的时候，需要在Joined-subclass<br>&nbsp;标签中，添加extends属性，里面的值是父类的全路径名称。子类的其它属性，像普通类一样，定义在joined-subclass标签的内部。<br>-----------------------------------<br>每个具体类一张表</p> 
+<p>1、理解如何映射<br>&nbsp;这种策略是使用union-subclass标签来定义子类的。每个子类对应一张表，而且这个表的信息是完备的，<br>&nbsp;即包含了所有从父类继承下来的属性映射的字段（这就是它跟joined-subclass的不同之处，<br>&nbsp;joined-subclass定义的子类的表，只包含子类特有属性映射的字段）。实现这种策略的时候，有如下步骤：<br>&nbsp;父类用普通&lt;class&gt;标签定义即可<br>&nbsp;子类用&lt;union-subclass&gt;标签定义，在定义union-subclass的时候，需要注意如下几点：<br>&nbsp;Union-subclass标签不再需要包含key标签（与joined-subclass不同）<br>&nbsp;Union-subclass标签，既可以被class标签所包含（这种包含关系正是表明了类之间的继承关系），<br>&nbsp;也可以与class标签平行。 当Union-subclass标签的定义与class标签平行的时候，需要在Union-subclass<br>&nbsp;标签中，添加extends属性，里面的值是父类的全路径名称。子类的其它属性，像普通类一样，<br>&nbsp;定义在Union-subclass标签的内部。这个时候，虽然在union-subclass里面定义的只有子类的属性，<br>&nbsp;但是因为它继承了父类，所以，不需要定义其它的属性，在映射到数据库表的时候，依然包含了父类的所<br>&nbsp;有属性的映射字段。</p> 
+<p>注意：在保存对象的时候id不能重复（不能使用自增的方式生成主键）<br>-----------------------------------</p> 
+<p>component映射</p> 
+<p>在hibernate中，component是实体对象的逻辑组成部分，它与实体对象的根本区别在于没有oid</p> 
+<p>采用component映射的好处：实现了对象模型的细粒度划分，层次分明，利于复用</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>复合主键映射（联合主键）</p> 
+<p>通常将复合主键相关的属性放到一个单独的类中,这个是有约束的：<br>&nbsp;* 必须实现序列化接口<br>&nbsp;* 必须复写hashCode和equals方法<br>&nbsp;<br>----------------------------------<br>悲观锁<br>&nbsp;悲观锁的实现：通常依赖于数据库机制，在整个过程中将数据锁定<br>&nbsp;其他任何用户都不能读取和修改<br>&nbsp;<br>&nbsp;<br>------------------------------</p> 
+<p>乐观锁</p> 
+<p>大多数基于数据版本记录机制（version）实现，一般在数据库中怎加一个version字段<br>读取时将版本号一同读出，之后更新时对版本号加一，如果提交的数据小于或等于当前版本号<br>则认为数据是过期的，否则给予更新<br>&nbsp;</p>

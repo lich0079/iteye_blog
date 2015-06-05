@@ -1,0 +1,176 @@
+<p>基本</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;Welcome &lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>新标签&nbsp; nav section aside&nbsp; article figure&nbsp; 不再是清一色的div</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;!DOCTYPE HTML&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;html5&lt;/title&gt;
+    &lt;style&gt;
+        header,section,footer,nav,aside,article,figure{
+            dispaly:block;
+            border:dashed 1px gray;
+            padding:10px;
+            margin:10px;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;header
+        &lt;nav&gt;nav&lt;/nav&gt;
+        &lt;/header&gt;
+    &lt;section&gt;section
+        &lt;article&gt;article&lt;/article&gt;
+                &lt;article&gt;article&lt;/article&gt;
+                        &lt;article&gt;article&lt;/article&gt;
+        &lt;aside&gt;aside&lt;/aside&gt;
+    &lt;/section&gt;
+    &lt;footer&gt;
+        footer
+    &lt;/footer&gt;
+    
+&lt;/body&gt;&lt;/html&gt;</pre> 
+<p>&nbsp;</p> 
+<p>outline 大纲&nbsp; check</p> 
+<pre class="java" name="code">http://gsnedders.html5.org/outliner/</pre> 
+<p>article aside nav section 属于&nbsp; sectioning content</p> 
+<p>h1 h2 ... h6&nbsp; hgroup 属于 heading content</p> 
+<p> heading content的内容(&lt;&gt;这就是内容&lt;/&gt;)可以产生outline的item</p> 
+<p>h1 h2 假如处在一个sectioning中是会有层次区别, 但假如他们在一个hgroup里面，那么会自动取h1的值用作outline的item, 不管h1的位置在前还是后</p> 
+<p>body 是root sectioning</p> 
+<p>blockquote包住h1可以让h1不产生outline</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>ps:&nbsp; div不会产生一个section</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>同时human readable and&nbsp; machine readable的time标签</p> 
+<pre class="java" name="code">&lt;time datetime="2010-02-10T13:59:06-08:00" pubdate&gt;02/23/11&lt;/time&gt;</pre> &nbsp; 
+<p>和iphone相关的一个</p> 
+<pre class="java" name="code">&lt;meta name="viewport" content="width-device-width,maximum-scale=1.0" /&gt;</pre> 
+<p>&nbsp;</p> 
+<p>让页面支持多种设备</p> 
+<pre class="js" name="code">&lt;!--update based on html5--&gt;
+&lt;!--[if lt IE 9]&gt;
+&lt;script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"&gt;&lt;/script&gt;
+&lt;![endif]--&gt;
+&lt;link href="_css/phone.css" rel="stylesheet" type="text/css" media="only screen and (min-width: 0px) and (max-width: 320px)" &gt;
+&lt;link href="_css/tablet.css" rel="stylesheet" type="text/css" media="only screen and (min-width: 321px) and (max-width: 768px)" &gt;
+&lt;link href="_css/main.css" rel="stylesheet" type="text/css" media="only screen and (min-width: 769px)" &gt;</pre> 
+<p>&nbsp;</p> 
+<p>video</p> 
+<pre class="js" name="code">      &lt;video width="420" height="236" controls preload="false"&gt;
+        &lt;source src="_video/explore_promo.mp4" type="video/mp4" codecs='avc1.42E01E, mp4a.40.2'" /&gt;
+        &lt;source src="_video/explore_promo.webm" type="video/webm; codecs='vp8, vorbis"' /&gt;
+        &lt;source src="_video/explore_promo.ogv"  type="video/ogg; codecs=&amp;quot;theora, vorbis&amp;quot;" /&gt;
+      &lt;/video&gt;
+
+	  &lt;video width="420" height="236" poster="_video/poster.jpg" preload="false"&gt;
+	    &lt;source type="video/h264" src="_video/explore_promo.mp4" /&gt;
+	    &lt;source type="video/webm" src="_video/explore_promo.webm" /&gt;
+	    &lt;source type="video/ogg" src="_video/explore_promo.ogv" /&gt;
+      &lt;/video&gt;</pre> &nbsp; 
+<p>audio</p> 
+<pre class="js" name="code"> &lt;audio controls="controls"&gt;
+  &lt;source src="_assets/ex_ca_podcast.ogg" type="audio/ogg" /&gt;
+  &lt;source src="_assets/ex_ca_podcast.mp3" type="audio/mpeg" /&gt;
+&lt;/audio&gt;</pre> &nbsp; 
+<p>canvas</p> 
+<pre class="js" name="code">&lt;head&gt;
+&lt;script type="text/javascript"&gt;
+function doCanvas() {
+  var my_canvas = document.getElementById("theCanvas");
+  var myCanvas_context = my_canvas.getContext("2d");
+  myCanvas_context.strokeRect(0, 0, 300, 225);
+  var chart_bg = new Image();
+  chart_bg.src = "_images/chart_bg.gif";
+  chart_bg.onload = function() {
+	myCanvas_context.drawImage(chart_bg,0,0);
+    myCanvas_context.beginPath();
+	myCanvas_context.moveTo(25,190);
+	myCanvas_context.lineTo(40,180);
+	myCanvas_context.lineTo(90,150);
+	myCanvas_context.lineTo(100,165);
+	myCanvas_context.lineTo(130,90);
+	myCanvas_context.lineTo(150,100);
+	myCanvas_context.lineTo(275,20);
+	myCanvas_context.strokeStyle = "#000";
+	myCanvas_context.stroke();
+	myCanvas_context.textAlign = "center";
+  	myCanvas_context.textBaseline = "middle";
+  	myCanvas_context.fillStyle = "#7F7F7F";
+  	myCanvas_context.font = "bold 30px sans-serif";
+  	myCanvas_context.fillText("We're Growing", 155, 100);
+  	};
+}
+
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body onload="doCanvas();"&gt;
+&lt;canvas id="theCanvas" width="300" height="225"&gt;&lt;/canvas&gt;
+&lt;/body&gt;</pre> &nbsp; 
+<p>new input type</p> 
+<pre class="java" name="code">&lt;input type="email" /&gt;  url, tel      // iphone上的safari会根据不同的type 弹出不同的输入框 
+
+&lt;input type="number"  min="1"  max="10"  value="1" step="1"  /&gt;   //自动变成下拉框 chrome支持 与autofocus有冲突
+
+&lt;input type="email"  placeholder="example:xxxxxx"/&gt;      // input example
+&lt;input type="email"  autofocus="autofocus"/&gt;      // 自动聚焦
+ &lt;input type="range" name="rating" id="rating" tabindex="65" min="1" max="50" value="25" step="5"&gt;    //可选进度条
+&lt;input type="date" /&gt;    //opera 支持
+&lt;input type="datetime" /&gt;    //opera 支持
+&lt;input type="month" /&gt;    //opera 支持
+&lt;input type="week" /&gt;    //opera 支持
+&lt;input type="time" /&gt;    //opera 支持</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>web font</p> 
+<pre class="js" name="code">@font-face {
+  font-family: 'DragonwickFGRegular';
+  src: url('../_fonts/dragwifg-webfont.eot');
+  src: local('!'),
+       url('../_fonts/dragwifg-webfont.woff') format('woff'), url('../_fonts/dragwifg-webfont.ttf') format('truetype');
+}
+#mainContent h1{
+	font: normal 2.5em "DragonwickFGRegular", Georgia, "Times New Roman", Times, serif;
+	margin: .5em 0 .25em;
+	letter-spacing: -1px;
+}</pre> &nbsp; 
+<p>字体阴影</p> 
+<pre class="java" name="code">#mainContent h2 {
+	text-shadow: 1px 1px 1px #333;
+	filter: dropshadow(color=#333, offx=1, offy=1);
+}
+</pre> &nbsp; 
+<p>兼容性检查&nbsp; </p> 
+<pre class="java" name="code">www.modernizr.com</pre> &nbsp; 
+<p>&lt;mark&gt;&lt;/mark&gt;标签&nbsp; 浏览器可以自动着色mark的字段&nbsp; 也可以自己改css 相当于span</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

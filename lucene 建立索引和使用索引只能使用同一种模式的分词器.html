@@ -1,0 +1,37 @@
+<p>最近一直负责做lucene构建搜索引擎，其中采用的中文分词器就是qieqie提供的庖丁解牛分词器。由于发现当搜索： <br>1、关于番禺供电局增加乙类工作票签发人的请示 <br>2、关于从化供电局2006年度“两票”考核奖励方案的报告 <br>3、关于辖区内10KV架空线路两旁(线行下)受树木影响情况的报告 <br>4、关于增城供电局防坠落装置安装和使用情况的报告 <br>5、关于广州萝岗供电局2007年安措计划的报告 <br>6、关于召开重要变电站事故应急预案编制讨论会的通知（9月9日上午9：30） <br>7、关于召开《广东电网继电保护通信通道运行管理办法》 <br>当搜索整条句子时查不出结果，但是去掉红色部分再查找却可以查找到结果。 </p> 
+<p>刚开始的分析：<br>从以上可总结出： <br>1、2、3、4、5：去掉的部分都是地名。 <br>7：去掉的是特殊符号 <br>6：还未找出具体问题，当查询“关于召开重要变电站事故应急预案编制讨论会的通知”还是一样查找不出结果。 </p> 
+<p>本想去研究一下庖丁解牛分词的源码，可现在这两周接到做jbpm工作流的任务，所以一直拖着没去看。</p> 
+<p>可这个问题一直挂在心上，昨天突然想到那个配置文件：</p> 
+<p>&lt;bean id="writerAnalyzer" class="com.net.paoding.analysis.analyzer.PaodingAnalyzer"&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="knife" ref="paoding"/&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="mode" value="1"/&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;/bean&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;bean id="queryAnalyzer" class="com.net.paoding.analysis.analyzer.PaodingAnalyzer"&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="knife" ref="paoding"/&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="mode" value="2"/&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;/bean&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;bean id="paoding" class="com.net.paoding.analysis.knife.PaodingMaker"&nbsp; factory-method="make"/&gt;&nbsp; </p> 
+<p>写索引的时候采用writerMode（1）而查询的时候采用queryMode（2），会不会是这两次采用了不同的模式导致。</p> 
+<p>所以把上面查询的模式也改为writerMode即value="1".再查询发现可以查出上面的结果出来。看来还真是这个问题导致。</p> 
+<p>今早来上班又到网上查了下，原来qieqie早已提到了这个问题。</p> 
+<p>qieqie在javaeye上的帖子中的回复内容：</p> 
+<p><br>参见： <br>[url=http://analysis.group.iteye.com/group/post/15584 ]JavaEye：Spring Context下使用"庖丁解牛" [/url] <br>或： <br>Google：Spring Context下使用"庖丁解牛" <br>简单摘要(以上面两个链接中的说明为准，这里只是摘要)： </p> 
+<p>Java代码 </p> 
+<p>&nbsp;</p> 
+<p>&lt;bean id="writerAnalyzer" class="com.net.paoding.analysis.analyzer.PaodingAnalyzer"&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="knife" ref="paoding"/&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="mode" value="1"/&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;/bean&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;bean id="queryAnalyzer" class="com.net.paoding.analysis.analyzer.PaodingAnalyzer"&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="knife" ref="paoding"/&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="mode" value="2"/&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;/bean&gt;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;bean id="paoding" class="com.net.paoding.analysis.knife.PaodingMaker"&nbsp; factory-method="make"/&gt; </p> 
+<p><br>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>补： <br>1、建立索引和使用索引只能使用同一种/模式的分词器 <br>2、2.0.2以后(包含)queryMode和writerMode这两个名称将重构为更好的名称，请留意倒是的API说明或readme变更说明。</p> 
+<p>本文来自CSDN博客，转载请标明出处：<a href="http://blog.csdn.net/foamflower/archive/2009/04/30/4138595.aspx">http://blog.csdn.net/foamflower/archive/2009/04/30/4138595.aspx</a></p>

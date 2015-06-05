@@ -1,0 +1,11 @@
+<pre class="java" name="code">&lt;div style="color:#F00;"&gt;
+		&lt;s:if test="%{#request.exception.class == @MyRuntimeException@class }"&gt;
+	        &lt;s:property value="%{#request.exception.message}" /&gt;
+	    &lt;/s:if&gt;
+	&lt;/div&gt;</pre> 
+<p>&nbsp;这样底层的exception就不会显示出来迷糊客户了</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>jsp要访问exception加上 </p> 
+<pre>&lt;%@ page isErrorPage="true" import="java.io.*" %&gt;
+</pre>

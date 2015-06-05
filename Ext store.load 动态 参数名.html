@@ -1,0 +1,14 @@
+<p>function simpleQuery() { <br>var time = Ext.get('datetype').dom.value; <br>var timeb = time + 'b'; <br>var timee = time + 'e'; <br>store.removeAll(); <br>store.load({ <br>params : { <br><strong>timeb</strong> : Ext.get('stimeb').dom.value, <br><strong>timee</strong> : Ext.get('stimee').dom.value, <br>start : 0, <br>limit : 10, <br>}, <br>callback : function(r, options, success) { <br>if (!success) { <br>Ext.Msg.alert("信息提示", " 连接服务器出现错误,请稍后再试！"); <br>} <br><br>} <br>}); <br>store.baseParams = { <br>timeb : Ext.get('stimeb').dom.value, <br>timee : Ext.get('stimee').dom.value <br><br>} <br>} <br><br><br>往服务器传参数的时候timeb&nbsp; timee&nbsp; 我希望是变量&nbsp; 这是从下拉框选出来的，就是说传到服务器的参数名会变，可按照上面的方法，ext识别timeb&nbsp; timee，为常量，这个问题如何解决？？</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>动态产生params 对象</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">obj = new Object();
+eval("obj." + time + "b='" + Ext.get('stimeb').dom.value + "';");
+eval("obj." + time + "e='" + Ext.get('stimee').dom.value + "';");
+store.load({params:obj, ...});
+</pre> 
+<p>&nbsp; </p>

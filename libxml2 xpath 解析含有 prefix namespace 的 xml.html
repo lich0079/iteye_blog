@@ -1,0 +1,46 @@
+<p>有一段xml 里面有 prefix &nbsp;URL namespace的 ， 这时用xpath解析 像平常那样写解析不出来节点</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<pre name="code" class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+ &lt;soapenv:Body&gt;
+  &lt;GetTokenResponse xmlns="urn:LBaseComponents"&gt;
+   &lt;Timestamp&gt;2012-11-06T05:04:55.256Z&lt;/Timestamp&gt;
+   &lt;Ack&gt;Success&lt;/Ack&gt;
+   &lt;AuthToken&gt;xxxxx&lt;/AuthToken&gt;
+  &lt;/GetTokenResponse&gt;
+ &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</pre> &nbsp; 
+<p>google了一下 最后用</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<p style="font-size: 14px; font-family: Menlo; color: #ff4647;"> </p> 
+<pre name="code" class="java">@"//*[local-name()='AuthToken'] "</pre> 
+<p style="font-size: 14px; font-family: Menlo; color: #ff4647;">&nbsp;</p> 
+<p style="font-size: 14px; font-family: Menlo; color: #ff4647;"><span style="color: #000000; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px;">&nbsp;解决了</span></p> 
+<p style="font-size: 14px; font-family: Menlo; color: #ff4647;">&nbsp;</p> 
+<p style="font-size: 14px; font-family: Menlo; color: #ff4647;"><span style="color: #000000; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px;">文章 link:&nbsp;</span>http://www.velocityreviews.com/forums/t169475-xpath-and-namespaces-a-newbie-question.html</p> 
+<p style="font-size: 14px; font-family: Menlo; color: #ff4647;">&nbsp;</p> 
+<p style="font-size: 14px; font-family: Menlo; color: #ff4647;">还找到一个在线的xpath test 站点 &nbsp;&nbsp;http://www.xpathtester.com</p> 
+<p style="font-size: 14px; font-family: Menlo; color: #ff4647;">&nbsp;</p> 
+<p style="font-size: 14px; font-family: Menlo; color: #ff4647;">&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

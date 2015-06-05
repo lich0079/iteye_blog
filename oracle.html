@@ -1,0 +1,23 @@
+<p>create user lisi identified by lisi</p> 
+<p>grant create session to lisi&nbsp; //登陆会话权限</p> 
+<p>grant create table to lisi</p> 
+<p>grant unlimited tablespace to lisi&nbsp;&nbsp; 使用空间的权限</p> 
+<p>select * from user_sys_privs&nbsp;&nbsp; //当前用户拥有的权限 <br>select * from user_tab_privs&nbsp;&nbsp; //当前用户拥有的权限 <br>select * from user_col_privs</p> 
+<p><br>revoke create table from lisi&nbsp;&nbsp; //撤销权限</p> 
+<p>grant create any table to public //给所有用户授权</p> 
+<p>lisi grant select on mytab to wangwu&nbsp; <br>&nbsp;&nbsp;&nbsp;&nbsp; grant all on mytab&nbsp; to wangwu&nbsp;&nbsp;&nbsp; 对象权限 wangwu&nbsp; 可以看lisi 的表</p> 
+<p>&nbsp;</p> 
+<p>grant update(name) on mytab to lisi&nbsp;&nbsp; //权限控制到某一列&nbsp; select delete不行</p> 
+<p><br>grant create any table to public with admin option&nbsp; //权限传递</p> 
+<p>grant all on mytab&nbsp; to wangwu with grant option</p> 
+<p>&nbsp;</p> 
+<p>080609 oracle 安装 后 改变 计算机名会导致不可用TNSListener</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>数据库 导入 导出&nbsp; exp&nbsp; imp&nbsp; 必须在cmd中&nbsp; 不要在 sql中</p> 
+<p><br>&nbsp;set linesize 1000;<br>&nbsp;set pagesize 100;</p> 
+<p>col is_leaf for a20;<br>select * from t_client;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;SQL&gt; ed<br>&nbsp;已写入 file afiedt.buf</p> 
+<p>&nbsp;</p>

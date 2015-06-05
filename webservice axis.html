@@ -1,0 +1,68 @@
+<pre class="java" name="code">//放在 webapps/axis下
+public class HelloWorldJWS{
+	public String test(String a, String b){
+		String result="a="+a+", b="+b;
+		System.out.println("Received: "+result);
+		return "Server OK ,you send: "+result;
+	}
+}</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">import javax.xml.namespace.QName;
+import javax.xml.rpc.ServiceException;
+
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+
+public class Client {
+    public static void main(String[] args) throws Exception {
+        String url = "http://localhost:8080/axis/HelloWorldJWS.jws";
+        Service service = new Service();
+        Call call=(Call) service.createCall();
+        call.setTargetEndpointAddress(url);
+        call.setOperationName(new QName(url,"test"));
+        String result=(String) call.invoke(new Object[]{"aaa","bbb"});
+        System.out.println("result= "+result);
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>---------------------------------------------------------------------------------------------------</p> 
+<p>Custom Deployment </p> 
+<p>&nbsp;</p> 
+<p>java -Djava.ext.dirs=lib org.apache.axis.client.AdminClient deploy.wsdd</p> 
+<p>&nbsp;</p> 
+<p>&lt;deployment xmlns="<a href="http://xml.apache.org/axis/wsdd/">http://xml.apache.org/axis/wsdd/</a>"<br>&nbsp;&nbsp;&nbsp; xmlns:java="<a href="http://xml.apache.org/axis/wsdd/providers/java">http://xml.apache.org/axis/wsdd/providers/java</a>"&gt;<br>&nbsp; &lt;service name="Calculator" provider="java:RPC"&gt;<br>&nbsp;&nbsp;&nbsp; &lt;parameter name="className" value="test.webservice.axis.Calculator"/&gt;<br>&nbsp;&nbsp;&nbsp; &lt;parameter name="allowedMethods" value="*"/&gt;<br>&nbsp; &lt;/service&gt;<br>&lt;/deployment&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package test.webservice.axis;
+
+public class Calculator {
+        public int add(int i1, int i2) {
+            return i1 + i2;
+        }
+
+        public int subtract(int i1, int i2) {
+            return i1 - i2;
+        }
+}</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">import javax.xml.namespace.QName;
+import javax.xml.rpc.ServiceException;
+
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+
+public class ClientWSDD {
+    public static void main(String[] args) throws Exception {
+        String url = "http://localhost:8080/axis/services/Calculator";
+        Service service = new Service();
+        Call call=(Call) service.createCall();
+        call.setTargetEndpointAddress(url);
+        call.setOperationName(new QName(url,"add"));
+        Integer result=(Integer) call.invoke(new Object[]{2,3});
+        System.out.println("result= "+result);
+    }
+}
+</pre> 
+<p>&nbsp;</p>

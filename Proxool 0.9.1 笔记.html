@@ -1,0 +1,120 @@
+<pre class="java" name="code">web.xml中
+&lt;servlet&gt;  
+        &lt;servlet-name&gt;ServletConfigurator&lt;/servlet-name&gt;  
+        &lt;servlet-class&gt;  
+            org.logicalcobwebs.proxool.configuration.ServletConfigurator   
+        &lt;/servlet-class&gt;  
+        &lt;init-param&gt;  
+            &lt;param-name&gt;xmlFile&lt;/param-name&gt;  
+            &lt;param-value&gt;WEB-INF/proxool.xml&lt;/param-value&gt;  
+        &lt;/init-param&gt;  
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;  
+    &lt;/servlet&gt;  
+    &lt;servlet&gt;  
+        &lt;servlet-name&gt;dbpool&lt;/servlet-name&gt;  
+        &lt;servlet-class&gt;  
+            org.logicalcobwebs.proxool.admin.servlet.AdminServlet   
+        &lt;/servlet-class&gt;  
+    &lt;/servlet&gt;  
+    &lt;servlet-mapping&gt;  
+        &lt;servlet-name&gt;dbpool&lt;/servlet-name&gt;  
+        &lt;url-pattern&gt;/dbpool&lt;/url-pattern&gt;  
+    &lt;/servlet-mapping&gt; 
+
+
+
+proxool.xml
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;pools&gt;
+	&lt;proxool&gt;
+
+		&lt;alias&gt;base&lt;/alias&gt;
+
+		&lt;driver-url&gt;
+			jdbc:jtds:sqlserver://localhost:1433/aaa
+		&lt;/driver-url&gt;
+
+		&lt;driver-class&gt;net.sourceforge.jtds.jdbc.Driver&lt;/driver-class&gt;
+		&lt;driver-properties&gt;
+			&lt;property name="user" value="sa" /&gt;
+			&lt;property name="password" value="sa" /&gt;
+		&lt;/driver-properties&gt;
+
+		&lt;house-keeping-sleep-time&gt;90000&lt;/house-keeping-sleep-time&gt;
+
+		&lt;simultaneous-build-throttle&gt;130&lt;/simultaneous-build-throttle&gt;
+
+		&lt;prototype-count&gt;3&lt;/prototype-count&gt;
+
+		&lt;maximum-connection-count&gt;100&lt;/maximum-connection-count&gt;
+
+		&lt;minimum-connection-count&gt;3&lt;/minimum-connection-count&gt;
+	&lt;/proxool&gt;
+	&lt;proxool&gt;
+
+		&lt;alias&gt;project&lt;/alias&gt;
+
+		&lt;driver-url&gt;
+			jdbc:jtds:sqlserver://localhost:1433/bbb
+		&lt;/driver-url&gt;
+
+		&lt;driver-class&gt;net.sourceforge.jtds.jdbc.Driver&lt;/driver-class&gt;
+		&lt;driver-properties&gt;
+			&lt;property name="user" value="sa" /&gt;
+			&lt;property name="password" value="sa" /&gt;
+		&lt;/driver-properties&gt;
+
+		&lt;house-keeping-sleep-time&gt;90000&lt;/house-keeping-sleep-time&gt;
+
+		&lt;simultaneous-build-throttle&gt;130&lt;/simultaneous-build-throttle&gt;
+
+		&lt;prototype-count&gt;3&lt;/prototype-count&gt;
+
+		&lt;maximum-connection-count&gt;100&lt;/maximum-connection-count&gt;
+
+		&lt;minimum-connection-count&gt;3&lt;/minimum-connection-count&gt;
+	&lt;/proxool&gt;
+&lt;/pools&gt;
+
+
+
+
+
+
+
+public class PoolManager {        
+    private static PoolManager instance=new PoolManager();        
+    private static int activeCount = 0;        
+    private final Logger logger = Logger.getLogger(getClass());        
+            
+    private PoolManager(){  
+        try {
+            Class.forName("org.logicalcobwebs.proxool.ProxoolDriver");
+            logDebug("加载Proxool驱动成功");
+        } catch (ClassNotFoundException e) {
+            logDebug("加载Proxool驱动失败",e);
+            e.printStackTrace();
+            throw new RuntimeException("加载Proxool驱动失败",e);
+        }
+    }
+    
+    public static PoolManager getInstance(){
+        return instance;
+    }
+    public Connection getConnection(String database) {        
+        try{        
+            //proxool驱动类        
+            Connection conn = DriverManager.getConnection(database);
+            logDebug("getConnection for "+database);
+            System.out.println("getConnection");
+           //此处的DBPool是在proxool.xml中配置的连接池别名       
+//            showSnapshotInfo(database);        
+            return conn;        
+        }catch(Exception ex){   
+            logDebug("error when get connection for "+database, ex);
+            ex.printStackTrace();  
+            return null;
+        }        
+                
+    }       </pre> 
+<p>&nbsp;</p>

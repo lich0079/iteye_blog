@@ -1,0 +1,52 @@
+<p>学过Java编程的人应该知道，都是要设置JDK的环境变量，这个是很烦的。下面就是我写的用于设置环境变量的批处理。</p> 
+<p>大家把下面的代码复制下来，另存为bat文件也就是批处理文件了，双击运行就可以了。</p> 
+<p>&nbsp;</p> 
+<p> <span style="color: #ff0000;">@echo off<br> title JDK和Tomcat环境变量设置<br> color 0a<br> set /p inputJH=&nbsp;&nbsp;&nbsp;&nbsp; [请输入你要设置的JDK的安装目录：]<br> if /i "%inputJH%"=="" set inputJH=%Java_Home%<br> set /p inputTH=&nbsp;&nbsp;&nbsp;&nbsp; [请输入你要设置的Tomcat的安装目录：]<br> if /i "%inputTH%"=="" set inputTH=%Tomcat_Home%<br> echo 正在配置环境变量，请稍候......<br> reg add "HKCU\Environment" /v Java_Home /t reg_sz /d "%inputJH%" /f<br> reg add "HKCU\Environment" /v Tomcat_Home /t reg_sz /d "%inputTH%" /f<br> reg add "HKCU\Environment" /v ClassPath /t reg_sz /d ".;"""%%Java_Home%%\lib\dt.jar""";"""%%Java_Home%%\lib\tools.jar"""" /f<br> reg add "HKCU\Environment" /v Path /t reg_sz /d """"%%Java_Home%%\bin""";"""%%Tomcat_Home%%\bin""";" /f<br> pause<br> cls<br> echo ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓<br> echo.<br> echo 恭喜您，环境变量配置成功...<br> echo.<br> echo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 您的Jdk的安装路径为：%inputJH%<br> echo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 您的Tomcat的安装路径为：%inputTH%<br> echo 注意：如果不重启的话，可以去“我的电脑”“属性”那里在设置环境<br> echo 变量那里单击一下确定，然后这个环境变量就会生效了。<br> echo.<br> echo ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓<br> set /p tmp=操作结束，请按回车键退出...<br> pause&gt;nul </span> </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>自己测了一下</p> 
+<p>改成了如下</p> 
+<pre name="code" class="java">@echo off
+title JDK和Tomcat环境变量设置
+color 0a
+
+SET inputJH=C:\jdk1.5.0_14
+SET inputTH=C:\jdk
+
+
+echo 正在配置环境变量，请稍候......
+reg add "HKCU\Environment" /v JAVA_HOME /t reg_sz /d "%inputJH%" /f
+reg add "HKCU\Environment" /v TOMCAT_HOME /t reg_sz /d "%inputTH%" /f
+reg add "HKCU\Environment" /v classpath /t reg_sz /d ".;%%JAVA_HOME%%\lib" /f
+reg add "HKCU\Environment" /v path /t reg_sz /d "%%JAVA_HOME%%\bin" /f
+pause
+cls
+echo ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+echo.
+echo 恭喜您，环境变量配置成功...
+echo.
+echo      您的Jdk的安装路径为：%inputJH%
+echo      您的Tomcat的安装路径为：%inputTH%
+echo 注意：如果不重启的话，可以去“我的电脑”“属性”那里在设置环境
+echo 变量那里单击一下确定，然后这个环境变量就会生效了。
+echo.
+echo ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+set /p tmp=操作结束，请按回车键退出...
+pause&gt;nul </pre> &nbsp; 
+<p>运行完之后（并重启）在环境变量那里看起来路径是正确的&nbsp; regedit看注册表的值也是对的 </p> 
+<p>但在console里输入 java 就是不对 </p> 
+<p>非要我在环境变量那里手动 动两下 哪怕只是 空格 回退&nbsp; 然后点击确定&nbsp; 实际上什么都没改&nbsp; 但这时在去console java就可以了 不知道为什么&nbsp; 以上测试环境在虚拟机里 xp英文操作系统</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>又试了一下方法</p> 
+<pre name="code" class="java">首先在一台机器上设置好环境变量。
+然后从注册表regedit中导出以下位置的内容：
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment]
+[HKEY_CURRENT_USER\Environment]
+将文件存为env.reg(文件名可任意)。
+创建批处理文件env.bat并写入以下内容：
+regedit env.reg
+在需要设置环境变量的机器上执行env.bat就可以了。
+当然也可以直接在regedit中导入env.reg文件。</pre> 
+<p>&nbsp;也不行 郁闷啊</p>

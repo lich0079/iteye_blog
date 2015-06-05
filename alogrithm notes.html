@@ -1,0 +1,115 @@
+<p> </p> 
+<p>2.数组&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>线性查找 &nbsp; &nbsp;O(N) &nbsp; N/2</p> 
+<p>二分查找 &nbsp; &nbsp;O(log(N))</p> 
+<p>&nbsp;</p> 
+<p>3.排序&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>冒泡排序 &nbsp; &nbsp; O(N*N)&nbsp;</p> 
+<p>每次遍历比较临近的2个选出最大的一个放到右边，这样最大的一个会到最右</p> 
+<p>第2次只要遍历到第N-1个</p> 
+<p>遍历N-1次</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>选择排序 &nbsp; &nbsp; &nbsp; O(N*N)&nbsp;</p> 
+<p>每次遍历选出最小的一个放到左边</p> 
+<p>比冒泡的好处是每次遍历只进行一次交换</p> 
+<p>&nbsp;</p> 
+<p>插入排序 &nbsp; &nbsp;O(N*N)&nbsp;</p> 
+<p>给出一个选定位 &nbsp;</p> 
+<p>他左边是有序的 &nbsp;</p> 
+<p>把该选定位和左边有序的依次比较 &nbsp;</p> 
+<p>插入其中合适的位置 &nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>4. 栈 队列</p> 
+<p>&nbsp;</p> 
+<p>数组是数据存储结构 &nbsp;</p> 
+<p>栈 队列作为辅助工具 &nbsp;受限访问</p> 
+<p>&nbsp;</p> 
+<p>栈只能访问最后插入的数据项 &nbsp; 先入后出</p> 
+<p>出入栈 &nbsp;O(1)</p> 
+<p>&nbsp;</p> 
+<p>队列 &nbsp; &nbsp; &nbsp; FIFO 先入先出 &nbsp; &nbsp; O(1)</p> 
+<p>&nbsp;</p> 
+<p>优先级队列 &nbsp;数据项按关键字有序 &nbsp;关键字最小的数据在队头</p> 
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;在多任务系统中进程的优先执行时采用此数据结构</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>算术运算 后缀表达式&nbsp;</p> 
+<p>&nbsp; 转换 &nbsp;&nbsp;</p> 
+<p>&nbsp; &nbsp; 遍历中缀表达式&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp; 遇到操作符就操作栈</p> 
+<p>&nbsp; &nbsp; &nbsp; 假如栈顶的操作符不比当前操作符优先级低，就推出栈顶的，遍历直到栈为空或推出一个，压入当前的</p> 
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 否则 压入当前的</p> 
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; （核心思想就是当前的操作符能不能出栈(意味着可以写在后缀表达式上)要看下一个操作符是什么，下一个不比自己高才能出栈加在后缀表达式上， 所以栈的结构也一定是栈底的操作符优先级底，栈顶高）</p> 
+<p>&nbsp; 计算</p> 
+<p>&nbsp; <span style="white-space: pre;"> </span>遍历完表达式</p> 
+<p>&nbsp; &nbsp; 遇到数字就压栈</p> 
+<p>&nbsp; &nbsp; 遇到操作符就从栈里弹出2个数，计算出结果，把结果压栈</p> 
+<p>&nbsp; &nbsp; 遍历完表达式，栈里最后的那个数就是结果</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>链表 &nbsp;</p> 
+<p>&nbsp; 单链表 &nbsp;双端链表 &nbsp;有序链表 &nbsp; 双向链表 &nbsp; 有迭代器的链表</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 单链表</p> 
+<p>&nbsp; &nbsp; 在链表头插入</p> 
+<p>&nbsp; &nbsp; 在链表头删除</p> 
+<p>&nbsp; &nbsp; 遍历</p> 
+<p>&nbsp; &nbsp; 没有持有对链表尾部的引用</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 双端链表</p> 
+<p>&nbsp; &nbsp; 持有对链表尾部的引用</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 链表的效率</p> 
+<p>&nbsp; &nbsp; 在表头插入 删除 很快 &nbsp;O(1)</p> 
+<p>&nbsp; &nbsp; 查找 删除 插入 &nbsp; O(N)</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 什么时候使用链表或数组来实现栈和列队呢？ 取决于能否预计数据量， 不清楚的话，链表就比数组有更好的适应性</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 有序链表</p> 
+<p>&nbsp; &nbsp; 插入 删除 O(N)</p> 
+<p>&nbsp; &nbsp; 找到或删除最小值 &nbsp;O(1)</p> 
+<p>&nbsp; &nbsp; 频繁的存取最小项 不需快速插入 可以考虑有序链表</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 双向链表</p> 
+<p>&nbsp; &nbsp; 可以向前 也可以向后 遍历</p> 
+<p>&nbsp;</p> 
+<p>希尔排序 &nbsp;O(N(logN)*(logN))</p> 
+<p>&nbsp;</p> 
+<p>快速排序 &nbsp; O(N(logN))</p> 
+<p>&nbsp;</p> 
+<p>二叉树</p> 
+<p>&nbsp; 二叉搜索树</p> 
+<p>&nbsp; &nbsp; 左子节点小于父节点 &nbsp;右子节点&gt;=父节点</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 非平衡树</p> 
+<p>&nbsp; &nbsp; 大部分节点在树的一边</p> 
+<p>&nbsp;</p> 
+<p>树查找 O(logN)</p> 
+<p>&nbsp;</p> 
+<p>树的遍历 &nbsp;</p> 
+<p>&nbsp; &nbsp;1</p> 
+<p>&nbsp; 2 &nbsp;3</p> 
+<p>&nbsp; 中序 &nbsp;213</p> 
+<p>&nbsp; 前序 &nbsp;123</p> 
+<p>&nbsp; 后序 &nbsp;231</p> 
+<p>&nbsp;</p> 
+<p>哈希表</p> 
+<p>&nbsp; 插入 删除 &nbsp; &nbsp;O(1)</p> 
+<p>&nbsp; 缺点 &nbsp;</p> 
+<p>&nbsp; &nbsp; 基于数组 大小扩展时很费时</p> 
+<p>&nbsp; &nbsp; 没法简便的有序遍历</p> 
+<p>&nbsp; 如果不需 有序遍历， &nbsp;能提前预测数据大小，哈希表有优势</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 特点&nbsp;</p> 
+<p>&nbsp; &nbsp; 把关键字转换为数组下标</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 开放地址</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 链表</p> 
+<p>&nbsp;</p>

@@ -1,0 +1,161 @@
+<div class="showContent"> 
+ <div>
+  用 'top -i' 看看有多少进程处于 Running 状态，可能系统存在内存或 I/O 瓶颈，用 free 看看系统内存使用情况，swap 是否被占用很多，用 iostat 看看 I/O 负载情况...
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div>
+  还 有一种办法是 ps -ef | sort -k7 ，将进程按运行时间排序，看哪个进程消耗的cpu时间最多。
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div> 
+  <span class="Apple-style-span" style="font-size: 14px; font-family: verdana,sans-serif; line-height: 21px;"> 
+   <div style="padding: 0px; margin: 1em 0px 0.5em;"> 
+    <strong>top:</strong> &nbsp;
+    <br> 主要参数
+    <br> d：指定更新的间隔，以秒计 算。
+    <br> q：没有任何延迟的更新。如果使用者有超级用户，则top命令将会以最高的优先序执行。
+    <br> c：显示进程完整的路径与名称。
+    <br> S： 累积模式，会将己完成或消失的子行程的CPU时间累积起来。
+    <br> s：安全模式。
+    <br> i：不显示任何闲置(Idle)或无用(Zombie)的行 程。
+    <br> n：显示更新的次数，完成后将会退出to
+    <br> 显示参数:
+    <br> PID（Process ID）：进程标示号。
+    <br> USER：进程所 有者的用户名。
+    <br> PR：进程的优先级别。
+    <br> NI：进程的优先级别数值。
+    <br> VIRT：进程占用的虚拟内存值。
+    <br> RES：进程占用的 物理内存值。
+    <br> SHR：进程使用的共享内存值。
+    <br> S：进程的状态，其中S表示休眠，R表示正在运行，Z表示僵死状态，N表示该进程优先值是负 数。
+    <br> %CPU：该进程占用的CPU使用率。
+    <br> %MEM：该进程占用的物理内存和总内存的百分比。
+    <br> TIME＋：该进程启动后占用的总 的CPU时间。
+    <br> Command：进程启动的启动命令名称，如果这一行显示不下，进程会有一个完整的命令行。
+    <br> top命令使用过程中，还可以 使用一些交互的命令来完成其它参数的功能。这些命令是通过快捷键启动的。
+    <br> &lt;空格&gt;：立刻刷新。
+    <br> P：根据CPU使用大小进行排 序。
+    <br> T：根据时间、累计时间排序。
+    <br> q：退出top命令。
+    <br> m：切换显示内存信息。
+    <br> t：切换显示进程和CPU状态信息。
+    <br> c： 切换显示命令名称和完整命令行。
+    <br> M：根据使用内存大小进行排序。
+    <br> W：将当前设置写入~/.toprc文件中。这是写top配置文件的推荐 方法。
+    <br>
+    <br>
+    <strong>free</strong> &nbsp;
+    <br> 1.作用
+    <br> free命令用来显示内存的使用情况，使用权限是所有用 户。
+    <br>
+    <br> 2.格式
+    <br> free [－b－k－m] [－o] [－s delay] [－t] [－V]
+    <br>
+    <br> 3.主要参数
+    <br> －b －k －m：分别以字节（KB、MB）为单位显示内存使用情况。
+    <br> －s delay：显示每隔多少秒数来显示一次内存使用情况。
+    <br> －t：显 示内存总和列。
+    <br> －o：不显示缓冲区调节列。
+    <br>
+    <strong><br> uptime</strong> &nbsp;
+    <br> 18:59:15 up 25 min, 2 users, load average: 1.23, 1.32, 1.21
+    <br> 现在的时间
+    <br> 系统开机运转到现在经过的 时间
+    <br> 连线的使用者数量
+    <br> 最近一分钟，五分钟和十五分钟的系统负载
+    <br> 参数： -V 显示版本资讯。
+    <br>
+    <strong><br> vmstat</strong> &nbsp;
+    <br> procs -----------memory---------- ---swap-- -----io---- --system-- ----cpu----
+    <br> r b swpd free buff cache si so bi bo in cs us sy id wa
+    <br> 0 1 24980 10792 8296 47316 5 19 205 52 1161 698 26 3 1 70
+    <br> 1 观察磁盘活动情况
+    <br> 磁 盘活动情况主要从以下几个指标了解：
+    <br> bi：表示从磁盘每秒读取的块数(blocks/s)。数字越大，表示读磁盘的活动越多。
+    <br> bo：表示 每秒写到磁盘的块数（blocks/s）。数字越大，表示写磁盘的活动越多。
+    <br> wa：cpu等待磁盘I／O（未决的磁盘IO）的时间比例。数字越 大，表示文件系统活动阻碍cpu的情况越严重，因为cpu在等待慢速的磁盘系统提供数据。wa为0是最理想的。如果wa经常大于10，可能文件系统就需要 进行性能调整了。&nbsp;
+    <br> 2 观察cpu活动情况
+    <br> vmstat比top更能反映出cpu的使用情况：
+    <br> us：用户程序使用cpu的时间比 例。这个数字越大，表示用户进程越繁忙。
+    <br> sy： 系统调用使用cpu的时间比例。注意，NFS由于是在内核里面运行的，所以NFS活动所占用的cpu时间反映在sy里面。这个数字经常很大的话，就需要注 意是否某个内核进程，比如NFS任务比较繁重。如果us和sy同时都比较大的话，就需要考虑将某些用户程序分离到另外的服务器上面，以免互相影响。
+    <br> id：cpu 空闲的时间比例。
+    <br> wa：cpu等待未决的磁盘IO的时间比例。
+    <br>
+    <strong><br> iostat</strong> &nbsp;
+    <br> 用于统 计CPU的使用情况及tty设备、硬盘和CD-ROM的I/0量
+    <br> 参数:
+    <br> -c 只显示CPU行
+    <br> -d 显示磁盘行
+    <br> -k 以千字节为单位显示磁盘输出
+    <br> -t 在输出中包括时间戳
+    <br> -x 在输出中包括扩展的磁盘指标
+    <br>
+    <br> avg-cpu: %user %nice %sys %iowait %idle
+    <br> 20.25 0.18 2.61 76.39 0.57
+    <br> %iowait 等待本地I/O时CPU空闲时间的百分比
+    <br> %idle 未等待本地I/O时CPU空闲时间的百分比
+    <br>
+    <br> Device: tps Blk_read/s Blk_wrtn/s Blk_read Blk_wrtn
+    <br> hda 9.86 284.34 84.48 685407 2036
+    <br> 每秒传输数（tps）、每秒512字节块读取数（Blk_read/s）、每秒512字节块写入数（Blk_wrtn/s）和512字节 块读取（Blk_read）和写入（Blk_wrtn）的总数量。
+   </div> 
+   <div style="padding: 0px; margin: 1em 0px 0.5em;"> 
+    <strong>　　系统</strong> &nbsp;
+    <br> 　　# uname -a # 查看内核/操作系统/CPU信息
+    <br> 　 　# head -n 1 /etc/issue # 查看操作系统版本
+    <br> 　　# cat /proc/cpuinfo # 查看CPU信息
+    <br> 　 　# hostname # 查看计算机名
+    <br> 　　# lspci -tv # 列出所有PCI设备
+    <br> 　　# lsusb -tv # 列出所有USB设备
+    <br> 　　# lsmod # 列出加载的内核模块
+    <br> 　　# env # 查看环境变量
+    <br>
+    <strong>　　资源</strong> &nbsp;
+    <br> 　 　# free -m # 查看内存使用量和交换区使用量
+    <br> 　　# df -h # 查看各分区使用情况
+    <br> 　　# du -sh # 查看指定目录的大小
+    <br> 　　# grep MemTotal /proc/meminfo # 查看内存总量
+    <br> 　　# grep MemFree /proc/meminfo # 查看空闲内存量
+    <br> 　　# uptime # 查看系统运行时间、用户数、负载
+    <br> 　　# cat /proc/loadavg # 查看系统负载
+    <br>
+    <strong>　　磁盘和分区</strong> &nbsp;
+    <br> 　　# mount | column -t # 查看挂接的分区状态
+    <br> 　　# fdisk -l # 查看所有分区
+    <br> 　　# swapon -s # 查看所有交换分区
+    <br> 　　# hdparm -i /dev/hda # 查看磁盘参数(仅适用于IDE设备)
+    <br> 　　# dmesg | grep IDE # 查看启动时IDE设备检测状况
+    <br>
+    <strong>　　网络</strong> &nbsp;
+    <br> 　　# ifconfig # 查看所有网络接口的属性
+    <br> 　　# iptables -L # 查看防火墙设置
+    <br> 　　# route -n # 查看路由表
+    <br> 　　# netstat -lntp # 查看所有监听端口
+    <br> 　　# netstat -antp # 查看所有已经建立的连接
+    <br> 　　# netstat -s # 查看网络统计信息
+    <br>
+    <strong>　　进程</strong> &nbsp;
+    <br> 　　# ps -ef # 查看所有进程
+    <br> 　 　# top # 实时显示进程状态
+    <br>
+    <strong>　　用户</strong> &nbsp;
+    <br> 　　# w # 查看活动用户
+    <br> 　　# id # 查看指定用户信息
+    <br> 　　# last # 查看用户登录日志
+    <br> 　　# cut -d: -f1 /etc/passwd # 查看系统所有用户
+    <br> 　　# cut -d: -f1 /etc/group # 查看系统所有组
+    <br> 　　# crontab -l # 查看当前用户的计划任务
+    <br>
+    <strong>　　服务</strong> &nbsp;
+    <br> 　　# chkconfig --list # 列出所有系统服务
+    <br> 　 　# chkconfig --list | grep on # 列出所有启动的系统服务
+    <br>
+    <strong>　　程序</strong> &nbsp;
+    <br> 　 　# rpm -qa # 查看所有安装的软件包
+   </div> </span> 
+ </div> 
+</div>

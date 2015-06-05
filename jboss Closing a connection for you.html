@@ -1,0 +1,10 @@
+<p>jboss 报了如下的错</p> 
+<p>&nbsp;</p> 
+<p>[CachedConnectionManager] Closing a connection for you.&nbsp; Please close them yourself: org.jboss.resource.adapter.jdbc.jdk6.WrappedConnectionJDK6@785d564b</p> 
+<p>&nbsp;</p> 
+<p>项目里面用了spring管理事物，&nbsp; 但用的是注释的方式，</p> 
+<p>&nbsp;</p> 
+<p>我把注释 </p> 
+<p>@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)</p> 
+<p>&nbsp;</p> 
+<p>加在首先被调用的service方法A上 就没这个错， 但在这个方法中的代码没有数据库操作， 只是有一行调用的另一个service方法B有数据库查询， 我把注释加在B上面就会报jboss的错&nbsp; 很奇怪</p>

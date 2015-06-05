@@ -1,0 +1,8 @@
+<p>public List&lt;User&gt; getUserByIds(List&lt;Long&gt; ids) {</p> 
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Query query = getSession().getNamedQuery("getUserByIds");<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; query.setParameterList("ids", ids);<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return (List&lt;User&gt;) query.list();</p> 
+<p>&nbsp;</p> 
+<p>}</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>from User where id in (:ids)</p>

@@ -1,0 +1,7 @@
+<p>com.microsoft.jdbc.sqlserver.SQLServerDriver</p> 
+<p>jdbc:microsoft:sqlserver://127.0.0.1:1433</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>图像存储 unsupported data conversion问题。<br>原因如下：<br>microsoft SQL驱动默认支持Blob(图像)及Clob(大型文本数据)的存储，却不能读取，发现需要替换为Microsoft SQL Server(jTDS driver)这个驱动。<br>解决方法：<br>jtds-0.6.jar下载：<a href="http://prdownloads.sourceforge.net/jtds/jtds-0.6.jar?download">http://prdownloads.sourceforge.net/jtds/jtds-0.6.jar?download</a><br>把项目中的驱动换下就行了。</p> 
+<p>我本人是在MyEclipse上解决的：<br>在MyEclipse的DB Browser中New个 Database Driver ，<br>&nbsp;&nbsp; Driver template:Microsoft SQL Server(jTDS driver)<br>&nbsp;&nbsp; Driver name:net.sourceforge.jtds.jdbc.Driver<br>&nbsp;&nbsp; Connection url :jdbc:jtds:sqlserver://219.228.230.7:1433/book&nbsp;&nbsp; (book为数据库名) <br>&nbsp;&nbsp; user name :sa<br>&nbsp;&nbsp; password:<br>&nbsp;&nbsp; Driver jars-&gt;add jars-&gt;把刚才下的jtds-0.6.jar选中<br>&nbsp;&nbsp; 勾选Save password复选框。<br>&nbsp;&nbsp; 修改hibernate.cfg.xml文件中的驱动和URL<br>&nbsp;</p> 
+<p><br>本文来自CSDN博客，转载请标明出处：<a href="http://blog.csdn.net/fireinjava/archive/2008/02/19/2104536.aspx">http://blog.csdn.net/fireinjava/archive/2008/02/19/2104536.aspx</a></p>

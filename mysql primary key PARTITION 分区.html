@@ -1,0 +1,24 @@
+<p>尝试把数据库一个表分区 </p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">ALTER TABLE user 
+PARTITION BY RANGE(TO_DAYS(`date`)) (
+PARTITION p1004 VALUES LESS THAN (TO_DAYS('2010-5-1')),
+PARTITION p1005 VALUES LESS THAN (TO_DAYS('2010-6-1')),
+PARTITION p1006 VALUES LESS THAN (TO_DAYS('2010-7-1')),
+PARTITION p1007 VALUES LESS THAN (TO_DAYS('2010-8-1')),
+PARTITION p1008 VALUES LESS THAN (TO_DAYS('2010-9-1')),
+PARTITION p1009 VALUES LESS THAN (TO_DAYS('2010-10-1')),
+PARTITION p1010 VALUES LESS THAN (TO_DAYS('2010-11-1')),
+PARTITION p1011 VALUES LESS THAN (TO_DAYS('2010-12-1')),
+PARTITION p1012 VALUES LESS THAN (TO_DAYS('2011-1-1')),
+PARTITION p9999 VALUES LESS THAN MAXVALUE);</pre> 
+<p>&nbsp;结果出现 </p> 
+<p>ERROR 1503&nbsp; A PRIMARY KEY must include all columns in the table's partitioning function</p> 
+<p>&nbsp;</p> 
+<p>google一下，查出以下解释，来自官方文档，意思是在分区的表达式中的条件字段必须是那个表定义的唯一键的一部分（part of every unique key that the table may have.） 我上面会出错就是因为我在user表定义了主键，但`date`不是主键</p> 
+<p>解决的话可以把主键ID扩展成联合主键(`ID`,`date`)，这样分区的条件字段就成了主键的一部分，这样就可以解决，理论上我想是这样，还没没实际试过， todo。</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>18.5.1.Partitioning Keys, Primary Keys, and Unique Keys<br> This section discusses the relationship of partitioning keys with primary keys and unique keys. The rule governing this relationship can be expressed as follows: All columns used in the partitioning expression for a partitioned table must be part of every unique key that the table may have.</p> 
+<p>&nbsp;</p> 
+<p>In other words,<em> every unique key on the table must use every column</em> in the table's partitioning expression. (This also includes the table's primary key, since it is by definition a unique key. This particular case is discussed later in this section.)</p>

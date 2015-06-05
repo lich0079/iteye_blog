@@ -1,0 +1,189 @@
+<pre class="java" name="code">	静态代理
+		接口
+			public interface UserManager {
+	
+				public void addUser(String username, String password);
+				
+				public void modifyUser(int userId, String username, String password);
+				
+				public String findUserById(int userId);
+			}
+		实现类
+			public class UserManagerImpl implements UserManager {
+
+			public void addUser(String username, String password) {
+		//		System.out.println("start--&gt;&gt;addUser - username=" + username + ", password=" + password);
+		//		try {
+		//			//
+		//			System.out.println("UserManagerImpl.addUser()");
+		//			System.out.println("end--&gt;&gt;addUser() ");
+		//		}catch(Exception e) {
+		//			e.printStackTrace();
+		//			System.out.println("error--&gt;&gt;addUser() ");
+		//		throw new java.lang.RuntimeException();
+		//		}
+				
+				try {
+					System.out.println("UserManagerImpl.addUser()");
+				}catch(Exception e) {
+					e.printStackTrace();
+					throw new java.lang.RuntimeException();
+				}	
+				}
+
+				public String findUserById(int userId) {
+					System.out.println("UserManagerImpl.findUserById()");
+					return null;
+				}
+
+				public void modifyUser(int userId, String username, String password) {
+					System.out.println("UserManagerImpl.modifyUser()");
+				}
+			}
+		
+		代理
+			public class UserManagerImplProxy implements UserManager {
+	
+				private UserManager userManager;
+				
+				public UserManagerImplProxy(UserManager userManager) {
+					this.userManager = userManager;
+				}
+				
+				public void addUser(String username, String password) {
+					System.out.println("start--&gt;&gt;addUser - username=" + username + ", password=" + password);
+					try {
+						userManager.addUser(username, password);
+						System.out.println("end--&gt;&gt;addUser() ");
+					}catch(Exception e) {
+						e.printStackTrace();
+						System.out.println("error--&gt;&gt;addUser() ");
+					}
+				}
+
+				public String findUserById(int userId) {
+					return null;
+				}
+
+				public void modifyUser(int userId, String username, String password) {
+				}
+			}
+
+		test
+			public class Client {
+
+				public static void main(String[] args) {
+					//UserManager userManager = new UserManagerImpl();
+					//userManager.addUser("张三", "123");
+					
+					UserManager userManager = new UserManagerImplProxy(new UserManagerImpl() );
+					userManager.addUser("张三", "123");
+				}
+
+			}
+		代理 和 实现 都实现了共同的接口
+			代理在内部维护了一个实现，当调用代理的接口方法时，
+			代理在内部调用了它维护的实现类的方法，并加上自己的操作
+			静态代理需要一个个的写代理方法，不好用
+
+
+
+	动态代理
+		接口
+			public interface UserManager {
+	
+				public void addUser(String username, String password);
+				
+				public void modifyUser(int userId, String username, String password);
+				
+				public String findUserById(int userId);
+			}
+
+		InvocationHandler
+			public class LogHandler implements InvocationHandler {
+	
+				private Object targetObject;
+				
+				public Object newProxyObject(Object targetObject) {
+					this.targetObject = targetObject;
+					
+					return Proxy.newProxyInstance(targetObject.getClass().getClassLoader(), 
+							targetObject.getClass().getInterfaces(), this);
+						
+				}
+				
+				public Object invoke(Object proxy, Method method, Object[] args)
+						throws Throwable {
+					System.out.println("start--&gt;&gt;" + method.getName());
+					for (int i=0; i&lt;args.length; i++) {
+						System.out.println(args[i]);
+					}
+					Object result = null;
+					try {
+						result = method.invoke(this.targetObject, args);
+						System.out.println("end--&gt;&gt;" + method.getName());
+					}catch(Exception e) {
+						e.printStackTrace();
+						System.out.println("error--&gt;&gt;" + method.getName());
+					}
+					System.out.println("result=" + result);
+					return result;
+				}
+
+			}
+		实现 
+			public class UserManagerImpl implements UserManager {
+
+				public void addUser(String username, String password) {
+			//		System.out.println("start--&gt;&gt;addUser - username=" + username + ", password=" + password);
+			//		try {
+			//			//
+			//			System.out.println("UserManagerImpl.addUser()");
+			//			System.out.println("end--&gt;&gt;addUser() ");
+			//		}catch(Exception e) {
+			//			e.printStackTrace();
+			//			System.out.println("error--&gt;&gt;addUser() ");
+			//		throw new java.lang.RuntimeException();
+			//		}
+					
+					try {
+						System.out.println("UserManagerImpl.addUser()");
+					}catch(Exception e) {
+						e.printStackTrace();
+						throw new java.lang.RuntimeException();
+					}	
+				}
+
+				public String findUserById(int userId) {
+					System.out.println("UserManagerImpl.findUserById()");
+					return "李四";
+				}
+
+				public void modifyUser(int userId, String username, String password) {
+					System.out.println("UserManagerImpl.modifyUser()");
+				}
+			}
+
+		test
+			public class Client {
+
+				public static void main(String[] args) {
+					//UserManager userManager = new UserManagerImpl();
+					//userManager.addUser("张三", "123");
+					
+					//UserManager userManager = new UserManagerImplProxy(new UserManagerImpl() );
+					//userManager.addUser("张三", "123");
+					
+					LogHandler handler = new LogHandler();
+					UserManager userManager = (UserManager)handler.newProxyObject(new UserManagerImpl());
+					//UserManagerImpl userManager = (UserManagerImpl)handler.newProxyObject(new UserManagerImpl());
+					//userManager.addUser("张三", "123");
+					//userManager.modifyUser(1, "张三", "123");
+					userManager.findUserById(1);
+				}
+
+			}
+		InvocationHandler中通过newProxyObject（）得到了一个实现了接口的代理，
+			该代理能动态的代理接口中的方法，被代理对象只能时实现了接口的对象
+			有第3方组件可以代理一般java对象</pre> 
+<p>&nbsp;</p>

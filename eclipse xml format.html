@@ -1,0 +1,35 @@
+<p><span style="font-size: x-small;"><span style="font-size: xx-small;">以前很喜欢在<span class="hilite1"><span style="background-color: #ffff00;">Eclipse</span></span>中使用CTRL+ALT+F来进行自动排版.不过今天发现以后要绝对慎用这项功能,尤其是在<span class="hilite2"><span style="background-color: #55ff55;">xml</span></span>和html中,尽量不要使用..因为今天发现,本来运行得很好的配置文件,只要一自动排版,就会报出一些莫名其妙的错误,而且这种错误是你检查配置检查不出来的,因为配置看起来根本就没变!!<br>猜测是由于在<span class="hilite2"><span style="background-color: #55ff55;">xml</span></span>的entity中加了空格或者换行符的缘故.</span></span> </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<table style="width: 660px; height: 56px;" border="0"> 
+ <tbody>
+  <tr> 
+   <td>&nbsp;</td> 
+  </tr> 
+  <tr> 
+   <td>有同感，在格式话的时候会加入空格，而很难检查出问题。 <br>像数据库的连接地址，要保证中间没有空格，但格式化后会加入空格。导致数据库连接出错</td> 
+  </tr> 
+ </tbody>
+</table> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span class="hilite1"><span style="background-color: #ffff00;">eclipse</span></span>&nbsp; 中的 code format 中的问题看来不只我一个人遇到，特别是在<span class="hilite2"><span style="background-color: #55ff55;">xml</span></span>文件中format代码。</p> 
+<p>&nbsp;</p> 
+<p>一般的解决办法有如下途径：</p> 
+<p>&nbsp;</p> 
+<table style="width: 648px; height: 42px;" border="0">
+ <tbody>
+  <tr> 
+   <td> <h3 title="随笔"><a href="http://jlk.iteye.com/blog/244020"><span style="color: #006600;"><span style="font-size: x-small;"><span class="hilite1"><span style="background-color: #ffff00;">eclipse</span></span> code format设置</span></span></a></h3> 
+    <div class="blog_content"> 
+     <div class="tit"> 
+      <span class="hilite1"><span style="background-color: #ffff00;">eclipse</span></span> code format设置
+     </div> 
+    </div> <p>上面仅仅是针对<span class="hilite1"><span style="background-color: #ffff00;">Eclipse</span></span>基本的Editor设置。对于Java/HTML/Ant等扩展编辑器，你还不得不单独去设定<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * Preference:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1). For Java: sets java code style in <span style="background-color: #ffff00;"><span class="hilite1">eclipse</span><br></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; windows-&gt;preferences-&gt;java-&gt;Code style-&gt;Formatter<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; add a new profile , for more detail, test it in <span class="hilite1"><span style="background-color: #ffff00;">eclipse</span></span> please <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2). For Ant: sets build.<span class="hilite2"><span style="background-color: #55ff55;">xml</span></span> in <span style="background-color: #ffff00;"><span class="hilite1">eclipse</span><br></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; windows-&gt;preferences-&gt;Ant&gt;Editor-&gt;Formatter<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; uncheck [Use tab character instead of spaces] option.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3). For Html:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; windows-&gt;preferences-&gt;Web and <span class="hilite2"><span style="background-color: #55ff55;">XML</span></span>-&gt;HTML Files-&gt;HTML Source<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select "Indent using tabs" and set space =2<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4). For <span class="hilite2"><span style="background-color: #55ff55;">XML</span></span>:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; windows-&gt;preferences-&gt;Web and <span class="hilite2"><span style="background-color: #55ff55;">XML</span></span>-&gt;<span class="hilite2"><span style="background-color: #55ff55;">XML</span></span> Files-&gt;<span class="hilite2"><span style="background-color: #55ff55;">XML</span></span> Source<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select "Indent using tabs" and set space =2<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5). For Properties<br>&nbsp;&nbsp;&nbsp; 3). 如何配置jsp,properties等文件默认使用UTF-8编码创建或者阅读？<br>&nbsp;&nbsp;&nbsp;&nbsp; (Eclipse3.2+) Windows-&gt;General-&gt;Content Types下选择指定的扩展名，然后说明相应的编码，然后Update.<br>&nbsp;&nbsp;&nbsp; 4). 转换存在文件的回车换行格式</p> </td> 
+  </tr>
+ </tbody>
+</table> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>我在<span class="hilite2"><span style="background-color: #55ff55;">xml</span></span>中遇到这种问题，我改到的地方只是在windows-&gt;preferences-&gt;myeclipse-&gt;files and editors-&gt;<span class="hilite2"><span style="background-color: #55ff55;">xml</span></span>-&gt;<span class="hilite2"><span style="background-color: #55ff55;">xml</span></span> source 下面的formatting栏中将line width 设置成172 ，默认是72.</p> 
+<p>我想，可能是因为line width 过小，导至在fomat时自动把<span class="hilite2"><span style="background-color: #55ff55;">xml</span></span> 标签split掉，然后又加了一些多余的空格，因而改变了<span class="hilite2"><span style="background-color: #55ff55;">xml</span></span> 实际内容。</p>

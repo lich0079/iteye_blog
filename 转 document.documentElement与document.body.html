@@ -1,0 +1,151 @@
+<p>原来HTML里是document.body<br> XHTML里是document.documentElement<br> 都指的是&lt;body&gt;节点(OR元素)<br><br><br> 可以这样兼容：<br><br> function getBodyObj()<br> {<br> return (document.documentElement) ? document.documentElement : document.body ;<br> }</p> 
+<p>在DHTML文档中对documentElement的说明是：Object that receives the reference to the document element，The root node of a typical HTML document is the <a>html</a> object.</p> 
+<p>body</p> 
+<div class="clsWhatsnew"> 
+ <strong>Microsoft<sup>®</sup> Internet Explorer 6 的新增内容</strong> 
+ <p>当你使用 <a>!DOCTYPE</a> 声明指定标准兼容模式的时候，此对象将不再代表文档内容所渲染的整个表面。该对象当然可从其内容中获得其大小，但你也可以像 <a>div</a> 对象那样精确设置其大小。</p> 
+ <p>也就是说在HTML4.0标准下用document.body，在XHTML标准下就要换成document.documentElement。XHTML下document.body仅仅表示body对象，而不能代表文档内容所渲染的整个表面。HTML下document.body.clientHeight表示浏览器的可视高度，XHTML下则是document.documentElement.clientHeight。document.body.clientHeight在XHTML下仅表示body的可视高度。在HTML4.0下用document.body.scrollTop；而在XHTML下则是document.documentElement.scrollTop,之前的document.body.scrollTop是恒为0的。</p> 
+ <p>&nbsp;</p> 
+ <p>===================================================================</p> 
+ <p>IE6在页面内容超出窗口大小时将宽度属性scrollWidth、clientWidth、offsetWidth都解释为内容实际宽度。 <br> 上次的测试说明了document.body属性并不会给我们返回预期的结果，比如我们用document.body.clientHeight原本想取得“页面可见区域高度”，可实际上返回的是“页面实际内容高度”。 <br> 那我们怎么办呢？难道加上了文档DTD类型之后就再也不能取到“可见区域高度”和“内容实际宽度”等等属性了吗？ <br></p> 
+ <pre name="code" class="java">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt; 
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt; 
+&lt;head runat="server"&gt; 
+&lt;title&gt;documentElement&lt;/title&gt; 
+&lt;style type="text/css"&gt; 
+body{margin:0;padding:0;font:12px/150% arial;} 
+&lt;/style&gt; 
+&lt;script type="text/javascript"&gt; 
+function a() { 
+var scrollTop; 
+var scrollLeft; 
+if (typeof window.pageYOffset != 'undefined') { 
+scrollTop = window.pageYOffset; 
+scrollLeft = window.pageXOffset; 
+} 
+else if (typeof document.compatMode != 'undefined' &amp;&amp; document.compatMode != 'BackCompat') { 
+scrollTop = document.documentElement.scrollTop; 
+scrollLeft = document.documentElement.scrollLeft; 
+} 
+else if (typeof document.body != 'undefined') { 
+scrollTop = document.body.scrollTop; 
+scrollLeft = document.body.scrollLeft; 
+} 
+var scrollHeight = document.documentElement.scrollHeight; 
+var scrollWidth = document.documentElement.scrollWidth; 
+var clientWidth = document.documentElement.clientWidth; 
+var clientHeight = document.documentElement.clientHeight; 
+var offsetWidth = document.documentElement.offsetWidth; 
+var offsetHeight = document.documentElement.offsetHeight; 
+var screenTop = window.screenTop; 
+var screenBottom = window.screenBottom; 
+var screenLeft = window.screenLeft; 
+var sheight = window.screen.height; 
+var swidth = window.screen.width; 
+var availHeight = window.screen.availHeight; 
+var availWidth = window.screen.availWidth; 
+document.getElementById('scrollTop').value = scrollTop; 
+document.getElementById('scrollLeft').value = scrollLeft; 
+document.getElementById('scrollHeight').value = scrollHeight; 
+document.getElementById('scrollWidth').value = scrollWidth; 
+document.getElementById('clientWidth').value = clientWidth; 
+document.getElementById('clientHeight').value = clientHeight; 
+document.getElementById('offsetWidth').value = offsetWidth; 
+document.getElementById('offsetHeight').value = offsetHeight; 
+document.getElementById('screenTop').value = screenTop; 
+document.getElementById('screenBottom').value = screenBottom; 
+document.getElementById('screenLeft').value = screenLeft; 
+document.getElementById('sheight').value = sheight; 
+document.getElementById('swidth').value = swidth; 
+document.getElementById('availHeight').value = availHeight; 
+document.getElementById('availWidth').value = availWidth; 
+} 
+&lt;/script&gt; 
+&lt;/head&gt; 
+&lt;body&gt; 
+&lt;div style="width:420px;height:470px;margin:0 auto;font-size:12px; border:solid 5px #ccc;"&gt; 
+&lt;center&gt; 
+&lt;table width="400" border="0" cellspacing="0" cellpadding="0" style="font-size:12px;margin-top:20px;"&gt; 
+&lt;tr&gt; 
+&lt;td width="187" align="right"&gt;scrollTop（滚动条卷过的高）：&lt;/td&gt; 
+&lt;td width="10"&gt; &lt;/td&gt; 
+&lt;td width="209"&gt;&lt;input type="text" name="scrollTop" id="scrollTop" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;scrollLeft（滚动条卷过的宽）：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="scrollLeft" id="scrollLeft" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;scrollHeight（内容实际高度）：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="scrollHeight" id="scrollHeight" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;scrollWidth（内容实际宽度）：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="scrollWidth" id="scrollWidth" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;clientWidth（可见区域宽）：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="clientWidth" id="clientWidth" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;clientHeight（可见区域高）：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="clientHeight" id="clientHeight" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;offsetWidth（加滚动条宽？）：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="offsetWidth" id="offsetWidth" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;offsetHeight（加滚动条高？）：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="offsetHeight" id="offsetHeight" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;screenTop：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="screenTop" id="screenTop" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;screenBottom：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="screenBottom" id="screenBottom" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;screenLeft：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="screenLeft" id="screenLeft" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;sheight（分辨率高）：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="sheight" id="sheight" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;swidth（分分辨率宽）：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="swidth" id="swidth" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;availHeight：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="availHeight" id="availHeight" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;tr&gt; 
+&lt;td align="right"&gt;availWidth：&lt;/td&gt; 
+&lt;td&gt; &lt;/td&gt; 
+&lt;td&gt;&lt;input type="text" name="availWidth" id="availWidth" /&gt;&lt;/td&gt; 
+&lt;/tr&gt; 
+&lt;/table&gt; 
+&lt;a href="javascript:a()" style="height:20px;display:block;"&gt;内容高度是400PX，点击查看所有属性值&lt;/a&gt; 
+&lt;/center&gt; 
+&lt;/div&gt; 
+&lt;/body&gt; 
+&lt;/html&gt; </pre> &nbsp; 
+ <p>其实，我们可以用document.documentElement代替document.body来获取我们想要的结果 将代码中的document.body替换为document.documentElement，再来看看各浏览器下的实际结果： <br> ii测试结果表明，IE系列浏览器对document.documentElement属性的解释是正确的，其它标准浏览器将offsetHeight解释成 了scrollHeight。火狐和netscape更是把这两个属性调换了过来。不过总的来说各属性都可以有个相应的解释，不会像 document.body一样只有可怜的两种解释。 <br> 终于可以放心地使用JS方法获取各种页面高宽属性了吧^_^!</p> 
+</div>

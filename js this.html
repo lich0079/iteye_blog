@@ -1,0 +1,65 @@
+<pre class="java" name="code">var scope = this;
+				toolbar.add({
+							iconCls : 'graphOrderAdd',
+							name : 'graphOrder_btn',
+							handler : function(btn) {
+								scope.opToolbarClick(btn)
+							}
+
+						});</pre> 
+<p>&nbsp;&nbsp;写ext代码的时候经常这样写scope.opToolbarClick(btn)&nbsp; 为什么不能写this呢</p> 
+<p>&nbsp;</p> 
+<p>下面贴一段网络上的</p> 
+<p>&nbsp;</p> 
+<p><a name="this"><span class="atitle">this</span></a></p> 
+<p>JavaScript 中的 this 一直是容易让人误用的，尤其对于熟悉 Java 的程序员来说，因为 JavaScript 中的 this 与 Java 中的 this 有很大不同。在一个 function 的执行过程中，如果变量的前面加上了 this 作为前缀的话，如<code>this.myVal</code>，对此变量的求值就从 this 所表示的对象开始。</p> 
+<p>this 的值取决于 function 被调用的方式，一共有四种，具体如下： </p> 
+<ul> 
+ <li>如果一个 function 是一个对象的属性，该 funtion 被调用的时候，this 的值是这个对象。如果 function 调用的表达式包含句点（.）或是 []，this 的值是句点（.）或是 [] 之前的对象。如<code>myObj.func</code>和<code>myObj["func"]</code>中，<code>func</code>被调用时的 this 是<code>myObj</code>。 </li> 
+ <li>如果一个 function 不是作为一个对象的属性，那么该 function 被调用的时候，this 的值是全局对象(注：window)。当一个 function 中包含内部 function 的时候，如果不理解 this 的正确含义，很容易造成错误。这是由于内部 function 的 this 值与它外部的 function 的 this 值是不一样的。<a href="http://www.ibm.com/developerworks/cn/web/wa-lo-dojoajax1/?S_TACT=105AGX52&amp;S_CMP=tec-csdn#code5">代码清单 5</a>中，在<code>myObj</code>的<code>func</code>中有个内部名为<code>inner</code>的 function，在<code>inner</code>被调用的时候，this 的值是全局对象，因此找不到名为<code>myVal</code>的变量。这个时候通常的解决办法是将外部 function 的 this 值保存在一个变量中（此处为<code>self</code>），在内部 function 中使用它来查找变量。 </li> 
+ <li>如果在一个 function 之前使用 new 的话，会创建一个新的对象，该 funtion 也会被调用，而 this 的值是新创建的那个对象。如<code>function User(name) {this.name = name}; var user1 = new User("Alex");</code>中，通过调用<code>new User("Alex")</code>，会创建一个新的对象，以<code>user1</code>来引用，<code>User</code>这个 function 也会被调用，会在<code>user1</code>这个对象中设置名为<code>name</code>的属性，其值是<code>Alex</code>。 </li> 
+ <li>可以通过 function 的 apply 和 call 方法来指定它被调用的时候的 this 的值。 apply 和 call 的第一个参数都是要指定的 this 的值，两者不同的是调用的实际参数在 apply 中是以数组的形式作为第二个参数传入的，而 call 中除了第一个参数之外的其它参数都是调用的实际参数。如<code>func.apply(anotherObj, [arg1, arg2])</code>中，<code>func</code>调用时候的 this 指的是<code>anotherObj</code>，两个参数分别是<code>arg1</code>和<code>arg2</code>。同样的功能用 call 来写则是<code>func.call(anotherObj, arg1, arg2)</code>。 </li> 
+</ul> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>===================================================================</p> 
+<p>那么我上面的那段代码里面的this是什么呢 是window吗&nbsp; 我加上了代码做试验</p> 
+<p>&nbsp;</p> 
+<p><br>&nbsp;</p> 
+<pre class="java" name="code">var scope = this;
+toolbar.add({
+		iconCls : 'graphAdd',
+		id:'aaa',
+		name : 'graphBtn',
+		handler : function(btn) {
+			alert(this==window); //false
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 	alert(this==scope);    //false
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		alert(this.id);             //'aaa'
+			scope.opToolbarClick(btn);
+		}
+
+});</pre> 
+<p>&nbsp;那么很明显 handler函数是某个对象的属性 所以他的代码内部this指向的是这个‘某个对象’就是上面handler函数外层的那个{}定义的对象</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>另一段测试代码</p> 
+<pre class="java" name="code">		function Container(param) {
+
+			var that = this;
+
+			function service() {
+				return this==window;
+			};
+			alert(service());      //true这个函数不是对象的成员 this指向全局
+
+			this.foo1=function(){
+				return this==window;
+			};
+		}
+		var a=new Container('aaaa');	
+		alert(a.foo1());         //false  foo1函数是对象的成员  this 不是window</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>我想的可能有不对的地方 望大家不吝赐教</p>

@@ -1,0 +1,17 @@
+<p>想用dojo.dnd做一个ms那种拖纸牌游戏(http://starcraft2trilogy.appspot.com/dojostudy/dnd.html)，其中需要在拖动完成后写事件，判断原先节点和拖动后节点的子节点数，也就是已有纸牌的数，找dojo列子动不动就是dojo.subscribe("/dnd/drop",function(source,nodes,copy){}&nbsp; </p> 
+<p>可是那个source怎么操作，有什么api却没怎么提到，找管网也没，要不怎么都说dojo api变态啊&nbsp;</p> 
+<p>后来找到一个方法，console。dir（source），在控制台把source的内部属性，方法都打了出来，终于找到了</p> 
+<p>source.getAllNodes().length&nbsp;&nbsp; 这样就可以操作目标子节点了，</p> 
+<p>随便说下这么获得拖动之后节点&nbsp; </p> 
+<p>var t=dojo.dnd.manager().target;&nbsp;&nbsp;&nbsp; 它也可以getAllNodes().length </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="js">dojo.subscribe("/dnd/drop",function(source,nodes,copy){
+				var t=dojo.dnd.manager().target;
+				alert(source.getAllNodes().length);
+				alert(t.getAllNodes().length);
+				alert(nodes.length);
+				console.log("/dnd/drop",source,nodes,copy);
+				console.dir(source);
+			});</pre> 
+<p>&nbsp;</p>

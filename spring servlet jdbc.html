@@ -1,0 +1,315 @@
+<p>这个文章的关注点是如何在只准使用servlet jsp jdbc的情况下 加入spring来简化 jdbc代码 事务控制 依赖注入</p> 
+<p>&nbsp;</p> 
+<p>web.xml</p> 
+<pre name="code" class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"&gt;
+	&lt;welcome-file-list&gt;
+		&lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+	&lt;/welcome-file-list&gt;
+	&lt;filter&gt;
+		&lt;filter-name&gt;WebFilter&lt;/filter-name&gt;
+		&lt;filter-class&gt;
+			org.springframework.web.filter.DelegatingFilterProxy
+		&lt;/filter-class&gt;
+		&lt;init-param&gt;
+			&lt;param-name&gt;targetFilterLifecycle&lt;/param-name&gt;
+			&lt;param-value&gt;true&lt;/param-value&gt;
+		&lt;/init-param&gt;
+	&lt;/filter&gt;
+
+	&lt;filter-mapping&gt;
+		&lt;filter-name&gt;WebFilter&lt;/filter-name&gt;
+		&lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+	&lt;/filter-mapping&gt;
+	&lt;context-param&gt;
+		&lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+		&lt;param-value&gt;
+			/WEB-INF/applicationContext-*.xml,classpath*:applicationContext-*.xml
+		&lt;/param-value&gt;
+	&lt;/context-param&gt;
+
+	&lt;listener&gt;
+		&lt;listener-class&gt;
+			org.springframework.web.context.ContextLoaderListener
+		&lt;/listener-class&gt;
+	&lt;/listener&gt;
+&lt;/web-app&gt;</pre> 
+<p>&nbsp;applicationContext.xml</p> 
+<pre name="code" class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;!--
+	- Application context definition for JPetStore's business layer.
+	- Contains bean references to the transaction manager and to the DAOs in
+	- dataAccessContext-local/jta.xml (see web.xml's "contextConfigLocation").
+--&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"&gt;
+	&lt;bean id="WebFilter" class="test.spring.WebFilter"&gt;
+		&lt;property name="manageSupport" ref="manageSupport" /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id="manageSupport" class="test.spring.ManageSupport"&gt;
+		&lt;property name="name" value="bingo" /&gt;
+		&lt;property name="jdbcTemplate" ref="jdbcTemplate"&gt;&lt;/property&gt;
+	&lt;/bean&gt;
+
+    &lt;bean id="jdbcTemplate" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate"&gt;
+    &lt;constructor-arg&gt;
+        &lt;ref bean="dataSource"/&gt;
+    &lt;/constructor-arg&gt;
+    &lt;/bean&gt;
+
+	&lt;bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close"&gt;
+		&lt;property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" /&gt;
+		&lt;property name="url" value="jdbc:jtds:sqlserver://127.0.0.1:1433/xxx" /&gt;
+		&lt;property name="username" value="sa" /&gt;
+		&lt;property name="password" value="sa" /&gt;
+	&lt;/bean&gt;
+&lt;/beans&gt;
+</pre> 
+<p>&nbsp;</p> 
+<p>WebFilter.java</p> 
+<pre name="code" class="java">package test.spring;
+
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
+public class WebFilter implements Filter {
+
+    private ManageSupport manageSupport;
+
+    public void destroy() {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void doFilter(ServletRequest arg0, ServletResponse arg1, FilterChain arg2) throws IOException, ServletException {
+        System.out.println(getClass().getName() + " filter");
+        System.out.println(manageSupport.getName());
+        int count = manageSupport.getJdbcTemplate().queryForInt("SELECT COUNT(*) FROM MESSAGE");
+        System.out.println(count);
+        arg2.doFilter(arg0, arg1);
+        HttpServletRequest req = (HttpServletRequest) arg0;
+        req.getSession().getServletContext().getRequestDispatcher("/index2.jsp").forward(arg0, arg1);
+
+    }
+
+    public void init(FilterConfig arg0) throws ServletException {
+        // TODO Auto-generated method stub
+
+    }
+
+    public ManageSupport getManageSupport() {
+        return manageSupport;
+    }
+
+    public void setManageSupport(ManageSupport manageSupport) {
+        this.manageSupport = manageSupport;
+    }
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>ManageSupport.java</p> 
+<pre name="code" class="java">package test.spring;
+
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+
+public class ManageSupport{
+    
+    private SimpleJdbcTemplate jdbcTemplate;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public SimpleJdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
+
+    public void setJdbcTemplate(SimpleJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+}</pre> 
+<p>&nbsp;事物控制在spring的sample里有参考</p> 
+<p>&nbsp;</p> 
+<p>研究了一下事物</p> 
+<p>改动如下</p> 
+<p>打算针对ManageSupport做自动事物切入</p> 
+<p>把ManageSupport重构出接口 用eclipse可以在几秒实现这个</p> 
+<pre name="code" class="java">package test.spring;
+
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+
+public interface IManageSupport {
+
+    public abstract String getName();
+
+    public abstract void setName(String name);
+
+    public abstract SimpleJdbcTemplate getJdbcTemplate();
+
+    public abstract void setJdbcTemplate(SimpleJdbcTemplate jdbcTemplate);
+    public int logic1();
+    public void logic2();
+}</pre> 
+<p>&nbsp;</p> 
+<p>在实现中的事物逻辑</p> 
+<pre name="code" class="java">public int logic1(){
+        return getJdbcTemplate().queryForInt("SELECT COUNT(*) FROM JB_COM_MESSAGE");
+    }
+    
+    public void logic2(){
+        int count=logic1();
+        for (int i = 1; i &lt;= count; i++) {
+            getJdbcTemplate().update("update JB_COM_MESSAGE set m_level =1 where id=?", i);
+        }
+    }</pre> 
+<p>&nbsp;调用业务方法的方法&nbsp; WebFilter.java中的</p> 
+<pre name="code" class="java">public void doFilter(ServletRequest arg0, ServletResponse arg1, FilterChain arg2) throws IOException, ServletException {
+        System.out.println(getClass().getName() + " filter");
+        System.out.println(manageSupport.getName());
+        int count = manageSupport.logic1();
+        System.out.println(count);
+        manageSupport.logic2();
+        arg2.doFilter(arg0, arg1);
+        HttpServletRequest req = (HttpServletRequest) arg0;
+        req.getSession().getServletContext().getRequestDispatcher("/index2.jsp").forward(arg0, arg1);
+    }</pre> 
+<p>&nbsp;</p> 
+<p>spring配置中 事务相关</p> 
+<pre name="code" class="java"> &lt;bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"&gt;
+  &lt;property name="dataSource" ref="dataSource" /&gt;
+ &lt;/bean&gt;
+
+ &lt;bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"&gt;
+  &lt;property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" /&gt;
+  &lt;property name="url" value="jdbc:jtds:sqlserver://127.0.0.1:1433/DSO" /&gt;
+  &lt;property name="username" value="sa" /&gt;
+  &lt;property name="password" value="sa" /&gt;
+ &lt;/bean&gt;
+
+ &lt;aop:config&gt;
+  &lt;aop:advisor pointcut="execution(* test.spring.IManageSupport.*(..))" advice-ref="txAdvice" /&gt;
+ &lt;/aop:config&gt;
+ 
+ &lt;tx:advice id="txAdvice"&gt;
+  &lt;tx:attributes&gt;
+   &lt;tx:method name="logic*" propagation="REQUIRED" /&gt;
+  &lt;/tx:attributes&gt;
+ &lt;/tx:advice&gt;</pre> 
+<p>&nbsp;</p> 
+<p>最后执行成功 以下是log</p> 
+<pre name="code" class="java">test.spring.WebFilter filter
+[DEBUG] 2009-12-07 10:26:45 [http-8080-Processor25] [org.springframework.transaction.interceptor.TransactionInterceptor.prepareTransactionInfo:300]  Don't need to create transaction for [test.spring.IManageSupport.getName]: This method isn't transactional.
+bingo
+[DEBUG] 2009-12-07 10:26:45 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.getTransaction:371]  Creating new transaction with name [test.spring.IManageSupport.logic1]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+[DEBUG] 2009-12-07 10:26:45 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.doBegin:202]  Acquired Connection [jdbc:jtds:sqlserver://127.0.0.1:1433/DSO, UserName=sa, jTDS Type 4 JDBC Driver for MS SQL Server and Sybase] for JDBC transaction
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.doBegin:219]  Switching JDBC Connection [jdbc:jtds:sqlserver://127.0.0.1:1433/DSO, UserName=sa, jTDS Type 4 JDBC Driver for MS SQL Server and Sybase] to manual commit
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.bindResource:186]  Bound value [org.springframework.jdbc.datasource.ConnectionHolder@6f0962] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.initSynchronization:261]  Initializing transaction synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.interceptor.TransactionInterceptor.prepareTransactionInfo:290]  Getting transaction for [test.spring.IManageSupport.logic1]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.query:436]  Executing SQL query [SELECT COUNT(*) FROM JB_COM_MESSAGE]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@6f0962] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@6f0962] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@6f0962] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.interceptor.TransactionInterceptor.commitTransactionAfterReturning:319]  Completing transaction for [test.spring.IManageSupport.logic1]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.triggerBeforeCommit:903]  Triggering beforeCommit synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.triggerBeforeCompletion:916]  Triggering beforeCompletion synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.processCommit:730]  Initiating transaction commit
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.doCommit:259]  Committing JDBC transaction on Connection [jdbc:jtds:sqlserver://127.0.0.1:1433/DSO, UserName=sa, jTDS Type 4 JDBC Driver for MS SQL Server and Sybase]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.triggerAfterCommit:929]  Triggering afterCommit synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.triggerAfterCompletion:945]  Triggering afterCompletion synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.clearSynchronization:315]  Clearing transaction synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.doUnbindResource:232]  Removed value [org.springframework.jdbc.datasource.ConnectionHolder@6f0962] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] from thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.doCleanupAfterCompletion:314]  Releasing JDBC Connection [jdbc:jtds:sqlserver://127.0.0.1:1433/DSO, UserName=sa, jTDS Type 4 JDBC Driver for MS SQL Server and Sybase] after transaction
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceUtils.doReleaseConnection:312]  Returning JDBC Connection to DataSource
+6
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.getTransaction:371]  Creating new transaction with name [test.spring.IManageSupport.logic2]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.doBegin:202]  Acquired Connection [jdbc:jtds:sqlserver://127.0.0.1:1433/DSO, UserName=sa, jTDS Type 4 JDBC Driver for MS SQL Server and Sybase] for JDBC transaction
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.doBegin:219]  Switching JDBC Connection [jdbc:jtds:sqlserver://127.0.0.1:1433/DSO, UserName=sa, jTDS Type 4 JDBC Driver for MS SQL Server and Sybase] to manual commit
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.bindResource:186]  Bound value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.initSynchronization:261]  Initializing transaction synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.interceptor.TransactionInterceptor.prepareTransactionInfo:290]  Getting transaction for [test.spring.IManageSupport.logic2]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.query:436]  Executing SQL query [SELECT COUNT(*) FROM JB_COM_MESSAGE]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.update:790]  Executing prepared SQL update
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.execute:574]  Executing prepared SQL statement [update JB_COM_MESSAGE set m_level =1 where id=?]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.StatementCreatorUtils.setParameterValueInternal:207]  Setting SQL statement parameter value: column index 1, parameter value [1], value class [java.lang.Integer], SQL type unknown
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.doInPreparedStatement:800]  SQL update affected 1 rows
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.update:790]  Executing prepared SQL update
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.execute:574]  Executing prepared SQL statement [update JB_COM_MESSAGE set m_level =1 where id=?]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.StatementCreatorUtils.setParameterValueInternal:207]  Setting SQL statement parameter value: column index 1, parameter value [2], value class [java.lang.Integer], SQL type unknown
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.doInPreparedStatement:800]  SQL update affected 1 rows
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.update:790]  Executing prepared SQL update
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.execute:574]  Executing prepared SQL statement [update JB_COM_MESSAGE set m_level =1 where id=?]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.StatementCreatorUtils.setParameterValueInternal:207]  Setting SQL statement parameter value: column index 1, parameter value [3], value class [java.lang.Integer], SQL type unknown
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.doInPreparedStatement:800]  SQL update affected 1 rows
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.update:790]  Executing prepared SQL update
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.execute:574]  Executing prepared SQL statement [update JB_COM_MESSAGE set m_level =1 where id=?]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.StatementCreatorUtils.setParameterValueInternal:207]  Setting SQL statement parameter value: column index 1, parameter value [4], value class [java.lang.Integer], SQL type unknown
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.doInPreparedStatement:800]  SQL update affected 1 rows
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.update:790]  Executing prepared SQL update
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.execute:574]  Executing prepared SQL statement [update JB_COM_MESSAGE set m_level =1 where id=?]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.StatementCreatorUtils.setParameterValueInternal:207]  Setting SQL statement parameter value: column index 1, parameter value [5], value class [java.lang.Integer], SQL type unknown
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.doInPreparedStatement:800]  SQL update affected 1 rows
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.update:790]  Executing prepared SQL update
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.execute:574]  Executing prepared SQL statement [update JB_COM_MESSAGE set m_level =1 where id=?]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.StatementCreatorUtils.setParameterValueInternal:207]  Setting SQL statement parameter value: column index 1, parameter value [6], value class [java.lang.Integer], SQL type unknown
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.core.JdbcTemplate.doInPreparedStatement:800]  SQL update affected 1 rows
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.getResource:142]  Retrieved value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] bound to thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.interceptor.TransactionInterceptor.commitTransactionAfterReturning:319]  Completing transaction for [test.spring.IManageSupport.logic2]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.triggerBeforeCommit:903]  Triggering beforeCommit synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.triggerBeforeCompletion:916]  Triggering beforeCompletion synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.processCommit:730]  Initiating transaction commit
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.doCommit:259]  Committing JDBC transaction on Connection [jdbc:jtds:sqlserver://127.0.0.1:1433/DSO, UserName=sa, jTDS Type 4 JDBC Driver for MS SQL Server and Sybase]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.triggerAfterCommit:929]  Triggering afterCommit synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.triggerAfterCompletion:945]  Triggering afterCompletion synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.clearSynchronization:315]  Clearing transaction synchronization
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.transaction.support.TransactionSynchronizationManager.doUnbindResource:232]  Removed value [org.springframework.jdbc.datasource.ConnectionHolder@139a0dc] for key [org.apache.commons.dbcp.BasicDataSource@17e9134] from thread [http-8080-Processor25]
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceTransactionManager.doCleanupAfterCompletion:314]  Releasing JDBC Connection [jdbc:jtds:sqlserver://127.0.0.1:1433/DSO, UserName=sa, jTDS Type 4 JDBC Driver for MS SQL Server and Sybase] after transaction
+[DEBUG] 2009-12-07 10:26:46 [http-8080-Processor25] [org.springframework.jdbc.datasource.DataSourceUtils.doReleaseConnection:312]  Returning JDBC Connection to DataSource
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

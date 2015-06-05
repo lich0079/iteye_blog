@@ -1,0 +1,15 @@
+<p>java.exe 有可能被装到system下 所以切换环境变量JDK版本换不掉&nbsp; </p> 
+<p>&nbsp;</p> 
+<p>公有部分往上移动 class<br>不再循环做的事不要放在循环里</p> 
+<p>&nbsp;</p> 
+<p>每个.close() 必修包含在try快中&nbsp;&nbsp; --JDBC</p> 
+<p>&nbsp;</p> 
+<p>FileWriter fw;<br>&nbsp;&nbsp; try {<br>&nbsp;&nbsp; &nbsp;fw = new FileWriter(new File("c:/ForceExpire.txt"));<br>fw.write("ForceExpire "+new Date());<br>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; fw.close();&nbsp; <br>&nbsp;&nbsp; } catch (IOException e) {<br>&nbsp;&nbsp;&nbsp;&nbsp;e.printStackTrace();<br>&nbsp;&nbsp; }&nbsp;&nbsp;// debug&nbsp; 看代码是否经过&nbsp; 当无法debug的时候</p> 
+<p>&nbsp;</p> 
+<p>System.getProperties().list(System.out);&nbsp; 输出所有System.getProperties()</p> 
+<p>&nbsp;</p> 
+<p>在GC输出的环境下，大压力下做多天的测试。（可以在 JAVA_OPTS增加-verbose:gc -XX:+PrintGCDetails -XX:+HeapDumpOnOutOfMemoryError）</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;heapdump<br>java -Xrunhprof:help</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

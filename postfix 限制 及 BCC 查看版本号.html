@@ -1,0 +1,208 @@
+<p><span style="border-collapse: collapse; font-family: song,Verdana;"> </span> </p> 
+<div> 
+ <div>
+  查看版本号&nbsp; postconf mail_version
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div> 
+  <a href="http://cublog.cn/u2/73230/showart.php?id=1336006">http://cublog.cn/u2/73230/showart.php?id=1336006</a> 
+ </div> 
+ <div> 
+  <strong>postfix的频率控制有几个:<br></strong> smtpd_client_connection_rate_limit=5
+  <br> ip地址连接的频率控制.
+  <br> smtpd_client_message_rate_limit=5
+  <br> 客户端发送邮件的频率控制.(某种情况下smtpd_client_message_rate_limit和 smtpd_client_connection_rate_limit的效果是一样.smtpd_client_connection_rate_limit是指连接到服务器25端口就开始计算,smtpd_client_message_rate_limit是发送邮件时计算.)
+  <br>
+  <br> smtpd_client_recipient_rate_limit=10
+  <br> rcpt to的频率控制,也就是说TO了多少个人.
+  <br> smtpd_client_event_limit_exceptions = ${smtpd_client_connection_limit_exceptions:$mynetworks}
+  <br> 指不做频率控制检测的网络,默认是mynetworks.
+ </div> 
+ <div>
+  &nbsp;
+ </div> 
+ <div> 
+  <span style="font-size: x-small;"><strong>posftfix的性能控制<br></strong> 之所以对postfix的性能进行控制，是为了在遇到邮件风暴时保证postfix可以正常运行。通常，我们可以通过对下列postfix参数的配置来调节postfix的性能，这些参数都是通过mail.cf配置文件进行配置的，修改以后不要忘了运行postfix reload命令来使配置生效。<br><br> 1． 进程数限制<br> 可以通过default_process_limit 参数来控制postfix系统同时可以运行的最大进程数目。缺省值是50个。&nbsp;<br><br> 2． 对同一目标主机的并发连接限制<br> 当向同一目标主机发出SMTP连接时，postfix初始化发出两个SMTP连接，如果投递成功则增加并发的SMTP连接数目，遇到拥塞时又减少并发连接的数目。postfix中通过以下的参数对同一目标主机的并发连接进行控制：<br> * initial_destination_concurrency：控制对同一目标主机的初始化并发连接数目。缺省值为2。<br> * default_destination_concurrency_limit：控制初始化连接后对同一目标主机的最大并发连接数目。缺省值为10。<br> * local_destination_concurrency_limit：控制对同一本地收件人的最大同时投递的邮件数目。缺省值为2，因为对本地同一收件人投递邮件时投递工作只能一个接一个的进行，所以设得在大也没用。<br><br> 3． 对同一封邮件的收件人数目限制<br> 通过default_destination_recipient_limit参数来控制postfix的投递代理（如<br> smtp进程）可以将同一封邮件发送给多少个收件人。缺省值为50。也可以用明确指出该投递代理的参数来覆盖该缺省值。如用smtpd_recipient_limit来指定smtp投递代理可以将同一封邮件发送给多少个收件人，该参数的缺省值为1000。<br> &nbsp; &nbsp;&nbsp;<br> 4． 推迟投递控制<br> 通过defer_transports参数，我们可以推迟投递该参数指定的邮件直到postfix明确的提出投递要求。下面我们看一个例子：<br> 有一个小型的局域网，用户都将邮件发送给局域网内部的一台postfix<br> 邮件服务器，然后通过在该服务器上拨号将邮件发送出去。这时我们可以这样指定该参数的值：<br> &nbsp; &nbsp;defer_transports = smtp<br> 该语句表示postfix推迟投递所有的邮件直到执行sendmail -q命令，这样<br> 我们就可以在ppp的脚本中加上sendmail -q，以便在拨号成功后让postfix开始投递邮件。<br><br> 5． 关于延迟邮件的再投递控制<br> 可以通过以下的几个参数实现对延迟邮件的再投递控制：<br> queue_run_delay：设置队列管理进行扫描deferred邮件队列的频率，缺省值为1000秒。<br> maximal_queue_lifetime：设置postfix在放弃投递而返回不可投递信息前，被延迟邮件再deferred邮件队列中的生存时间。<br> minimal_backoff_time：当一封邮件投递失败后，邮件队列将在一段时间内忽视该邮件的存在，也就是我们前面讲的时间邮票。该参数就是用来设置最小的时间邮票。缺省值为1000秒。<br> maximal_backoff_time：设置最大的时间邮票。<br><br> 6． 对拒绝服务攻击的处理<br> postfix对每一个SMTP会话都设置一个错误计数器，当该客户端的请求未<br> 被接受或违反那UCE规则时，该计数器就增1。随着计数器的增加，postfix将采取不同的措施来防止恶意用户的拒绝服务攻击。<br> smtpd_error_sleep_time：当该错误计数器的值还很小时，postfix将暂停<br> smtpd_error_sleep_time指定的时间，然后向客户端报告一个错误。该参数的缺省值为5秒。<br> &nbsp; &nbsp; smtpd_soft_error_limit：当错误计数器的值超过该参数指定的值时，postfix在响应该客户端请求前将沉睡一段时间。缺省值为10。<br> smtpd_hard_error_limit：当错误计数器的值超过该参数指定的值时，postfix<br> 中断同该客户端的连接。缺省值为100。<br><br><span style="font-weight: bold;">postfix对使用资源的控制</span> <br> 通过特定的postfix配置参数，我们可以实现postfix运行时对所消耗的资源的灵活控制。可以通过以下几个方面来控制postfix消耗的资源：<br><br> 1． 限制内存中的对象的大小<br> 要控制对内存资源的消耗，必须控制内存中对象的大小。可以用以下的参数来进行对象大小的控制：<br> line_length_limit：控制读入数据时每一行的大小，如果太长则强行将其分割成更短的行，太长的行在投递时再重组。缺省值为2048 bytes。<br> header_size_limit：限制信头长度。缺省值为102400bytes。<br> message_size_limit：限制postfix队列文件的大小。缺省值为10240000 bytes。<br> queue_minfree：邮件队列中可用的空间大小。缺省为无限制。建议该值最好时message_size_limit的数倍以便于处理大邮件。<br> bounce_size_limit：限制某一邮件不可投递时，返回给发件人不可投递报告的大小，缺省值为50000 bytes。<br><br> 2． 限制内存中对象的数目<br> qmgr_message_recipient_limit：设置内存中收件人地址的最大数目。缺省值为10000。<br> qmgr_message_active_limit：设置active邮件队列中邮件数目的最大值。缺省值为1000。<br> duplicate_filter_limit：设置需要local和cleanup后台程序记住的收件人地址的最大数目。缺省值为1000。<br><br> 3．限制等待一个外部命令完成的时间<br> command_time_limit：设置local程序等待一个外部命令完成的时间。缺省值为1000秒。<br><br> 4． 限制文件锁定的操作时间<br> &nbsp; &nbsp;deliver_lock_attempts：设置锁定一个文件的最大尝试次数。缺省值为5次。<br> &nbsp; &nbsp;deliver_lock_delay：设置如果锁定一个文件失败后再次尝试的等待时间，缺省值为1秒。<br> &nbsp; &nbsp;<br> 5． 控制错误恢复<br> 在某些情况下（如高负载），postfix的某个进程可能会死掉，这时master进<br> 程会试图重新启动该进程，我们可以通过下面的参数来控制这种行为：<br> fork_attempts：试图重启动一个进程的最大尝试次数。缺省值为5次。<br> fork_delay：每两次尝试之间的等待时间，缺省值为1秒。<br> transport_retry_time：队列管理进程每两次尝试连接一个不正常的投递代理进程之间的等待时间。缺省为60秒。</span> 
+ </div> 
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ postfix的bcc（密送）功能可以根据条件，将所有经过postfix队列的邮件根据规则密送到指定的邮箱。
+</div> 
+<div>
+ postfix带有三个bcc参数：
+</div> 
+<div>
+ ①、always_bcc：将所有的邮件都备份到指定邮箱；
+</div> 
+<div>
+ ②、sender_bcc_maps：将收件人包含在map文件中的邮件被分到指定邮箱；
+</div> 
+<div>
+ ③、recipient_bcc_maps：将收件人包含在map文件中的邮件被分到指定邮箱。
+</div> 
+<div>
+ &nbsp;
+</div> 
+<div>
+ 1、recipient_bcc_maps和sender_bcc_maps的使用
+</div> 
+<div>
+ #&nbsp;vi /etc/postfix/main.cf #增加下面两行
+</div> 
+<div>
+ recipient_bcc_maps = hash:/etc/postfix/recipient_bcc
+ <br> sender_bcc_maps = hash:/etc/postfix/sender_bcc
+</div> 
+<div>
+ &nbsp;
+</div> 
+<div>
+ # cat sender_bcc
+ <br>
+ <a style="text-decoration: underline; color: #0044b6;" href="mailto:sender@test.com">sender@test.com</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ <a style="text-decoration: underline; color: #0044b6;" href="mailto:backup@test.com">backup@test.com</a> 
+</div> 
+<div>
+ # cat recipient_bcc
+ <br>
+ <a style="text-decoration: underline; color: #0044b6;" href="mailto:recipient@test.com">recipient@test.com</a> &nbsp;&nbsp;&nbsp;
+ <a style="text-decoration: underline; color: #0044b6;" href="mailto:backup@test.com">backup@test.com</a> 
+</div> 
+<div>
+ &nbsp;
+</div> 
+<div>
+ #postmap /etc/postfix/sender_bcc
+ <br>
+ <div>
+  #postmap /etc/postfix/recipient_bcc
+ </div> 
+ <div>
+  &nbsp;
+ </div> 
+ <div>
+  #/etc/init.d/postfix reload
+ </div> 
+ <div>
+  &nbsp;
+ </div> 
+ <div>
+  2、always_bcc的使用方法
+ </div> 
+ <div>
+  #&nbsp;vi /etc/postfix/main.cf #增加下面一行
+ </div> 
+ <div>
+  always_bcc =&nbsp;
+  <a style="text-decoration: underline; color: #0044b6;" href="mailto:backup@test.com">backup@test.com</a> 
+ </div> 
+ <div>
+  &nbsp;
+ </div> 
+ <div>
+  #/etc/init.d/postfix reload
+ </div> 
+ <div>
+  &nbsp;
+ </div> 
+ <div> 
+  <span style="color: #ff0000;">注意：如果bbc被弹回，退信将被退回到发件人</span> 
+ </div> 
+</div> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="border-collapse: collapse; font-family: song,Verdana;"> </span> </p> 
+<div></div> 
+<div>
+ ＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+</div> 
+<div> 
+ <p>main.cf中与bcc有关的三个设置</p> 
+ <table border="1"> 
+  <tbody>
+   <tr> 
+    <td> <strong>参数</strong> </td> 
+    <td> <strong>含义</strong> </td> 
+   </tr> 
+   <tr> 
+    <td>sender_bcc_maps</td> 
+    <td>通过 postfix 发送出去的邮件</td> 
+   </tr> 
+   <tr> 
+    <td>recipient_bcc_maps</td> 
+    <td>通过 postfix 接收到的邮件</td> 
+   </tr> 
+   <tr> 
+    <td>always_bcc</td> 
+    <td>通过 postfix 发送和接收的任何邮件。参数是单独的 *一个* 邮件地址</td> 
+   </tr> 
+  </tbody>
+ </table> 
+ <p>注意：</p> 
+ <ul> 
+  <li>如果设置了整个域的 bcc，又为域内的某个用户单独设置了 bcc，则只有域的 bcc 会生效。</li> 
+  <li>bcc 不支持多个地址，只能是单个地址。</li> 
+ </ul> 
+ <p>&nbsp;</p> 
+ <p><strong><span style="font-size: medium;">如何设置</span> </strong> </p> 
+ <p>如果你的postfix管理着多个邮件域，你希望将所有的进出邮件都转发到一个地址，使用always_bcc进行简单配置就可以了。<br> 编辑/etc/postfix/main.cf，加入</p> 
+ <div class="wp_syntax"> 
+  <div class="code"> 
+   <pre class="shell">always_bcc = user@simple.org</pre> 
+  </div> 
+ </div> 
+ <p>如果需要为不同的域设置不同的转发地址，只针对个别用户转发或只需要保存接收信件，则只能使用sender_bcc_maps与recipient_bcc_maps了。<br> 编辑/etc/postfix/main.cf，加入</p> 
+ <div class="wp_syntax"> 
+  <div class="code"> 
+   <pre class="shell">sender_bcc_maps = hash:/etc/postfix/sender_bcc_maps
+recipient_bcc_maps = hash:/etc/postfix/recipient_bcc_maps</pre> 
+  </div> 
+ </div> 
+ <p>然后建立/etc/postfix/sender_bcc_maps与/etc/postfix/recipient_bcc_maps</p> 
+ <div class="wp_syntax"> 
+  <div class="code"> 
+   <pre class="shell">## 用户##
+#a@a.org    c@c.org
+#b@b.org    c@c.org
+## 全域##
+#@a.org      c@c.org
+#@b.org      c@c.org</pre> 
+  </div> 
+ </div> 
+ <p>根据你的需要，设置为全域或者单个用户即可</p> 
+ <p>编辑完成后需要生成hash db，否则postfix读不到配置文件</p> 
+ <div class="wp_syntax"> 
+  <div class="code"> 
+   <pre class="shell">postmap hash:/etc/postfix/sender_bcc_maps
+postmap hash:/etc/postfix/recipient_bcc_maps</pre> 
+  </div> 
+ </div> 
+ <p>最后执行postfix reload重载配置文件，你的更改就生效了</p> 
+ <p>PS：不要忘记将接收信箱的quota调大一些或者干脆不设限额，否则信箱满了后接踵而来的就是铺天盖地的退信。</p> 
+</div> 
+<p>&nbsp;</p>

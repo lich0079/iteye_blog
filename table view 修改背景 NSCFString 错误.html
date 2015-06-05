@@ -1,0 +1,16 @@
+<p>&nbsp;table view 修改背景</p> 
+<p>&nbsp;</p> 
+<p> UIImageView *background = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background.jpg"]];<br> &nbsp;&nbsp;&nbsp; [[self tableView] setBackgroundView:background];<br> &nbsp;&nbsp;&nbsp; [background autorelease];</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>今天还出了一个错误&nbsp; 本来是array的对象 突然debug的时候发现变成NSCFString了， 网上查了下，说是内存方面的错误，</p> 
+<p>后来发现</p> 
+<p>&nbsp;</p> 
+<p>@property (nonatomic, retain) NSArray *array;</p> 
+<p>&nbsp;</p> 
+<p>在代码中 array = [_context executeFetchRequest:fetchRequest error:&amp;error];</p> 
+<p>&nbsp;</p> 
+<p>和 self.array = [_context executeFetchRequest:fetchRequest error:&amp;error]; </p> 
+<p>效果是不一样的， 前者没有保存(retain)array对象，所以才出错</p>

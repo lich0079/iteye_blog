@@ -1,0 +1,30 @@
+<pre class="js" name="code">Ext.onReady(function() {
+			Ext.BLANK_IMAGE_URL = "extjs/resources/images/default/s.gif";
+			Ext.Msg.show({
+						title : 'Milton',
+						msg : 'Have you seen my stapler?',
+						buttons : {
+							yes : '确定',
+							no : '不',
+							cancel : '取消'
+						},
+						icon : 'milton-icon',
+						fn : function(btn) {
+							switch (btn) {
+								case 'yes' :
+									Ext.Msg.prompt('Milton', 'Where is it?');
+									break;
+								case 'no' :
+									Ext.Msg
+											.alert('Milton',
+													'Im going to burn the building down!');
+									break;
+								case 'cancel' :
+									Ext.Msg.wait('Saving tables to disk...',
+											'File Copy');
+									break;
+							}
+						}
+					});
+		});</pre> 
+<p>&nbsp;</p>

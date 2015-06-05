@@ -1,0 +1,63 @@
+<div class="iteye-blog-content-contain" style="font-size: 14px;"> 
+ <p>&nbsp;</p> 
+ <p>String str="123,123,,123,,";</p> 
+ <p>&nbsp;</p> 
+ <p>System.out.println(str.split(",").length);// 这时结果会是4， 最后的2个因为是空白没有算</p> 
+ <p>&nbsp;</p> 
+ <p>System.out.println(str.split(",",-1).length);//这时会是6， 是我想要的</p> 
+ <p>&nbsp;</p> 
+ <p>为什么呢， 看下源码</p> 
+ <p>&nbsp;</p> 
+ <p>最后执行到的是</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; public String[] split(CharSequence input, int limit) {</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; int index = 0;</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; boolean matchLimited = limit &gt; 0;</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; ArrayList&lt;String&gt; matchList = new ArrayList&lt;String&gt;();</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; Matcher m = matcher(input);</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; // Add segments before each match found</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; while(m.find()) {</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (!matchLimited || matchList.size() &lt; limit - 1) {</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; String match = input.subSequence(index, m.start()).toString();</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; matchList.add(match);</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; index = m.end();</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } else if (matchList.size() == limit - 1) { // last one</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; String match = input.subSequence(index,</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;input.length()).toString();</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; matchList.add(match);</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; index = m.end();</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; }</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; // If no match was found, return this</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; if (index == 0)</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return new String[] {input.toString()};</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; // Add remaining segment</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; if (!matchLimited || matchList.size() &lt; limit)</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; matchList.add(input.subSequence(index, input.length()).toString());</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; // Construct result</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; int resultSize = matchList.size();</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; if (limit == 0)</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; while (resultSize &gt; 0 &amp;&amp; matchList.get(resultSize-1).equals(""))</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; resultSize--;</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; String[] result = new String[resultSize];</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; return matchList.subList(0, resultSize).toArray(result);</p> 
+ <p>&nbsp; &nbsp; }</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>这里</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; if (limit == 0)</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; while (resultSize &gt; 0 &amp;&amp; matchList.get(resultSize-1).equals(""))</p> 
+ <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; resultSize--;</p> 
+ <p>&nbsp;</p> 
+ <p>这里把后面的空白字符串减去了。</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+</div>

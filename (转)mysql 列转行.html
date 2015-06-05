@@ -1,0 +1,6 @@
+<p>mysql 的group_concat函数很好用，可以把列转成行。</p> 
+<p>SELECT threadid, group_concat(postid separator ',') as postids FROM msg_reply where&nbsp;group by threadid </p> 
+<p>输出</p> 
+<p>threadid&nbsp;&nbsp;&nbsp;&nbsp; postids<br> ---------------------<br> 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1,2,3,4<br> 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5,6,7</p> 
+<p>得到postids 后可以很方便做in查询，连implode都省了</p> 
+<p> 完整的语法如下<br> &nbsp;&nbsp; group_concat([DISTINCT] 要连接的字段 [Order BY ASC/DESC 排序字段] [Separator '分隔符'])</p>

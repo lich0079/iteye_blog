@@ -1,0 +1,70 @@
+<p>如果你急需一个简单的Web Server，但你又不想去下载并安装那些复杂的HTTP服务程序，比如：Apache，ISS等。那么， Python 可能帮助你。使用Python可以完成一个简单的内建 HTTP 服务器。于是，你可以把你的目录和文件都以HTTP的方式展示出来。佻只需要干一件事情，那就是安装一个Python。</p> 
+<p>实际上来说，这是一个可以用来共享文件的非常有用的方式。实现一个微型的HTTP服务程序来说是很简单的事情，在Python下，只需要一个命令行。下面是这个命令行：（假设我们需要共享我们的目录 /home/haoel 而IP地址是192.168.1.1）</p> 
+<pre>
+ <ol class="dp-css">
+
+  <li class="alt"><span><span>$&nbsp;cd&nbsp;/home/haoel &nbsp;</span></span></li>
+
+  <li><span>$&nbsp;python&nbsp;-m&nbsp;SimpleHTTPServer &nbsp;</span></li>
+
+ </ol></pre> 
+<p>这就行了，而我们的HTTP服务在8000号端口上侦听。你会得到下面的信息：</p> 
+<pre>
+ <ol class="dp-css">
+  <li class="alt"><span><span>Serving&nbsp;HTTP&nbsp;on&nbsp;</span><span class="value">0.0</span><span>.</span><span class="value">0.0</span><span>&nbsp;port&nbsp;</span><span class="value">8000</span><span>&nbsp;...&nbsp;</span></span></li>
+ </ol></pre> 
+<p>你可以打开你的浏览器（IE或Firefox），然后输入下面的URL：</p> 
+<pre>
+ <ol class="dp-css">
+  <li class="alt"><span><span>http://</span><span class="value">192.168</span><span>.</span><span class="value">1.1:</span><span class="value">8000</span><span>&nbsp;</span></span></li>
+ </ol></pre> 
+<p>如果你的目录下有一个叫 index.html 的文件名的文件，那么这个文件就会成为一个默认页，如果没有这个文件，那么，目录列表就会显示出来。</p> 
+<p>如果你想改变端口号，你可以使用如下的命令：</p> 
+<pre>
+ <ol class="dp-py">
+  <li class="alt"><span><span>$&nbsp;python&nbsp;-m&nbsp;SimpleHTTPServer&nbsp;</span><span class="number">8080</span><span>&nbsp;</span></span></li>
+ </ol></pre> 
+<p>如果你只想让这个HTTP服务器服务于本地环境，那么，你需要定制一下你的Python的程序，下面是一个示例：</p> 
+<pre>
+ <ol class="dp-py">
+
+  <li class="alt"><span><span class="keyword"><strong><span style="color: #006699;">import</span></strong></span><span>&nbsp;sys &nbsp;</span></span></li>
+
+  <li> <span class="keyword"><strong><span style="color: #006699;">import</span></strong></span><span>&nbsp;BaseHTTPServer &nbsp;</span> </li>
+
+  <li class="alt"> <span class="keyword"><strong><span style="color: #006699;">from</span></strong></span><span>&nbsp;SimpleHTTPServer&nbsp;</span><span class="keyword"><strong><span style="color: #006699;">import</span></strong></span><span>&nbsp;SimpleHTTPRequestHandler &nbsp;</span> </li>
+
+  <li><span>HandlerClass&nbsp;=&nbsp;SimpleHTTPRequestHandler &nbsp;</span></li>
+
+  <li class="alt"><span>ServerClass&amp;nbsp;&nbsp;=&nbsp;BaseHTTPServer.HTTPServer &nbsp;</span></li>
+
+  <li> <span>Protocol&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&nbsp;=&nbsp;</span><span class="string"><span style="color: #0000ff;">"HTTP/1.0"</span></span><span>&nbsp;</span> </li>
+
+  <li class="alt"><span>&nbsp;</span></li>
+
+  <li> <span class="keyword"><strong><span style="color: #006699;">if</span></strong></span><span>&nbsp;sys.argv[</span><span class="number">1</span><span>:]: &nbsp;</span> </li>
+
+  <li class="alt"> <span>&amp;nbsp;&amp;nbsp;&amp;nbsp;&nbsp;port&nbsp;=&nbsp;int(sys.argv[</span><span class="number">1</span><span>]) &nbsp;</span> </li>
+
+  <li> <span class="keyword"><strong><span style="color: #006699;">else</span></strong></span><span>: &nbsp;</span> </li>
+
+  <li class="alt"> <span>&amp;nbsp;&amp;nbsp;&amp;nbsp;&nbsp;port&nbsp;=&nbsp;</span><span class="number">8000</span><span>&nbsp;</span> </li>
+
+  <li> <span>server_address&nbsp;=&nbsp;(</span><span class="string"><span style="color: #0000ff;">'127.0.0.1'</span></span><span>,&nbsp;port) &nbsp;</span> </li>
+
+  <li class="alt"><span>&nbsp;</span></li>
+
+  <li><span>HandlerClass.protocol_version&nbsp;=&nbsp;Protocol &nbsp;</span></li>
+
+  <li class="alt"><span>httpd&nbsp;=&nbsp;ServerClass(server_address,&nbsp;HandlerClass) &nbsp;</span></li>
+
+  <li><span>&nbsp;</span></li>
+
+  <li class="alt"><span>sa&nbsp;=&nbsp;httpd.socket.getsockname() &nbsp;</span></li>
+
+  <li> <span class="keyword"><strong><span style="color: #006699;">print</span></strong></span><span>&nbsp;</span><span class="string"><span style="color: #0000ff;">"Serving&nbsp;HTTP&nbsp;on"</span></span><span>,&nbsp;sa[</span><span class="number">0</span><span>],&nbsp;</span><span class="string"><span style="color: #0000ff;">"port"</span></span><span>,&nbsp;sa[</span><span class="number">1</span><span>],&nbsp;</span><span class="string"><span style="color: #0000ff;">"..."</span></span><span>&nbsp;</span> </li>
+
+  <li class="alt"><span>httpd.serve_forever() &nbsp;</span></li>
+
+ </ol></pre> 
+<p>我们的Python HTTP服务这样就完成了。注意：所有的这些东西都可以在 Windows 或 Cygwin 下工作。</p>

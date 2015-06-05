@@ -1,0 +1,23 @@
+<p>("div[name='jobTitle']")</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>$("#aDiv").find("input[type='checkbox']:checked").each(function() {<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $toRemove = $(this).parent().parent();<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $toRemove.remove();<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cnt++;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; });</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&lt;div id="jq_1"&gt;<br> &lt;div id="jq_2"&gt;<br> &lt;div id="sdf"&gt;<br> &lt;div id="jq_3"&gt;<br> &lt;div id="jq_4"&gt;<br> 需要吧所有带jq_都查出来<br> 然后对这个对象数组遍历 </p> 
+<p>&nbsp;</p> 
+<p>$("div[id^=jq_]");</p> 
+<p>&nbsp;</p> 
+<p>ListDiv.children("div[id^=iq_"+sName+"_]");</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<p style="margin-bottom: 15px; padding: 0px; line-height: 24px; color: #666666; font-family: Arial, Helvetica, sans-serif; background-color: #f2f2f2;">$的选择器部分:<br>凡是运用$,其返回值是一个object<br>$选择器主要用于选择标签.基本用法是同css的选择器.但是,很让人兴奋的是,他支持常见的浏览器,而css中很多选择器是IE6所不支持的.</p> 
+<p style="margin-bottom: 15px; padding: 0px; line-height: 24px; color: #666666; font-family: Arial, Helvetica, sans-serif; background-color: #f2f2f2;">1.基本选择器(3种): ----凡是运用$,其返回值是一个object<br>$("标签名"),如$("p")是选取了所有的p标签节点<br>$("#id名"),如$("#test")是选取了id为test的标签节点<br>$(".class名"),如$(".test")是选取了所有class为test的标签节点<br>上面的$("标签名")和$(".class名")返回的都是所有满足的节点,至于进一步筛选可以添加一些函数,如eq,gt,lt等等.</p> 
+<p style="margin-bottom: 15px; padding: 0px; line-height: 24px; color: #666666; font-family: Arial, Helvetica, sans-serif; background-color: #f2f2f2;">2.组选择器: ----3种基本选择器的组合，“,”隔开<br>下面还是现做一个约定:把"标签名或#id名或.class名"记作mix,则mix表示一个标签名,或一个#id或一个.class.<br>$("mix,mix,mix,..."),如:$("div,#test1,p,.test2,#test3")</p> 
+<p style="margin-bottom: 15px; padding: 0px; line-height: 24px; color: #666666; font-family: Arial, Helvetica, sans-serif; background-color: #f2f2f2;">3.后代选择器: ----3种基本选择器的组合，“ ”隔开，直系皆生效<br>$("mix mix"),当然可以是多个嵌套,但后代选择器可以是深层子代,所以$("mix mix mix ...")这种写法作用不大.例子:$("div .test"):在div标签内的所有具有test的class的后代元素(就是被div嵌套的class属性为test的标签)</p> 
+<p style="margin-bottom: 15px; padding: 0px; line-height: 24px; color: #666666; font-family: Arial, Helvetica, sans-serif; background-color: #f2f2f2;">4.子选择器: ----3种基本选择器的组合，“&gt;”隔开，只亲子有效<br>$("mix&gt;mix"),这个放在后代选择器后面是为了和它做对比.子选择器只能选择第一代子代.不处理深层嵌套.例子:<br>$("div&gt;.test")<br>&lt;div&gt;&lt;p&gt;&lt;/p&gt;&lt;/div&gt;对这里的p段落标签有效.但对<br>&lt;div&gt;&lt;p&gt;&lt;p&gt;&lt;/p&gt;&lt;/p&gt;&lt;/div&gt;对这里的p段落标签无效,这里要用<br>$("div .test)</p> 
+<p style="margin-bottom: 15px; padding: 0px; line-height: 24px; color: #666666; font-family: Arial, Helvetica, sans-serif; background-color: #f2f2f2;">5.临近选择器: ----3种基本选择器的组合，“+”隔开，只下一个兄弟节点<br>$("mix+mix"),选取下一个兄弟节点.如:$("div +#test"),id为test的的节点必须是div的下一个兄弟节点.<br>&lt;div&gt;&lt;/div&gt;&lt;p id="test"&gt;&lt;/p&gt;在$("div + #test")中能取到p段落节点<br>&lt;div&gt;&lt;/div&gt;&lt;p&gt;&lt;/p&gt;&lt;p id="test"&gt;&lt;/p&gt;则不能取到</p> 
+<p style="margin-bottom: 15px; padding: 0px; line-height: 24px; color: #666666; font-family: Arial, Helvetica, sans-serif; background-color: #f2f2f2;">6.属性选择器: ----“ |=|^|$|*”<br>把属性选择器不放在css选择器里面是因为jQuery中写法是不一样的.至于css中写法可以参考我之前写的一篇css的选择器一文.jQuery中是和xPath类似的写法:<br>$("mix[@attr]"):选取所有该mix且具有attr属性的节点<br>$("mix[@attr=a_value"]):选取所有该mix且具有attr属性并满足属性值为a_value的节点<br>$("mix[@attr^=a_value_head"]):attr属性的属性值是以a_value_head开头的<br>$("mix[@attr$=a_value_end"]):attr属性的属性值是以a_value_end结尾的<br>$("mix[@attr*=a_value"]):attr属性的属性值中包含a_value</p> 
+<p style="margin-bottom: 15px; padding: 0px; line-height: 24px; color: #666666; font-family: Arial, Helvetica, sans-serif; background-color: #f2f2f2;">7. 限定选择器:<br>这个名称是我自己起的,其实选择器组合都有限定的意思,你明白后面所介绍的知识即可.<br>具有限定子节点选择器:$("mix1[mix2]"):返回包含mix2的mix1节点.如:$("div[a]"):包含a标签的div.<br>这个和$("div a")不相同.后者表示div中的a标签,返回的是a标签对象,前者返回的是div标签对象<br>冒号限定结点选择器:$("mix:condition"):mix标签,并且满足限定条件.<br>E:root:类型为E,并且是文档的根元素<br>E:nth-child(n):是其父元素的第n个类型为E的子元素 ,基数从1开始<br>E:first-child:是其父元素的第1个类型为E的子元素<br>E:last-child:是其父元素的最后一个类型为E的子元素<br>E:only-child:且是其父元素的唯一一个类型为E的子元素</p>

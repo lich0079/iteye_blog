@@ -1,0 +1,40 @@
+<p>var xmlDoc = new ActiveXObject("Microsoft.XMLDOM");</p> 
+<p>xmlDoc.async = false;</p> 
+<p>xmlDoc.loadXML(text);</p> 
+<p>xmlDoc.load("stu.xml");</p> 
+<p>&nbsp;</p> 
+<p>转换string&nbsp;&nbsp; </p> 
+<p>xmlDoc.xml</p> 
+<p>&nbsp;</p> 
+<p>var Count = xmlDoc.selectNodes('/TableData')[0].childNodes.length</p> 
+<p><span>node</span> .text = "星际";</p> 
+<p>&nbsp;</p> 
+<p><span>node</span> ..setAttribute("index", 'xxx');</p> 
+<p>pnode.removeChild(node);</p> 
+<p>nodes[0].getAttribute('index');</p> 
+<ol class="dp-j"> 
+ <li><span><span class="comment">//增加结点</span> <span>&nbsp;&nbsp;</span> </span></li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;function&nbsp;add_node(){&nbsp;&nbsp;</span> </li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;&nbsp;oxh&nbsp;=&nbsp;xmlDoc.createElement(<span class="string">"学号"</span> <span>);&nbsp;&nbsp;</span> </span></li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oxh.appendChild(xmlDoc.createTextNode(xh.value));&nbsp;&nbsp;</span> </li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;&nbsp;oxm&nbsp;=&nbsp;xmlDoc.createElement(<span class="string">"姓名"</span> <span>);&nbsp;&nbsp;</span> </span></li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oxm.appendChild(xmlDoc.createTextNode(xm.value));&nbsp;&nbsp;</span> </li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;&nbsp;oxb&nbsp;=&nbsp;xmlDoc.createElement(<span class="string">"性别"</span> <span>);&nbsp;&nbsp;</span> </span></li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oxb.appendChild(xmlDoc.createTextNode(xb.value));&nbsp;&nbsp;</span> </li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;&nbsp;ojg&nbsp;=&nbsp;xmlDoc.createElement(<span class="string">"籍贯"</span> <span>);&nbsp;&nbsp;</span> </span></li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ojg.appendChild(xmlDoc.createTextNode(jg.value));&nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;</span> </li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;oxs&nbsp;=&nbsp;xmlDoc.createElement(<span class="string">"学生"</span> <span>);&nbsp;&nbsp;</span> </span></li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oxs.appendChild(oxh);&nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oxs.appendChild(oxm);&nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oxs.appendChild(oxb);&nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;oxs.appendChild(ojg);&nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;</span> </li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;var&nbsp;parent&nbsp;=&nbsp;xmlDoc.selectSingleNode(<span class="string">"/学生管理"</span> <span>);&nbsp;&nbsp;</span> </span></li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> <span>(parent.hasChildNodes())&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> </span></li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parent.insertBefore(oxs,parent.firstChild);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> </li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<span class="keyword">else</span> <span>{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> </span></li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parent.appendChild(oxs);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;</span> </li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp; <br></span></li> 
+</ol>

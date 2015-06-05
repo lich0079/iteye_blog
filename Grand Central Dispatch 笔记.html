@@ -1,0 +1,305 @@
+<p>https://www.evernote.com/shard/s20/sh/54fbd735-53b6-4436-9bd4-88d46b628527/22bc221c73b55dbf1ddfb5515649c239</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="font-family: Arial; font-size: 14px; color: #01010a;">1. GCD 使用后不用程序去管理线程的开闭，GCD会在系统层面上去动态检测系统状态，开闭线程</span></p> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #01010a; font-size: 14px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="color: #01010a; font-size: medium;"><span style="font-size: 14px;"> 2. Dispatch Queues &nbsp; 单行(放进去的task只会等前一个执行完了才会执行下一个) 并行(<span style="color: #01010a; font-size: 14px;">放进去的task不用等前一个执行完了，但他们开始执行的次序还是FIFO的</span><span style="color: #01010a; font-size: 14px;">) 2种 &nbsp;FIFO &nbsp;把task依次放入单行queue可以实现顺序执行</span></span></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-weight: normal; font-size: 14px; color: #01010a;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-size: 14px; color: #01010a;">3. Operation Queues 可以指定任务之间的优先级 &nbsp;task之间的先后依赖关系</span>
+ <br> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <div>
+  <span><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div>
+  <span><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div>
+  <span><span style="font-family: Menlo; font-size: 14px; color: #01010a;">4. __block变量是可以改变的　共享的</span><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 14px; color: #01010a;"><br></span>
+ </div> 
+ <div> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp; &nbsp;dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);</span></p> 
+  <p><span style="color: #01010a;"><br></span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; for (__block&nbsp;int i = 0; i&lt;10000; i++) {</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dispatch_async(aQueue, ^{</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NSLog(@"%d",i);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; });</span></p> 
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">&nbsp;&nbsp; &nbsp;}</span></span>
+  <span style="color: #01010a;"><br></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.346 ttt[41418:1803] 61</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.346 ttt[41418:5f03] 1292</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.348 ttt[41418:1803] 4096</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.348 ttt[41418:5f03] 4954</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.349 ttt[41418:1803] 5823</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.349 ttt[41418:5f03] 6159</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.349 ttt[41418:1803] 6575</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.349 ttt[41418:5f03] 6634</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.350 ttt[41418:1803] 7936</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.350 ttt[41418:5f03] 8428</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.351 ttt[41418:1803] 8895</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.351 ttt[41418:5f03] 9364</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.351 ttt[41418:1803] 9836</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:11:38.351 ttt[41418:5f03] 10000</span></strong></p> 
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;">2011-07-05 17:11:38.354 ttt[41418:1803] 10000</span></strong></span>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span>
+ </div> 
+ <div>
+  <span style="font-family: Menlo; color: #01010a;"><span style="font-size: medium;"><span style="font-size: 14px;">5. 普通的外部变量的值是task（block）被创建时的值（闭包）</span></span></span>
+ </div> 
+ <div>
+  <span style="font-family: Menlo; color: #01010a;"><span style="font-size: medium;"><span style="font-size: 14px;"><br></span></span></span>
+ </div> 
+ <div> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp; &nbsp;dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);</span></p> 
+  <p><span style="color: #01010a;"><br></span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; for (int i = 0; i&lt;1000; i++) {</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dispatch_async(aQueue, ^{</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NSLog(@"%d",i);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; });</span></p> 
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">&nbsp;&nbsp; &nbsp;}</span></span>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.525 ttt[41697:1803] 0</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.526 ttt[41697:1803] 2</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.527 ttt[41697:1803] 3</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.527 ttt[41697:1803] 4</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.527 ttt[41697:1803] 5</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.527 ttt[41697:1803] 6</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.526 ttt[41697:5f03] 1</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.530 ttt[41697:5f03] 8</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.530 ttt[41697:5f03] 9</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.530 ttt[41697:5f03] 10</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:15:37.530 ttt[41697:5f03] 11</span></strong></p> 
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;">2011-07-05 17:15:37.532 ttt[41697:6203] 13</span></strong></span>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span>
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span>
+ </div> 
+ <div> 
+  <span style="font-family: Menlo; font-size: 14px; color: #01010a;">6. queue可以有结束时执行的方法</span>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span>
+ </div> 
+ <div> 
+  <p><span style="color: #01010a;">void myFinalizerFunction(){</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; NSLog(@"xxx");</span></p> 
+  <p><span style="color: #01010a;">}</span></p> 
+  <p><span style="color: #01010a;"><br></span></p> 
+  <p><span style="color: #01010a;">- (void)viewDidLoad {</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; [superviewDidLoad];</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_queue_t queue = dispatch_queue_create("com.example.MyQueue", NULL);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_set_context(queue, @"xxx");</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_set_finalizer_f(queue, &amp;myFinalizerFunction);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; for (int i = 0; i&lt;1000; i++) {</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dispatch_async(queue, ^{</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NSLog(@"%d",i);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; });</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; }</span></p> 
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">&nbsp;&nbsp; &nbsp;dispatch_release(queue);</span></span>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div> 
+  <span><span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif; font-size: 13px;"><code style="font-size: 13px; font-family: Courier, Consolas, monospace;"><a target="_self"><span style="color: #01010a;">7. dispatch_syn</span><span style="color: #01010a;">c(queue,task)</span></a></code><span style="color: #01010a;">&nbsp;&nbsp;会阻塞当前线程 直到queue完成了你给的task， 但queue要完成你给的task，因为queue是FIFO的，意味着要完成之前的任务，才有机会执行你刚才给的task, 相当于当前线程等待queue里面所有任务执行完毕，　　所以这句话不能在当前queue的任务代码里面调用，会造成死锁</span></span></span>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span> 
+ </div> 
+ <div>
+  <span><span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif; font-size: 13px;"><span style="color: #01010a;"><br></span></span></span>
+ </div> 
+ <div> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp; &nbsp;dispatch_queue_t queue = dispatch_queue_create("com.example.MyQueue", NULL);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_set_context(queue, @"xxx");</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_set_finalizer_f(queue, &amp;myFinalizerFunction);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; for (int i = 0; i&lt;10; i++) {</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dispatch_async(queue, ^{</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NSLog(@"%d",i);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; });</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; }</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; NSLog(@"waiting");</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_sync(queue, ^{</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NSLog(@"wait done");</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; });</span></p> 
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">&nbsp;&nbsp; &nbsp;dispatch_release(queue);</span></span>
+  <span><span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif; font-size: 13px;"><span style="color: #01010a;"><br></span></span></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.479 ttt[44203:207] waiting</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.479 ttt[44203:1803] 0</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.481 ttt[44203:1803] 1</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.482 ttt[44203:1803] 2</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.482 ttt[44203:1803] 3</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.483 ttt[44203:1803] 4</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.483 ttt[44203:1803] 5</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.484 ttt[44203:1803] 6</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.484 ttt[44203:1803] 7</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.485 ttt[44203:1803] 8</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.485 ttt[44203:1803] 9</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 17:54:35.486 ttt[44203:207] wait done</span></strong></p> 
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;">2011-07-05 17:54:35.487 ttt[44203:1803] xxx</span></strong></span>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span>
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span>
+ </div> 
+ <div> 
+  <h2 style="margin-top: 1.75em; font-size: 24px; font-weight: normal; padding-bottom: 2px; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #8391a8;"><span><span style="color: #01010a;">8.&nbsp;<span style="font-size: medium;"><span style="font-size: 14px;">Waiting on Groups of Queued Tasks　　　　//</span></span></span><span style="font-family: Courier, Consolas, monospace;"><a target="_self"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: 14px;">dispatch_sync只能对一个queue等待，　group可以等好几个queue执行完</span></span></span></a></span></span></h2> 
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span>
+ </div> 
+ <div> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp; &nbsp;dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_group_t group = dispatch_group_create();</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // Add a task to the group</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_group_async(group, queue, ^{</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NSLog(@"first task");</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; });</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_queue_t otherqueue = dispatch_queue_create("com.example.MyQueue", NULL);</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; for (int i = 0; i&lt;100; i++) {</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dispatch_group_async(group, otherqueue, ^{</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NSLog(@"otherqueue task");</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; });</span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; }</span></p> 
+  <p><span style="color: #01010a;"><br></span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; dispatch_group_wait(group, DISPATCH_TIME_FOREVER);</span></p> 
+  <p><span style="color: #01010a;"><br></span></p> 
+  <p><span style="color: #01010a;">&nbsp;&nbsp;&nbsp; NSLog(@"end waiting");</span></p> 
+  <p><span style="color: #01010a;"><br></span></p> 
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">&nbsp;&nbsp; &nbsp;dispatch_release(group);</span></span>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;"><br></span></span>
+ </div> 
+ <div> 
+  <p><strong><span style="color: #01010a;">2011-07-05 19:32:31.919 ttt[50138:5f03] otherqueue task</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 19:32:31.919 ttt[50138:1803] first task</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 19:32:31.922 ttt[50138:5f03] otherqueue task</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 19:32:31.923 ttt[50138:5f03] otherqueue task</span></strong></p> 
+  <p><span style="color: #01010a;"><strong>...</strong></span></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 19:32:32.078 ttt[50138:5f03] otherqueue task</span></strong></p> 
+  <p><strong><span style="color: #01010a;">2011-07-05 19:32:32.079 ttt[50138:5f03] otherqueue task</span></strong></p> 
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;">2011-07-05 19:32:32.080 ttt[50138:207] end waiting</span></strong></span>
+  <span style="font-family: Menlo; font-size: 14px; color: #47afff;"><span style="color: #ffffff;"><br></span></span> 
+ </div> 
+ <div>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span>
+ </div> 
+ <div>
+  <span style="font-family: Menlo;"><span style="color: #01010a;"><span style="font-size: medium;"><span style="font-size: 14px;"><br></span></span></span></span>
+ </div> 
+ <div> 
+  <span><span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif;"><span style="font-size: medium;"><span style="font-size: 14px;">9. Although you can obtain information about the underlying thread running a task, it is better to avoid doing so</span></span></span></span>
+  <span style="font-family: Menlo; font-size: 11px;"><strong><span style="color: #01010a;"><br></span></strong></span> 
+ </div> 
+ <div>
+  <span><span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif;"><span style="font-size: medium;"><span style="font-size: 14px;"><br></span></span></span></span>
+ </div> 
+ <div>
+  <span><span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif;"><span style="font-size: medium;"><span style="font-size: 14px;">10. 当你使用的是obj-c时，　block会自动retain 被它包住的任何对象，当block执行完释放，所以你不必担心你在block内使用的obj-c对象会消失</span></span></span></span>
+ </div> 
+ <div> 
+  <span><span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif;"><span style="font-size: medium;"><span style="font-size: 14px;">当使用的是c时（</span></span></span></span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;">CoreFoundation types in a C function</span>
+  <span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif; font-size: 14px;">），　你必须手动retain release,</span> 
+ </div> 
+ <div></div> 
+ <span><span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"> <pre><code style="line-height: 1em; background-color: #eeeeee; font-family: Menlo, Consolas, 'Andale Mono', Monaco, Courier, 'Courier New', Verdana, sans-serif; font-size: 0.929em; padding: 0px; margin: 0px;">void SaveArrayAsync(CFArrayRef array) {
+&nbsp;&nbsp;&nbsp; CFRetain(array);
+
+&nbsp;&nbsp;&nbsp; dispatch_queue_t queue = dispatch_get_global_queue(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+&nbsp;&nbsp;&nbsp; dispatch_async(queue, ^{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SaveToDisk(array);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CFRelease(array);
+&nbsp;&nbsp;&nbsp; }
+}&nbsp;</code></pre> </span></span> 
+ <div>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><br></span>
+ </div> 
+ <div>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;">11. &nbsp;block的自动retain特性有时会造成互相引用，造成彼此都不能被释放，　可以用__block来解决这个问题，因为使用__block时不会retain</span>
+ </div> 
+ <div> 
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;">This copying/retaining semantics of blocks is very useful as it means your objects won’t go away while your block is being executed on some other thread, but you can also get into trouble if you happen to be using them only on one thread and the context in a block contains a reference to some parent structure. You’ll get into a retain-loop.</span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><br></span> 
+ </div> 
+ <span><span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"> <pre><code style="line-height: 1em; background-color: #eeeeee; font-family: Menlo, Consolas, 'Andale Mono', Monaco, Courier, 'Courier New', Verdana, sans-serif; font-size: 0.929em; padding: 0px; margin: 0px;">// inside your controller's tableView:cellForRowAtIndexPath:
+cell = [[MyCell alloc] initWithBlock:^(MyCell* cell) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [self adjustCell:cell];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }];&nbsp;</code></pre> </span></span> 
+ <div> 
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;">So here we have a block that calls a method on the controller. Simple enough. But when that cell is created, it’s init method might copy the block to ensure the block is valid at all times. The problem is, it references&nbsp;</span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><code style="line-height: 1em; background-color: #eeeeee; font-family: Menlo, Consolas, 'Andale Mono', Monaco, Courier, 'Courier New', Verdana, sans-serif; font-size: 0.929em; padding: 0px; margin: 0px;">self</code></span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;">. But that&nbsp;</span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><code style="line-height: 1em; background-color: #eeeeee; font-family: Menlo, Consolas, 'Andale Mono', Monaco, Courier, 'Courier New', Verdana, sans-serif; font-size: 0.929em; padding: 0px; margin: 0px;">self</code></span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;">&nbsp;is the view controller. So you have a view controller retained by one of its descendants. This creates a retained object loop that ultimately means this controller will never get released.</span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><br></span> 
+ </div> 
+ <div>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><br></span>
+ </div> 
+ <div> 
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;">&nbsp;</span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><code style="line-height: 1em; background-color: #eeeeee; font-family: Menlo, Consolas, 'Andale Mono', Monaco, Courier, 'Courier New', Verdana, sans-serif; font-size: 0.929em; padding: 0px; margin: 0px;">__block</code></span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;">&nbsp;variables are actually&nbsp;</span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><em style="padding: 0px; margin: 0px;">not</em></span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;">&nbsp;retained when the lock is copied. So you can do this</span>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><br></span> 
+ </div> 
+ <div>
+  <span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"><br></span>
+ </div> 
+ <span><span style="color: #111111; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 22px;"> <pre><code style="line-height: 1em; background-color: #eeeeee; font-family: Menlo, Consolas, 'Andale Mono', Monaco, Courier, 'Courier New', Verdana, sans-serif; font-size: 0.929em; padding: 0px; margin: 0px;">// inside your controller's tableView:cellForRowAtIndexPath:
+__block me = self;
+cell = [[MyCell alloc] initWithBlock:^(MyCell* cell) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [me adjustCell:cell];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }];
+</code></pre> <p style="margin-top: 0px; margin-right: 0px; margin-left: 0px; padding: 0px;">Since the self doesn’t get retained this time, we avoid the retain cycle. While it strikes me as iffy, it does work, and it’s the only way I’ve found to deal with this situation. You can’t simply avoid copying the block if you want to call it later, because the scope will be gone by the time the function that declared the block exits. That will lead to nothing but sadness.</p> </span></span> 
+</div>

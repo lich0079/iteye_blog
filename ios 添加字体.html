@@ -1,0 +1,25 @@
+<p>&lt;!--?xml version="1.0" encoding="UTF-8" standalone="no"?--&gt; <span style="color: #01010a; font-family: Arial; font-size: medium;">1、确定你的项目工程的resouce下有你要用的字体文件(.ttf,.odf)。 </span></p>
+<div>
+ 2、然后在你的工程的Info.plist文件中新建一行(Add Row)，添加key为：UIAppFonts,类型为Array添加Value为XXX.ttf（你字体的名字）。
+</div> 
+<div>
+ key为Item 0,值为xxxx.ttf。是这样，可以添加多个，使用的时候写对应字体名字就行。
+</div> 
+<div>
+ 3、在你的项目里要用字体的时候&nbsp; xx.font = [UIFont fontWithName:@"XXX" size:20.0]，这样就可以了。
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div> 
+ <pre class="java" name="code">&lt;key&gt;UIAppFonts&lt;/key&gt;
+     &lt;array&gt;
+          &lt;string&gt;Exocet.TTF&lt;/string&gt;
+          &lt;string&gt;ExocetLight.TTF&lt;/string&gt;
+     &lt;/array&gt;
+</pre> &nbsp;
+</div> 
+<p></p>

@@ -1,0 +1,828 @@
+<p><a href="http://www.evernote.com/shard/s20/sh/c54af718-b04e-4645-b482-9fd1012160ef/809d946e19b8fd1f0d78b82e7157cf88">http://www.evernote.com/shard/s20/sh/c54af718-b04e-4645-b482-9fd1012160ef/809d946e19b8fd1f0d78b82e7157cf88</a></p> 
+<p>&nbsp;</p> 
+<p>书链接:&nbsp;<a href="http://book.douban.com/subject/2003121/">http://book.douban.com/subject/2003121/</a></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="font-family: Arial; font-size: medium;"><span style="color: #0a020b;">Context 上下文 &nbsp;画板 &nbsp; 可以是window &nbsp;printer &nbsp;<span style="font-size: 10pt; font-family: Berling;">bitmap &nbsp;</span>显示屏</span></span></p> 
+<p>&nbsp;</p> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;">Filling 填充</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;">alpha (<span style="font-family: Berling; font-size: 13px;">opacity)&nbsp;</span>&nbsp;不透明度 1为不透明 &nbsp;0透明 &nbsp;此属性决定能否看到下面的画面</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;">opaque 不透明</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;">stroking &nbsp;画边框 &nbsp;在rectangle的边框（此边框无限thin）2侧画线 &nbsp;线有宽度</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;">CGContextRef context = UIGraphicsGetCurrentContext(); &nbsp; // drawRect 方法中拿到context<br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGContextSetRGBFillColor(context, 1.0, 0.0, 0.0, 1.0) &nbsp; // 设置颜色</span><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGContextFillRect(context, ourRect); &nbsp; //填充</span><span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGContextSetRGBStrokeColor(context, 0.482, 0.62, 0.871, 1.0);</span><span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGContextStrokeRectWithWidth(context, ourRect, 3.0); &nbsp; // 画边框 设置边框宽度3.0</span><span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><img alt=""><span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;">边框是画在2侧的 所以画完框在填充 会把内侧的边框覆盖掉</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextTranslateCTM</span><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextScaleCTM</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextRotateCTM</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">arbitrary &nbsp;任意的</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">path &nbsp; 任何图像都是由path构成的</span><span style="font-family: Berling; font-size: 13px; font-weight: bold;">a sequence of lines and curves that make up a shape, and then performing painting operations on that path</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextBeginPath &nbsp;用空白路径替换context中已存在路径 &nbsp;</span><span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="font-weight: normal;">replaces any existing path in the context with an empty path</span><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="font-weight: normal;"><span style="color: #0a020b;"><br></span></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextMoveToPoint &nbsp; path的起点 &nbsp;&nbsp;</span><span style="font-family: Berling;"><span style="font-family: Arial;"><span style="font-size: 10pt; font-family: Berling;">establishes the first point on the path and makes that the</span></span><span style="font-family: Arial;">&nbsp;</span><span style="font-family: Arial;"><span style="font-size: 10pt; font-family: Berling; font-weight: 700;">current&nbsp;</span></span></span><span style="font-family: Berling; font-size: 13px; font-weight: bold;">point</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextAddLineToPoint &nbsp;画线 &nbsp;&nbsp;</span><span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="font-family: Arial; font-weight: normal; font-size: medium;"><span style="font-size: 10pt; font-family: Berling;">add a line segment from the existing current point to the point passed to&nbsp;</span></span><span style="font-family: Arial; font-weight: normal; font-size: medium;"><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextAdd- LineToPoint</span></span></span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">&nbsp;</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextClosePath &nbsp; &nbsp;在当前点和起点之间画一条线 完成一个shape. &nbsp;&nbsp;</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="font-family: Berling;">This function adds a straight line segment from the current point to the initial point on the path</span></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="font-family: Berling;"><span style="color: #0a020b;"><br></span></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextDrawPath &nbsp; &nbsp;path不会产生任何图像 &nbsp;draw才会，同时这个方法也会清除path。&nbsp;</span><span style="font-family: Berling; font-size: 13px;">actually paint the stroked, filled, and stroked-and-filled paths，&nbsp;</span><span style="font-family: Berling; font-size: 13px;">also clears the path from the context</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">kCGPathFill &nbsp;&nbsp;</span><span style="font-family: Berling; font-size: 13px;"><span style="font-family: Menlo; font-size: 14px;">kCGPathStroke &nbsp;&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">kCGPathFillStroke &nbsp; //</span></span><span style="font-size: 10pt; font-family: Berling;">This type of fill-then-stroke operation is so common that Quartz defines the special&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">kCGPathFillStroke&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">painting mode used here</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Menlo; font-size: 14px;">CGContextTranslateCTM</span><span style="font-family: Menlo; font-size: 14px;">(context,&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">200.0</span><span style="font-family: Menlo; font-size: 14px;">,&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">0.0</span><span style="font-family: Menlo; font-size: 14px;">); &nbsp; 坐标偏移x轴正向200, 之后的draw都依据改变后的坐标 &nbsp;</span><span style="font-size: 10pt; font-family: Berling;">Drawing performed after calling&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextTranslateCTM&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">takes place in the transformed coordinate system.</span><span style="font-family: LetterGothic12PitchBT;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextSetLineWidth &nbsp; &nbsp; &nbsp;</span><span style="font-family: Berling; font-size: 13px;">sets the width of the stroke</span><span style="font-family: Berling; font-size: 13px;">&nbsp;</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Menlo; font-size: 14px;">CGContextSaveGState</span><span style="font-family: Menlo; font-size: 14px;">(context); &nbsp; 保持context当前状态</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Menlo; font-size: 14px;">CGContextRestoreGState</span><span style="font-family: Menlo; font-size: 14px;">(context); 回复context状态</span><span style="font-family: Menlo; font-size: 14px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Menlo; font-size: 14px;">CGContextRotateCTM</span><span style="font-family: Menlo; font-size: 14px;">(context, rotateAngle); &nbsp; 旋转坐标系 顺时针 单位是</span><span style="font-family: Berling; font-size: 13px;">radians</span><span style="font-family: Menlo; font-size: 14px;">&nbsp; 一圈是2*</span><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">M_PI</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;">// 画点线</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><img alt=""></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Menlo; font-size: 14px;">CGContextSetLineDash</span><span style="font-family: Menlo; font-size: 14px;">(context,&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">0.</span><span style="font-family: Menlo; font-size: 14px;">, lengths,&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">4</span><span style="font-family: Menlo; font-size: 14px;">); //第2个参数 指定起点坐标是多少，假如是18（</span><span style="font-family: Menlo; font-size: 14px;">lengths[0]+lengths[1]）</span><span style="font-family: Menlo; font-size: 14px;">,那么第一个点实际是5（</span><span style="font-family: Menlo; font-size: 14px;">lengths[2]）</span><span style="font-family: Menlo; font-size: 14px;">了， &nbsp;第4个参数指的用几个lengths(必须小于length总长度)</span><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Menlo; font-size: 14px;">float</span><span style="font-family: Menlo; font-size: 14px;">&nbsp;lengths[</span><span style="font-family: Menlo; font-size: 14px;">6</span><span style="font-family: Menlo; font-size: 14px;">] = {&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">12.0</span><span style="font-family: Menlo; font-size: 14px;">,&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">6.0</span><span style="font-family: Menlo; font-size: 14px;">,&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">5.0</span><span style="font-family: Menlo; font-size: 14px;">,&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">6.0</span><span style="font-family: Menlo; font-size: 14px;">,&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">5.0</span><span style="font-family: Menlo; font-size: 14px;">,&nbsp;</span><span style="font-family: Menlo; font-size: 14px;">6.0</span><span style="font-family: Menlo; font-size: 14px;">&nbsp;};</span><span style="font-family: Menlo; font-size: 14px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Menlo; font-size: 14px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px; font-weight: bold;">Clipping &nbsp;裁剪</span><span style="font-family: Menlo; font-size: 14px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-size: 10pt; font-family: Berling;">Setting up a clipping area requires creating a path to clip to, then calling the function&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextClip&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">to tell Quartz to constrain drawing to the area inside that path. &nbsp;裁剪时先指定一个path, 然后执行裁剪方法</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px; white-space: pre;"><span style="color: #0a020b;">CGContextBeginPath(context);</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px; white-space: pre;"><span style="color: #0a020b;">CGContextAddRect(context, ourRect);&nbsp;</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 12px; white-space: pre;">CGContextClip(context)</span><span style="font-size: 10pt; font-family: Berling;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px; white-space: pre;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextClipToRect &nbsp; &nbsp;//</span><span style="font-family: LetterGothic12PitchBT;"><span style="font-family: Arial; white-space: normal; font-size: medium;"><span style="font-size: 10pt; font-family: Berling;">clipping to a rectangle specified by a&nbsp;</span></span><span style="font-family: Arial;"><span style="white-space: normal; font-size: 10pt; font-family: LetterGothic12PitchBT;">CGRec</span><span style="font-family: LetterGothic12PitchBT; white-space: pre;"><span style="font-size: x-small;">t</span></span></span></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <div>
+  <span style="color: #0a020b;"><br></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;">CGContextAddArc(context, circleCenter.x, circleCenter.y, circleRadius,&nbsp;</span><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">startingAngle, endingAngle, 0); &nbsp;画圆， 参数：圆心，半径， 起始角度，终点角度, 最后一个应该是否顺时针</span></span>
+ </div> 
+ <div>
+  <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGContextScaleCTM(context, 1, -1); &nbsp; 放缩坐标 &nbsp; -1是倒转坐标Y轴</span><span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">Window context</span><span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">Bitmap graphics context</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">PDF graphics context</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">PostScript context</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">GLContext context</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">You can perform the same drawing without regard to the type of context that you are drawing to. You do the drawing and Quartz takes care of converting that drawing into the best representation for the device, or context, into which you are drawing. Device independence is one of the most powerful features of Quartz.</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-size: 10pt; font-family: Berling;">Using the&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">NSImage&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">class to draw images can result in the creation of multiple CGImage objects when drawing a given image. This produces larger PDF doc- uments since drawing the same&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">NSImage&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">to a given PDF context multiple times does not produce a single copy of the image data. In addition, JPEG image data is not treated specially by&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">NSImage;&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">therefore, during PDF genera- tion, uncompressed data is written to the PDF document</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-size: 10pt; font-family: Berling;"><span style="color: #0a020b;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: RotisSansSerif; font-size: 19px;"><span style="color: #0a020b;">User Space and Device Space</span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-size: 10pt; font-family: Berling;">For a PDF context, the size of a default user space unit is 1/72 of an inch, a unit of measure called a&nbsp;</span><span style="font-size: 10pt; font-family: Berling; font-weight: 700;">point.&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">For a printing context, 1 user space unit is a point, regardless of the resolution of the output device used for printing. This means that for a printing context corresponding to a 300-dpi raster printer, 1 user space unit is 1/72 of an inch, so 72 user space units equals 1 inch or 300 device pixels.</span><span style="font-size: 10pt; font-family: Berling;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><br></span>
+ </div> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-size: 10pt; font-family: RotisSansSerif;">The term&nbsp;</span><span style="font-size: 10pt; font-family: RotisSansSerif; font-style: italic;">point&nbsp;</span><span style="font-size: 10pt; font-family: RotisSansSerif;">has its origins in the printing industry where historically the size of a printer point was approximately 1/72 of an inch. Quartz has adopted the same definition of a point as the PostScript and PDF imaging models with 1 point being exactly 1/72 of an inch.</span><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: RotisSansSerif;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">Because Quartz drawing calls take user space coordinates as parameters and the output device coordinates are in device space, Quartz must map all user space coordinates into device space coordinates as part of its rendering. By providing an abstract user space coordinate system and taking care of the mapping of those coordinates onto the output device, Quartz provides a device-independent coor- dinate system. The coordinate mapping performed by Quartz also provides the flexibility of additional user space transformations, such as the translation, rota- tion, and scaling of coordinates as seen in the examples in “Quartz 2D Drawing Basics” (page 15).</span><span style="font-size: 10pt; font-family: RotisSansSerif;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-size: 10pt; font-family: Berling; font-weight: 700;">current transformation matrix &nbsp; &nbsp;//&nbsp;</span><span style="font-size: 10pt; font-family: Berling; font-weight: 700;">CTM</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGAffineTransform &nbsp; // &nbsp;&nbsp;</span><span style="font-size: 10pt; font-family: Berling; font-weight: 700;"><span style="font-weight: normal;">This data structure consists of six floating-point values: a, b, c, d, tx, and ty.</span></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;">x′ = a * x + c * y + tx</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-size: 10pt; font-family: Berling;">y′&nbsp;</span><span style="font-size: 10pt; font-family: Times;">=&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">b * x + d * y + ty</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">一个不对称的坐标缩放，接上一个旋转会制造一个倾斜的坐标系 &nbsp;Nonuniform scaling of a coordinate system, followed by a rotation, produces a skew or shear to the coordinate axes</span><span style="font-size: 10pt; font-family: Berling;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; color: #0a020b;"><img alt=""><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; color: #0a020b;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><img alt=""></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;">// alpha is 22.5 degrees and beta is 15 degrees.&nbsp;</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">float alpha = M_PI/8, beta = M_PI/12;</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<p> <span style="font-family: Arial; font-size: medium;"><span style="color: #0a020b;"><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;">CGAffineTransform skew&nbsp;</span><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;"><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;">= CGAffineTransformMake(1, tan(alpha), tan(beta), 1, 0, 0);</span><br></span></span></span></p> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGContextConcatCTM(context, skew);</span><span style="font-family: LetterGothic12PitchBT; font-size: x-small;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">所有的Quartz绘画分为3类， 画线，图像， 文字。 &nbsp;All Quartz drawing falls into of one of three fundamental categories: line art (graphics that consist of paths that are filled, stroked, or both), sampled images, and text.</span><br></span>
+ </div> 
+ <div>
+  <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+ </div> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">quadratic 二次</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">cubic 立方体</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">Path &nbsp;可以是open， &nbsp;closed, 有方向(</span><span style="font-family: Berling; font-size: 13px; font-weight: bold;">direction</span><span style="font-family: Berling; font-size: 13px;">)</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">一个Path可以有许多subpath 这些subpath未必相连,&nbsp;</span><span style="font-family: Menlo; font-size: small;">CGContextMoveToPoint 就创建了一个subpath</span></span>
+</div> 
+<p><span style="color: #0a020b; font-size: x-small;">&nbsp; &nbsp;&nbsp;CGContextSetRGBStrokeColor(context, 0, 0, 1, 0.7);</span></p> 
+<p><span style="color: #0a020b; font-size: x-small;">&nbsp;&nbsp;&nbsp; CGContextBeginPath(context);</span></p> 
+<p><span style="color: #0a020b; font-size: x-small;">&nbsp;&nbsp;&nbsp;&nbsp;</span></p> 
+<p><span style="color: #0a020b; font-size: x-small;">&nbsp;&nbsp;&nbsp; CGContextMoveToPoint(context, 0, 0);</span></p> 
+<p><span style="color: #0a020b; font-size: x-small;">&nbsp;&nbsp;&nbsp; CGContextAddLineToPoint(context, 30, 40);</span></p> 
+<p><span style="color: #0a020b; font-size: x-small;">&nbsp;&nbsp;&nbsp;&nbsp;</span></p> 
+<p><span style="color: #0a020b; font-size: x-small;">&nbsp;&nbsp;&nbsp; CGContextMoveToPoint(context, -20, 10);</span></p> 
+<p><span style="color: #0a020b; font-size: x-small;">&nbsp;&nbsp;&nbsp; CGContextAddLineToPoint(context, 100, 70);</span></p> 
+<p><span style="color: #0a020b; font-size: x-small;">&nbsp;&nbsp;&nbsp;</span></p> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b; font-size: x-small;"><span style="font-family: Menlo;">&nbsp; &nbsp;&nbsp;</span><span style="font-family: Menlo;">CGContextDrawPath</span><span style="font-family: Menlo;">(context,&nbsp;</span><span style="font-family: Menlo;">kCGPathStroke</span><span style="font-family: Menlo;">);</span><span style="font-family: Berling;">&nbsp;</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">所以的path都由下面5种基本方法创建 &nbsp;All paths in Quartz can be constructed using one or more of the following five basic path construction primitive functions,</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <p><span style="color: #0a020b;"><span style="font-size: 7pt; font-family: ZapfDingbats; vertical-align: 1pt;">I&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextMoveToPoint&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">begins a new subpath in the current path.</span></span></p> 
+ <p><span style="color: #0a020b;"><span style="font-size: 7pt; font-family: ZapfDingbats; vertical-align: 1pt;">I&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextAddLineToPoint&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">adds a straight line segment to the current path.</span></span></p> 
+ <p><span style="color: #0a020b;"><span style="font-size: 7pt; font-family: ZapfDingbats; vertical-align: 1pt;">I&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextAddCurveToPoint&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">adds a cubic Bézier curve segment to the current path.</span></span></p> 
+ <p><span style="color: #0a020b;"><span style="font-size: 7pt; font-family: ZapfDingbats; vertical-align: 1pt;">I&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextAddQuadCurveToPoint&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">adds a quadratic Bézier curve segment to the current path.</span></span></p> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-size: 7pt; font-family: ZapfDingbats; vertical-align: 1pt;">I&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextClosePath&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">ends the current path. &nbsp;//</span><span style="font-family: Berling; font-size: 13px;"><span style="font-family: LetterGothic12PitchBT;">&nbsp;在当前点和起点之间画一条线</span><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextBeginPath. &nbsp; clear path</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; color: #0a020b;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">Cubic Bézier curves&nbsp;</span><span style="font-family: LetterGothic12PitchBT;"><span style="font-family: Berling; font-size: 13px;">are defined by two endpoints together with two additional control points</span>.</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-size: 10pt; font-family: Berling; font-style: italic;">P(t)</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">= (1 –</span>&nbsp;<span style="font-size: 10pt; font-family: Berling; font-style: italic;">t)3P0</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">+ 3t</span>&nbsp;<span style="font-size: 10pt; font-family: Symbol;">(1</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">–</span>&nbsp;<span style="font-size: 10pt; font-family: Berling; font-style: italic;">t)2C1</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">+ 3t2(1 –</span>&nbsp;<span style="font-size: 10pt; font-family: Berling; font-style: italic;">t)C2</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">+</span>&nbsp;<span style="font-size: 10pt; font-family: Berling; font-style: italic;">t3P1</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling; font-style: italic;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGContextAddCurveToPoint(context, c1.x, c1.y, c2.x, c2.y, p1.x, p1.y);</span><span style="font-size: 10pt; font-family: Berling; font-style: italic;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">quadratic Bézier curve&nbsp;</span><span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="font-family: Berling; font-size: 13px;">are defined by two endpoints and a single control point</span><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-size: 10pt; font-family: Berling; font-style: italic;">P(t)</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">=</span>&nbsp;<span style="font-size: 10pt; font-family: Symbol;">(1</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">–</span>&nbsp;<span style="font-size: 10pt; font-family: Berling; font-style: italic;">t)2P0</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">+ 2t(1 –</span>&nbsp;<span style="font-size: 10pt; font-family: Berling; font-style: italic;">t)C</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">+</span>&nbsp;<span style="font-size: 10pt; font-family: Berling; font-style: italic;">t2P1</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Menlo; font-size: 14px;">CGContextAddQuadCurveToPoint(&lt;#CGContextRef c#&gt;, &lt;#CGFloat cpx#&gt;, &lt;#CGFloat cpy#&gt;, &lt;#CGFloat x#&gt;, &lt;#CGFloat y#&gt;)</span><span style="font-size: 10pt; font-family: Berling; font-style: italic;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling; font-style: italic;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling; font-style: italic;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling; font-style: italic;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextClosePath 执行的时候看起点和最后一点是不是在一起， 不在一起的话会添加一条线把她们连起来。&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">Quartz subpaths are either open or closed. A closed subpath has its initial point connected to the last point on the subpath. The function&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextClosePath&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">connects the last point on the subpath with the initial point on the subpath</span><span style="font-size: 10pt; font-family: Berling; font-style: italic;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextAddRect</span><span style="font-size: 10pt; font-family: Berling;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextAddRects</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextAddLines</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextAddArc &nbsp; //</span><span style="font-size: 13px;"><span style="font-family: Arial; font-size: medium;"><span style="font-size: 10pt; font-family: Berling;">The result- ing subpath is open; you must call&nbsp;</span></span><span style="font-family: Arial; font-size: medium;"><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextClosePath&nbsp;</span></span><span style="font-size: medium;"><span style="font-size: 10pt; font-family: Berling;">if you want to close it.</span><span style="font-size: 10pt;"><span style="font-family: LetterGothic12PitchBT;">&nbsp;如果之前有点的话， 会在此点和圆的起点连一条线&nbsp;</span></span></span></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextAddEllipseInRect</span><span style="font-size: 10pt;"><span style="font-family: LetterGothic12PitchBT;"><br></span></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextFillEllipseInRect</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextStrokeEllipseInRect</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextStrokeLineSegments</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextStrokeRect</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextStrokeRectWithWidth</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextFillRect</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;">CGContextFillRects</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextClipToRect</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextClipToRects</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px; font-weight: bold;">line width &nbsp; &nbsp;//</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="font-family: Berling;">line width is affected by the scaling aspects of the CTM</span><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px; font-weight: bold;">line join &nbsp; // &nbsp;</span><span style="font-family: Berling; font-size: 13px;">three different types of joins—miter, round, or bevel &nbsp; &nbsp; &nbsp; &nbsp;<span style="font-family: Arial; font-size: medium;"><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">kCGLineJoinMiter, kCGLineJoinRound,&nbsp;</span></span><span style="font-family: Arial; font-size: medium;"><span style="font-size: 10pt; font-family: Berling;">or&nbsp;</span></span><span style="font-family: Arial; font-size: medium;"><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">kCG- LineJoinBevel</span></span></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><img alt=""><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px; font-weight: bold;">line cap &nbsp; &nbsp;//&nbsp;</span><span style="font-size: 10pt; font-family: Berling; font-weight: 700;">butt,</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">square, or rounded &nbsp; &nbsp;</span><span style="font-size: 10pt; font-family: Berling;">kCGLineCap-&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">Butt, kCGLineCapSquare,&nbsp;</span><span style="font-size: 10pt; font-family: Berling;">or&nbsp;</span><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">kCGLineCapRound</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; color: #0a020b;"><img alt=""><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px; font-weight: bold;">line dash</span><span style="font-family: LetterGothic12PitchBT;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">Filling a path</span><span style="font-family: Berling; font-size: 13px; font-weight: bold;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">Filling 是填充path的内部， 但复杂path的内部不好判断. Quartz defines two distinct rules to determine the interior of a path. You choose which rule to apply when filling a path—the non- zero winding number rule or the even-odd&nbsp;</span><span style="font-family: Berling; font-size: 13px;">(</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">kCGPathEOFillStroke</span><span style="font-family: Berling; font-size: 13px;">)</span><span style="font-family: Berling; font-size: 13px;">&nbsp;rule &nbsp;</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGPathRef</span><span style="font-family: Berling; font-size: 13px; font-weight: bold;"><br></span></span>
+</div> 
+<p> <span style="font-family: Arial; font-size: medium;"><span style="color: #0a020b;"><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;">CGMutablePathRef path =&nbsp;</span><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;"><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;">CGPathCreateMutable();</span><br></span></span></span></p> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <div>
+  <span style="font-size: 9pt; font-family: LetterGothic12PitchBT;"><span style="color: #0a020b;">CGPathAddArc(path, &amp;theTransform, 0., 0., 45., 0., 2*M_PI, false);&nbsp;</span></span>
+ </div> 
+ <div>
+  <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;">CGPathCloseSubpath(path);</span></span>
+ </div> 
+ <div>
+  <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><span style="color: #0a020b;">utility</span></span>
+ </div> 
+ <div>
+  <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextSetAllowsAntialiasing</span><br></span>
+ </div> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextGetPathBoundingBox</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGRectNull</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGRectEqualToRect</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextIsPathEmpty</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextGetPathCurrentPoint</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGPointZero</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextReplacePathWithStrokedPath</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGContextPathContainsPoint &nbsp; &nbsp; // 看点在path内不</span><span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: LetterGothic12PitchBT; font-size: 13px;">Color &nbsp;包括颜色组件，透明度 &nbsp; &nbsp; 还有全局透明度 //</span><span style="font-family: Berling; font-size: 13px;">Quartz supports a global alpha,&nbsp;</span><span style="font-family: Berling; font-size: 13px;">applied to all drawing</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px; font-weight: bold;">graphics state</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px; font-weight: bold;">&nbsp;&nbsp;</span><span style="font-family: Berling; font-size: 13px;">Fill and stroke colors</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">&nbsp; current transformation matrix (CTM)</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">&nbsp; the clipping area, the font, and more than a dozen other parameters</span><span style="font-family: Berling;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: RotisSansSerif; font-size: 19px;">Color Spaces&nbsp;</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: RotisSansSerif; font-size: 19px;">&nbsp; &nbsp;&nbsp;</span><span style="font-family: Berling; font-size: 13px;">RGB uses three—red, green, and blue</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">&nbsp; &nbsp; &nbsp;CMYK uses four—cyan, magenta, yellow, and black</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">Quartz color spaces fall into three basic categories</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">&nbsp;&nbsp;</span><span style="font-family: Berling; font-size: 13px;">Calibrated color spaces specify color &nbsp;is reproduc- ible across a wide range of output devices. &nbsp;</span><span style="font-family: Berling; font-size: 13px;">ICCBased, CalibratedGray, CalibratedRGB, and Lab color spaces.</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">&nbsp; &nbsp;</span><span style="font-family: Berling; font-size: 13px;">Device-dependent color spaces &nbsp; &nbsp; &nbsp;</span><span style="font-family: Berling; font-size: 13px;">DeviceGray, DeviceRGB, and DeviceCMYK color spaces</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">&nbsp; &nbsp;</span><span style="font-family: Berling; font-size: 13px;">Special color spaces &nbsp; &nbsp; &nbsp;</span><span style="font-family: Berling; font-size: 13px;">Pattern color space &nbsp;&nbsp;</span><span style="font-family: Berling; font-size: 13px;">Indexed color space</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">intrinsic自带</span><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><span style="color: #0a020b;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-family: Berling; font-size: 13px;">Quartz also uses the current fill color space and fill color component values when painting images without intrinsic color</span><span style="font-family: Berling; font-size: 13px;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling;"><span style="color: #0a020b;">&nbsp;<br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextSetRGBFillColor</span>&nbsp;<span style="font-size: 10pt; font-family: Berling;">implicitly uses the DeviceRGB color space&nbsp;</span><span style="font-size: 10pt; font-family: Berling;"><br></span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="color: #0a020b;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><span style="color: #0a020b;">CGColorSpaceRef</span></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGColorRef</span>
+</div> 
+<p> <span style="font-family: Arial; font-size: medium;"><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;">CGColorSpaceRef deviceRGB =&nbsp;</span></span><span style="font-family: Arial; font-size: medium;"><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;"><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;">CGColorSpaceCreateDeviceRGB();</span><br></span></span></p> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">float opaqueRed[] = {0.663, 0.0, 0.031, 1.0}</span>
+ <span style="font-family: LetterGothic12PitchBT;"><span style="font-size: x-small;"><br></span></span> 
+</div> 
+<p> <span style="font-family: Arial; font-size: medium;"><span style="font-size: 9pt; font-family: LetterGothic12PitchBT;">CGContextSetFillColorSpace(context, theColorSpace);<br></span></span></p> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGContextSetFillColor(context, opaqueRed);</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Helvetica; font-size: 11px;">Fill alpha = 0.25&nbsp;</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Helvetica; font-size: 11px;">Global alpha = 0.5&nbsp;</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: Helvetica; font-size: 11px;">Effective alpha = .125</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Helvetica; font-size: 11px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Helvetica; font-size: 11px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGDataProviderCreateWithURL</span>
+ <span style="font-family: Helvetica; font-size: 11px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGDataProviderCreateWithData</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGDataProviderCreate</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGDataProviderCreateDirectAccess</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;">CGDataProviderCreateWithCFData</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGImageCreateWithJPEGDataProvider</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 13px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGImageCreateWithPNGDataProvider</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGImageCreate</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGImageSourceCreateWithDataProvider</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGImageSourceCreateWithData</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGImageSourceCreateWithURL</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">GraphicsImportCreateCGImage</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CFURLRef url = …..;</span>
+ <br> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 9pt; font-family: LetterGothic12PitchBT;">CGRect jpgRect;</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGImageRef jpgImage = NULL;</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGDataProviderRef jpgProvider = CGDataProviderCreateWithURL(url);</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">jpgImage = CGImageCreateWithJPEGDataProvider(jpgProvider, NULL,&nbsp;</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px; white-space: pre;">true, kCGRenderingIntentDefault);</span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGDataProviderRelease(jpgProvider);</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">jpgRect = CGRectMake(0., 0.,&nbsp;</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px; white-space: pre;">CGImageGetWidth(jpgImage)/4, CGImageGetHeight(jpgImage)/4);</span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px;">CGContextDrawImage(context, jpgRect, jpgImage);</span>
+ <span style="font-family: LetterGothic12PitchBT; font-size: 12px; white-space: pre;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-size: 10pt; font-family: Berling; font-weight: 700;">image mask, masking image,</span>&nbsp;
+ <span style="font-size: 10pt; font-family: Berling;">and</span>&nbsp;
+ <span style="font-size: 10pt; font-family: Berling; font-weight: 700;">mask</span>
+ <br> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;">stencil 模板</span>
+ <br> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;">image mask 就是模板图片 &nbsp;就象在白纸上盖上模板， 然后喷漆，纸上就会留下印迹</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-size: 10pt; font-family: Berling;">The terms&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling; font-weight: 700;">image mask, masking image,&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">and&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling; font-weight: 700;">mask&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">are interchange- able terms to describe an image whose sample values indicate a percentage of paint to apply but not the color of the paint itself. Such an image is sometimes called a&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling; font-weight: 700;">stencil mask&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">because the mask does not itself have any intrinsic color; instead, color “pours” through the stencil. An image mask has only one compo- nent value, the coverage value.</span>
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling;">1bit mask只显示on/off， &nbsp;8bit可以显示色深，</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-size: 10pt; font-family: Berling;">An image mask can be 1, 2, 4, or 8 bits per sample. A sample value that decodes to&nbsp;</span>
+ <span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">0&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">allows paint to go through it—it’s the “hole” in the stencil. A sample value that decodes to&nbsp;</span>
+ <span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">1&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">doesn’t allow paint through—it’s the solid part of the stencil. A 1-bit mask, by definition, has only “on/off” options—0 or&nbsp;</span>
+ <span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">1.&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">Deeper masks, such as an 8-bit mask, can contain intermediate values (0 &lt;&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling; font-style: italic;">x&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">&lt;&nbsp;</span>
+ <span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">1)&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">that specify grada- tions of paint that get through the mask, with lower values allowing more paint than higher values.</span>
+ <span style="font-size: 10pt; font-family: Berling;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-size: 10pt; font-family: Berling;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: Berling; font-size: 13px;">Quartz provides three masking devices that can control how pixels are painted— image masks, images that are used for the purpose of masking another image, and masking colors.</span>
+ <span style="font-size: 10pt; font-family: Berling;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;">Text</span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextSelectFont &nbsp; &nbsp;&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">sets both the font and the font size</span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-size: 10pt; font-family: LetterGothic12PitchBT;">CGContextSetFont &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">sets only the font</span>
+ <span style="font-family: Berling;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <span style="font-family: Berling; font-size: 13px;"><br></span>
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-family: Berling; font-size: 13px; font-weight: bold;">text space &nbsp; &nbsp; &nbsp; &nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">Quartz text is drawn in a special coordinate system called</span>&nbsp;
+ <span style="font-size: 10pt; font-family: Berling; font-weight: 700;">text space</span>
+ <span style="font-family: Berling; font-size: 13px;"><br></span> 
+</div> 
+<div style="font-family: Arial; font-size: medium;"> 
+ <span style="font-size: 10pt; font-family: Berling; font-weight: 700;">text matrix &nbsp; &nbsp; &nbsp;&nbsp;</span>
+ <span style="font-size: 10pt; font-family: Berling;">an affine transform that maps text space coordinates into user space coordinates</span> 
+</div>

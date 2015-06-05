@@ -1,0 +1,541 @@
+<p>这个列子是关于汉堡包要和什么材料搭配&nbsp; 汉堡包核心是面包 但中间夹得材料可以是各种食物 即装饰面包以不同的材料</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>Ingredient&nbsp;&nbsp;&nbsp; 装饰器和被装饰着都要继承的类 也可定义为接口</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package decoratorPatternSample;
+
+public abstract class Ingredient {
+
+         public abstract String getDescription();
+
+         public abstract double getCost();     
+
+         public void printDescription(){         
+
+                   System.out.println(" Name      "+ this.getDescription());
+
+                   System.out.println(" Price RMB "+ this.getCost());
+
+         }
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>Bread&nbsp; 核心组件</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package decoratorPatternSample;
+
+public class Bread extends Ingredient {
+
+    private String description;
+
+    public Bread(String desc) {
+
+        this.description = desc;
+
+    }
+
+    public String getDescription() {
+
+        return description;
+
+    }
+
+    public double getCost() {
+
+        return 2.48;
+
+    }
+
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>Decorator&nbsp; 装饰器类基类 </p> 
+<pre class="java" name="code">package decoratorPatternSample;
+
+public abstract class Decorator extends Ingredient {
+
+     Ingredient ingredient ;
+
+     public Decorator(Ingredient igd){
+
+              this.ingredient = igd;      
+
+     }        
+
+     public abstract String getDescription();
+
+     public abstract double getCost();
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>下面是4中装饰器实现类</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package decoratorPatternSample;
+
+public class Celery extends Decorator{
+
+         public Celery(Ingredient igd){
+
+                   super(igd);
+
+         }
+
+         public String getDescription(){
+
+                   String base = ingredient.getDescription();
+
+                   return base +"\n"+"Decrocated with Celery !";
+
+         }
+
+         public double getCost(){
+
+                   double basePrice = ingredient.getCost();
+
+                   double celeryPrice =0.6;
+
+                   return        basePrice + celeryPrice ;
+
+         }
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package decoratorPatternSample;
+
+public class GreenGrocery extends Decorator{
+
+         public GreenGrocery (Ingredient igd){
+
+                   super(igd);
+
+         }
+
+         public String getDescription(){
+
+                   String base = ingredient.getDescription();
+
+                   return base +"\n"+"Decrocated with GreenGrocery  !";
+
+         }
+
+         public double getCost(){
+
+                   double basePrice = ingredient.getCost();
+
+                   double greenGroceryPrice = 0.4;
+
+                   return        basePrice + greenGroceryPrice ;
+
+         }
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package decoratorPatternSample;
+
+public class Mutton extends Decorator{
+
+         public Mutton(Ingredient igd){
+
+                   super(igd);
+
+         }
+
+         public String getDescription(){
+
+                   String base = ingredient.getDescription();
+
+                   return base +"\n"+"Decrocated with Mutton !";
+
+         }
+
+         public double getCost(){
+
+                   double basePrice = ingredient.getCost();
+
+                   double muttonPrice = 2.3;
+
+                   return        basePrice + muttonPrice ;
+
+         }
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package decoratorPatternSample;
+
+public class Pork extends Decorator{
+
+         public Pork(Ingredient igd){
+
+                   super(igd);
+
+         }
+
+         public String getDescription(){
+
+                   String base = ingredient.getDescription();
+
+                   return base +"\n"+"Decrocated with Pork !";
+
+         }
+
+         public double getCost(){
+
+                   double basePrice = ingredient.getCost();
+
+                   double porkPrice = 1.8;
+
+                   return        basePrice + porkPrice ;
+
+         }
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>测试类</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">package decoratorPatternSample;
+
+public class DecoratorTest {
+
+    public static void main(String[] args) {
+
+        Ingredient compound = new Mutton(new Celery(new Bread("Master24's Bread")));
+
+        compound.printDescription();
+
+        compound = new Celery(new GreenGrocery(new Bread("Bread with milk")));
+
+        compound.printDescription();
+
+        compound = new Mutton(new Pork(new Bread("Bread with cheese")));
+
+        compound.printDescription();
+
+    }
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>输出</p> 
+<pre class="java" name="code"> Name      Master24's Bread
+Decrocated with Celery !
+Decrocated with Mutton !
+ Price RMB 5.38
+ Name      Bread with milk
+Decrocated with GreenGrocery  !
+Decrocated with Celery !
+ Price RMB 3.48
+ Name      Bread with cheese
+Decrocated with Pork !
+Decrocated with Mutton !
+ Price RMB 6.58</pre> 
+<p>&nbsp;===========================</p> 
+<p>&nbsp;</p> 
+<p>java基础类库上的用法</p> 
+<p>&nbsp;</p> 
+<p>Collections 类提供了一些集合类的帮助方法 ，如把集合转换成 checked&nbsp;&nbsp; unmodifiable&nbsp; Synchronized等</p> 
+<p>这些都是用的装饰器模式</p> 
+<p>这面给出一个把map转成同步map的列子</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 调用代码如下&nbsp; 相当于客户代码</p> 
+<pre class="java" name="code">public static &lt;K,V&gt; Map&lt;K,V&gt; synchronizedMap(Map&lt;K,V&gt; m) {
+	return new SynchronizedMap&lt;K,V&gt;(m);
+    }</pre> 
+<p>&nbsp;给一个map&nbsp; return一个&nbsp;&nbsp; SynchronizedMap ，给原来的map添加了同步的功能（实际上这个新的map和原来的不是一个对象了，但客户是看不到这一点，但假如使用==的话 就会发现），保证线程的安全</p> 
+<p>&nbsp;</p> 
+<p>接下来看下SynchronizedMap 是如何包装的</p> 
+<pre class="java" name="code">    private static class SynchronizedMap&lt;K,V&gt;
+	implements Map&lt;K,V&gt;, Serializable {
+	// use serialVersionUID from JDK 1.2.2 for interoperability
+	private static final long serialVersionUID = 1978198479659022715L;
+
+	private Map&lt;K,V&gt; m;     // Backing Map
+        Object      mutex;	// Object on which to synchronize
+
+	SynchronizedMap(Map&lt;K,V&gt; m) {
+            if (m==null)
+                throw new NullPointerException();
+            this.m = m;
+            mutex = this;
+        }
+
+	SynchronizedMap(Map&lt;K,V&gt; m, Object mutex) {
+            this.m = m;
+            this.mutex = mutex;
+        }
+
+	public int size() {
+	    synchronized(mutex) {return m.size();}
+        }
+	public boolean isEmpty(){
+	    synchronized(mutex) {return m.isEmpty();}
+        }
+	public boolean containsKey(Object key) {
+	    synchronized(mutex) {return m.containsKey(key);}
+        }
+	public boolean containsValue(Object value){
+	    synchronized(mutex) {return m.containsValue(value);}
+        }
+	public V get(Object key) {
+	    synchronized(mutex) {return m.get(key);}
+        }
+
+	public V put(K key, V value) {
+	    synchronized(mutex) {return m.put(key, value);}
+        }
+	public V remove(Object key) {
+	    synchronized(mutex) {return m.remove(key);}
+        }
+	public void putAll(Map&lt;? extends K, ? extends V&gt; map) {
+	    synchronized(mutex) {m.putAll(map);}
+        }
+	public void clear() {
+	    synchronized(mutex) {m.clear();}
+	}
+
+	private transient Set&lt;K&gt; keySet = null;
+	private transient Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet = null;
+	private transient Collection&lt;V&gt; values = null;
+
+	public Set&lt;K&gt; keySet() {
+            synchronized(mutex) {
+                if (keySet==null)
+                    keySet = new SynchronizedSet&lt;K&gt;(m.keySet(), mutex);
+                return keySet;
+            }
+	}
+
+	public Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet() {
+            synchronized(mutex) {
+                if (entrySet==null)
+                    entrySet = new SynchronizedSet&lt;Map.Entry&lt;K,V&gt;&gt;((Set&lt;Map.Entry&lt;K,V&gt;&gt;)m.entrySet(), mutex);
+                return entrySet;
+            }
+	}
+
+	public Collection&lt;V&gt; values() {
+            synchronized(mutex) {
+                if (values==null)
+                    values = new SynchronizedCollection&lt;V&gt;(m.values(), mutex);
+                return values;
+            }
+        }
+
+	public boolean equals(Object o) {
+            synchronized(mutex) {return m.equals(o);}
+        }
+	public int hashCode() {
+            synchronized(mutex) {return m.hashCode();}
+        }
+	public String toString() {
+	    synchronized(mutex) {return m.toString();}
+        }
+        private void writeObject(ObjectOutputStream s) throws IOException {
+	    synchronized(mutex) {s.defaultWriteObject();}
+        }
+    }</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>SynchronizedMap 实现了map接口，然后在内部把传进来的map用一个property保存住，然后在所有的map接口方法中都加上了锁</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>同理的看下&nbsp; UnmodifiableMap</p> 
+<pre class="java" name="code">private static class UnmodifiableMap&lt;K,V&gt; implements Map&lt;K,V&gt;, Serializable {
+	// use serialVersionUID from JDK 1.2.2 for interoperability
+	private static final long serialVersionUID = -1034234728574286014L;
+
+	private final Map&lt;? extends K, ? extends V&gt; m;
+
+	UnmodifiableMap(Map&lt;? extends K, ? extends V&gt; m) {
+            if (m==null)
+                throw new NullPointerException();
+            this.m = m;
+        }
+
+	public int size() 		         {return m.size();}
+	public boolean isEmpty() 	         {return m.isEmpty();}
+	public boolean containsKey(Object key)   {return m.containsKey(key);}
+	public boolean containsValue(Object val) {return m.containsValue(val);}
+	public V get(Object key) 	         {return m.get(key);}
+
+	public V put(K key, V value) {
+	    throw new UnsupportedOperationException();
+        }
+	public V remove(Object key) {
+	    throw new UnsupportedOperationException();
+        }
+	public void putAll(Map&lt;? extends K, ? extends V&gt; t) {
+	    throw new UnsupportedOperationException();
+        }
+	public void clear() {
+	    throw new UnsupportedOperationException();
+        }
+
+	private transient Set&lt;K&gt; keySet = null;
+	private transient Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet = null;
+	private transient Collection&lt;V&gt; values = null;
+
+	public Set&lt;K&gt; keySet() {
+	    if (keySet==null)
+		keySet = unmodifiableSet(m.keySet());
+	    return keySet;
+	}
+
+	public Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet() {
+	    if (entrySet==null)
+		entrySet = new UnmodifiableEntrySet&lt;K,V&gt;(m.entrySet());
+	    return entrySet;
+	}
+
+	public Collection&lt;V&gt; values() {
+	    if (values==null)
+		values = unmodifiableCollection(m.values());
+	    return values;
+	}
+
+	public boolean equals(Object o) {return m.equals(o);}
+	public int hashCode()           {return m.hashCode();}
+        public String toString()        {return m.toString();}
+
+        /**
+         * We need this class in addition to UnmodifiableSet as
+         * Map.Entries themselves permit modification of the backing Map
+         * via their setValue operation.  This class is subtle: there are
+         * many possible attacks that must be thwarted.
+         *
+         * @serial include
+         */
+        static class UnmodifiableEntrySet&lt;K,V&gt;
+	    extends UnmodifiableSet&lt;Map.Entry&lt;K,V&gt;&gt; {
+	    private static final long serialVersionUID = 7854390611657943733L;
+
+            UnmodifiableEntrySet(Set&lt;? extends Map.Entry&lt;? extends K, ? extends V&gt;&gt; s) {
+                super((Set&lt;Map.Entry&lt;K,V&gt;&gt;)(Set)s);
+            }
+            public Iterator&lt;Map.Entry&lt;K,V&gt;&gt; iterator() {
+                return new Iterator&lt;Map.Entry&lt;K,V&gt;&gt;() {
+		    Iterator&lt;? extends Map.Entry&lt;? extends K, ? extends V&gt;&gt; i = c.iterator();
+
+                    public boolean hasNext() {
+                        return i.hasNext();
+                    }
+		    public Map.Entry&lt;K,V&gt; next() {
+			return new UnmodifiableEntry&lt;K,V&gt;(i.next());
+                    }
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+
+            public Object[] toArray() {
+                Object[] a = c.toArray();
+                for (int i=0; i&lt;a.length; i++)
+                    a[i] = new UnmodifiableEntry&lt;K,V&gt;((Map.Entry&lt;K,V&gt;)a[i]);
+                return a;
+            }
+
+            public &lt;T&gt; T[] toArray(T[] a) {
+                // We don't pass a to c.toArray, to avoid window of
+                // vulnerability wherein an unscrupulous multithreaded client
+                // could get his hands on raw (unwrapped) Entries from c.
+		Object[] arr =
+		    c.toArray(
+			a.length==0 ? a :
+			(T[])java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), 0));
+
+                for (int i=0; i&lt;arr.length; i++)
+                    arr[i] = new UnmodifiableEntry&lt;K,V&gt;((Map.Entry&lt;K,V&gt;)arr[i]);
+
+                if (arr.length &gt; a.length)
+                    return (T[])arr;
+
+                System.arraycopy(arr, 0, a, 0, arr.length);
+                if (a.length &gt; arr.length)
+                    a[arr.length] = null;
+                return a;
+            }
+
+            /**
+             * This method is overridden to protect the backing set against
+             * an object with a nefarious equals function that senses
+             * that the equality-candidate is Map.Entry and calls its
+             * setValue method.
+             */
+            public boolean contains(Object o) {
+                if (!(o instanceof Map.Entry))
+                    return false;
+                return c.contains(new UnmodifiableEntry&lt;K,V&gt;((Map.Entry&lt;K,V&gt;) o));
+            }
+
+            /**
+             * The next two methods are overridden to protect against
+             * an unscrupulous List whose contains(Object o) method senses
+             * when o is a Map.Entry, and calls o.setValue.
+             */
+            public boolean containsAll(Collection&lt;?&gt; coll) {
+                Iterator&lt;?&gt; e = coll.iterator();
+                while (e.hasNext())
+                    if (!contains(e.next())) // Invokes safe contains() above
+                        return false;
+                return true;
+            }
+            public boolean equals(Object o) {
+                if (o == this)
+                    return true;
+
+                if (!(o instanceof Set))
+                    return false;
+                Set s = (Set) o;
+                if (s.size() != c.size())
+                    return false;
+                return containsAll(s); // Invokes safe containsAll() above
+            }
+
+            /**
+             * This "wrapper class" serves two purposes: it prevents
+             * the client from modifying the backing Map, by short-circuiting
+             * the setValue method, and it protects the backing Map against
+             * an ill-behaved Map.Entry that attempts to modify another
+             * Map Entry when asked to perform an equality check.
+             */
+            private static class UnmodifiableEntry&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {
+                private Map.Entry&lt;? extends K, ? extends V&gt; e;
+
+                UnmodifiableEntry(Map.Entry&lt;? extends K, ? extends V&gt; e) {this.e = e;}
+
+                public K getKey()	  {return e.getKey();}
+                public V getValue()  {return e.getValue();}
+                public V setValue(V value) {
+                    throw new UnsupportedOperationException();
+                }
+                public int hashCode()	  {return e.hashCode();}
+                public boolean equals(Object o) {
+                    if (!(o instanceof Map.Entry))
+                        return false;
+                    Map.Entry t = (Map.Entry)o;
+                    return eq(e.getKey(),   t.getKey()) &amp;&amp;
+                           eq(e.getValue(), t.getValue());
+                }
+                public String toString()  {return e.toString();}
+            }
+        }
+    }</pre> 
+<p>&nbsp;当尝试改变map的时候就会抛出UnsupportedOperationException</p>

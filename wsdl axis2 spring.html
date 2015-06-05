@@ -1,0 +1,249 @@
+<p>&nbsp;</p> 
+<p style="margin-top: 12px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; line-height: 18px;">WSDL 文档是利用这些主要的元素来描述某个 web service 的：</p> 
+<table class="dataintable" border="0" style="font-family: Arial, Helvetica, sans-serif; margin-top: 10px; border-collapse: collapse; width: 606px; border: 1px solid #888888;"> 
+ <tbody>
+  <tr>
+    元素 定义 
+  </tr> 
+  <tr> 
+   <td style="vertical-align: text-top; padding-top: 5px; padding-right: 15px; padding-bottom: 5px; padding-left: 5px; background-color: #efefef; border: 1px solid #aaaaaa;">&lt;portType&gt;</td> 
+   <td style="vertical-align: text-top; padding-top: 5px; padding-right: 15px; padding-bottom: 5px; padding-left: 5px; background-color: #efefef; border: 1px solid #aaaaaa;">web service 执行的操作</td> 
+  </tr> 
+  <tr> 
+   <td style="vertical-align: text-top; padding-top: 5px; padding-right: 15px; padding-bottom: 5px; padding-left: 5px; background-color: #efefef; border: 1px solid #aaaaaa;">&lt;message&gt;</td> 
+   <td style="vertical-align: text-top; padding-top: 5px; padding-right: 15px; padding-bottom: 5px; padding-left: 5px; background-color: #efefef; border: 1px solid #aaaaaa;">web service 使用的消息</td> 
+  </tr> 
+  <tr> 
+   <td style="vertical-align: text-top; padding-top: 5px; padding-right: 15px; padding-bottom: 5px; padding-left: 5px; background-color: #efefef; border: 1px solid #aaaaaa;">&lt;types&gt;</td> 
+   <td style="vertical-align: text-top; padding-top: 5px; padding-right: 15px; padding-bottom: 5px; padding-left: 5px; background-color: #efefef; border: 1px solid #aaaaaa;">web service 使用的数据类型</td> 
+  </tr> 
+  <tr> 
+   <td style="vertical-align: text-top; padding-top: 5px; padding-right: 15px; padding-bottom: 5px; padding-left: 5px; background-color: #efefef; border: 1px solid #aaaaaa;">&lt;binding&gt;</td> 
+   <td style="vertical-align: text-top; padding-top: 5px; padding-right: 15px; padding-bottom: 5px; padding-left: 5px; background-color: #efefef; border: 1px solid #aaaaaa;">web service 使用的通信协议</td> 
+  </tr> 
+ </tbody>
+</table> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>下面是一个标准的wsdl定义</p> 
+<p>来自 &nbsp;http://www.webxml.com.cn/webservices/weatherwebservice.asmx?wsdl</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="xml" name="code">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://WebXml.com.cn/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://WebXml.com.cn/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"&gt;
+  &lt;wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"&gt;&amp;lt;a href="http://www.webxml.com.cn/" target="_blank"&amp;gt;WebXml.com.cn&amp;lt;/a&amp;gt; &amp;lt;strong&amp;gt;天气预报 Web 服务，&amp;lt;/strong&amp;gt;数据来源于&amp;lt;strong&amp;gt;中国气象局&amp;lt;/strong&amp;gt; &amp;lt;a href="http://www.cma.gov.cn/" target="_blank"&amp;gt;http://www.cma.gov.cn/&amp;lt;/a&amp;gt; ，数据每2.5小时左右自动更新一次，准确可靠。包括 340 多个中国主要城市和 60 多个国外主要城市三日内的天气预报数据。&amp;lt;/br&amp;gt;此天气预报Web Services请不要用于任何商业目的，若有需要请&amp;lt;a href="http://www.webxml.com.cn/zh_cn/contact_us.aspx" target="_blank"&amp;gt;联系我们&amp;lt;/a&amp;gt;，欢迎技术交流。 QQ：8409035&amp;lt;br /&amp;gt;&amp;lt;strong&amp;gt;使用本站 WEB 服务请注明或链接本站：http://www.webxml.com.cn/ 感谢大家的支持&amp;lt;/strong&amp;gt;！&amp;lt;br /&amp;gt;&amp;lt;span style="color:#999999;"&amp;gt;通知：天气预报 WEB 服务如原来使用地址 http://www.onhap.com/WebServices/WeatherWebService.asmx 的，请改成现在使用的服务地址 http://www.webxml.com.cn/WebServices/WeatherWebService.asmx ，重新引用即可。&amp;lt;/span&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;br /&amp;gt;&amp;amp;nbsp;&lt;/wsdl:documentation&gt;
+
+  &lt;wsdl:types&gt;
+    &lt;s:schema elementFormDefault="qualified" targetNamespace="http://WebXml.com.cn/"&gt;
+      &lt;s:complexType name="ArrayOfString"&gt;
+        &lt;s:sequence&gt;
+          &lt;s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" /&gt;
+        &lt;/s:sequence&gt;
+      &lt;/s:complexType&gt;
+      &lt;s:element name="getSupportDataSet"&gt;
+        &lt;s:complexType /&gt;
+      &lt;/s:element&gt;
+      &lt;s:element name="getSupportDataSetResponse"&gt;
+        &lt;s:complexType&gt;
+          &lt;s:sequence&gt;
+            &lt;s:element minOccurs="0" maxOccurs="1" name="getSupportDataSetResult"&gt;
+              &lt;s:complexType&gt;
+                &lt;s:sequence&gt;
+                  &lt;s:element ref="s:schema" /&gt;
+                  &lt;s:any /&gt;
+                &lt;/s:sequence&gt;
+              &lt;/s:complexType&gt;
+            &lt;/s:element&gt;
+          &lt;/s:sequence&gt;
+        &lt;/s:complexType&gt;
+      &lt;/s:element&gt;
+      &lt;s:element name="ArrayOfString" nillable="true" type="tns:ArrayOfString" /&gt;
+      &lt;s:element name="DataSet" nillable="true"&gt;
+        &lt;s:complexType&gt;
+          &lt;s:sequence&gt;
+            &lt;s:element ref="s:schema" /&gt;
+            &lt;s:any /&gt;
+          &lt;/s:sequence&gt;
+        &lt;/s:complexType&gt;
+      &lt;/s:element&gt;
+    &lt;/s:schema&gt;
+  &lt;/wsdl:types&gt;
+
+ 
+ &lt;wsdl:message name="getSupportDataSetSoapIn"&gt;
+    &lt;wsdl:part name="parameters" element="tns:getSupportDataSet" /&gt;
+  &lt;/wsdl:message&gt;
+  &lt;wsdl:message name="getSupportDataSetSoapOut"&gt;
+    &lt;wsdl:part name="parameters" element="tns:getSupportDataSetResponse" /&gt;
+  &lt;/wsdl:message&gt;
+  
+
+  &lt;wsdl:portType name="WeatherWebService"&gt;
+    &lt;wsdl:operation name="getSupportDataSet"&gt;
+      &lt;wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"&gt;&amp;lt;br&amp;gt;&amp;lt;h3&amp;gt;获得本天气预报Web Services支持的洲、国内外省份和城市信息&amp;lt;/h3&amp;gt;&amp;lt;p&amp;gt;输入参数：无；返回：DataSet 。DataSet.Tables(0) 为支持的洲和国内省份数据，DataSet.Tables(1) 为支持的国内外城市或地区数据。DataSet.Tables(0).Rows(i).Item("ID") 主键对应 DataSet.Tables(1).Rows(i).Item("ZoneID") 外键。&amp;lt;br /&amp;gt;Tables(0)：ID = ID主键，Zone = 支持的洲、省份；Tables(1)：ID 主键，ZoneID = 对应Tables(0)ID的外键，Area = 城市或地区，AreaCode = 城市或地区代码。&amp;lt;/p&amp;gt;&amp;lt;br /&amp;gt;&lt;/wsdl:documentation&gt;
+      &lt;wsdl:input message="tns:getSupportDataSetSoapIn" /&gt;
+      &lt;wsdl:output message="tns:getSupportDataSetSoapOut" /&gt;
+    &lt;/wsdl:operation&gt;
+  &lt;/wsdl:portType&gt;
+  
+
+  &lt;wsdl:binding name="WeatherWebServiceSoap" type="tns:WeatherWebService"&gt;
+    &lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http" /&gt;
+    &lt;wsdl:operation name="getSupportDataSet"&gt;
+      &lt;soap:operation soapAction="http://WebXml.com.cn/getSupportDataSet" style="document" /&gt;
+      &lt;wsdl:input&gt;
+        &lt;soap:body use="literal" /&gt;
+      &lt;/wsdl:input&gt;
+      &lt;wsdl:output&gt;
+        &lt;soap:body use="literal" /&gt;
+      &lt;/wsdl:output&gt;
+    &lt;/wsdl:operation&gt;
+  &lt;/wsdl:binding&gt;
+
+  &lt;wsdl:service name="WeatherWebService"&gt;
+    &lt;wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"&gt;&amp;lt;a href="http://www.webxml.com.cn/" target="_blank"&amp;gt;WebXml.com.cn&amp;lt;/a&amp;gt; &amp;lt;strong&amp;gt;天气预报 Web 服务，&amp;lt;/strong&amp;gt;数据来源于&amp;lt;strong&amp;gt;中国气象局&amp;lt;/strong&amp;gt; &amp;lt;a href="http://www.cma.gov.cn/" target="_blank"&amp;gt;http://www.cma.gov.cn/&amp;lt;/a&amp;gt; ，数据每2.5小时左右自动更新一次，准确可靠。包括 340 多个中国主要城市和 60 多个国外主要城市三日内的天气预报数据。&amp;lt;/br&amp;gt;此天气预报Web Services请不要用于任何商业目的，若有需要请&amp;lt;a href="http://www.webxml.com.cn/zh_cn/contact_us.aspx" target="_blank"&amp;gt;联系我们&amp;lt;/a&amp;gt;，欢迎技术交流。 QQ：8409035&amp;lt;br /&amp;gt;&amp;lt;strong&amp;gt;使用本站 WEB 服务请注明或链接本站：http://www.webxml.com.cn/ 感谢大家的支持&amp;lt;/strong&amp;gt;！&amp;lt;br /&amp;gt;&amp;lt;span style="color:#999999;"&amp;gt;通知：天气预报 WEB 服务如原来使用地址 http://www.onhap.com/WebServices/WeatherWebService.asmx 的，请改成现在使用的服务地址 http://www.webxml.com.cn/WebServices/WeatherWebService.asmx ，重新引用即可。&amp;lt;/span&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;br /&amp;gt;&amp;amp;nbsp;&lt;/wsdl:documentation&gt;
+    &lt;wsdl:port name="WeatherWebService" binding="tns:WeatherWebServiceSoap"&gt;
+      &lt;soap:address location="http://www.webxml.com.cn/webservices/weatherwebservice.asmx" /&gt;
+    &lt;/wsdl:port&gt;
+  &lt;/wsdl:service&gt;
+
+
+&lt;/wsdl:definitions&gt;
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>自己做的项目中用axis2做webservice， 并与spring集成，&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>这个集成方法比较麻烦， 找到了更简便的方法 <a href="/blog/1021696">http://renxiangzyq.iteye.com/blog/1021696</a></p> 
+<p>之前已经集成了，下面是我找到的一些集成点</p> 
+<p>web.xml</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">	&lt;servlet&gt;
+		&lt;servlet-name&gt;AxisServlet&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.apache.axis2.transport.http.AxisServlet&lt;/servlet-class&gt; 
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;AxisServlet&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;/services/*&lt;/url-pattern&gt;&lt;!--have to named as /services/--&gt;
+	&lt;/servlet-mapping&gt;</pre> &nbsp; 
+<p>WEB-INF &nbsp;下的相关目录</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">.
+├── conf
+│&nbsp;&nbsp; └── axis2.xml
+├── modules
+│&nbsp;&nbsp; ├── addressing-1.5.2.mar
+│&nbsp;&nbsp; ├── axis2-jaxws-mar-1.5.2.mar
+│&nbsp;&nbsp; ├── mex-1.5.2.mar
+│&nbsp;&nbsp; ├── modules.list
+│&nbsp;&nbsp; ├── mtompolicy-1.5.2.mar
+│&nbsp;&nbsp; ├── ping-1.5.2.mar
+│&nbsp;&nbsp; ├── scripting-1.5.2.mar
+│&nbsp;&nbsp; └── soapmonitor-1.5.2.mar
+├── services
+│&nbsp;&nbsp; ├── ecvservice
+│&nbsp;&nbsp; │&nbsp;&nbsp; └── META-INF
+│&nbsp;&nbsp; │&nbsp;&nbsp;     └── services.xml
+│&nbsp;&nbsp; ├── services.list
+│&nbsp;&nbsp; └── version-1.5.2.aar
+└── web.xml</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>接下来我要新加一个webservice</p> 
+<p>&nbsp;</p> 
+<p>1. 首先用myeclipse的New。。。 里面wsdl生成一个wsdl模板， 然后自己在wsdl可视化设计器里定义输入， 输出</p> 
+<p>&nbsp;&nbsp; &nbsp;这里要注意的是定义复杂类型是在设计器的一个叫types 的地方， 或者直接写source， 下面是个列子</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">    &lt;wsdl:types&gt;
+        &lt;xs:schema xmlns:ax23="http://webservice.xxxx.com" xmlns:ax24="http://webservice.xxxx.com/xsd" xmlns:ax22="http://business.webservice.xxxx.com/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://webservice.xxxx.com"&gt;
+            &lt;xs:complexType name="Entrydata"&gt;
+                &lt;xs:sequence&gt;
+                    &lt;xs:element minOccurs="0" name="authToken" nillable="true" type="xs:string"/&gt;
+                    &lt;xs:element minOccurs="0" name="url" nillable="true" type="xs:string"/&gt;
+                &lt;/xs:sequence&gt;
+            &lt;/xs:complexType&gt;
+            &lt;xs:complexType name="Result"&gt;
+                &lt;xs:sequence&gt;
+                    &lt;xs:element minOccurs="0" name="message" nillable="true" type="xs:string"/&gt;
+                    &lt;xs:element minOccurs="0" name="status" nillable="true" type="xs:string"/&gt;
+                &lt;/xs:sequence&gt;
+            &lt;/xs:complexType&gt;
+            &lt;xs:element name="getAuthToken"&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element minOccurs="0" name="userName" nillable="true" type="xs:string"/&gt;
+                        &lt;xs:element minOccurs="0" name="userId" nillable="true" type="xs:string"/&gt;
+                        &lt;xs:element minOccurs="0" name="friendlyName" nillable="true" type="xs:string"/&gt;
+                        &lt;xs:element minOccurs="0" name="email" nillable="true" type="xs:string"/&gt;
+                    &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+            &lt;xs:element name="getAuthTokenResponse"&gt;
+                &lt;xs:complexType&gt;
+                    &lt;xs:sequence&gt;
+                        &lt;xs:element minOccurs="0" name="entrydata" nillable="true" type="ax23:Entrydata"/&gt;
+                        &lt;xs:element minOccurs="0" name="result" nillable="true" type="ax23:Result"/&gt;
+                    &lt;/xs:sequence&gt;
+                &lt;/xs:complexType&gt;
+            &lt;/xs:element&gt;
+        &lt;/xs:schema&gt;
+    &lt;/wsdl:types&gt;</pre> &nbsp; 
+<p>2. 在wsdl写好后就可以利用axis2的plugin来生成代码，可以生成服务器端和客户端的， 我主要是要服务器端的，把服务器端的代码copy要到项目中，</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">                ├── AserviceMessageReceiverInOut.java       //输入 输出 的转换对象
+                ├── AserviceSkeleton.java                            //service类
+                ├── AserviceSkeletonInterface.java              //接口
+                ├── AuthRequest.java                                 //代表请求数据的类 负责请求数据的处理
+                ├── AuthResponse.java                               //响应数据的类  负责响应数据
+                ├── Entrydata.java                                     //复杂数据类型
+                ├── ExtensionMapper.java                          //不用管的
+                └── Result.java                                          //复杂数据类型
+</pre> &nbsp; 
+<p>然后把<span style="white-space: pre;">│ ├── aservice</span> </p> 
+<pre class="java" name="code">│   │   └── META-INF
+│   │       └── services.xml</pre> 
+<p>&nbsp;放入WEB-INF/services/下</p> 
+<p>&nbsp;</p> 
+<p>service.xml 内容如下</p> 
+<p>&nbsp;</p> 
+<pre class="xml" name="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;service name="aservice"&gt;
+    &lt;description&gt;atservice - spring axis2 web service&lt;/description&gt; 
+    &lt;parameter name="ServiceObjectSupplier"&gt;org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier&lt;/parameter&gt; 
+    &lt;parameter name="SpringBeanName"&gt;aWebService&lt;/parameter&gt; 
+    &lt;messageReceivers &gt; 
+        &lt;messageReceiver  mep="http://www.w3.org/2004/08/wsdl/in-out" class="com.xxxx.webservice.AserviceMessageReceiverInOut"/&gt; 
+    &lt;/messageReceivers&gt; 
+&lt;/service&gt;</pre> 
+<p>&nbsp;</p> 
+<p>3. 接着启动服务器 访问 &nbsp; /services/aservice?wsdl 应该就可以看到wsdl , 但这个wsdl和原来里自己写的有些不一样了</p> 
+<p>你可能想自己修改（服务器生成的可能格式不对， 用soapui不能直接访问） ， 可以把这个生成的wsdl &nbsp;保存到一个文件中放到 WEB-INF/services/aservice/META-INF/下，然后自己按照想要的修改， 这个时候在去访问/services/aservice?wsdl看到的就是你自己修改过的了， </p> 
+<p>（但这里面的location会根据你访问的地址变化, 所以就不用担心wsdl里面的一些写死的地址相关的会在开发服务器和生产服务器切换的时候要去修改配置了）</p> 
+<p>如</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;soap:address
+				location="http://127.0.0.1:8080/xxxx/services/aservice.aserviceHttpSoap11Endpoint/" /&gt;</pre> 
+<p>&nbsp;是你访问127.0.0.1时的输出</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;soap:address
+				location="http://localhost:8080/xxxx/services/aservice.aserviceHttpSoap11Endpoint/" /&gt;</pre> 
+<p> &nbsp;是你访问localhost时的输出 </p> 
+<p>&nbsp;</p> 
+<p>最后完成的目标应该是soapui直接用访问 /services/aservice?wsdl生成的wsdl生成一个项目， 然后直接用默认的request可以去访问服务而不出异常</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>最开始的时候会报错</p> 
+<p>因为AuthRequest.java里面有句</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code"> if (reader.isStartElement() &amp;&amp; new javax.xml.namespace.QName("", "userName").equals(reader.getName())) {</pre> 
+<p>&nbsp;这里是两个QName做比较，&nbsp; 服务器端生成的</p> 
+<pre class="java" name="code">new javax.xml.namespace.QName("", "userName")</pre> 
+<p> 是没有namespace 的，&nbsp; 而客户端请求上来的是有namespace 的， 所以会出现Unexpected subelement </p> 
+<p>这里我在比较的时候加了QName.getLocalPart()去比较&nbsp; 就忽略了namespace对比较的影响</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>还有一个关于namespace&nbsp; 的讨论&nbsp;</p> 
+<p> http://grails.1312388.n4.nabble.com/Grails-AXIS2-Web-Services-td3452513.html</p>

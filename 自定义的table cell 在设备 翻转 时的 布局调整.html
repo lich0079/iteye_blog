@@ -1,0 +1,18 @@
+<p>比如你又一个cell</p> 
+<p>&nbsp;</p> 
+<p>在最左边有一个image， 最右边有一个button ，&nbsp; 当设备翻转成landscape时 希望这2个组件还是在cell的两端</p> 
+<p>&nbsp;</p> 
+<p>这时要做的是设置这2个组件（UIView）的autoresizingMask属性</p> 
+<p>我希望翻转时右边的button还是在屏幕最右边 那么就要编程式的设置&nbsp; </p> 
+<p>button.autoresizingMask= UIViewAutoresizingFlexibleLeftMargin;&nbsp;&nbsp; </p> 
+<p>&nbsp;</p> 
+<p>你也可以在IB 里面可视化的设置autoresizing ， 但这里注意，你希望button总在最右边 就要选中IB中autoresizing的右边的选项，但编程的时候就要设置UIViewAutoresizingFlexible<span style="color: #ff0000;">Left</span> Margin 是反的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>同理 设置navi bar的背景图像 支持翻转</p> 
+<pre class="java" name="code">        UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+        imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;//autoresizing
+        [navi.navigationBar addSubview:imageView];
+        [navi.navigationBar sendSubviewToBack:imageView];</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

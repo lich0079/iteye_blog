@@ -1,0 +1,32 @@
+<div style="font-size: 14px;" class="iteye-blog-content-contain"> 
+ <p>使用Annotation整合Spring2.5和Hibernate3.3，在使用HibernateDaoSupport的时候我希望采用Annotation的方式，但是setSessionFactory被标记为final，那继承HibernateDaoSupport后就不能重写setSessionFactory方法来实现使用Annotation的注入， 解决方法如下：</p> 
+ <p>&nbsp;</p> 
+ <pre name="code" class="java">@Resource(name="sessionFactory")
+
+    public void setBaseDaoSessionFactory(SessionFactory sessionFactory) {
+
+        super.setSessionFactory(sessionFactory);
+
+    }</pre> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>如果采用hibernate4的话， 会遇到java.lang.NoSuchMethodError</p> 
+ <p>&nbsp;</p> 
+ <p><span style="color: #444444; font-family: tahoma, arial, sans-serif; font-size: 12px; line-height: 18px;">主要原因就是hibernate4已经提供了很好的机制，所以不需要再继承HibernateDaoSupport类了。那怎么办呢？不就是为了获取到Session么，我们直接在UserDAOImpl.java类中添加一个SessionFactory属性，再添上它的setter方法。</span></p> 
+ <p>&nbsp;</p> 
+ <pre name="code" class="java">    @Autowired
+    private SessionFactory sessionFactory;
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+	protected Session getSession(){
+	    return sessionFactory.openSession();
+	}</pre> 
+ <p>&nbsp;</p> 
+ <p><strong style="margin: 0px; padding: 0px; color: #444444; font-family: tahoma, arial, sans-serif; font-size: 12px; line-height: 18px;">注意这里不要用getCurrentSession()，不然还是有异常。直接用openSession()</strong></p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+</div>

@@ -1,0 +1,116 @@
+<h3><a href="http://renxiangzyq.iteye.com/blog/182095"></a></h3> 
+<div class="blog_content">
+ "^\d+$"　　//非负整数（正整数 + 0） 
+ <br>"^[0-9]*[1-9][0-9]*$"　　//正整数 
+ <br>"^((-\d+)|(0+))$"　　//非正整数（负整数 + 0） 
+ <br>"^-[0-9]*[1-9][0-9]*$"　　//负整数 
+ <br>"^-?\d+$"　　　　//整数 
+ <br>"^\d+(\.\d+)?$"　　//非负浮点数（正浮点数 + 0） 
+ <br>"^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$"　　//正浮点数 
+ <br>"^((-\d+(\.\d+)?)|(0+(\.0+)?))$"　　//非正浮点数（负浮点数 + 0） 
+ <br>"^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$"　　//负浮点数 
+ <br>"^(-?\d+)(\.\d+)?$"　　//浮点数 
+ <br>"^[A-Za-z]+$"　　//由26个英文字母组成的字符串 
+ <br>"^[A-Z]+$"　　//由26个英文字母的大写组成的字符串 
+ <br>"^[a-z]+$"　　//由26个英文字母的小写组成的字符串 
+ <br>"^[A-Za-z0-9]+$"　　//由数字和26个英文字母组成的字符串 
+ <br>"^\w+$"　　//由数字、26个英文字母或者下划线组成的字符串 
+ <br>"^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$"　　　　//email地址 
+ <br>"^[a-zA-z]+://(\w+(-\w+)*)(\.(\w+(-\w+)*))*(\?\S*)?$"　　//url 
+ <br>/^(d{2}|d{4})-((0([1-9]{1}))|(1[1|2]))-(([0-2]([1-9]{1}))|(3[0|1]))$/ // 年-月-日 
+ <br>/^((0([1-9]{1}))|(1[1|2]))/(([0-2]([1-9]{1}))|(3[0|1]))/(d{2}|d{4})$/ // 月/日/年 
+ <br>"^([w-.]+)@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.)|(([w-]+.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(]?)$" //Emil 
+ <br>"(d+-)?(d{4}-?d{7}|d{3}-?d{8}|^d{7,8})(-d+)?" //电话号码 
+ <br>"^(d{1,2}|1dd|2[0-4]d|25[0-5]).(d{1,2}|1dd|2[0-4]d|25[0-5]).(d{1,2}|1dd|2[0-4]d|25[0-5]).(d{1,2}|1dd|2[0-4]d|25[0-5])$" //IP地址 
+ <br>
+ <br>
+ <br>
+ <br>匹配中文字符的正则表达式： [\u4e00-\u9fa5] 
+ <br>匹配双字节字符(包括汉字在内)：[^\x00-\xff] 
+ <br>匹配空行的正则表达式：\n[\s| ]*\r 
+ <br>匹配HTML标记的正则表达式：/&lt;(.*)&gt;.*&lt;\/\1&gt;|&lt;(.*) \/&gt;/ 
+ <br>匹配首尾空格的正则表达式：(^\s*)|(\s*$) 
+ <br>匹配Email地址的正则表达式：\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)* 
+ <br>匹配网址URL的正则表达式：^[a-zA-z]+://(\\w+(-\\w+)*)(\\.(\\w+(-\\w+)*))*(\\?\\S*)?$ 
+ <br>匹配帐号是否合法(字母开头，允许5-16字节，允许字母数字下划线)：^[a-zA-Z][a-zA-Z0-9_]{4,15}$ 
+ <br>匹配国内电话号码：(\(\d{3,4}\)|\d{3,4}-|\s)?\d{8} 
+ <br>正确格式为：“XXXX-XXXXXXX”，“XXXX-XXXXXXXX”，“XXX-XXXXXXX”， 
+ <br>
+ <br>“XXX-XXXXXXXX”，“XXXXXXX”，“XXXXXXXX”。 
+ <br>验证身份证号（15位或18位数字）：“^d{15}|d{}18$” 
+ <br>匹配腾讯QQ号：^[1-9]*[1-9][0-9]*$ 
+ <br>
+ <br>
+ <br>匹配中文字符的正则表达式： [u4e00-u9fa5] 
+ <br>
+ <br>匹配双字节字符(包括汉字在内)：[^x00-xff] 
+ <br>
+ <br>应用：计算字符串的长度（一个双字节字符长度计2，ASCII字符计1） 
+ <br>
+ <br>String.prototype.len=function(){return this.replace([^x00-xff]/g,"aa").length;} 
+ <br>
+ <br>匹配空行的正则表达式：n[s| ]*r 
+ <br>
+ <br>匹配HTML标记的正则表达式：/&lt;(.*)&gt;.*&lt;/1&gt;|&lt;(.*) /&gt;/ 
+ <br>
+ <br>匹配首尾空格的正则表达式：(^s*)|(s*$) 
+ <br>
+ <br>应用：javascript中没有像vbscript那样的trim函数，我们就可以利用这个表达式来实现，如下： 
+ <br>
+ <br>String.prototype.trim = function() 
+ <br>{ 
+ <br>return this.replace(/(^s*)|(s*$)/g, ""); 
+ <br>} 
+ <br>
+ <br>利用正则表达式分解和转换IP地址： 
+ <br>
+ <br>下面是利用正则表达式匹配IP地址，并将IP地址转换成对应数值的Javascript程序： 
+ <br>
+ <br>function IP2V(ip) 
+ <br>{ 
+ <br>re=/(d+).(d+).(d+).(d+)/g //匹配IP地址的正则表达式 
+ <br>if(re.test(ip)) 
+ <br>{ 
+ <br>return RegExp.$1*Math.pow(255,3))+RegExp.$2*Math.pow(255,2))+RegExp.$3*255+RegExp.$4*1 
+ <br>} 
+ <br>else 
+ <br>{ 
+ <br>throw new Error("Not a valid IP address!") 
+ <br>} 
+ <br>} 
+ <br>
+ <br>不过上面的程序如果不用正则表达式，而直接用split函数来分解可能更简单，程序如下： 
+ <br>
+ <br>var ip="10.100.20.168" 
+ <br>ip=ip.split(".") 
+ <br>alert("IP值是："+(ip[0]*255*255*255+ip[1]*255*255+ip[2]*255+ip[3]*1)) 
+ <br>
+ <br>匹配Email地址的正则表达式：w+([-+.]w+)*@w+([-.]w+)*.w+([-.]w+)* 
+ <br>
+ <br>匹配网址URL的正则表达式：http://([w-]+.)+[w-]+(/[w- ./?%&amp;=]*)? 
+ <br>
+ <br>利用正则表达式去除字串中重复的字符的算法程序： 
+ <br>
+ <br>var s="abacabefgeeii" 
+ <br>var s1=s.replace(/(.).*1/g,"$1") 
+ <br>var re=new RegExp("["+s1+"]","g") 
+ <br>var s2=s.replace(re,"") 
+ <br>alert(s1+s2) //结果为：abcefgi 
+ <br>
+ <br>得用正则表达式从URL地址中提取文件名的javascript程序，如下结果为page1 
+ <br>
+ <br>s="http://www.9499.net/page1.htm" 
+ <br>s=s.replace(/(.*/){0,}([^.]+).*/ig,"$2") 
+ <br>alert(s) 
+ <br>
+ <br>利用正则表达式限制网页表单里的文本框输入内容： 
+ <br>
+ <br>用正则表达式限制只能输入中文：onkeyup="value=value.replace(/[^u4E00-u9FA5]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^u4E00-u9FA5]/g,''))" 
+ <br>
+ <br>用正则表达式限制只能输入全角字符： onkeyup="value=value.replace(/[^uFF00-uFFFF]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^uFF00-uFFFF]/g,''))" 
+ <br>
+ <br>用正则表达式限制只能输入数字：onkeyup="value=value.replace(/[^d]/g,'') "onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^d]/g,''))" 
+ <br>
+ <br>用正则表达式限制只能输入数字和英文：onkeyup="value=value.replace(/[W]/g,'') "onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^d]/g,''))" 
+ <br> 
+</div>

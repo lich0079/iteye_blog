@@ -1,0 +1,40 @@
+<pre class="java" name="code">&lt;s:date name="#note.createdDate" format="EEE, MMM dd 'at' hh:mm aaa" /&gt;
+
+Mon, Feb 15 at 10:38 AM
+
+
+
+&lt;s:text name="global.format.money"&gt;&lt;s:param name="value" value="job.minSalary"/&gt;&lt;/s:text&gt;
+
+
+messages_en_US.properties
+global.format.money={0,number,$###,###}
+
+
+
+ERROR 10-04-27 18:40:11,265 [ObjectFactory.error:27]  Unable to set parameter [cid] in result of type [org.apache.struts2.dispatcher.ServletActionRedirectResult]
+Caught OgnlException while setting property 'cid' on type 'org.apache.struts2.dispatcher.ServletActionRedirectResult'. - Class: ognl.ObjectPropertyAccessor
+File: ObjectPropertyAccessor.java
+Method: setProperty
+Line: 132 - ognl/ObjectPropertyAccessor.java:132:-1
+	at com.opensymphony.xwork2.ognl.OgnlUtil.internalSetProperty(OgnlUtil.java:392)
+	at com.opensymphony.xwork2.ognl.OgnlUtil.setProperty(OgnlUtil.java:143)
+	at com.opensymphony.xwork2.ognl.OgnlReflectionProvider.setProperty(OgnlReflectionProvider.java:91)
+	
+	at org.apache.jk.common.HandlerRequest.invoke(HandlerRequest.java:283)
+	at org.apache.jk.common.ChannelSocket.invoke(ChannelSocket.java:767)
+	at org.apache.jk.common.ChannelSocket.processConnection(ChannelSocket.java:697)
+	at org.apache.jk.common.ChannelSocket$SocketConnection.runIt(ChannelSocket.java:889)
+	at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:690)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: ognl.NoSuchPropertyException: org.apache.struts2.dispatcher.ServletActionRedirectResult.cid
+	at ognl.ObjectPropertyAccessor.setProperty(ObjectPropertyAccessor.java:132)
+	at com.opensymphony.xwork2.ognl.accessor.ObjectAccessor.setProperty(ObjectAccessor.java:28)
+	at ognl.OgnlRuntime.setProperty(OgnlRuntime.java:1656)
+	at ognl.ASTProperty.setValueBody(ASTProperty.java:101)
+	at ognl.SimpleNode.evaluateSetValueBody(SimpleNode.java:177)
+	at ognl.SimpleNode.setValue(SimpleNode.java:246)
+	at ognl.Ognl.setValue(Ognl.java:476)
+	at com.opensymphony.xwork2.ognl.OgnlUtil.setValue(OgnlUtil.java:192)
+	at com.opensymphony.xwork2.ognl.OgnlUtil.internalSetProperty(OgnlUtil.java:385)
+	... 120 more</pre>

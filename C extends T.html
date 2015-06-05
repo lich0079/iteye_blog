@@ -1,0 +1,21 @@
+<p>&lt;C extends T&gt; 是限制 Class&lt;C&gt;里的C的 也就是C需要是T的实现类或者子类</p> 
+<p><strong></strong></p> 
+<p><strong>泛型更具体</strong></p> 
+<ol> 
+ <li class="alt"> <span><span class="keyword"><strong><span style="color: #7f0055;">public</span></strong></span><span>&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">static</span></strong></span><span>&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">class</span></strong></span><span>&nbsp;abc&lt;E&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">extends</span></strong></span><span>&nbsp;&nbsp;CharSequence&gt;{ &nbsp;&nbsp;</span></span> </li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">public</span></strong></span><span>&nbsp;E&nbsp;e; &nbsp;&nbsp;</span> </li> 
+ <li class="alt"> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">public</span></strong></span><span>&nbsp;abc(E&nbsp;o){ &nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">this</span></strong></span><span>.e=o; &nbsp;&nbsp;</span> </li> 
+ <li class="alt"> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} &nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">public</span></strong></span><span>&nbsp;String&nbsp;toString(){ &nbsp;&nbsp;</span> </li> 
+ <li class="alt"> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">return</span></strong></span><span>&nbsp;e.toString(); &nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} &nbsp;&nbsp;</span> </li> 
+ <li class="alt"> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">public</span></strong></span><span>&nbsp;E&nbsp;getE(){ &nbsp;&nbsp;</span> </li> 
+ <li> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="keyword"><strong><span style="color: #7f0055;">return</span></strong></span><span>&nbsp;e; &nbsp;&nbsp;</span> </li> 
+ <li class="alt"> <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} &nbsp;&nbsp;</span> </li> 
+ <li><span>&nbsp;&nbsp;&nbsp;&nbsp;} </span></li> 
+</ol> 
+<p><span> </span></p>
+<p>上面的e可以使CharSequence及其子类。<br>在class abc中e可以调用CharSequence的方法！<br><br>还可是更具体的类<br>请见sun的网站，一般我们仅仅使用上面的内容！</p> 
+<p></p> 
+<p><span>&lt;E extents CharSequence&gt;<br>这时E可以是继承CharSequence的类！</span></p>

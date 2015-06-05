@@ -1,0 +1,74 @@
+<pre name="code" class="java">{
+					id : 'account',
+					xtype : 'textfield',
+					name : 'account',
+					fieldLabel : '用户名',
+					blankText : '用户名不能为空',
+					allowBlank : false,
+					validationEvent : 'blur',
+					validator : function(thisText) {
+						Ext.Ajax.request({
+									url : '../userManage.do?method=isPersonNameUsed',
+									method : 'post',
+									params : {
+										personName : thisText
+									},
+									success : function(response, options) {
+										if (response.responseText == 'nameUsed') {
+											Ext.getCmp('account')
+													.markInvalid('用户名已被使用');
+										} else {
+										}
+									}
+								});
+						return true;//输入框失去焦点后，执行Ajax请求，但马上继续执行对是否valid的判断，这里先返回valid，默认验证成功，假如异步的请求返回后发现用户名已注册，在改成invalid  markInvalid('用户名已被使用');
+
+					}
+				}</pre> 
+<p>&nbsp;</p> 
+<p>发现还是有问题，假如我输入的名字是被占用的，代码执行了markInvalid ，输入栏被改成了invalid的状态（有红框），但是假如这时我执行提交，提交时会执行userForm.form.isValid()&nbsp;，</p> 
+<p>或者手动执行alert(Ext.getCmp('account').isValid()); &nbsp;&nbsp;&nbsp; 这时会判断那个输入栏是valid的，就是说markInvalid 只是改变了输入栏的外在，提示错误，但内在的valid判断还是最开始返回的那个true，</p> 
+<p>&nbsp;</p> 
+<p>然后反过来&nbsp; 最开始返回false，然后假如没占用的话，Ext.getCmp('account').clearInvalid();</p> 
+<p>那么 最开始输入完 是现实 错误的，然后过一会后台验证完了 ，发现没占用，红框没了，</p> 
+<p>但一旦提交的时候&nbsp; userForm.form.isValid()&nbsp; 还是会判断说输入框是invalid的&nbsp; ，这时因为最开始返回的false</p> 
+<p>貌似 markInvalid&nbsp;&nbsp;&nbsp; clearInvalid 改变的只是表象</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>又研究了一下现象 发现了&nbsp; 在执行userForm.form.isValid()&nbsp;时，他是会把所有输入框的vallidator函数都执行一遍的，这个时候我最开始的写的true 或false就产生效果了 其实每次markInvalid&nbsp;&nbsp;&nbsp;&nbsp; clearInvalid&nbsp; 还是把valid的状态改过来了，但是 每次在userForm.form.isValid()&nbsp;时 就会又访问输入框的验证函数 然后直接返回true 或false才造成了之前的现象</p> 
+<p>&nbsp;</p> 
+<p>下面是再次改了之后的代码</p> 
+<pre name="code" class="java">isPersonNameOK=true; 先定义个全局变量
+
+{
+					id : 'account',
+					xtype : 'textfield',
+					name : 'account',
+					fieldLabel : '用户名',
+					blankText : '用户名不能为空',
+					allowBlank : false,
+					validationEvent : 'blur',
+					validator : function(thisText) {
+						if (thisText != '') {
+							Ext.Ajax.request({
+								url : '../userManage.do?method=isPersonNameUsed',
+								method : 'post',
+								params : {
+									personName : thisText
+								},
+								success : function(response, options) {
+									if (response.responseText == 'nameUsed') {
+                                        isPersonNameOK=false;
+										 Ext.getCmp('account')
+										 .markInvalid('用户名已被使用');
+									} else {
+										isPersonNameOK=true;
+                                        Ext.getCmp('account').clearInvalid();
+									}
+								}
+							});
+						}
+						return isPersonNameOK;
+					}
+				}</pre> 
+<p>&nbsp;</p>

@@ -1,0 +1,32 @@
+public static void main(String[] args) { 
+<br>&nbsp; // TODO Auto-generated method stub 
+<br>&nbsp; Double myNumber=23323.3323232323; 
+<br>&nbsp; Double test=0.3434; 
+<br>&nbsp; //getInstance() 
+<br>&nbsp; //返回当前缺省语言环境的缺省数值格式。 
+<br>&nbsp; String myString = NumberFormat.getInstance().format(myNumber); 
+<br>&nbsp; System.out.println(myString); 
+<br>&nbsp; //getCurrencyInstance()返回当前缺省语言环境的通用格式 
+<br>&nbsp; myString = NumberFormat.getCurrencyInstance().format(myNumber); 
+<br>&nbsp; System.out.println(myString); 
+<br>&nbsp; //getNumberInstance() 返回当前缺省语言环境的通用数值格式。 
+<br>&nbsp; myString = NumberFormat.getNumberInstance().format(myNumber); 
+<br>&nbsp; System.out.println(myString); 
+<br>&nbsp; 
+<br>&nbsp; //getPercentInstance()&nbsp; 返回当前缺省语言环境的百分比格式。 
+<br>&nbsp; myString = NumberFormat.getPercentInstance().format(test); 
+<br>&nbsp; System.out.println(myString); 
+<br>&nbsp; 
+<br>&nbsp; //setMaximumFractionDigits(int) 设置数值的小数部分允许的最大位数。 
+<br>&nbsp; //setMaximumIntegerDigits(int)&nbsp; 设置数值的整数部分允许的最大位数。 
+<br>&nbsp; //setMinimumFractionDigits(int) 设置数值的小数部分允许的最小位数。 
+<br>&nbsp; //setMinimumIntegerDigits(int)&nbsp; 设置数值的整数部分允许的最小位数. 
+<br>&nbsp; NumberFormat format = NumberFormat.getInstance(); 
+<br>&nbsp; format.setMinimumFractionDigits( 3 ); 
+<br>&nbsp; format.setMaximumFractionDigits(5); 
+<br>&nbsp; format.setMaximumIntegerDigits( 10 ); 
+<br>&nbsp; format.setMinimumIntegerDigits(0); 
+<br>&nbsp; System.out.println(format.format(2132323213.23266666666)); 
+<br> } 
+<br> 
+<br>

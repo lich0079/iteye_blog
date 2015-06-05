@@ -1,0 +1,74 @@
+<p>build.xml&nbsp; testng测试 并生成覆盖率报告</p> 
+<pre class="java" name="code">&lt;project name="coverage" default="emma.reports"&gt;
+
+    &lt;path id="emma.lib"&gt;
+        &lt;pathelement location="WebRoot/WEB-INF/lib/emma.jar" /&gt;
+        &lt;pathelement location="WebRoot/WEB-INF/lib/emma_ant.jar" /&gt;
+    &lt;/path&gt;
+
+    &lt;property file="build.properties" /&gt;
+    &lt;property name="reports" location="reports" /&gt;
+    &lt;property name="coverage" location="coverage" /&gt;
+    &lt;property name="coverage-output" location="coverage-classes" /&gt;
+    &lt;property name="output" location="classes" /&gt;
+
+    &lt;fileset dir="${JAVA_HOME}" /&gt;
+    &lt;fileset dir="${J2EE_HOME}" /&gt;
+
+    &lt;taskdef resource="testngtasks" classpath="WebRoot/WEB-INF/lib/testng-5.11-jdk15.jar" /&gt;
+    &lt;taskdef resource="emma_ant.properties" classpathref="emma.lib" /&gt;
+
+    &lt;path id="cp"&gt;
+        &lt;fileset dir="WebRoot/WEB-INF/lib"&gt;
+            &lt;include name="*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;fileset dir="${JAVA_HOME}"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;fileset dir="${J2EE_HOME}"&gt;
+            &lt;include name="**/*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;pathelement location="${coverage-output}" /&gt;
+        &lt;pathelement location="${output}" /&gt;
+    &lt;/path&gt;
+    &lt;target name="compile"&gt;
+        &lt;mkdir dir="${output}" /&gt;
+        &lt;mkdir dir="${coverage-output}" /&gt;
+        &lt;javac source="1.5" srcdir="src" debug="true" destdir="${output}" classpathref="cp"&gt;
+            &lt;include name="**/*.java" /&gt;
+        &lt;/javac&gt;
+    &lt;/target&gt;
+    &lt;target name="emma" depends="compile"&gt;
+        &lt;emma&gt;
+            &lt;instr instrpath="${output}"
+                   destdir="${coverage-output}"
+                   metadatafile="${coverage}/metadata.emma"
+                   merge="true" /&gt;
+        &lt;/emma&gt;
+    &lt;/target&gt;
+    &lt;target name="coverage-test" depends="emma"&gt;
+        &lt;testng classpathref="cp"&gt;
+            &lt;classfileset dir="${coverage-output}" includes="**/*.class" /&gt;
+            &lt;jvmarg value="-Demma.coverage.out.file=${coverage}/coverage.emma" /&gt;
+            &lt;jvmarg value="-Demma.coverage.out.merge=true" /&gt;
+        &lt;/testng&gt;
+    &lt;/target&gt;
+    &lt;target name="emma.reports" depends="coverage-test"&gt;
+        &lt;emma&gt;
+            &lt;report sourcepath="src"&gt;
+                &lt;fileset dir="${coverage}"&gt;
+                    &lt;include name="*.emma" /&gt;
+                &lt;/fileset&gt;
+                &lt;txt outfile="${reports}/coverage.txt" /&gt;
+                &lt;html outfile="${reports}/coverage.html" /&gt;
+            &lt;/report&gt;
+        &lt;/emma&gt;
+    &lt;/target&gt;
+    &lt;!--&lt;target name="test" depends="compile"&gt;
+        &lt;testng classpathref="cp" suitename="ant"&gt;
+            &lt;classfileset dir="${output}" includes="**/*.class" /&gt;
+        &lt;/testng&gt;
+    &lt;/target&gt;--&gt;
+&lt;/project&gt;</pre> 
+<p>&nbsp;</p> 
+<p><img height="641" width="1401" src="http://dl.iteye.com/upload/attachment/210651/99bd9a6d-8924-38a0-8f5f-c7203428e3f7.png" alt=""></p>

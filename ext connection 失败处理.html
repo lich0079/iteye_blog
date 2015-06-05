@@ -1,0 +1,70 @@
+<p>使用Extjs进行开发系统时，客户端功能相当丰富。大部门工作都是直接从服务器获取数据再送给widgets进行显示出来。Ext.Ajax是继承Ext.data.Connection而来，而Ext.data.Store在进行加载数据时都需要用到Ext.data.Connection。</p> 
+<p>&nbsp;&nbsp; &nbsp;Ext.data.Connection提供以下三个事件：</p> 
+<p>1、beforerequest &nbsp;请求服务器之前</p> 
+<p>2、requestcomplete 和服务通信成功后</p> 
+<p>3、requestexception 请求失败</p> 
+<p>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;而这三个事件分别在执行request、doFormUpload、handleResponse、handleFailure触发，所以，重写这四个函数就可以实现在请求服务过程中进行相关操作。</p> 
+<p>&nbsp;&nbsp; &nbsp;在这里，大家可以先看一下以下几个Function &nbsp;&nbsp;<a href="http://www.extjs.com/deploy/dev/docs/?class=Function">http://www.extjs.com/deploy/dev/docs/?class=Function</a></p> 
+<p>&nbsp;</p> 
+<p><span style="font-size: large;"><span style=""><span style="font-size: medium;">解决办法：</span></span></span></p> 
+<p>首先，在HTML文件中加入如下代码：</p> 
+<p>&nbsp;</p> 
+<div class="cnblogs_code"> 
+ <img height="16" alt="" src="http://renxiangzyq.iteye.com/Images/OutliningIndicators/ContractedBlock.gif" style="display: none;" width="11">
+ <img height="16" alt="" src="http://renxiangzyq.iteye.com/Images/OutliningIndicators/ExpandedBlockStart.gif" width="11">
+ <span class="cnblogs_code_Collapse">Html</span>
+ <span><br>&lt;!--&lt;br /&gt;&lt;br /&gt;Code highlighting produced by Actipro CodeHighlighter (freeware)&lt;br /&gt;http://www.CodeHighlighter.com/&lt;br /&gt;&lt;br /&gt;--&gt;<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">div&nbsp;</span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="load-ing"</span><span style="color: #0000ff;">&gt;</span><span style="color: #000000;"><br>加载数据中<img alt="" src="http://images.cnblogs.com/dot.gif"><br></span><span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">div</span><span style="color: #0000ff;">&gt;</span></span> 
+</div> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>其loading-ing的CSS样式如下：</p> 
+<p>&nbsp;</p> 
+<div class="cnblogs_code"> 
+ <img height="16" alt="" src="http://renxiangzyq.iteye.com/Images/OutliningIndicators/ContractedBlock.gif" style="display: none;" width="11">
+ <img height="16" alt="" src="http://renxiangzyq.iteye.com/Images/OutliningIndicators/ExpandedBlockStart.gif" style="display: inline;" width="11">
+ <span class="cnblogs_code_Collapse" style="display: none;">CSS</span>
+ <span style="display: inline;"><br>&lt;!--&lt;br /&gt;&lt;br /&gt;Code highlighting produced by Actipro CodeHighlighter (freeware)&lt;br /&gt;http://www.CodeHighlighter.com/&lt;br /&gt;&lt;br /&gt;--&gt;<span style="color: #800000;">#load-ing</span><span style="color: #000000;">{</span><span style="color: #ff0000;">position</span><span style="color: #000000;">:</span><span style="color: #0000ff;">absolute</span><span style="color: #000000;">;</span><span style="color: #ff0000;">right</span><span style="color: #000000;">:</span><span style="color: #0000ff;">5px</span><span style="color: #000000;">;</span><span style="color: #ff0000;">top</span><span style="color: #000000;">:</span><span style="color: #0000ff;">25px</span><span style="color: #000000;">;</span><span style="color: #ff0000;">background</span><span style="color: #000000;">:</span><span style="color: #0000ff;">rgb(221,&nbsp;68,&nbsp;119)&nbsp;url(../images/loading16.gif)&nbsp;no-repeat&nbsp;4px&nbsp;2px&nbsp;</span><span style="color: #000000;">;</span><span style="color: #ff0000;">z-index</span><span style="color: #000000;">:</span><span style="color: #0000ff;">&nbsp;200001</span><span style="color: #000000;">;</span><span style="color: #ff0000;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height</span><span style="color: #000000;">:</span><span style="color: #0000ff;">20px</span><span style="color: #000000;">;</span><span style="color: #ff0000;">line-height</span><span style="color: #000000;">:</span><span style="color: #0000ff;">20px</span><span style="color: #000000;">;</span><span style="color: #ff0000;">width</span><span style="color: #000000;">:</span><span style="color: #0000ff;">150px</span><span style="color: #000000;">;</span><span style="color: #ff0000;">font-size</span><span style="color: #000000;">:</span><span style="color: #0000ff;">12px</span><span style="color: #000000;">;</span><span style="color: #ff0000;">padding-left</span><span style="color: #000000;">:</span><span style="color: #0000ff;">30px</span><span style="color: #000000;">;</span><span style="color: #ff0000;">color</span><span style="color: #000000;">:</span><span style="color: #0000ff;">#FFF</span><span style="color: #000000;">;</span><span style="color: #ff0000;">&nbsp;</span><span style="color: #000000;">}</span></span> 
+</div> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>通过Extjs实现提示等待功能可以有以下两种解决办法：</p> 
+<p>一、可以监听beforerequest &nbsp;、requestcomplete 、requestexception 事件，在每次用到Ext.Ajax或Ext.data.Connection时都写监听函数。</p> 
+<p>&nbsp;&nbsp; &nbsp;此方向可以解决问题，但是，每次使用Ext.Ajax或Ext.data.Connection都需要写监听函数，这样，重复工作较多。不可行</p> 
+<p>二、重写Ext.data.Connection</p> 
+<p>&nbsp;&nbsp; &nbsp;重写Ext.data.Connection的request、doFormUpload、handleResponse、handleFailure几个函数，在执行这几个函数之前选执行你的动作。代码如下：</p> 
+<p>&nbsp;</p> 
+<div class="cnblogs_code"> 
+ <img height="16" alt="" src="http://renxiangzyq.iteye.com/Images/OutliningIndicators/ContractedBlock.gif" style="display: none;" width="11">
+ <img height="16" alt="" src="http://renxiangzyq.iteye.com/Images/OutliningIndicators/ExpandedBlockStart.gif" width="11">
+ <span class="cnblogs_code_Collapse">override Ext.data.Connection</span>
+ <span><br>&lt;!--&lt;br /&gt;&lt;br /&gt;Code highlighting produced by Actipro CodeHighlighter (freeware)&lt;br /&gt;http://www.CodeHighlighter.com/&lt;br /&gt;&lt;br /&gt;--&gt;<span style="color: #000000;">Ext.override(Ext.data.Connection,{<br></span><span style="color: #000000;">&nbsp;&nbsp; &nbsp;request&nbsp;:&nbsp;Ext.data.Connection.prototype.request.createSequence(</span><span style="color: #0000ff;">function</span><span style="color: #000000;">(){&nbsp;<br></span><span style="color: #000000;">&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;Ext.get(</span><span style="color: #000000;">'</span><span style="color: #000000;">load-ing</span><span style="color: #000000;">'</span><span style="color: #000000;">).show();<br>&nbsp;&nbsp;&nbsp;&nbsp;}),<br>&nbsp;&nbsp;&nbsp;&nbsp;handleResponse&nbsp;:&nbsp;Ext.data.Connection.prototype.handleResponse.createSequence(</span><span style="color: #0000ff;">function</span><span style="color: #000000;">(){&nbsp;<br></span><span style="color: #000000;">&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Ext.get(</span><span style="color: #000000;">'</span><span style="color: #000000;">load-ing</span><span style="color: #000000;">'</span><span style="color: #000000;">).hide();<br></span><span style="color: #000000;">&nbsp;&nbsp; &nbsp;}),<br>&nbsp;&nbsp;&nbsp;&nbsp;doFormUpload&nbsp;:&nbsp;Ext.data.Connection.prototype.doFormUpload.createSequence(</span><span style="color: #0000ff;">function</span><span style="color: #000000;">(){&nbsp;<br></span><span style="color: #000000;">&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Ext.get(</span><span style="color: #000000;">'</span><span style="color: #000000;">load-ing</span><span style="color: #000000;">'</span><span style="color: #000000;">).hide();<br></span><span style="color: #000000;">&nbsp;&nbsp; &nbsp;}),<br>&nbsp;&nbsp;&nbsp;&nbsp;handleFailure&nbsp;:&nbsp;Ext.data.Connection.prototype.handleFailure.createSequence(</span><span style="color: #0000ff;">function</span><span style="color: #000000;">(){&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ext.DomHelper.overwrite(Ext.get(</span><span style="color: #000000;">'</span><span style="color: #000000;">load-ing</span><span style="color: #000000;">'</span><span style="color: #000000;">),</span><span style="color: #000000;">'</span><span style="color: #000000;">加载出错,建议&nbsp;&lt;a&nbsp;onclick="window.location.reload();"&nbsp;href="#"&gt;&lt;b&gt;刷新本页&lt;/b&gt;&lt;/a&gt;&nbsp;!</span><span style="color: #000000;">'</span><span style="color: #000000;">)<br>&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000ff;">this</span><span style="color: #000000;">.serail</span><span style="color: #000000;">=</span><span style="color: #0000ff;">this</span><span style="color: #000000;">.serail</span><span style="color: #000000;">-</span><span style="color: #000000;">100</span><span style="color: #000000;">;<br>&nbsp;&nbsp;&nbsp;&nbsp;})<br>})</span></span> 
+</div> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>问题：</p> 
+<p>在一个页面中同时执行几个request函数时，当第一个request执行完成后，“载数据中<img alt="" src="http://images.cnblogs.com/dot.gif">”将会被隐藏，而这时可能页面还在和服务器通信。所以这种办法并不能根据解决问题。于是想到了加入标志的方法。</p> 
+<p>&nbsp;&nbsp; &nbsp;当执行一次Ext.get('load-ing').show();时，标志加一，当执行一次Ext.get('load-ing').hide();时，标志减一。代码如下：</p> 
+<p>&nbsp;</p> 
+<div class="cnblogs_code"> 
+ <img height="16" alt="" src="http://renxiangzyq.iteye.com/Images/OutliningIndicators/ContractedBlock.gif" style="display: none;" width="11">
+ <img height="16" alt="" src="http://renxiangzyq.iteye.com/Images/OutliningIndicators/ExpandedBlockStart.gif" width="11">
+ <span class="cnblogs_code_Collapse">Ext.data.Connection</span>
+ <span><br>&lt;!--&lt;br /&gt;&lt;br /&gt;Code highlighting produced by Actipro CodeHighlighter (freeware)&lt;br /&gt;http://www.CodeHighlighter.com/&lt;br /&gt;&lt;br /&gt;--&gt;<span style="color: #000000;">Ext.override(Ext.data.Connection,{<br>&nbsp;&nbsp;&nbsp;&nbsp;serail&nbsp;:&nbsp;</span><span style="color: #000000;">0</span><span style="color: #000000;">,<br>&nbsp;&nbsp;&nbsp;&nbsp;request&nbsp;:&nbsp;Ext.data.Connection.prototype.request.createSequence(</span><span style="color: #0000ff;">function</span><span style="color: #000000;">(){&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000ff;">this</span><span style="color: #000000;">.serail</span><span style="color: #000000;">++</span><span style="color: #000000;">;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ext.get(</span><span style="color: #000000;">'</span><span style="color: #000000;">load-ing</span><span style="color: #000000;">'</span><span style="color: #000000;">).show();<br>&nbsp;&nbsp;&nbsp;&nbsp;}),<br>&nbsp;&nbsp;&nbsp;&nbsp;handleResponse&nbsp;:&nbsp;Ext.data.Connection.prototype.handleResponse.createSequence(</span><span style="color: #0000ff;">function</span><span style="color: #000000;">(){&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000ff;">if</span><span style="color: #000000;">(</span><span style="color: #0000ff;">this</span><span style="color: #000000;">.serail</span><span style="color: #000000;">==</span><span style="color: #000000;">1</span><span style="color: #000000;">)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ext.get(</span><span style="color: #000000;">'</span><span style="color: #000000;">load-ing</span><span style="color: #000000;">'</span><span style="color: #000000;">).hide();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000ff;">this</span><span style="color: #000000;">.serail</span><span style="color: #000000;">--</span><span style="color: #000000;">;<br>&nbsp;&nbsp;&nbsp;&nbsp;}),<br>&nbsp;&nbsp;&nbsp;&nbsp;doFormUpload&nbsp;:&nbsp;Ext.data.Connection.prototype.doFormUpload.createSequence(</span><span style="color: #0000ff;">function</span><span style="color: #000000;">(){&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000ff;">if</span><span style="color: #000000;">(</span><span style="color: #0000ff;">this</span><span style="color: #000000;">.serail</span><span style="color: #000000;">==</span><span style="color: #000000;">1</span><span style="color: #000000;">)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ext.get(</span><span style="color: #000000;">'</span><span style="color: #000000;">load-ing</span><span style="color: #000000;">'</span><span style="color: #000000;">).hide();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000ff;">this</span><span style="color: #000000;">.serail</span><span style="color: #000000;">--</span><span style="color: #000000;">;<br>&nbsp;&nbsp;&nbsp;&nbsp;}),<br>&nbsp;&nbsp;&nbsp;&nbsp;handleFailure&nbsp;:&nbsp;Ext.data.Connection.prototype.handleFailure.createSequence(</span><span style="color: #0000ff;">function</span><span style="color: #000000;">(){&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ext.DomHelper.overwrite(Ext.get(</span><span style="color: #000000;">'</span><span style="color: #000000;">load-ing</span><span style="color: #000000;">'</span><span style="color: #000000;">),</span><span style="color: #000000;">'</span><span style="color: #000000;">加载出错,建议&nbsp;&lt;a&nbsp;onclick="window.location.reload();"&nbsp;href="#"&gt;&lt;b&gt;刷新本页&lt;/b&gt;&lt;/a&gt;&nbsp;!</span><span style="color: #000000;">'</span><span style="color: #000000;">)<br>&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000ff;">this</span><span style="color: #000000;">.serail</span><span style="color: #000000;">=</span><span style="color: #0000ff;">this</span><span style="color: #000000;">.serail</span><span style="color: #000000;">-</span><span style="color: #000000;">100</span><span style="color: #000000;">;<br>&nbsp;&nbsp;&nbsp;&nbsp;})<br>})</span></span> 
+</div> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<div>
+ 实现效果：
+</div> 
+<div>
+ 1、在于服务器进行通信时的提示如下：
+</div> 
+<div>
+ <img alt="" src="http://pic002.cnblogs.com/img/petali/200902/2009021718521040.jpg">
+</div> 
+<div>
+ 2、当于服务器通信失败时会提示：
+</div> 
+<div>
+ <img alt="" src="http://pic002.cnblogs.com/img/petali/200902/2009021718582265.jpg">
+</div>

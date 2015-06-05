@@ -1,0 +1,57 @@
+<pre name="code" class="java">import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class Publisher {
+
+    List&lt;Subscriber&gt; listener = new ArrayList&lt;Subscriber&gt;();
+
+    public void publish(String message) {
+        for (Iterator iterator = listener.iterator(); iterator.hasNext();) {
+            Subscriber s = (Subscriber) iterator.next();
+            s.receive(message);
+        }
+    }
+
+    public void add(Subscriber subscriber) {
+        listener.add(subscriber);
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">interface Subscriber {
+    void receive(String message);
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">import junit.framework.TestCase;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+
+public class PublisherTest extends TestCase {
+    Mockery context = new Mockery();
+
+    public void testOneSubscriberReceivesAMessage() {
+        // set up
+        final Subscriber subscriber = context.mock(Subscriber.class);
+        Publisher publisher = new Publisher();
+        publisher.add(subscriber);
+        
+        final String message = "message";
+        
+        // expectations
+        context.checking(new Expectations() {{
+            oneOf (subscriber).receive(message);
+        }});
+
+        // execute
+        publisher.publish(message);
+        
+        // verify
+        context.assertIsSatisfied();
+    }
+}
+</pre> 
+<p>&nbsp;</p>

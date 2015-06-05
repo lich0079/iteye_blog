@@ -1,0 +1,41 @@
+<p>vi &nbsp; /etc/crontab</p> 
+<p>&nbsp;</p> 
+<p><span style="font-size: 14px; line-height: 21px; font-family: verdana,sans-serif;"> </span> </p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">第一行会有内容格式的提示：</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;"># m h&nbsp; dom mon dow&nbsp;&nbsp; command<br> 具体意义表示：<strong><span style="font-family: 'Arial Narrow';">分钟 小时 日期 月份 星期 命令</span> </strong> ，在某月（mon）的某天（dom）或者星期几（dow）的几点（h，24小时制）几分（m）执行某个命令（command），<strong>*</strong> 表示任意时间。例如：</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">* 1 * * 7 &nbsp; root &nbsp;/root/backup.sh &nbsp; #星期日的1点备份</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">* 1 1 * * &nbsp; root &nbsp;/root/backup.sh &nbsp; #每月1号的1点备份</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">&nbsp;</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">/etc/init.d/cron restart</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">&nbsp;</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">service cron restart</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">&nbsp;</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">&nbsp;</p> 
+<p style="margin-top: 1em; margin-right: 0px; margin-bottom: 0.5em; margin-left: 0px; padding: 0px;">&nbsp;</p> 
+<pre class="java" name="code">#! /bin/bash
+
+now=`date +%Y%m%d%H`
+
+if test ! "$1" = "" ; then
+tomail=$1
+last=`tail -1 logcount`
+echo `ls -l  /var/log | grep Error | wc -l` &gt;&gt; logcount
+now=`tail -1 logcount`
+
+   if [ $now -gt $last ] ; then
+     echo  $now &gt;&gt; /tmp/logmail
+     echo `ls -l  /var/log/ | grep Error | wc -l` " error logs"  &gt;&gt; /tmp/logmail
+     echo  "/var/log" &gt;&gt; /tmp/logmail
+     ls -l  /var/log &gt;&gt; /tmp/logmail
+     cat /tmp/logmail   |  mail -s "log-report" $tomail
+     rm  /tmp/logmail
+   else
+    echo "no change"
+   fi
+
+else
+echo 'no to mail'
+
+fi
+</pre> &nbsp; 
+<p>&nbsp;</p>

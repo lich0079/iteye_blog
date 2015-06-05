@@ -1,0 +1,7 @@
+<p>public class ContactAction extends ActionSupport implements ModelDriven&lt;Contact&gt; {<br> &nbsp;&nbsp;&nbsp; private static final long serialVersionUID = -2318419860549968641L;<br><br> &nbsp;&nbsp;&nbsp; private TextProvider textProvider;<br> &nbsp;&nbsp;&nbsp; private UserServices userServices;<br> &nbsp;&nbsp;&nbsp; private ContactServices contactServices;<br><br> &nbsp;&nbsp;&nbsp; private int cid;<br> &nbsp;&nbsp;&nbsp; private Contact contact = new Contact();</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>@SkipValidation<br> &nbsp;&nbsp;&nbsp; public String loadForUpdate() {<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Contact acontact = contactServices.read(contact.getId());<br><br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BeanUtils.copyProperties(acontact, contact);//work<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return Action.SUCCESS;<br> &nbsp;&nbsp;&nbsp; }</p> 
+<p>&nbsp;</p> 
+<p>直接contact = contactServices.read(contact.getId());//not work</p> 
+<p>在update页面上表单的值显示不出来</p>

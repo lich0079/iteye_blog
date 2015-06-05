@@ -1,0 +1,26 @@
+<div class="iteye-blog-content-contain" style="font-size: 14px;"> 
+ <p>dojo/query 不好用， 想用jquery做dom查询， 列子如下， 注意jquery的路径就好了</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <pre class="java" name="code">&lt;script type="text/javascript"
+  src="https://ajax.googleapis.com/ajax/libs/dojo/1.7.0/dojo/dojo.js"
+  data-dojo-config="async: true, packages: [
+    { name: 'jquery', location: 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1', 
+      main: 'jquery' }
+    ]"&gt;
+&lt;/script&gt;
+
+The second step is to modify our source code to add the actual loading of jQuery through the require function: 
+ 
+&lt;script type="text/javascript"&gt;
+  define.amd.jQuery = true;
+  require(["jquery", "dojo/query", "dojo/NodeList-dom"], function(jquery, $){
+    $("output").style("visibility", "visible");
+    jquery("#output").css("visibility", "hidden");
+  });
+&lt;/script&gt;</pre> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+</div>

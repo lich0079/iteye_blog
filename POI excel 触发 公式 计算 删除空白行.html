@@ -1,0 +1,34 @@
+用POI api修改excel&nbsp; 表格数据后， 想触发计算公式重新计算 
+<br> 
+<br> 
+<br>简单的方法&nbsp; 
+<br> 
+<br> 
+<br> 
+<br>对设置了公式的单元格做如下操作，相当于刷新下公式会触发重新计算 
+<br> 
+<br> 
+<br>cell.setCellFormula(cell.getCellFormula()); 
+<br> 
+<br> 
+<br> 
+<br> 
+<br>删除空白行 
+<br> 
+<br>HSSFSheet类有两个和删除行有关的方法，第一个是removeRow(Row row)，但这个方法只可以把该行清空，并不能完全删除。 
+<br> 
+<br>怎么办？我处理的excel文件可是几百行，靠自己打开excel重新删除肯定是不靠谱的。 
+<br> 
+<br>又去网上查了下，看到了shiftRows(int startRow, int endRow, int n) 这个方法。这个方法可以把startRow至endRow之间的所有行，按照n向上或移动。n如果为正数，则整体区域向下移动，n如果为负数，则整体区域向上移动，我们如果要删除空行，就可以利用shiftRows方法，从sheet表的最后一行开始向上逆序移动非空行。代码如下： 
+<br> 
+<br>int i = sheet.getLastRowNum(); 
+<br>HSSFRow tempRow; 
+<br>while(i &gt; 0){ 
+<br> i--; 
+<br> tempRow = sheet.getRow(i); 
+<br> if(tempRow == null){ 
+<br>&nbsp; sheet.shiftRows(i+1, sheet.getLastRowNum(), -1);&nbsp; 
+<br> } 
+<br>} 
+<br> 
+<br>代码很简单。

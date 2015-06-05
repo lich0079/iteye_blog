@@ -1,0 +1,16 @@
+<h1 class="postTitle"> <a class="postTitle2" href="http://www.cnblogs.com/missthe/archive/2007/04/17/717379.html">如何查 看MX记录是否生效</a> </h1> 
+<p> 运行-&gt;CMD.exe <br> nslookup 回车； <br> set ty=mx 回车； <br> 输入你要查询的域名 回车 </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><strong>A (Address) 记录</strong> </p> 
+<p>是用来指定主机名（或域名）对应的IP地址记录。用户可以将该域名下的网站服务器指向到自己的web server上。同时也可以设置您域名的二级域名。 </p> 
+<p><strong></strong> &nbsp;</p> 
+<p><strong>别名记录(CNAME)</strong> </p> 
+<p>也被称为规范名字。这种记录允许您将多个名字映射到同一台计算机。 通常用于同时提供WWW和MAIL服务的计算机。例如，有一台计算机名为“host.mydomain.com”（A记录）。 它同时提供WWW和MAIL服务，为了便于用户访问服务。可以为该计算机设置两个别名（CNAME）：WWW和MAIL。 这两个别名的全称就是“www.mydomain.com”和“mail.mydomain.com”。实际上他们都指向 “host.mydomain.com”。 同样的方法可以用于当您拥有多个域名需要指向同一服务器IP，此时您就可以将一个域名做A记录指向服务器IP然后将其他的域名做别名到之前做A记录的域名 上，那么当您的服务器IP地址变更时您就可以不必麻烦的一个一个域名更改指向了 只需要更改做A记录的那个域名其他做别名的那些域名的指向也将自动更改到新的IP地址上了。</p> 
+<p>&nbsp;</p> 
+<p><strong>MX（Mail Exchanger）记录</strong> </p> 
+<p>是邮件交换记录，它指向一个邮件服务器，用于电子邮件系统发邮件时根据 收信人的地址后缀来定位邮件服务器。例如，当Internet上的某用户要发一封信给 user@mydomain.com 时，该用户的邮件系统通过DNS查找mydomain.com这个域名的MX记录，如果MX记录存在， 用户计算机就将邮件发送到MX记录所指定的邮件服务器上。</p> 
+<p><a name="checkmx"><strong>检查MX记录是否存在的方法</strong> <br> 　 &nbsp;&nbsp;&nbsp;进行DNS查询的一个非常有用的工具是nslookup，可以使用它来查询DNS中的各种数据。可以在Windows的命令行下直接运行 nslookup进入一个交互模式，在这里能查询各种类型的DNS数据。 <br> 　 &nbsp;&nbsp;&nbsp;DNS的名字解析数据可以有各种不同的类型，有设置这个zone的参数的SOA类型数据，有设置名字对应的IP地址的A类型数据，有设置邮件交换的 MX类型数据。这些不同类型的数据均可以通过nslookup的交互模式来查询，在查询过程中可以使用 set type命令设置相应的查询类型。<br> 如：<br> C:\&gt;nslookup<br> Default Server: [202.106.184.166]<br> Address: 202.106.184.166<br><br> &gt; set type=mx<br> &gt; sina.com.cn<br> Default Server: [202.106.184.166]<br> Address: 202.106.184.166<br><br> Non-authoritative answer:<br> sina.com.cn MX preference = 10, mail exchanger = sinamx.sina.com.cn<br><br> sina.com.cn nameserver = ns1.sina.com.cn<br> sina.com.cn nameserver = ns3.sina.com.cn<br> sinamx.sina.com.cn internet address = 202.106.187.179<br> sinamx.sina.com.cn internet address = 202.106.182.230<br> ns1.sina.com.cn internet address = 202.106.184.166<br> ns3.sina.com.cn internet address = 202.108.44.55<br><br></a> </p> 
+<p><a name="checkmx">如果所要查的某域名的MX记录不存在，则出现与以下类似的提示： <br> C:\&gt;nslookup<br> &gt; set type=mx<br> &gt; amafdsfxit.com.cn<br> Default Server: [202.106.184.166]<br> Address: 202.106.184.166<br><br> *** 202.106.184.166 can't find amaxit.com.cn: Non-existent domain</a> </p> 
+<p><strong>简单技巧：</strong> 同时也可使用 nslookup -qt=mx zzy.cn 这样的命令来查询zzy.cn的MX记录。</p>

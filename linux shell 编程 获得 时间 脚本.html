@@ -1,0 +1,39 @@
+<p><span style="color: #ffa500;">1. date 到 timestamp:</span> <br><span style="color: #32cd32;">-------------</span> <br><br><span style="color: #0000ff;">{aviar@monitor01:~/monitor}<br> $ date -d '2009-12-01 23:20' +%s&nbsp;&nbsp;&nbsp;&nbsp; <br> 1259680800</span> <br><br><span style="color: #ffa500;">2. timestamp 到 date</span> <br><span style="color: #32cd32;">-------------</span> <br><br><span style="color: #0000ff;">{aviar@monitor01:~/monitor}<br> $ date -d '1970-01-01 1259680800 sec utc'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br> Tue Dec&nbsp;&nbsp;1 23:20:00 CST 2009</span> </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>时间的格式怎么写 可以看 man date</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>在inux的shell下获取时间戳一般用两种方法，一是直接调用系统变量；二是用纯shell脚本获取，举例如下</p> 
+<p>一，直接调用系统变量</p> 
+<p>获取今天时期：date +%Y%m%d`</p> 
+<p>获取昨天时期：`date -d yesterday +%Y%m%d`</p> 
+<p>获取前天日期：`date -d -2day +%Y%m%d`</p> 
+<p>依次类推比如获取10天前的日期：`date -d -10day +%Y%m%d`</p> 
+<p>注意以上中间有空格</p> 
+<p>二，自己用shell实现，如下例子是已知今天日期，推算出昨天的日期的shell</p> 
+<p>startdate=`date`<br> d1=`date '+%Y%m%d'`<br> if test ! "$1" = ""<br> then<br> d1=$1<br> fi<br> echo "TODAY IS ${d1}"<br> yesterday()<br> {<br> YEAR=`expr substr "${d1}" 1 4`<br> MONTH=`expr substr "${d1}" 5 2`<br> DAY=`expr substr "${d1}" 7 2`<br> if [ $DAY -eq 1 ]<br> then<br> if [ $MONTH -eq 1 ]<br> then<br> YEAR=`expr $YEAR - 1`<br> MONTH=12<br> else<br> MONTH=`expr $MONTH - 1`<br> fi<br> DAY=`echo \`cal $MONTH $YEAR\`|tail -n1|awk '{print $NF}'`<br> else<br> DAY=`expr $DAY - 1`<br> fi<br> d2=`echo "$YEAR $MONTH $DAY"|awk '{if (length($2)==1) $2=0$2;if (length($3)==1) $3=0$3;printf "%s%s%s",$1,$2,$3}'`<br> }<br> yesterday<br> echo "yesterday IS ${d2}"</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>========================================================</p> 
+<p>判断有没有参数，没有就提示， 有就执行</p> 
+<pre class="java" name="code">#/bin/bash
+
+if test ! "$1" = "" ; then
+dbname=$1
+echo "database ${dbname}  "
+date
+
+mysql -uroot -p1234 ${dbname}&lt;/base.sql
+echo 'import base.sql done'
+date
+
+else
+echo 'no dbname'
+
+fi
+</pre> 
+<p> &nbsp; =================================================================</p> 
+<p>通过 /tmp 递归地搜索以找到含有字 IBM 的文件，而不是通过指向目录的链接进行递归搜索，请输入： <br> grep –R IBM /tmp <br> 或 <br> grep –r -H IBM /tmp <br> 要通过 /tmp 递归地搜索以找到含有词 IBM 的文件，同时也通过链接进行递归搜索，请输入： <br> grep –r IBM /tmp <br> 或 <br> grep -R -L IBM /tmp <br> 文件 <br> /usr/bin/grep 包含 grep 命令。 </p> 
+<p>&nbsp;</p>

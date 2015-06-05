@@ -1,0 +1,75 @@
+<p>用法及返回结果如下：<br> lvyaozu@lvyaozu-desktop:~/shell$ ./requesturl.sh -n20 http://www.baidu.com<br> Request url: http://www.baidu.com<br> Request number: 20<br> Request Failed: 0<br> ——Average Value——<br> time_connect: 0.1614<br> time_total: 0.1693<br> time_namelookup: 0.0088<br> ————————-<br> 请求参数：<br> -n 指定发送多少次请求，默认为10</p> 
+<p>返回结果为 curl -w 选项返回值，以下摘自curl官方文档：</p> 
+<p>http://curl.haxx.se/docs/manpage.html</p> 
+<p><strong>time_connect</strong> The time, in seconds, it took from the start until the TCP connect to the remote host (or proxy) was completed.<br><strong>time_total</strong> The total time, in seconds, that the full operation lasted. The time will be displayed with millisecond resolution.<br><strong>time_namelookup</strong> The time, in seconds, it took from the start until the name resolving was completed. </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">#!/bin/bash
+#requesturl.sh
+ 
+usage="
+Usage: $0 [options...] &lt;url&gt;\n
+Options:\n
+ -h This help text\n
+ -n &lt;num&gt; The numbers to request\n
+"
+if [ $# -lt 1 ]
+then
+    echo -e $usage
+    exit 1
+fi
+num=10
+while getopts "n:h" arg
+do
+	case $arg in
+		n)
+			num=$OPTARG
+			if [ $num -lt 1 ]
+			then
+			    num=1
+			fi
+			;;
+		h)
+		    echo -e $usage
+		    exit 1
+		    ;;
+		?)
+			echo "Unknow argument"
+			exit 1
+			;;
+		esac
+done
+ 
+url=$(eval echo "\$$#")
+ 
+if [ "http://" != ${url:0:7} ]
+then
+    echo "The url need to add the http:// prefix"
+    exit 1
+fi
+ 
+echo "Request url: "$url
+echo "Request number: "$num
+ 
+i=1
+while [ $i -le $num ]
+do
+    c=`curl -o /dev/null -s -w \
+        "http_code:%{http_code} time_namelookup:%{time_namelookup} \
+        time_connect:%{time_connect} time_total:%{time_total}" $url`
+    s=$s$c"\n"
+    i=$[$i+1]
+done
+#echo -e $s
+echo -e $s | \
+awk '{OFS="\n"}{if($1) for(i=1;i&lt;=NF;i++)print $i}' | \
+awk -F: -v num=$num -v failnum=0 \
+    '{if($1 != "http_code")result[$1]+=$2;if($1=="http_code" &amp;&amp; $2 != 200)failnum++} \
+    END{print "Request Failed: " failnum "\n------Average Value------"; \
+    for(i in result) {print i ": " result[i]/num;} \
+    print "-------------------------"}'</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

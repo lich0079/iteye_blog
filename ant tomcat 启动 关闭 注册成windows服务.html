@@ -1,0 +1,387 @@
+<p>tomcat注册成windows服务： <br> 打开cmd命令行，进入tomcat目标下的bin目录里，执行service.bat install tomcat_juziku（服务名）</p> 
+<p>&nbsp;</p> 
+<p>如果想删除windows服务，可以进入cmd命令行，执行sc delete tomcat_juziku（其中，tomcat_juziku为服务名，如果服务名中间有空格，就需要前后加引号）</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>--------------------------------------------------------------------</p> 
+<p>问题： 自己写ant的时候build完war后想部署到tomcat上，然后启动tomcat，在启动前会先运行shutdown尝试关闭tomcat，并且删除掉之前部署的war和相关目录，结果运行shutdown之后马上尝试删除的时候，说是有些资源被使用，无法删除，应该是shutdown执行的关闭tomcat没有完全执行完，就开始执行删除，导致资源被使用中，在网上找了些相关的处理办法，记录如下：</p> 
+<p>&nbsp;</p> 
+<p>1.</p> 
+<p>==========================================</p> 
+<p>ant 启动 tomcat</p> 
+<p>&lt;target name="tomcat.start"&gt;<br> &lt;java jar="${tomcat.home}/bin/bootstrap.jar" fork="true"&gt;<br> &lt;jvmarg value="-Dcatalina.home=${tomcat.home}"/&gt;<br> &lt;/java&gt;<br> &lt;/target&gt;</p> 
+<p>&lt;target name="tomcat.stop"&gt;<br> &lt;java jar="${tomcat.home}/bin/bootstrap.jar" fork="true"&gt;<br> &lt;jvmarg value="-Dcatalina.home=${tomcat.home}"/&gt;<br> &lt;arg line="stop"/&gt;<br> &lt;/java&gt;<br> &lt;/target&gt;<br><br> &lt;target name="tomcat.debug"&gt;<br> &lt;java jar="${tomcat.home}/bin/bootstrap.jar" fork="true"&gt;<br> &lt;jvmarg value="-Dcatalina.home=${tomcat.home}"/&gt;<br> &lt;jvmarg value="-Xdebug"/&gt;<br> &lt;jvmarg<br> value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/&gt;<br> &lt;/java&gt;<br> &lt;/target&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>2、</p> 
+<p>=======================================================</p> 
+<pre class="java" name="code">今天研究对象是Ant，用于对msms系统进行Tomcat的自动部署。
+
+遇到一个怪问题，百思不得其解：
+通过ant depoly可以把msms.war部署到tomcat上。当然，要求这时候webapps下面没有msms目录。
+看tomcat的纪录，加载msms.war正常，网页也可以打开。
+
+通过ant undeploy，可以把msms卸载。Tomcat显示：
+Undeploying context [/msms]
+正常卸载了。问题是，去看webapps目录下面，居然有一个msms目录的残骸，里面保留的目录是
+WEB-INF\lib
+有以下几个文件残留着：
+commons-digester.jar
+commons-validator.jar
+struts.jar
+
+这时候msms目录也无法手工删除，必须停掉tomcat后才能删除。
+
+我装的tomcat是5.5。不知道是否还有人遇到过这种情况，我反正是晕了。
+
+build.properties文件如下：
+tomcat.dir=C:/ApacheGroup/Tomcat5.5
+tomcat.webapps=C:/ApacheGroup/Tomcat5.5/webapps
+tomcat.manager.url=http://localhost:8080/manager
+tomcat.manager.username=admin
+tomcat.manager.password=xxxxxxxx
+
+build.xml文件如下：
+&lt;?xml version="1.0"?&gt;
+&lt;project name="msms" default="compile" basedir="."&gt;
+    &lt;!-- Ant Tomcat Task Definition --&gt;
+    &lt;taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"&gt;
+        &lt;classpath&gt;
+            &lt;path location="${tomcat.dir}/server/lib/catalina-ant.jar" /&gt;
+        &lt;/classpath&gt;
+    &lt;/taskdef&gt;
+
+    &lt;taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"&gt;
+        &lt;classpath&gt;
+            &lt;path location="${tomcat.dir}/server/lib/catalina-ant.jar" /&gt;
+        &lt;/classpath&gt;
+    &lt;/taskdef&gt;
+
+    &lt;taskdef name="install" classname="org.apache.catalina.ant.InstallTask"&gt;
+        &lt;classpath&gt;
+            &lt;path location="${tomcat.dir}/server/lib/catalina-ant.jar" /&gt;
+        &lt;/classpath&gt;
+    &lt;/taskdef&gt;
+
+    &lt;taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask"&gt;
+        &lt;classpath&gt;
+            &lt;path location="${tomcat.dir}/server/lib/catalina-ant.jar" /&gt;
+        &lt;/classpath&gt;
+    &lt;/taskdef&gt;
+
+    &lt;taskdef name="list" classname="org.apache.catalina.ant.ListTask"&gt;
+        &lt;classpath&gt;
+            &lt;path location="${tomcat.dir}/server/lib/catalina-ant.jar" /&gt;
+        &lt;/classpath&gt;
+    &lt;/taskdef&gt;
+
+    &lt;taskdef name="start" classname="org.apache.catalina.ant.StartTask"&gt;
+        &lt;classpath&gt;
+            &lt;path location="${tomcat.dir}/server/lib/catalina-ant.jar" /&gt;
+        &lt;/classpath&gt;
+    &lt;/taskdef&gt;
+
+    &lt;taskdef name="stop" classname="org.apache.catalina.ant.StopTask"&gt;
+        &lt;classpath&gt;
+            &lt;path location="${tomcat.dir}/server/lib/catalina-ant.jar" /&gt;
+        &lt;/classpath&gt;
+    &lt;/taskdef&gt;
+
+    &lt;property name="build" value="build" /&gt;
+    &lt;property name="dist" value="dist" /&gt;
+    &lt;property name="src" value="src/java" /&gt;
+    &lt;property name="test" value="src/test" /&gt;
+    &lt;property name="war-config" value="src/config" /&gt;
+    &lt;property name="report" value="report" /&gt;
+    &lt;property name="lib" value="lib" /&gt;
+    &lt;property name="web" value="web" /&gt;
+    &lt;property name="meta" value="meta" /&gt;
+    &lt;property name="context-path" value="${ant.project.name}" /&gt;
+    &lt;property file="build.properties" /&gt;
+
+    &lt;path id="build.classpath"&gt;
+        &lt;fileset file="${lib}/*.jar" /&gt;
+        &lt;fileset dir="${tomcat.dir}/common/lib"&gt;
+            &lt;include name="*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;fileset dir="${tomcat.dir}/common/endorsed"&gt;
+            &lt;include name="*.jar" /&gt;
+        &lt;/fileset&gt;
+        &lt;pathelement path="${build}" /&gt;
+    &lt;/path&gt;
+
+    &lt;!-- Hibernate Tool Task Definition --&gt;
+    &lt;taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="build.classpath" /&gt;
+    
+    &lt;target name="clean"&gt;
+        &lt;echo message="Cleaning up the build and dist directories" /&gt;
+        &lt;delete dir="${build}" /&gt;
+        &lt;mkdir dir="${build}" /&gt;
+        &lt;delete dir="${dist}" /&gt;
+        &lt;mkdir dir="${dist}" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="copy-resources"&gt;
+        &lt;copy todir="${build}"&gt;
+            &lt;fileset dir="${src}"&gt;
+                &lt;exclude name="**/*.java" /&gt;
+                &lt;exclude name="**/*.hbm.xml" /&gt;
+            &lt;/fileset&gt;
+        &lt;/copy&gt;
+    &lt;/target&gt;
+
+    &lt;target name="compile" depends="copy-resources"&gt;
+        &lt;javac destdir="${build}" srcdir="${src}:${test}"&gt;
+            &lt;classpath refid="build.classpath" /&gt;
+        &lt;/javac&gt;
+    &lt;/target&gt;
+
+    &lt;target name="initdb" depends="compile"&gt;
+        &lt;hibernatetool destdir="${build}"&gt;
+            &lt;classpath&gt;
+                &lt;path location="${build}" /&gt;
+            &lt;/classpath&gt;
+            &lt;annotationconfiguration configurationfile="src/java/hibernate.cfg.xml" /&gt;
+
+            &lt;hbm2ddl create="true" /&gt;
+        &lt;/hibernatetool&gt;
+    &lt;/target&gt;
+
+    &lt;target name="run" depends="compile"&gt;
+        &lt;java fork="true" classname="cn.ac.rcpa.msms.tools.ProjectManager" classpathref="build.classpath"&gt;
+            &lt;classpath path="${build}" /&gt;
+            &lt;arg value="${action}" /&gt;
+            &lt;arg value="${project}" /&gt;
+            &lt;arg value="${description}" /&gt;
+        &lt;/java&gt;
+    &lt;/target&gt;
+
+    &lt;target name="test" depends="compile" description="run junit test"&gt;
+        &lt;delete dir="${report}" /&gt;
+        &lt;mkdir dir="${report}" /&gt;
+        &lt;junit dir="." fork="true" printsummary="on" haltonfailure="false" failureproperty="tests.failed" showoutput="true"&gt;
+            &lt;classpath refid="build.classpath" /&gt;
+            &lt;formatter type="brief" /&gt;
+            &lt;batchtest todir="${report}"&gt;
+                &lt;fileset dir="${build}"&gt;
+                    &lt;include name="**/*Test.*" /&gt;
+                    &lt;include name="**/Test*.*" /&gt;
+                &lt;/fileset&gt;
+            &lt;/batchtest&gt;
+        &lt;/junit&gt;
+        &lt;fail if="tests.failed"&gt;
+      ***********************************************************
+      **** One or more tests failed! Check the output ... ****
+      ***********************************************************
+    &lt;/fail&gt;
+    &lt;/target&gt;
+
+    &lt;target name="create-war" depends="clean, compile" description="build release war"&gt;
+        &lt;echo message="creation the WAR file...${context-path}.war" /&gt;
+        &lt;war destfile="${dist}/${context-path}.war" webxml="${meta}/web.xml"&gt;
+            &lt;classes dir="${build}"&gt;
+                &lt;exclude name="**/*Test.*" /&gt;
+                &lt;exclude name="**/Test*.*" /&gt;
+                &lt;exclude name="hibernate.cfg.xml" /&gt;
+            &lt;/classes&gt;
+            &lt;lib dir="${lib}" /&gt;
+            &lt;fileset dir="${web}" /&gt;
+            &lt;zipfileset dir="${war-config}" prefix="WEB-INF/classes" /&gt;
+        &lt;/war&gt;
+        &lt;!--        &lt;scp file="${dist}/${context-path}.war" todir="root:${password}@172.16.1.20:/usr/local/tomcat/webapps" trust="true" /&gt; --&gt;
+    &lt;/target&gt;
+
+    &lt;target name="deploy" description="Install application in Tomcat"&gt;
+        &lt;deploy url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context-path}" localWar="file:${dist}/${context-path}.war" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="undeploy" description="Remove application in Tomcat" if="already.deployed"&gt;
+        &lt;undeploy url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context-path}" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="reload" description="Reload application in Tomcat"&gt;
+        &lt;reload url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context-path}" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="start" description="Start Tomcat application"&gt;
+        &lt;start url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context-path}" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="stop" description="Stop Tomcat application"&gt;
+        &lt;stop url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context-path}" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="list" description="List Tomcat applications"&gt;
+        &lt;list url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="deploy-application" description="Compile the web application..."&gt;
+        &lt;echo message="Undeploying the application only if it's deployed..." /&gt;
+        &lt;available file="${tomcat.webapps}/${context-path}.war" property="already.deployed" /&gt;
+        &lt;antcall target="undeploy" /&gt;
+        &lt;antcall target="create-war" /&gt;
+        &lt;antcall target="deploy" /&gt;
+    &lt;/target&gt;
+&lt;/project&gt;
+
+
+只有Windows上才会有的问题， 
+创建META-INF目录， 在目录里新建context.xml，加入如下内容 
+
+&lt;?xml version="1.0" encoding="UTF-8"?&gt; 
+&lt;Context reloadable="true" antiResourceLocking="true"&gt; 
+&lt;/Context&gt; 
+
+
+昨天的错误至今无法修正，即使重装了Tomcat也不行。
+
+不过，deploy到两台linux服务器上倒都成功了。
+    &lt;taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"&gt;
+        &lt;classpath&gt;
+            &lt;path location="${tomcat.dir}/server/lib/catalina-ant.jar" /&gt;
+        &lt;/classpath&gt;
+    &lt;/taskdef&gt;
+
+    &lt;taskdef name="list" classname="org.apache.catalina.ant.ListTask"&gt;
+        &lt;classpath&gt;
+            &lt;path location="${tomcat.dir}/server/lib/catalina-ant.jar" /&gt;
+        &lt;/classpath&gt;
+    &lt;/taskdef&gt;
+
+    &lt;target name="deploy-web" description="Install application in Local Tomcat"&gt;
+        &lt;echo message="deploying to web ..." /&gt;
+        &lt;deploy url="http://172.16.1.20:8080/manager" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context-path}" war="file:${dist}/${context-path}.war" update="true" /&gt;
+    &lt;/target&gt;
+
+    &lt;target name="list-web"&gt;
+        &lt;echo message="list web tomcat ..." /&gt;
+        &lt;list url="http://172.16.1.20:8080/manager" username="${tomcat.manager.username}" password="${tomcat.manager.password}" /&gt;
+    &lt;/target&gt;
+
+
+这里跟昨天的代码有一点不一样：
+1、localWar改成了war。
+原来更新远程服务器的时候，总是显示更新成功，但是到webapps目录下总是没有相应的war文件，通过调用
+ant list-web
+发现，有一个context-path是dist/msms，而且是stop状态。哦，原来localWar的意思不是指开发的机器的local path，而是指把这个war被写到服务器的什么地方。改成war就正常了。
+
+2、不需要判断是否已经deploy进而调用undeploy了，直接通过update="true"更新就可以了。
+
+
+</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">彻底解决Ant在Tomcat进行卸载部署undeploy时不能删除jar文件的问题 
+
+首先有一种解决办法，就是在应用下的META-INF下新建context.xml： 
+&lt;?xml version="1.0" encoding="UTF-8"?&gt; 
+&lt;Context reloadable="true" antiResourceLocking="true" antiJARLocking="true"&gt; 
+&lt;/Context&gt; 
+
+这种方法在重复进行多次deploy、undeploy时的确解决了该问题。但是如果在deploy和undeploy之间执行如下的 webtest任务，也就是在undeploy前访问该应用，那么Tomcat就会加载jar文件，再执行undeploy时还是不能删除jar文件，此 时似乎Tomcat植入jar根深蒂固了！ 
+&lt;target name="webtest_login"&gt; 
+&lt;echo message="WebTest测试"/&gt; 
+&lt;exec executable="cmd"&gt; 
+&lt;arg line="/c webtest.bat -f tools/Java/webtest/login.xml -Dwebtest.home=${tools.webtest}"/&gt; 
+&lt;arg line="-Dwebtest.home=${tools.webtest}"/&gt; 
+&lt;arg line="-Dhost=${manager.ip}"/&gt; 
+&lt;arg line="-Dport=${manager.port}"/&gt; 
+&lt;arg line="-Dbasepath=${deploy.name}"/&gt; 
+&lt;arg line="-Dresultpath=${report.webtestReport.part}"/&gt; 
+&lt;arg line="-Dresultfile=${report.webtestReport.xml.part}"/&gt; 
+&lt;/exec&gt; 
+&lt;xslt in="${report.webtestReport.xml}" out="${report.webtestReport.html}" style="${tools.webtest.reportstyle}" /&gt; 
+&lt;/target&gt; 
+
+有一个办法可以彻底解决该问题，就是使用xml部署文件来部署应用，不适用war发布的方式： 
+&lt;target name="deploy"&gt; 
+&lt;echo message="安装Web应用"/&gt; 
+&lt;taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" classpathref="classpath.catalina"/&gt; 
+&lt;deploy url="${manager.url}" username="${manager.username}" password="${manager.password}" path="/${deploy.name}" config="D:\AutoBuilder\build\student\web\context.xml"/&gt; 
+&lt;/target&gt; 
+
+context.xml描述的项目目录位于Tomcat外的目录： 
+&lt;Context path="/student" docBase="D:/AutoBuilder/build/student/web" debug="0"/&gt; 
+
+这样应用程序是指向外界的，不位于Tomcat目录中，再执行undeploy时就没有这个问题了。而且使用war进行deploy时后台的错误也不会再出现了： 
+java.io.FileNotFoundException: webapps\student (The system cannot find the path specified) 
+at java.io.FileInputStream.open(Native Method) 
+at java.io.FileInputStream.&lt;init&gt;(FileInputStream.java:106) 
+at org.apache.catalina.startup.ExpandWar.copyInternal(ExpandWar.java:226) 
+
+BTW，deploy时会在C:\Tomcat 5.5\conf\Catalina\localhost下拷贝生成context.xml，undeploy时会删除该文件
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>3、</p> 
+<p>=======================================================</p> 
+<h2> <span style="color: #0000ff;">启动</span> </h2> 
+<p>注意tomcat.home是你的tomcat的安装路径</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;target name="start-tomcat" description="tomcat starting....."&gt;
+        &lt;exec executable="${tomcat.home}/bin/startup.bat" spawn="true" vmlauncher="false"&gt;
+        &lt;env key="CATALINA_HOME" value="${tomcat.home}" /&gt;
+        &lt;arg line="/c start ${tomcat.home}/bin/startup.bat" /&gt;
+      &lt;/exec&gt;		
+   &lt;/target&gt;</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;关闭</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;target name="tomcat.stop"&gt;
+	&lt;java jar="${tomcat.home}/bin/bootstrap.jar" fork="true"&gt;
+		&lt;jvmarg value="-Dcatalina.home=${tomcat.home}"/&gt;
+		&lt;arg line="stop"/&gt;
+	&lt;/java&gt;
+	&lt;waitfor maxwait="5" maxwaitunit="second"&gt;
+                                &lt;available file="errors.log"/&gt;
+	&lt;/waitfor&gt;
+
+&lt;/target&gt;</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="font-size: medium;"><strong>总结</strong> </span> ：</p> 
+<p>自己试了下，用的第3种，其实他没有彻底解决我的问题，就是多了一个wait的时间，这个时间也是个估计值</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>liunx 下的&nbsp; ant tomcat </p> 
+<p>===================================================================</p> 
+<p>最近公司项目上线了，这一段时间我频繁地按照Release Guide做重复性操作，不胜其烦。今天刚好有空，就用ant加Linux的sh文件做了一个自动Release的脚本，哈哈，以后方便了，一条命令就可以全部搞定。</p> 
+<p>&nbsp;&nbsp;&nbsp; 首先把ant解压到路径/opt/app下，然后用vi编辑/etc/profile文件，加入以下几个语句：<br> &nbsp;&nbsp;&nbsp; export ANT_HOME=/opt/app/apache-ant-1.7.0<br> &nbsp;&nbsp;&nbsp; export JAVA_HOME=/opt/app/jdk1.5.0_16<br> &nbsp;&nbsp;&nbsp; export PATH=$PATH:$JAVA_HOME/bin:$ANT_HOME/bin<br> &nbsp;&nbsp;&nbsp; 按Esc后同时按shift跟:键，接着输入命令wq退出vi。现在我们可以写ant脚本跟sh文件了</p> 
+<p>/*&nbsp; release.sh&nbsp; */<br> cd /opt/app/apache-tomcat-5.5.26/bin<br> ./shutdown.sh<br> killall -9 java&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //因为有时候shutdown不能完全关闭tomcat，所以就用这条命令把java线程全部kill掉</p> 
+<p>kill -TERM `ps -ef | grep 5.5.26 | grep -v grep | awk '{print $2}'`&nbsp; //或者仅仅kill掉tomcat-5.5.26的线程<br> rm -rf /opt/app/apache-tomcat-5.5.26/work/Catalina/localhost<br> cd /opt/app/my<br> ant all<br> cd /opt/app/my_1.0_dynamic<br> unzip&nbsp; my_dynamic.war<br> mv /opt/app/my/trunk/my.xml /opt/app/apache-tomcat-5.5.26/conf/Catalina/localhost/&nbsp;&nbsp;&nbsp;&nbsp; //这个文件指定Context<br> cd /opt/app/apache-tomcat-5.5.26/bin<br> ./startup.sh</p> 
+<p>/*&nbsp; my.xml&nbsp; */<br> &lt;?xml version="1.0" encoding="UTF-8"?&gt;</p> 
+<p>&lt;Context docBase="/opt/app/my_1.0_dynamic" crossContext="true" &gt;<br> &lt;/Context&gt;</p> 
+<p>/*&nbsp; build.properties&nbsp; */<br> # -----------------------------------------------------------------------------<br> # build.properties<br> # This file is referenced by the build.xml file.<br> # -----------------------------------------------------------------------------</p> 
+<p>svnant.version=1.0.0</p> 
+<p># -----------------------------------------------------------------------------<br> # all jar needed<br> # -----------------------------------------------------------------------------<br> svnlib.dir=trunk/lib/svnant<br> svnant.jar=${svnlib.dir}/svnant.jar<br> svnClientAdapter.jar=${svnlib.dir}/svnClientAdapter.jar<br> svnjavahl.jar=${svnlib.dir}/svnjavahl.jar</p> 
+<p>svnant.latest.url=http://192.168.1.1/svn/projects/my/coding/trunk/</p> 
+<p>svnant.repository.user=your username<br> svnant.repository.passwd=your password</p> 
+<p>dev.apache.DocumentRoot=/opt/app/httpd-2.2.9-ssl-rewrite/htdocs</p> 
+<p>/*&nbsp; build.xml&nbsp; */<br> &lt;?xml version="1.0"?&gt;</p> 
+<p>&lt;project name="myProject" basedir="." default="usage"&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;!--&nbsp; all properties are in build.properties --&gt; <br> &nbsp;&nbsp;&nbsp; &lt;property file="build.properties" /&gt; </p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;property name="name" value="${ant.project.name}"/&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;property name="src.dir" value="trunk/src"/&gt;<br> &nbsp;&nbsp;&nbsp; &lt;property name="src.webapp" value="trunk/web"/&gt;<br> &nbsp;&nbsp;&nbsp; &lt;property name="lib.dir" value="trunk/lib"/&gt;<br> &nbsp;&nbsp;&nbsp; &lt;property name="static.dir" value="trunk/static"/&gt;<br> &nbsp;&nbsp;&nbsp; <br> &nbsp;&nbsp;&nbsp; &lt;property name="build.dir" value="trunk/build"/&gt;<br> &nbsp;&nbsp;&nbsp; &lt;property name="build.webapp" value="${build.dir}/webapp"/&gt;<br> &nbsp;&nbsp;&nbsp; &lt;property name="build.classes" value="${build.webapp}/WEB-INF/classes"/&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;property name="dist.dir" value="/opt/app/my_1.0_dynamic"/&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;!-- path to the svnant libraries. --&gt;<br> &nbsp;&nbsp;&nbsp; &lt;path id="svnant.classpath"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;pathelement location="${svnjavahl.jar}" /&gt; <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;pathelement location="${svnant.jar}" /&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;pathelement location="${svnClientAdapter.jar}" /&gt;<br> &nbsp;&nbsp;&nbsp; &lt;/path&gt; <br> &nbsp;&nbsp;&nbsp; &lt;taskdef resource="svntask.properties" classpathref="svnant.classpath"/&gt;&nbsp;&nbsp;&nbsp; <br> &nbsp;&nbsp;&nbsp; <br> &nbsp;&nbsp;&nbsp; &lt;!-- another way is to put all lib to ant_home/lib and just uncomment the following line. --&gt;<br> &nbsp;&nbsp;&nbsp; &lt;!-- &lt;taskdef resource="svntask.properties"/&gt;--&gt;<br> &nbsp; <br> &nbsp; &lt;target name="checkout"&gt;<br> &nbsp;&nbsp;&nbsp; &lt;svn username="${svnant.repository.user}" password="${svnant.repository.passwd}"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;checkout url="${svnant.latest.url}" revision="HEAD" destPath="trunk" /&gt;<br> &nbsp;&nbsp;&nbsp; &lt;/svn&gt;<br> &nbsp; &lt;/target&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;path id="master-classpath"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset dir="${lib.dir}"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;include name="*.jar"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fileset&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset dir="${lib.dir}/test"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;include name="*.jar"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fileset&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset dir="${lib.dir}/servlet"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;include name="*.jar"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fileset&gt;<br> &nbsp;&nbsp;&nbsp; &lt;/path&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;target name="usage"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message=""/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message="my build"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message="------------------------------------------------------"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message=""/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message="Available targets are:"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message=""/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message="clean&nbsp;&nbsp;&nbsp; --&gt; Clean output dirs"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message="checkout --&gt; Check out latest source from svn server"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message="build&nbsp;&nbsp;&nbsp; --&gt; Compile main Java sources and copy libraries"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message="war&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --&gt; Build a war file"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message="all&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --&gt; Clean, checkout,build, war, tests"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;echo message=""/&gt;<br> &nbsp;&nbsp;&nbsp; &lt;/target&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;target name="init" description="Clean output dirs (.classes and .testclasses)"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;mkdir dir="${build.dir}"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;mkdir dir="${build.webapp}"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;mkdir dir="${build.webapp}/WEB-INF"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;mkdir dir="${build.webapp}/WEB-INF/lib"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;mkdir dir="${build.classes}"/&gt;<br> &nbsp;&nbsp;&nbsp; &lt;/target&gt;<br> &nbsp;&nbsp;&nbsp; <br> &nbsp;&nbsp;&nbsp; &lt;target name="clean" description="Clean output dirs (.classes and .testclasses)"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;delete dir="${build.dir}"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;delete dir="${dist.dir}"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;delete&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset dir="${src.webapp}/WEB-INF/lib" includes="**/*.jar"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/delete&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;delete dir="${src.webapp}/WEB-INF/classes/au"/&gt;<br> &nbsp;&nbsp;&nbsp; &lt;/target&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;target name="build" depends="init" description="Compile main source tree java files into class files, generate jar files"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;javac destdir="${build.classes}" source="1.5" target="1.5" debug="true"<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; deprecation="false" optimize="false" failonerror="true" encoding="utf-8"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;src path="${src.dir}"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;classpath refid="master-classpath"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/javac&gt;&nbsp; <br> &nbsp;&nbsp;&nbsp; &lt;/target&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;target name="webapp" depends="init, build"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;copy todir="${build.webapp}"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset dir="${src.webapp}"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/copy&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;copy todir="${build.webapp}/WEB-INF/lib"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset dir="${lib.dir}"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;exclude name="**/servlet*"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;exclude name="**/servlet/*"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;exclude name="**/test*"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;exclude name="**/test/*.jar"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;exclude name="**/svnant/*.jar"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;exclude name="**/svnant*"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fileset&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/copy&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;copy todir="${build.webapp}/WEB-INF/classes"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset dir="${src.dir}"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;include name="**/resources/*"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fileset&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/copy&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;copy todir="${build.webapp}/WEB-INF/classes"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset dir="${src.dir}"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;include name="**/*validation.xml"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fileset&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/copy&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;copy todir="${dev.apache.DocumentRoot}"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileset dir="${static.dir}"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/fileset&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/copy&gt;<br> &nbsp;&nbsp;&nbsp; &lt;/target&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;target name="war" depends="init, build, webapp"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;jar jarfile="${build.webapp}/WEB-INF/lib/my.jar" basedir="${build.webapp}/WEB-INF/classes" &gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;include name="**/au/**"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;include name="**/com/**"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/jar&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;jar jarfile="${build.dir}/my_dynamic.war" basedir="${build.webapp}" &gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;exclude name="**/jai_*.jar"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;exclude name="**/classes/au/**"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;exclude name="**/classes/com/**"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/jar&gt;<br> &nbsp; &lt;/target&gt;</p> 
+<p>&nbsp;&nbsp;&nbsp; &lt;target name="dist" depends="init, build, webapp, war"&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;mkdir dir="${dist.dir}"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;copy file="${build.dir}/my_dynamic.war" todir="${dist.dir}"/&gt;<br> &nbsp;&nbsp;&nbsp;&nbsp; &lt;/target&gt;</p> 
+<p><br> &nbsp;&nbsp;&nbsp; &lt;target name="all" depends="clean,checkout,dist" description="Clean,checkout,build,warfile,dist"/&gt;<br> &nbsp;&nbsp;&nbsp; <br> &lt;/project&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

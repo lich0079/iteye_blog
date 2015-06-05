@@ -1,0 +1,17 @@
+Caused by: LifecycleException:  Error initializaing :  javax.management.ReflectionException: Cannot find method addChild with this signature
+ 
+jboss 部署的时候出现这个错误
+ 
+删除WEB-INF/lib 下的j2ee.jar  jms.jar  jmx.jar 后 错误没了，  应该是部署了这些jboss已经自带的jar引起冲突造成的
+ 
+ 
+org.jboss.resource.adapter.jdbc.WrapperDataSource cannot be cast to javax.sql.DataSource
+ 
+可能是项目中的数据库驱动和服务器上数据库驱动重复,导致冲突
+ 这个很隐蔽,可能有的包中含有Javax.sql.DataSource,也会冲突,我查到的就有一个,class12.jar
+ 
+ 
+delete    xerces.jar
+ 
+ 
+http://mingxiao2010.blog.163.com/blog/static/86190481201003144336547/

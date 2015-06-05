@@ -1,0 +1,37 @@
+<p>nginx貌似没有虚拟目录的说法，因为它本来就是完完全全根据目录来设计并工作的。<br> 如果非要给nginx安上一个虚拟目录的说法，那就只有alias标签比较“像”，干脆来说说alias标签和root标签的区别吧。<br> 最基本的区别：alias指定的目录是准确的，root是指定目录的上级目录，并且该上级目录要含有location指定名称的同名目录。另外，根据前文 所述，使用alias标签的目录块中不能使用rewrite的break。<br> 说不明白，看下配置：<br> location /abc/ {<br> &nbsp;&nbsp;&nbsp; alias /home/html/abc/;<br> }<br> 在这段配置下，<a href="http://test/abc/a.html">http://test/abc/a.html</a> 就指定的是 /home/html/abc/a.html。这段配置亦可改成<br> location /abc/ {<br> &nbsp;&nbsp;&nbsp; root /home/html/;<br> }<br> 这样，nginx就会去找/home/html/目录下的abc目录了，得到的结果是相同的。<br> 但是，如果我把alias的配置改成：<br> location /abc/ {<br> &nbsp;&nbsp;&nbsp; alias /home/html/def/;<br> }<br> 那么nginx将会从/home/html/def/取数据，这段配置还不能直接使用root配置，如果非要配置，只有在/home/html/下建立一 个 def-&gt;abc的软link（快捷方式）了。<br> 一般情况下，在location /中配置root，在location /other中配置alias是一个好习惯。<br> 至于alias和root的区别，我估计还没有说完全，如果在配置时发现奇异问题，不妨把这两者换换试试。<br> 原文：<a href="http://www.sudone.com/nginx/nginx_alias.html">http://www.sudone.com/nginx/nginx_alias.html</a> <br><br> 自己实践总结：<br> 1、使用alias时目录名后面一定要加“/”<br> 2、nginx、resin当虚拟目录名与真实目录同名时，虚拟目录比真实目录优先级要高。<br> 3、前端nginx的虚拟目录与后端resin真实目录同名时，后端resin真实目录优先级要高(即使resin也配制了同名的别名)。<br> 4、nginx+resin/tomcat整合过程中，发现Nginx的虚拟目录不能正确解析jsp，待解决。</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<h4> <a href="http://www.admin99.net/read.php/413.htm">expires</a> </h4> 
+<h4><br></h4> 
+<h4>expires起到控制页面缓存的作用，合理的配置expires可以减少很多服务器的请求<br> 要配置expires，可以在http段中或者 server段中或者location段中加入<br><br> </h4> 
+<div class="quote"> 
+ <div class="quote-title">
+  引用
+ </div> 
+ <div class="quote-content">
+   &nbsp; &nbsp; &nbsp; &nbsp;location ~ \.(gif|jpg|jpeg|png|bmp|ico)$ {
+  <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;expires 30d;
+  <br> &nbsp; &nbsp; &nbsp; &nbsp;}
+ </div> 
+</div> 
+<p><br> 控制图片等过期时间为30天，当然这个时间可以设置的更长。具体视情况而定<br> 比如</p> 
+<div class="quote"> 
+ <div class="quote-title">
+  引用
+ </div> 
+ <div class="quote-content">
+   &nbsp; &nbsp; &nbsp; &nbsp;location ~ \.(wma|wmv|asf|mp3|mmf|zip|rar|swf|flv)$ {
+  <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;expires max;
+  <br> &nbsp; &nbsp; &nbsp; &nbsp;}
+ </div> 
+</div> 
+<p><br> max表示过期时间为31 December 2037 23:59:59 GMT</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>server {<br> server_name&nbsp; &nbsp;_;&nbsp; &nbsp;#default<br> return 404;<br> }</p>

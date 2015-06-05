@@ -1,0 +1,265 @@
+<pre name="code" class="java">js:
+
+Ext.onReady(function() {
+
+ // 树形面板
+ var tree = new Ext.tree.TreePanel({
+    id : 'tree-mianban',
+    title : '树',
+    region : 'west',
+    animate : true,
+    enableDD : true,
+    containerScroll : false,
+    loader : new Ext.tree.TreeLoader({
+       dataUrl : 'scripts/advancedTree01.json'
+      }),
+    lines : true,
+    // selModel : new Ext.tree.MultiSelectionModel(),
+    containerScroll : false,
+    border : true
+   });
+ // 根节点
+ var root = new Ext.tree.AsyncTreeNode({
+  text : '木叶',
+  draggable : false,
+  id : 'root'
+   // /children : json
+  });
+ // 树形编辑器
+ var treeEditer = new Ext.tree.TreeEditor(Ext.getCmp('tree-mianban'), {
+  id : 'tree-Manage',
+  allowBlank : false
+   // 输入值不可以为空
+  });
+ // 弹出窗口
+ var win = new Ext.Window({
+    maskDisabled : false,
+    id : 'tree-window',
+    modal : true,// 是否为模式窗口
+    constrain : true,// 窗口只能在viewport指定的范围
+    closable : true,// 窗口是否可以关闭
+    closeAction : 'hide',
+    layout : 'fit',
+    width : 300,
+    height : 200,
+    plain : true,
+    items : [{
+       id : 'tree-window-view',
+       border : false
+      }]
+   });
+
+ // 给tree添加事件
+ tree.on('rightClickCont', tree.rightClick, tree);
+
+   
+ // 模块销毁函数
+ function destroy() {
+  this.win.destroy();// 将win窗口销毁，否则在IE中会报错
+ }
+
+ // 本例的主角，加载 tree TreePanel
+ tree.setRootNode(root);
+ tree.render(document.body);
+ root.expand(true, true);
+
+ // 定义右键菜单
+ var rightClick = new Ext.menu.Menu({
+    id : 'rightClickCont',
+    items : [{
+       id : 'addNode',
+       text : '添加',
+       // 增加菜单点击事件
+       menu : [{
+          id : 'insertNode',
+          text : '添加兄弟节点',
+          handler : function(tree) {
+           
+           insertNode();
+          }
+
+         }, {
+          id : 'appendNode',
+          text : '添加儿子节点',
+          handler : function(tree) {
+           
+           appendNodeAction();
+          }
+         }]
+      }, '-', {
+       id : 'delNode',
+       text : '删除',
+       handler : function(tree) {
+
+        delNodeAction();
+       }
+      }, {
+       id : 'modifNode',
+       text : '修改',
+       handler : function() {
+
+        modifNodeAction()
+       }
+      }, {
+       id : 'viewNode',
+       text : '查看',
+       handler : function(tree) {
+
+        veiwNodeAction();
+       }
+      }]
+   });
+ // 添加点击事件
+ tree.on('click', function(node) {
+    if (node.id != 'root') {
+     // alert(node.id);
+     alert('我是：' + node.text + ',我的id是' + node.id + '');
+    }
+   });
+
+ // 增加右键弹出事件
+ tree.on('contextmenu', function(node, event) {// 声明菜单类型
+    event.preventDefault();// 这行是必须的，使用preventDefault方法可防止浏览器的默认事件操作发生。
+   
+    node.select();
+    rightClick.showAt(event.getXY());// 取得鼠标点击坐标，展示菜单
+   });
+
+ // 添加兄弟节点事件实现
+ function insertNode() {
+
+  var selectedNode = tree.getSelectionModel().getSelectedNode();
+
+  var selectedParentNode = selectedNode.parentNode;
+ 
+  var newNode = new Ext.tree.TreeNode({
+     text : '新建节点' + selectedNode.id
+    });
+  if (selectedParentNode == null) {
+   selectedNode.appendChild(newNode);
+  } else {
+   selectedParentNode.insertBefore(newNode, selectedNode);
+  }
+
+  setTimeout(function() {
+     treeEditor.editNode = newNode;
+     treeEditor.startEdit(newNode.ui.textNode);
+    }, 10);
+ };
+
+ // 添加子节点事件实现
+ function appendNodeAction() {
+  
+  var selectedNode = tree.getSelectionModel().getSelectedNode();
+  if (selectedNode.isLeaf()) {
+   selectedNode.leaf = false;
+  }
+  var newNode = selectedNode.appendChild(new Ext.tree.TreeNode({
+     text : '新建节点' + selectedNode.id
+    }));
+  newNode.parentNode.expand(true, true, function() {
+     tree.getSelectionModel().select(newNode);
+     setTimeout(function() {
+        treeEditor.editNode = newNode;
+        treeEditor.startEdit(newNode.ui.textNode);
+       }, 10);
+    });// 将上级树形展开
+ }
+ // 删除节点事件实现
+ function delNodeAction() {
+  
+  var selectedNode = tree.getSelectionModel().getSelectedNode();
+  // 得到选中的节点
+  selectedNode.remove();
+ };
+ // 修改节点事件实现
+ function modifNodeAction() {
+
+  var selectedNode = tree.getSelectionModel().getSelectedNode();// 得到选中的节点
+  treeEditor.editNode = selectedNode;
+  treeEditor.startEdit(selectedNode.ui.textNode);
+ };
+ // 查看事件实现
+ function veiwNodeAction() {
+ 
+  var viewPanel = Ext.getCmp('tree-window-view');
+  var selectedNode = tree.getSelectionModel().getSelectedNode();
+  // 得到选中的节点
+  var tmpid = selectedNode.attributes.id;
+  var tmpname = selectedNode.attributes.text;
+  var tmpdes = selectedNode.attributes.des;
+
+  win.setTitle(tmpname + '的介绍');
+  win.show();
+
+  var dataObj = {
+   id : tmpid,
+   name : tmpname,
+   des : tmpdes
+  }
+  var tmpTpl = new Ext.Template([
+    '&lt;div style="margin:10px"&gt;&lt;div style="margin:10px"&gt;编号:{id}&lt;/div&gt;',
+    '&lt;div style="margin:10px"&gt;名称:{name}&lt;/div&gt;',
+    '&lt;div style="margin:10px"&gt;描述:{des}&lt;/div&gt;&lt;/div&gt;']);
+
+  tmpTpl.overwrite(viewPanel.body, dataObj);
+
+ };
+
+});
+
+
+html:
+
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;
+&lt;title&gt;Drag and Drop between 2 TreePanels&lt;/title&gt;
+&lt;link rel="stylesheet" type="text/css"
+ href="D:/ext-2.2.1/resources/css/ext-all.css" /&gt;
+&lt;script type="text/javascript"
+ src="D:/ext-2.2.1/adapter/ext/ext-base.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="D:/ext-2.2.1/ext-all.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="./treelip.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;div&gt;&lt;/div&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+json:
+
+[
+  {
+   "text":"卡卡西班",
+   "id":"01",
+   "allowDrag":false,
+   "des":"最强的组合！",
+    "children":[
+    {"text":"小樱","id":"0101","allowDrag":false,"des":"一个很可爱的女孩！","children":[
+            {"text":"小樱1","id":"010101","leaf":true,"allowDrag":true,"des":"一个很可爱的女孩！"},
+            {"text":"鸣人1","id":"010202","leaf":true,"allowDrag":true,"des":"四代火影的儿子！"},
+            {"text":"佐助1","id":"010303","leaf":true,"allowDrag":true,"des":"为了杀自己哥哥而活着的男人！"}
+             ]
+    },
+    {"text":"鸣人","id":"0102","leaf":true,"allowDrag":true,"des":"四代火影的儿子！"},
+    {"text":"佐助","id":"0103","leaf":true,"allowDrag":true,"des":"为了杀自己哥哥而活着的男人！"}
+   ]
+  },
+  {
+   "text":"凯班",
+   "id":"02",
+   "allowDrag":false,
+   "des":"有一个很白痴的老师！",
+   "children":[
+    {"text":"小李","id":"0201","leaf":true,"allowDrag":true,"des":"他的努力意识值得任何人学习！"},
+    {"text":"宁次","id":"0202","leaf":true,"allowDrag":true,"des":"白眼族的天才忍者！"},
+    {"text":"天天","id":"0203","leaf":true,"allowDrag":true,"des":"她救活了一个暗器公司！"}
+   ]
+  }
+ ]
+
+
+本文来自CSDN博客，转载请标明出处：http://blog.csdn.net/lipeng_nii/archive/2009/02/18/3905450.aspx</pre> 
+<p>&nbsp;</p>

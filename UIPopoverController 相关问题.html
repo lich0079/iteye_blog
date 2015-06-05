@@ -1,0 +1,30 @@
+<p>&nbsp;</p> 
+<p><span style="border-collapse: collapse; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; font-size: 18px; line-height: 24px;"><strong><span style="color: #01010a;">Popover + tableView 的宽度问题 </span></strong></span></p> 
+<p><span style="border-collapse: collapse; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; font-size: 18px; line-height: 24px;"><strong><span style="color: #01010a;">在tableview push detailview的时候宽度会变</span></strong></span></p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">所有viewcontrol 在viewDidLoad调下面方法
+- (void)setPopoverSize {
+   
+        CGRect  screen = [[UIScreenmainScreen] bounds];
+        if (UIInterfaceOrientationIsLandscape([UIDevice currentDevice].orientation)) {
+            self.contentSizeForViewInPopover =  CGSizeMake(screen.size.height*5/9, screen.size.width*2/3);
+        }else{
+            self.contentSizeForViewInPopover =  CGSizeMake(screen.size.width*3/4, screen.size.height*2/3);
+        }
+    
+}
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;<span style="border-collapse: collapse; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; font-size: 18px; line-height: 24px; color: #01010a;"><span style="font-weight: bold;">Popover + tableView 的</span><strong>title 和&nbsp;</strong></span><strong><span style="font-family: Menlo; font-size: 14px; line-height: normal;">rightBarButtonItem&nbsp;</span><span style="border-collapse: collapse; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; font-size: 18px; line-height: 24px;">问题</span></strong></p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">如果直接把tableview放在popover里面，pop出来的table的navigationbar是显示不出来的
+必须把table放在一个navi里面  再把navi放在popover里面
+        UINavigationController *navigationController = [[UINavigationControlleralloc] initWithRootViewController:controller];
+        UIPopoverController *apopover = [[UIPopoverControlleralloc] initWithContentViewController:navigationController];
+        apopover.delegate = self;
+        [navigationController release];
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>asd</p>

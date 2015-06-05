@@ -1,0 +1,145 @@
+<p>Document.form.item 问题</p> 
+<p>现有问题：</p> 
+<p>现有代码中存在许多 document.formName.item("itemName") 这样的语句，不能在 firefox下运行。</p> 
+<p>解决方法：</p> 
+<p>改用 document.formName.elements["elementName"]。</p> 
+<p>集合类对象问题</p> 
+<p>现有问题：</p> 
+<p>现有代码中许多集合类对象取用时使用 ()，IE 能接受，firefox 不能。</p> 
+<p>解决方法：</p> 
+<p>改用 [] 作为下标运算。如：document.forms("formName") 改为 document.forms["formName"]。</p> 
+<p>又如：document.getElementsByName("inputName")(1) 改为 document.getElementsByName("inputName")[1] </p> 
+<p>window.event</p> 
+<p>现有问题：</p> 
+<p>使用 window.event 无法在 firefox上运行</p> 
+<p>解决方法：</p> 
+<p>MF的 event 只能在事件发生的现场使用，此问题暂无法解决。可以这样变通：</p> 
+<p>原代码(可在IE中运行)：</p> 
+<p>&lt;input type="button" name="someButton" value="提交" onclick="javascript:gotoSubmit()"/&gt;</p> 
+<p>&lt;script language="javascript"&gt;<br>function gotoSubmit() {<br>&nbsp;&nbsp;&nbsp;&nbsp; <br>&nbsp;&nbsp;&nbsp; alert(window.event);&nbsp;&nbsp;&nbsp; // use window.event<br>&nbsp;&nbsp;&nbsp;&nbsp; <br>}<br>&lt;/script&gt;</p> 
+<p>新代码(可在IE和MF中运行)：</p> 
+<p>&lt;input type="button" name="someButton" value="提交" onclick="javascript:gotoSubmit(event)"/&gt;</p> 
+<p>&lt;script language="javascript"&gt;<br>&nbsp;&nbsp;&nbsp; function gotoSubmit(evt) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; evt = evt ? evt : (window.event ? window.event : null);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alert(evt);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // use evt<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>&nbsp;&nbsp;&nbsp; }<br>&lt;/script&gt;</p> 
+<p>此外，如果新代码中第一行不改，与老代码一样的话(即 gotoSubmit 调用没有给参数)，则仍然只能在IE中运行，但不会出错。所以，这种方案 tpl 部分仍与老代码兼容。</p> 
+<p>HTML 对象的 id 作为对象名的问题</p> 
+<p>现有问题：</p> 
+<p>在 IE 中，HTML 对象的 ID 可以作为 document 的下属对象变量名直接使用。在 firefox 中不能。</p> 
+<p>解决方法：</p> 
+<p>用 getElementById("idName") 代替 idName 作为对象变量使用。 </p> 
+<p>用idName字符串取得对象的问题 </p> 
+<p>现有问题：</p> 
+<p>在IE中，利用 eval(idName) 可以取得 id 为 idName 的 HTML 对象，在MF 中不能。</p> 
+<p>解决方法：</p> 
+<p>用 getElementById(idName) 代替 eval(idName)。</p> 
+<p>变量名与某 HTML 对象 id 相同的问题 </p> 
+<p>现有问题：</p> 
+<p>在 MF 中，因为对象 id 不作为 HTML 对象的名称，所以可以使用与 HTML 对象 id 相同的变量名，IE 中不能。 </p> 
+<p>解决方法：</p> 
+<p>在声明变量时，一律加上 var ，以避免歧义，这样在 IE 中亦可正常运行。 </p> 
+<p>此外，最好不要取与 HTML 对象 id 相同的变量名，以减少错误。</p> 
+<p>event.x 与 event.y 问题</p> 
+<p>现有问题：</p> 
+<p>在IE 中，event 对象有 x, y 属性，MF中没有。</p> 
+<p>解决方法：</p> 
+<p>在MF中，与event.x 等效的是 event.pageX。但event.pageX IE中没有。故采用 event.clientX 代替 event.x。在IE 中也有这个变量。 event.clientX 与 event.pageX 有微妙的差别（当整个页面有滚动条的时候），不过大多数时候是等效的。如果要完全一样，可以稍麻烦些：<br>mX = event.x ? event.x : event.pageX;<br>然后用 mX 代替 event.x。 </p> 
+<p>其它:event.layerX 在 IE 与 MF 中都有，具体意义有无差别尚未试验。</p> 
+<p>也要注意css中一些关于x、y区别的，在FireFox可能你不支持的。例如:backgroundPositionX、backgroundPositionY FireFox下是不支持的。 </p> 
+<p>&nbsp;</p> 
+<p>关于frame</p> 
+<p>现有问题：</p> 
+<p>在 IE中 可以用window.testFrame取得该frame，mf中不行 </p> 
+<p>解决方法：</p> 
+<p>在frame的使用方面mf和ie的最主要的区别是：如果在frame标签中书写了以下属性：<br>&lt;frame src="xx.htm" id="frameId" name="frameName" /&gt;<br>那么ie可以通过id或者name访问这个frame对应的window对象。而mf只可以通过name来访问这个frame对应的window对象。例如如果上述frame标签写在最上层的window里面的htm里面，那么可以这样访问：<br>ie： window.top.frameId或者window.top.frameName来访问这个window对象<br>mf： 只能这样window.top.frameName来访问这个window对象 </p> 
+<p>另外，在mf和ie中都可以使用window.top.document.getElementById("frameId")来访问frame标 签。并且可以通过window.top.document.getElementById("testFrame").src = 'xx.htm'来切换frame的内容。也都可以通过window.top.frameName.location = 'xx.htm'来切换frame的内容。关于frame和window的描述可以参见bbs的‘window与frame’文章。以及/test/js /test_frame/目录下面的测试。 </p> 
+<p>自己定义的属性</p> 
+<p>在mf中，自己定义的属性必须getAttribute()取得</p> 
+<p>parentElement parement.children</p> 
+<p>在mf中没有 parentElement parement.children。而用parentNode parentNode.childNodes。</p> 
+<p>childNodes的下标的含义在IE和MF中不同，MF使用DOM规范，childNodes中会插入空白文本节点。一般可以通过 node.getElementsByTagName()来回避这个问题。 当html中节点缺失时，IE和MF对parentNode的解释不同，例如： </p> 
+<p>&lt;form&gt; &lt;table&gt; &lt;input/&gt; &lt;/table&gt; &lt;/form&gt; </p> 
+<p>MF中input.parentNode的值为form, 而IE中input.parentNode的值为空节点。 MF中节点没有removeNode方法，必须使用如下方法 node.parentNode.removeChild(node)。 </p> 
+<p>const 问题 </p> 
+<p>现有问题：</p> 
+<p>在 IE 中不能使用 const 关键字。如 const constVar = 32; 在IE中这是语法错误。 </p> 
+<p>解决方法：</p> 
+<p>不使用 const ，以 var 代替。 </p> 
+<p>body 对象 </p> 
+<p>MF的body在body标签没有被浏览器完全读入之前就存在，而IE则必须在body完全被读入之后才存在 </p> 
+<p>url encoding </p> 
+<p>现有问题：</p> 
+<p>在js中如果书写url就直接写&amp;不要写&amp;例如var url = 'xx.jsp?objectName=xx&amp;objectEvent=xxx';</p> 
+<p>frm.action = url那么很有可能url不会被正常显示以至于参数没有正确的传到服务器。一般会服务器报错参数没有找到当然如果是在tpl中例外，因为tpl中符合xml规范，要求&amp;书写为&amp; 一般MF无法识别js中的&amp; </p> 
+<p>nodeName 和 tagName 问题 </p> 
+<p>现有问题：</p> 
+<p>在MF中，所有节点均有 nodeName 值，但 textNode 没有 tagName 值。在 IE 中，nodeName 的使用好象有问题（具体情况没有测试，但我的IE已经死了好几次）。 </p> 
+<p>解决方法：</p> 
+<p>使用 tagName，但应检测其是否为空。 </p> 
+<p>元素属性 </p> 
+<p>IE下 input.type属性为只读，但是MF下可以修改 </p> 
+<p>document.getElementsByName() 和 document.all[name] 的问题 </p> 
+<p>在 IE 中，getElementsByName()、document.all[name] 均不能用来取得 div 元素（是否还有其它不能取的元素还不知道）。</p> 
+<p>解决方法：</p> 
+<p>&nbsp;</p> 
+<p>对象问题:Form对象 </p> 
+<p>现有问题：</p> 
+<p>现有代码这获得form对象通过document.forms("formName")，这样使用在IE 能接受，MF 不能。 </p> 
+<p>解决方法：</p> 
+<p>改用 作为下标运算。改为document.forms["formName"]<br>备注：上述的改用 作为下标运算中的formName是id而name </p> 
+<p>对象问题:HTML对象 </p> 
+<p>现有问题：</p> 
+<p>在 IE 中，HTML 对象的 ID 可以作为 document 的下属对象变量名直接使用。在 MF 中不能。 document.all("itemName")或者document.all("itemId") </p> 
+<p>解决方法：</p> 
+<p>使用对象ID作为对象变量名 document.getElementById("itemId") <br>备注： document.all是IE自定义的方法，所以请大家尽量不使用。还有一种方式，在IE和MF都可以使用：<br>var f = document.forms["formName "];<br>var o = f. itemId; </p> 
+<p>对象问题:DIV对象</p> 
+<p>现有问题：</p> 
+<p>在 IE 中，DIV对象可以使用ID作为对象变量名直接使用。在 MF 中不能。如： DivId.style.display = "none" </p> 
+<p>解决方法：</p> 
+<p>document.getElementById("DivId").style.display = "none" </p> 
+<p>对象问题:关于frame</p> 
+<p>现有问题：</p> 
+<p>在 IE中 可以用window.testFrame取得该frame，mf中不行 </p> 
+<p>解决方法：</p> 
+<p>在frame的使用方面MF和IE的最主要的区别是：如果在frame标签中书写了以下属性：<br>&lt;frame src="xx.htm" id="frameId" name="frameName" /&gt; 那么ie可以通过id或者name访问这个frame对应的window对象，而mf只可以通过name来访问这个frame对应的window对象。例 如如果上述frame标签写在最上层的window里面的htm里面，那么可以这样访问：<br>ie： window.top.frameId或者window.top.frameName来访问这个window对象<br>mf： 只能这样window.top.frameName来访问这个window对象<br>另外，在mf和ie中都可以使用window.top.document.getElementById("frameId")来访问frame标签，并 且可以通过window.top.document.getElementById("testFrame").src = 'xx.htm'来切换frame的内容，也都可以通过window.top.frameName.location = 'xx.htm'来切换frame的内容。 </p> 
+<p>对象问题：窗口</p> 
+<p>现有问题：</p> 
+<p>IE中可以通过showModalDialog和showModelessDialog打开模态和非模态窗口，但是MF不支持。 </p> 
+<p>解决方法：</p> 
+<p>直接使用window.open(pageURL,name,parameters)方式打开新窗口。如果需要传递参数，可以使用frame或者iframe。 </p> 
+<p>小结</p> 
+<p>在JS中定义各种对象变量名时，尽量使用id，避免使用name。在 IE 中，HTML 对象的 ID 可以作为 document 的下属对象变量名直接使用。在 MF 中不能，所以在平常使用时请尽量使用id，避免只使用name，而不使用id。</p> 
+<p>变量名与某 HTML 对象 id 相同的问题 </p> 
+<p>现有问题：</p> 
+<p>在 MF 中，因为对象 id 不作为 HTML 对象的名称，所以可以使用与 HTML 对象 id 相同的变量名，IE 中不能。 </p> 
+<p>解决方法：</p> 
+<p>在声明变量时，一律加上 var ，以避免歧义，这样在 IE 中亦可正常运行。此外，最好不要取与 HTML 对象 id 相同的变量名，以减少错误。</p> 
+<p>document.all</p> 
+<p>Firefox可以兼容document.all， 但会生成一条警告。可以用getElementById("*") 或者 getElementByTagName("*)来代替 不过对于document.all.length等属性，则完全不兼容。</p> 
+<p>parentElement </p> 
+<p>这个也不兼容。比方说， obj.parentElement.name 则应改成 obj.parentNode.attributes.getNamedItem("name").nodeValue （不知道如何写得更简洁些）</p> 
+<p>event</p> 
+<p>W3C不支持windows.event 比方说在IE里面: &lt;div class="menu" id="menu" onclick="onMenuClick(); "&gt;.....&lt;/div&gt;<br>function onMenuClick()<br>{<br>collapseMenu(event.srcElement);<br>}<br>工作正常。不过在Firefox中，则改成：<br>&lt;div class="menu" id="menu" onclick="onMenuClick(event); "&gt;<br>function onMenuClick(evt)<br>{<br>if(evt == null)<br>evt = window.event; // For IE<br>var srcElement = evt.srcElement? evt.srcElement : evt.target; // IE使用srcElement, 而Firefox使用target<br>collapseMenu(srcElement);<br>} </p> 
+<p>innerText </p> 
+<p>现有问题：</p> 
+<p>IE支持，FIREFOX不支持 </p> 
+<p>解决方法：</p> 
+<p>用innerHTML,2种浏览器都识别innerHTML</p> 
+<p>document.createElement </p> 
+<p>现有问题：</p> 
+<p>FIREFOX支持(除了IE，现在所有浏览器都支持)，IE不支持 </p> 
+<p>解决方法：</p> 
+<p>不用setAttribute('style','color:red')<br>而用object.style.cssText = 'color:red;'(这写法也有例外) </p> 
+<p>class </p> 
+<p>现有问题：</p> 
+<p>setAttribute('class','styleClass') FIREFOX支持，IE不支持(指定属性名为CLASS，IE不会设置元素的CLASS属性，相反只使用SETATTRIBUTE时IE自动识别CLASSNAME属性) </p> 
+<p>解决方法：</p> 
+<p>setAttribute('class','styleClass')<br>setAttribute('className','styleClass') 2种都用上</p> 
+<p>用setAttribute设置事件 </p> 
+<p>现有问题：</p> 
+<p>var obj = document.getElementById('objId');<br>obj.setAttribute('onclick','funcitonname();'); FIREFOX支持，IE不支持</p> 
+<p>解决方法：</p> 
+<p>IE中必须用点记法来引用所需的事件处理程序,并且要用赋予匿名函数如下： var obj = document.getElementById('objId');<br>obj.onclick=function(){fucntionname();}; 这种方法所有浏览器都支持 </p> 
+<p>建立单选钮 </p> 
+<p>IE以外的浏览器：<br>var rdo = document.createElement('input');<br>rdo.setAttribute('type','radio');<br>rdo.setAttribute('name','radiobtn');<br>rdo.setAttribute('value','checked');</p> 
+<p>共同的一些技巧 </p> 
+<p>在动态建立INPUT型输入元素时，一般是先加入，再设置TYPE。这就有可能出错。应该：<br>var btn = document.createElement('input');<br>btn.setAttribut('type','button');<br>document.getElementById('formId').appendChild(btn); </p> 
+<p><br>本文来自CSDN博客，转载请标明出处：<a href="http://blog.csdn.net/natineprince/archive/2009/04/27/4127945.aspx">http://blog.csdn.net/natineprince/archive/2009/04/27/4127945.aspx</a></p>

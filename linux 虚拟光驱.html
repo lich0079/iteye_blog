@@ -1,0 +1,24 @@
+<p style="text-indent: 2em;">1、挂载iso文件</p> 
+<p style="text-indent: 2em;">一般查看iso文件内容，只需要：</p> 
+<p style="text-indent: 2em;">#mount -t iso9660 -o loop xxx.iso /mnt/cdrom</p> 
+<p style="text-indent: 2em;">就可以在/mnt/cdrom下看到xxx.iso的内容。</p> 
+<p style="text-indent: 2em;">&nbsp;</p> 
+<p style="text-indent: 2em;">2、复制光盘为iso镜像</p> 
+<p style="text-indent: 2em;">#dd if=/dev/hdb of=xxx.iso</p> 
+<p style="text-indent: 2em;">或者</p> 
+<p style="text-indent: 2em;">#cp /dev/cdrom xxx.iso</p> 
+<p style="text-indent: 2em;">&nbsp;</p> 
+<p style="text-indent: 2em;">3、虚拟iso为设备</p> 
+<p style="text-indent: 2em;">#rm -rf /dev/cdrom //删除原来的符号连接，最好先查看一下，记得之后复原哦:-)</p> 
+<p style="text-indent: 2em;">#ln -s /dev/loop7 /dev/cdrom //建立符号连接</p> 
+<p style="text-indent: 2em;">#losetup /dev/loop7 /path/to/xxx.iso //虚拟iso为设备loop7</p> 
+<p style="text-indent: 2em;">#mount /dev/cdrom /mnt/cdrom //挂载虚拟设备</p> 
+<p style="text-indent: 2em;">以下是换盘步骤：</p> 
+<p style="text-indent: 2em;">#losetup -d /dev/loop7 //删除虚拟设备</p> 
+<p style="text-indent: 2em;">#losetup /dev/loop7 /path/to/yyy.iso</p> 
+<p style="text-indent: 2em;">#mount /dev/cdrom /mnt/cdrom</p> 
+<p style="text-indent: 2em;">&nbsp;</p> 
+<p style="text-indent: 2em;">PS：http://hi.baidu.com/jmks_5/blog/item/e2a48efdf0d9c3fafc037fb1.html</p> 
+<p style="text-indent: 2em;">&nbsp;</p> 
+<p style="text-indent: 2em;">PS：http://my.donews.com/weasky/2006/10/03/pboljnqjtomqjdqtzighahoqxxsyqkwdzian/</p> 
+<p style="text-indent: 2em;">———–bin,cue———-<br> 要先转换成iso文件<br> sudo apt-get install bchunk<br> bchunk xx.bin xx.cue xx.iso<br> 注意bin和cue的顺序不能错<br> ———–iso———-<br> sudo mkdir /media/iso<br> sudo mount file.iso /media/iso/ -t iso9660 -o loop<br> sudo umount /media/iso/</p>

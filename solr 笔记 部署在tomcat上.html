@@ -1,0 +1,26 @@
+<p>下载&nbsp; solr1.4 解压至目录&nbsp; apache-solr-1.4.0/</p> 
+<p>在apache-solr-1.4.0\example\webapps 下 有个solr.war文件&nbsp; 把他放到tomcat的webapps下</p> 
+<p>&nbsp;</p> 
+<p>solr中有个solr的home目录，这个和war不在一起，需要你指定，这个home的例子在example里也有，里面有conf目录 （配置），data（index数据）</p> 
+<p>在apache-solr-1.4.0\example\solr下&nbsp;，把这个solr文件夹copy到tomcat的bin目录下，然后启动tomcat</p> 
+<p>&nbsp;</p> 
+<p>访问<a href="http://localhost:8080/solr">http://localhost:8080/solr</a>&nbsp; 不出错的话，就可以成功启动了</p> 
+<p>关于solr home,这个在书上说有3种配置方式，</p> 
+<li>设置 java 系统属性 <code>solr.solr.home</code> （没错，就是 <code>solr.solr.home</code>）。 </li> 
+<li>配置 <code>java:comp/env/solr/home</code> 的一个 JNDI 查找指向 <code>solr</code> 目录。 </li> 
+<li>在包含 solr 目录的目录中启动 servlet 容器。（默认的 Solr 主目录是当前工作目录下的 <em>solr</em>。） </li> 
+<p>我把solr home拷到tomcat bin下 实际上就是第3种方式，</p> 
+<p>你也可以在 solr 的web.xml里改，列子中的web.xml有了，只不过注掉了</p> 
+<p>这里要注意路径问题&nbsp; 绝对路径我试了 没什么问题，</p> 
+<p>不过假如是相对的话我试验的结果是&nbsp; 当前路径&nbsp;. &nbsp;是在tomcat的bin中，所以你在这写solr2/的话 他会去tomcat/bin/solr2</p> 
+<p>&nbsp;&lt;!-- People who want to hardcode their "Solr Home" directly into the<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WAR File can set the JNDI property here...<br>&nbsp;&nbsp; --&gt;<br>&nbsp; &lt;!--<br>&nbsp;&nbsp;&nbsp; &lt;env-entry&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;env-entry-name&gt;solr/home&lt;/env-entry-name&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;env-entry-value&gt;solr2/&lt;/env-entry-value&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;<br>&nbsp;&nbsp;&nbsp; &lt;/env-entry&gt;<br>&nbsp; --&gt;</p> 
+<p>假如你不设置任何东西 ，直接把solr home（文件夹叫solr）目录放到tomcat bin下就可以了，这是他默认的查找方式，</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>总结一下</p> 
+<p>1 、把solr.war放到webapps下</p> 
+<p>2、把solr的home目录放到tomcat&nbsp; bin下</p> 
+<p>3、启动tomcat</p> 
+<p>4、打开<a href="http://localhost:8080/solr/admin/">http://localhost:8080/solr/admin/</a></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;solr的hello world 级&nbsp; 部署完成</p>

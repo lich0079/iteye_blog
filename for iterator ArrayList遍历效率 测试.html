@@ -1,0 +1,165 @@
+<p>&nbsp;</p> 
+<pre class="java" name="code">/**
+ * 测试 对于ArrayList的iterator遍历和for遍历的效率问题
+ * 注： 这个测试结果对其他容器类不一定成立 比如LinkedList
+ *  
+ */
+public class IteratorTest {
+
+    static int size = 1000000;
+    static List&lt;Object&gt; list1 = new ArrayList&lt;Object&gt;();
+    static List&lt;Object&gt; list2 = new ArrayList&lt;Object&gt;();
+    static {
+        for (int i = 0; i &lt; size; i++) {
+            list1.add(new Object());
+            list2.add(new Object());
+        }
+    }
+
+    @Test
+    public void iteratorTest() {
+        long start = System.currentTimeMillis();
+        for (Iterator&lt;Object&gt; iterator = list1.iterator(); iterator.hasNext();) {
+            Object entry = (Object) iterator.next();
+            // System.out.print(entry);
+        }
+        System.out.println("\niterator " + (System.currentTimeMillis() - start) + " ms");
+    }
+
+    @Test(dependsOnMethods = "iteratorTest")
+    public void forTest() {
+        long start = System.currentTimeMillis();
+        for (int i = 0, size = list2.size(); i &lt; size; i++) {//这里是一次性求出size() ，假如在遍历的过程中list的内容有增减的话，遍历逻辑会出错
+            Object entry = list2.get(i);
+            // System.out.print(entry);
+        }
+        System.out.println("\nfor " + (System.currentTimeMillis() - start) + " ms");
+    }
+
+    @Test(groups="alone",invocationCount=10)    //testng 测试10次
+    public void compareTest() {
+        long start = System.currentTimeMillis();
+        for (Iterator&lt;Object&gt; iterator = list1.iterator(); iterator.hasNext();) {
+            Object entry = (Object) iterator.next();
+            // System.out.print(entry);
+        }
+        long time=System.currentTimeMillis()-start;
+        start = System.currentTimeMillis();
+        for (int i = 0, size = list2.size(); i &lt; size; i++) {
+            Object entry = list2.get(i);
+            // System.out.print(entry);
+        }
+        long time2=System.currentTimeMillis() - start;
+        System.out.println("iterator "+time +" ms, for "+time2+" ms");
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>输出</p> 
+<pre class="java" name="code">iterator 32 ms
+
+for 15 ms
+iterator 32 ms, for 15 ms
+iterator 31 ms, for 0 ms
+iterator 31 ms, for 0 ms
+iterator 32 ms, for 15 ms
+iterator 31 ms, for 16 ms
+iterator 31 ms, for 16 ms
+iterator 31 ms, for 0 ms
+iterator 31 ms, for 0 ms
+iterator 31 ms, for 16 ms
+iterator 31 ms, for 16 ms</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>遍历中的remove测试</p> 
+<pre class="java" name="code"> @Test
+    public void iteratorTest() {
+        long start = System.currentTimeMillis();
+        for (Iterator&lt;Object&gt; iterator = list1.iterator(); iterator.hasNext();) {
+            Object entry = (Object) iterator.next();
+            System.out.println(entry);
+            iterator.remove();//right
+        }
+        System.out.println("\niterator " + (System.currentTimeMillis() - start) + " ms");
+    }
+
+    @Test(expectedExceptions = IndexOutOfBoundsException.class)
+    public void forTest() {
+        long start = System.currentTimeMillis();
+        for (int i = 0, size = list2.size(); i &lt; size; i++) {
+            Object entry = list2.get(i);
+            System.out.println(entry);
+            list2.remove(i);//wrong
+        }
+        System.out.println("\nfor " + (System.currentTimeMillis() - start) + " ms");
+    }</pre> 
+<p>&nbsp;</p> 
+<p>输出</p> 
+<pre class="java" name="code">0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+iterator 0 ms
+0
+2
+4
+6
+8</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<pre class="java" name="code">public static void main(String[] args) {
+		List a =new ArrayList();
+		for (int i = 0; i &lt; 10; i++) {
+			a.add(i);
+			System.out.println(i);
+		}
+		System.out.println("-------------");
+		int j =0;
+		for (Iterator iterator = a.iterator(); iterator.hasNext();) {
+			Object object = (Object) iterator.next();
+			if(j%2==0){
+				iterator.remove();
+			}
+			j++;
+		}
+		for (Object object : a) {
+			System.out.println(object);
+		}
+	}
+
+
+
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+-------------
+1
+3
+5
+7
+9
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

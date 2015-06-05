@@ -1,0 +1,44 @@
+<pre class="java" name="code">Ext.extend(Ext.data.JsonReader, Ext.data.DataReader, {
+    /**
+     * This JsonReader's metadata as passed to the constructor, or as passed in
+     * the last data packet's &lt;b&gt;&lt;tt&gt;metaData&lt;/tt&gt;&lt;/b&gt; property.
+     * @type Mixed
+     * @property meta
+     */
+    /**
+     * This method is only used by a DataProxy which has retrieved data from a remote server.
+     * @param {Object} response The XHR object which contains the JSON data in its responseText.
+     * @return {Object} data A data block which is used by an Ext.data.Store object as
+     * a cache of Ext.data.Records.
+     */
+    read : function(response){
+        var json = response.responseText;
+        var o = Ext.decode(json);
+        if(!o) {
+            throw {message: "JsonReader.read: Json object not found"};
+        }
+        return this.readRecords(o);
+    }</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">Ext.util.JSON = new (function(){
+    var useHasOwn = !!{}.hasOwnProperty,
+        isNative = function() {
+            var useNative = null;
+
+            return function() {
+                if (useNative === null) {
+                    useNative = Ext.USE_NATIVE_JSON &amp;&amp; window.JSON &amp;&amp; JSON.toString() == '[object JSON]';
+                }
+        
+                return useNative;
+            };
+        }(),
+        pad = function(n) {
+            return n &lt; 10 ? "0" + n : n;
+        },
+        doDecode = function(json){
+            return eval("(" + json + ')');    
+        }</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

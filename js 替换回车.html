@@ -1,0 +1,10 @@
+<pre name="code" class="java">function formatStr(str) 
+{ 
+str=str.replace(/\r\n/ig,"&lt;br/&gt;"); 
+return str; 
+} 
+要注意两点：
+
+要使用正则表达式，不能使用 str.replace("\r\n", newString); ，这会导致只替换第一个匹配的子字符串。 
+母字符串中不一定 \r\n 会同时存在，也许只有 \n，没有 \r 也是可能的。</pre> 
+<p>&nbsp;</p>

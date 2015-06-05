@@ -1,0 +1,18 @@
+<p><span class="mail_quotation">&gt; For example:</span></p> 
+<p> <span class="mail_quotation">&gt; I want to substitute A with T and G with C and vice</span> </p> 
+<p><span class="mail_quotation">&gt; versa</span> <span class="mail_quotation">&gt; </span> <span class="mail_quotation">&gt; A -&gt; T</span> <span class="mail_quotation">&gt; G -&gt; C</span> <span class="mail_quotation">&gt; T -&gt; A</span> <span class="mail_quotation">&gt; c -&gt; G</span> </p> 
+<p>You can do this with the translate() method of a string. It is a two-step process. </p> 
+<p>First you have to make a translation table that defines the translation.</p> 
+<p>&gt; &gt;&gt; import string</p> 
+<p> <span class="mail_quotation">&gt; &gt;&gt; xlate = string.maketrans('AGTC', 'TCAG')</span> </p> 
+<p>Next use the translation table to translate the string of interest:</p> 
+<p> <span class="mail_quotation">&gt; &gt;&gt; 'AAGTTC'.translate(xlate)</span> 'TTCAAG'</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>my example:</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<pre name="code" class="python">import string
+a=string.maketrans('abcdefghijklmnopqrstuvwxyz','cdefghijklmnopqrstuvwxyzab')
+print "g fmnc wms bgblr rpylqjyrc gr zw fylb. rfyrq ufyr amknsrcpq ypc dmp. bmgle gr gl zw fylb gq glcddgagclr ylb rfyr'q ufw rfgq rcvr gq qm jmle. sqgle qrpgle.kyicrpylq() gq pcamkkclbcb. lmu ynnjw ml rfc spj.".translate(a)
+</pre> &nbsp; 感觉没那么智能 有点像java的replace

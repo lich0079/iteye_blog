@@ -1,0 +1,23 @@
+<p>常规的linux下的 用户和组 命令在mac os x 下不太灵，下面是网上找的</p> 
+<p><a target="_blank" href="http://lmgtfy.com/?q=mac+os+x+add+users+to+group">http://lmgtfy.com/?q=mac+os+x+add+users+to+group</a> </p> 
+<p>&nbsp;</p> 
+<p>在命令行：</p> 
+<p>&nbsp;</p> 
+<pre><code>dscl localhost</code>
+
+</pre> 
+<p> 进入组目录</p> 
+<pre><code>cd /Local/Default/Groups</code>
+
+</pre> 
+<p> 使用ls 你就可以看到所有的group，&nbsp; /Local/Default/Users 可以看到所有的用户</p> 
+<pre><code>append groupname GroupMembership username</code>
+
+</pre> 
+<p>groupname是你想添加的组， username是你的用户名</p> 
+<p>&nbsp;</p> 
+<p>下面是怎么删除</p> 
+<pre><code>delete groupname GroupMembership username
+</code>
+
+</pre>

@@ -1,0 +1,66 @@
+<p>*******</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">/**
+	 * 设置操作
+	 * @param permission 哪一位
+	 * @param yes  允许 或 不允许 
+	 */
+	public void setPermission(int permission, boolean yes) {
+		//进行位运算
+		int temp=1;
+		//移位 000001    0000010   00000100  00001000
+		temp=temp &lt;&lt; permission;
+		if(yes){
+			//目标是设置为可操作 将操作为设置为1 其他位不变
+			// 0|X=X  1|X=1
+			aclState |=temp;
+		}else{
+			//目标是设置为不可操作 将操作为设置为0 其他位不变
+			//首先取反 111110    1111111101    11111111011    1111111110111
+			// 0&amp;X=0  1&amp;X=X
+			aclState &amp;=~temp;
+		}
+	}
+	
+	/**
+	 * 查询某个位的开关
+	 * @param permission 哪一位
+	 * @return 1表示允许 0表示不允许 -1表示不确定
+	 */
+	public int getPermission(int permission) {
+
+		//0000001
+		int temp=1;
+		//0000001   000000010   0000000100   00000001000
+		temp=temp &lt;&lt; permission;
+		//0&amp;X=0  1&amp;X=X  只有当目标位不为0时即为1时 temp才能为非0
+		temp=aclState &amp; temp;
+		if(temp!=0){
+			//说明为该操作位 为 1 可执行
+			return ACL_YES;
+		}
+		return ACL_NO;
+	}</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="color: #333333; font-family: Verdana, 'BitStream vera Sans', Tahoma, Helvetica, sans-serif; line-height: 17px;"> </span></p>
+<pre class="actionscript3"><span style="color: #009900; font-style: italic;">// 都是正数才管用的</span>
+<span style="color: #6699cc; font-weight: bold;">var</span> n<span style="color: #000066; font-weight: bold;">:</span><span style="color: #004993;">int</span> = <span style="color: #000000; font-weight: bold;">5</span><span style="color: #000066; font-weight: bold;">;</span> 
+&nbsp;
+<span style="color: #009900; font-style: italic;">// 设置位 </span>
+n <span style="color: #000066; font-weight: bold;">|</span>= flag<span style="color: #000066; font-weight: bold;">;</span>
+<span style="color: #009900; font-style: italic;">// 取消位</span>
+<span style="color: #000066; font-weight: bold;">~</span>flag <span style="color: #000066; font-weight: bold;">&amp;</span> n<span style="color: #000066; font-weight: bold;">;</span>
+<span style="color: #009900; font-style: italic;">// 获取位</span>
+n <span style="color: #000066; font-weight: bold;">&amp;</span> flag<span style="color: #000066; font-weight: bold;">;</span></pre> 
+<p></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>**********</p>

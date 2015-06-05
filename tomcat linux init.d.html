@@ -1,0 +1,46 @@
+<pre class="java" name="code">#!/bin/sh
+# chkconfig: 345 60 30
+# description: Starts and stops Tomcat (running as root)
+
+mode=$1
+
+export TOMCAT_HOME=/websites/tomcat
+export CATALINA_HOME=/websites/tomcat
+export JAVA_HOME=/usr/java/jdk1.6.0_03
+
+case "$mode" in
+  'start')
+    # Start daemon
+    su -c "$TOMCAT_HOME/bin/catalina.sh $mode" root
+    ;;
+
+  'stop')
+    # Stop daemon. We use a signal here to avoid having to know the
+    # root password.
+        $TOMCAT_HOME/bin/catalina.sh $mode
+    ;;
+
+  *)
+    # usage
+    echo "usage: $0 start|stop"
+    exit 1
+    ;;
+esac
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>二、保存并设置脚本文件</p> 
+<p>　　将以上的脚本文件保存在/etc/init.d中，命名为tomcat;</p> 
+<p>　　设置tomcat的文件属性</p> 
+<p>　　#chmod a+x tomcat</p> 
+<p>　　三、设置服务运行级别</p> 
+<p>　　最后用chkconfig设置服务运行</p> 
+<p>　　#chkconfig --add tomcat</p> 
+<p>　　服务就添加成功了。</p> 
+<p>　　然后你就可以用 chkconfig --list 查看，在服务列表里就会出现自定义的服务了。</p> 
+<p>　　注意：</p> 
+<p>　　在tomcat文件的头两行的注释语句中，需要包含chkconfig和description两部分内容(确认不要拼写错误，)，否则在执行“chkconfig --add tomcat”时，会出现“tomcat服务不支持chkconfig”的错误提示。</p> 
+<p>　　chkconfig这行表示缺省启动的运行级别以及启动和停止的优先级，如该服务缺省不再任何运行级启动，则以 - 代替运行级别。在tomcat中表示脚本在运行级2、3、4、5启动，启动优先权为10，停止优先权为90。</p> 
+<p>　　description行对服务进行描述，可以用 “” 跨行注释。 这样你就学会了SUSE Linux Tomcat自动启动过程</p> 
+<p>&nbsp;</p> 
+<p><a href="http://www.jz123.cn/text/2427761.html"></a></p>

@@ -1,0 +1,49 @@
+<p>hibernate一级缓存</p> 
+<p>一级缓存生命周期很短，它session的生命周期一致，一级缓存也叫session级的缓存，也称事务级缓存</p> 
+<p>哪些方法支持一级缓存?<br>&nbsp;*load<br>&nbsp;*get<br>&nbsp;*iterate查询实体对象支持一级缓存</p> 
+<p>一级缓存是缓存实体对象的</p> 
+<p>一级缓存如何管理？<br>&nbsp;* session.clear(),session.evict()<br>&nbsp;<br>如何避免一次性打批量的实体数据插入后内存溢出<br>&nbsp;* 先flush，再clear<br>&nbsp;&nbsp;<br>如果在现实工作中，遇到了大规模的数据，建议使用jdbc导入或数据库特定工具导入</p> 
+<p>&nbsp;</p> 
+<p>hibernate二级缓存</p> 
+<p>二级缓存也称进程级缓存或SessionFactory级缓存，二级缓存可以被所有的session共享<br>二级缓存的生命周期和SessionFactory的生命周期一致，SessionFactory可以管理二级缓存</p> 
+<p>二级缓存的配置和使用：<br>&nbsp;* 将ehcache.xml配置文件拷贝到src下<br>&nbsp;* 启用二级缓存，默认是启用的<br>&nbsp;&lt;property name="hibernate.cache.use_second_level_cache"&gt;true&lt;/property&gt;<br>&nbsp;* 指定缓存产品提供商，如：<br>&nbsp; &lt;property name="hibernate.cache.provider_class"&gt;org.hibernate.cache.EhCacheProvider&lt;/property&gt;<br>&nbsp;* 指定哪些实体类使用二级缓存（两种方法）<br>&nbsp;&nbsp;* 在映射文件中指定<br>&nbsp;&nbsp;* 在hibernate.cfg.xml文件中指定<br>&nbsp;&nbsp;<br>二级缓存是缓存实体对象的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>hibernate查询缓存</p> 
+<p>查询缓存是缓存普通属性结果集的<br>对实体对象的结果集只缓存id</p> 
+<p>查询缓存的生命周期，当关联的表发生修改，那么查询缓存的生命周期结束</p> 
+<p>查询缓存的配置和使用：<br>&nbsp;* 在配置文件hibernate.cfg.xml中启用查询缓存，如：<br>&nbsp;&lt;property name="hibernate.cache.use_query_cache"&gt;true&lt;/property&gt;<br>&nbsp;* 在程序中必须手动启用查询缓存，如：<br>&nbsp;query.setCachable(true)</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>component映射</p> 
+<p>在hibernate中，component是实体对象的逻辑组成部分，它与实体对象的根本区别在于没有oid</p> 
+<p>采用component映射的好处：实现了对象模型的细粒度划分，层次分明，利于复用</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>复合主键映射（联合主键）</p> 
+<p>通常将复合主键相关的属性放到一个单独的类中,这个是有约束的：<br>&nbsp;* 必须实现序列化接口<br>&nbsp;* 必须复写hashCode和equals方法<br>&nbsp;</p> 
+<p>&nbsp;lazy策略可以应用在：<br>&nbsp;* &lt;class&gt;标签上，可以取值true/false<br>&nbsp;* &lt;property&gt;标签上，可以取值true/false,需要类增强工具<br>&nbsp;* &lt;set&gt;&lt;list&gt;集合标签上，可以取值true/false/extra<br>&nbsp;* &lt;one-to-one&gt;、&lt;many-to-one&gt;单端关联上，可以取值false/proxy/noproxy<br>&nbsp;<br>lazy的概念：在正真使用的时候发出查询语句加载相应的对象</p> 
+<p>hibernate支持lazy策略只有在session打开状态下才有效</p> 
+<p>hibernate类级别的lazy只对普通属性起作用，可以控制什么时候加载这些普通属性&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>hibernate在集合上的lazy策略：可以取值true/false/extra</p> 
+<p>true:默认取值，它的意思是只有在调用这个集合获取里面的元素对象时，才发出查询语句，加载其<br>&nbsp;&nbsp;&nbsp;&nbsp; 集合元素的数据<br>false:取消lazy特性，即在加载对象的同时，就发出第二条查询语句加载其关联集合的数据<br>extra:一种比较聪明的lazy策略，即调用集合的size等方法的时候，hibernate 并不会去<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 加载整个集合的数据，而是发出一条聪明的SQL语句，以便获得需要的值，只有在真正需<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 要用到这些集合元素对象数据的时候，才去发出查询语句加载所有对象的数据</p> 
+<p>&lt;class&gt;标签上配置的lazy不会影响到集合上的lazy特性</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>hibernate在单端关联上的lazy策略可以取值：false/proxy/noproxy</p> 
+<p>false:取消lazy策略，即在加载对象的同时，发出查询语句，加载其关联对象<br>proxy:这是hibernate对单端关联的默认lazy策略，即只有在调用到其关联对象的方法的时候<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 才真正发出查询语句查询其对象数据，其关联对象是代理类<br>no-proxy:这种lazy特性需要对类进行增强，使用no-proxy，其关联对象不是代理类</p> 
+<p>&lt;class&gt;标签上配置的lazy不会影响到单端关联对象上的lazy特性</p>

@@ -1,0 +1,57 @@
+<p>方法一</p> 
+<pre name="code" class="java"> @implementation UINavigationBar (UINavigationBarCategory)
+ - (void)drawRect:(CGRect)rect {
+         //加入旋转坐标系代码
+     // Drawing code       
+         UIImage *navBarImage = [UIImage imageNamed:@"navibar.png"];
+         CGContextRef context = UIGraphicsGetCurrentContext();
+         CGContextTranslateCTM(context, 0.0, self.frame.size.height);
+         CGContextScaleCTM(context, 1.0, -1.0);       
+        
+         CGPoint center=self.center;
+
+
+         CGImageRef cgImage= CGImageCreateWithImageInRect(navBarImage.CGImage, CGRectMake(0, 0, 1, 44));
+         CGContextDrawImage(context, CGRectMake(center.x-160-80, 0, 80, self.frame.size.height), cgImage);
+         CGContextDrawImage(context, CGRectMake(center.x-160, 0, 320, self.frame.size.height), navBarImage.CGImage);
+         CGContextDrawImage(context, CGRectMake(center.x+160, 0, 80, self.frame.size.height), cgImage);CGImageRelease(cgImage);
+ }
+@end
+</pre> &nbsp; 
+<p>方法二</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">UINavigationController *navi =。。。。
+
+        UIImage *image = [UIImage imageNamed:@"navibar.jpg"];
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+        [navi.navigationBar addSubview:imageView];
+        [navi.navigationBar sendSubviewToBack:imageView];
+        [imageView release];
+
+
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>ios 5&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">#if __IPHONE_OS_VERSION_MAX_ALLOWED &gt;= 50000
+    if ([self.navigationController.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)]){
+        CLog(@"111");
+            [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"navi.png"] forBarMetrics:UIBarMetricsDefault];
+    }
+#endif</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>方法三，没成功</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">+ (UIColor *)colorWithPatternImage:(UIImage *)image; //也就是说其实UIColor可以表示的不仅仅是纯色，也可以是一张图片 
+
+
+ 
+UIImage *navBarImage = [UIImage imageNamed:@"LOGO_320×44.png"];
+UIColor *backgroundColor = [UIColor colorWithPatternImage: navBarImage];//因为是pattern的缘故，所以最好提供和bar一样大小的图片。
+UINavigationBar.backgroundColor = backgroundColor;</pre>

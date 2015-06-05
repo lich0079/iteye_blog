@@ -1,0 +1,106 @@
+<p>hover</p> 
+<p>&nbsp;</p> 
+<pre class="js" name="code">    $(".onenote").hover(function(e) {
+        $(this).children(".newnote_right_icon").removeClass("div_beHidden");
+        e.stopPropagation();
+
+    }, function() {
+        $(this).children(".newnote_right_icon").addClass("div_beHidden");
+    });</pre> 
+<p>&nbsp;</p> 
+<p>hasClass</p> 
+<pre class="js" name="code">    $(".onenote").click(function() {
+        var obj = $(this).parent().children(".addCommentDiv")[0];
+        if ($(obj).hasClass("div_beHidden")) {
+            $(obj).removeClass("div_beHidden");
+        } else {
+            $(obj).addClass("div_beHidden");
+        }
+    });</pre> 
+<p>live&nbsp; 和直接click的区别是以后新添加的元素也会受影响</p> 
+<pre class="js" name="code">    $(".deleteComment").live("click",function(e){
+        $(this).parent().parent().parent().remove();
+        e.stopPropagation();
+    });</pre> 
+<p>&nbsp;</p> 
+<p>hover的live写法</p> 
+<pre class="js" name="code">    $(".onecomment").live('hover',function (ev) {
+            if (ev.type == 'mouseover') {
+                $(this).children().children(".right").removeClass("div_beHidden");
+            }
+            if (ev.type == 'mouseout') {
+                $(this).children().children(".right").addClass("div_beHidden");
+            }
+    });</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>insertBefore</p> 
+<pre class="js" name="code">    $(".submitCommit").click(function() {
+        $('.CommitTemplate').clone().removeClass("div_beHidden").removeClass("CommitTemplate").insertBefore($(this).parent().parent().parent());
+        $(this).parent().parent().parent().addClass("div_beHidden");
+    });</pre> &nbsp; 
+<p>blockUI</p> 
+<pre class="js" name="code">    &lt;script type="text/javascript" src="jquery/blockui/jquery.blockUI.js"&gt;&lt;/script&gt;
+
+
+	openWaitBlock();
+	$.post(url,params,function(data){
+		closeWaitBlock();
+		if(data.status=="1"){
+			parent.$.fn.ceebox.closebox();
+			alert("Your message was sent successfully.");
+		}else if(data.status=="-1"){
+			$("body").html("The session time out.");
+		}else if(data.status=="0"){
+			$("body").html("Error");
+		}
+	},"json");</pre> &nbsp; 
+<p>&nbsp;</p> 
+<pre class="java" name="code">function openWaitBlock(message, timeout){
+	if(!message){
+		message = "&lt;div style='font-size: 20px; float: right;'&gt;&lt;img src='images/ajax-loader.gif'/&gt;&lt;/div&gt;";
+	}			
+	$.blockUI({ css: { 
+		            border: 'none', 
+		            padding: '15px', 
+		            backgroundColor: '', 
+		            '-webkit-border-radius': '10px', 
+		            '-moz-border-radius': '10px', 
+		            opacity: .5, 
+		            color: '#fff',
+		            width: '15%'
+	          	},
+	          	message:message
+	});
+	if(timeout){
+		setTimeout($.unblockUI, timeout); 
+	}
+}</pre> &nbsp; 
+<p>find children</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">$("#myjobpost_status_list&gt;li.wh&gt;span")
+
+copyTR.children().children("b.name").attr("onClick","checkCandidates("+list[i].rojid+");");
+</pre> 
+<pre class="java" name="code">copyTR.find("b&gt;img.isCheck").attr("src","images3/checked.png");</pre> 
+<pre class="java" name="code">copyTR.find("b.name")</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>notice &nbsp; jquery.notice.js</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">function notice(data){
+	  if(data != null &amp;&amp; data.length &gt;0 ){
+	   jQuery.noticeAdd({
+		text: data
+     });
+	}
+}</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

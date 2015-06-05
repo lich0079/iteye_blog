@@ -1,0 +1,69 @@
+以下是自己学习Adapter模式时的理解 
+<br> 
+<br>interface Usb{ 
+<br>&nbsp; void useUsbDevice(); 
+<br>} 
+<br> 
+<br>class PC{ 
+<br>&nbsp; Usb usb1; 
+<br>&nbsp; Usb usb2; 
+<br>} 
+<br> 
+<br>interface PS2{ 
+<br>&nbsp; void usePS2Device(); 
+<br>} 
+<br> 
+<br>class PS2Mouse implements PS2{ 
+<br>&nbsp; void usePS2Device(){ 
+<br>&nbsp;&nbsp;&nbsp; System.out.println("using mouse"); 
+<br>&nbsp; } 
+<br>} 
+<br> 
+<br>PC想用PS2Mouse,但PS2Mouse没有实现Usb接口 
+<br>Adapter登场 
+<br> 
+<br>class PS2ToUsb implements Usb{ 
+<br>&nbsp; PS2 ps2; 
+<br> 
+<br>&nbsp; void setPs2(PS2 ps2){ 
+<br>&nbsp;&nbsp;&nbsp; this.ps2=ps2; 
+<br>&nbsp; } 
+<br> 
+<br>&nbsp; void useUsbDevice(){ 
+<br>&nbsp;&nbsp;&nbsp; ps2.usePS2Device(); 
+<br>&nbsp; } 
+<br>} 
+<br> 
+<br> 
+<br>class Test{ 
+<br>&nbsp; public static void main(String[] args){ 
+<br>&nbsp;&nbsp; PC mypc=new PC();//买了个新电脑 
+<br>&nbsp;&nbsp; PS2Mouse ps2m=new PS2Mouse();//买了个ps2鼠标 
+<br>&nbsp;&nbsp;&nbsp; PS2ToUsb p2m=new PS2ToUsb();//买了个适配器 
+<br>&nbsp;&nbsp;&nbsp; p2m.setPs2(ps2m);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //把鼠标插到适配器上 
+<br>&nbsp;&nbsp; pc.setUsb1(p2m);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //把适配器插到电脑的USB接口上 
+<br>&nbsp;&nbsp; pc.getUsb1.useUsbDevice();&nbsp; //电脑可以用鼠标了 
+<br>&nbsp; } 
+<br>} 
+<br> 
+<br>------------------------------------------------------- 
+<br> 
+<br> // 适配器 
+<br> public static class ReaderToInputStream extends InputStream { 
+<br> Reader reader; 
+<br> 
+<br> public ReaderToInputStream(Reader reader) { 
+<br> super(); 
+<br> this.reader = reader; 
+<br> } 
+<br> 
+<br> @Override 
+<br> public int read() throws IOException { 
+<br> try { 
+<br> return reader.read(); 
+<br> } catch (IOException e) { 
+<br> throw e; 
+<br> } 
+<br> } 
+<br> } 
+<br>

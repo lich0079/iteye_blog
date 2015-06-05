@@ -1,0 +1,178 @@
+<pre name="code" class="java">	I18N
+	public class I18N {
+		public static void main(String[] args){
+			Locale defaultL=Locale.getDefault();
+			System.out.println(defaultL.getCountry());
+			System.out.println(defaultL.getLanguage());
+			Locale my=new Locale("en","US");
+			ResourceBundle r=ResourceBundle.getBundle("Message",my);
+			System.out.println(r.getString("k1")+"---");
+			System.out.println(r.getString("k2")+"222");
+			MessageFormat mf=new MessageFormat(r.getString("k1"));
+			System.out.println(mf.format(new Object[]{"aaa"}));
+		}
+	}
+
+	public class I18nSample {
+
+		public static void main(String[] args) {
+			Locale defaultLocale = Locale.getDefault();  
+			System.out.println("default country=" + defaultLocale.getCountry());
+			System.out.println("defalut language=" + defaultLocale.getLanguage());
+			
+			//Locale currentLocale = new Locale("zh", "CN");
+			Locale currentLocale = new Locale("en", "US");
+			//Locale currentLocale = new Locale("aaa", "asdfdsf");
+			
+			ResourceBundle rb = ResourceBundle.getBundle("MessagesBundle", currentLocale);
+			
+	//		System.out.println(rb.getString("k1"));
+	//		System.out.println(rb.getString("k2"));
+			
+			MessageFormat mf = new MessageFormat(rb.getString("k1"));
+			System.out.println(mf.format(new Object[]{"张三"}));
+			
+		}
+	}
+
+	中文 乱码  转成 unicode
+		native2ascii Message_zh_CN1.properties Message_zh_CN.properties
+
+
+1、struts的国际化配置
+	* 在struts-config.xml文件中加入&lt;message-resources parameter="MessageResources" /&gt;	
+	* 将MessageResources.propertis文件拷贝到src下
+	
+2、提供不同版本的国际化资源文件，中文需要采用native2ascii转换为unicode
+
+
+3、在jsp中采用&lt;bean:message/&gt;标签读取国际化资源文件
+&lt;%@ taglib prefix="bean" uri="http://struts.apache.org/tags-bean"%&gt;
+
+ &lt;form action="login.do" method="post"&gt;
+    	&lt;bean:message key="id" /&gt;:&lt;input name="id" type="text"&gt;&lt;br&gt;
+    	&lt;bean:message key="pw"/&gt;:&lt;input name="pw" type="text"&gt;&lt;br&gt;
+    	&lt;input type="submit" &gt;
+    &lt;/form&gt;
+
+4、利用struts默认把Locale放到session中的特性，可以采用编程的方式手动切换语言设置
+
+
+	参见：ChangeLanguageAction.java
+public class LangAction extends Action {
+
+	@Override
+	public ActionForward execute(ActionMapping mapping, ActionForm form,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		Locale l=null;
+		//Locale locale = Locale.getDefault();
+		String lang=request.getParameter("lang");
+		if("cn".equals(lang)){
+			l=new Locale("zh","CN");
+		}else if("en".equals(lang)){
+			l=new Locale("en","US");
+		}
+		//request.getSession().setAttribute(Globals.LOCALE_KEY, l);
+		this.setLocale(request, l);
+		return mapping.findForward("success");
+	}
+
+}
+-------------------------------------
+jstl
+
+	&lt;%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%&gt;    
+&lt;fmt:setLocale value="${header['accept-language']}"/&gt;
+&lt;fmt:setBundle basename="res.MessageResources"/&gt;
+&lt;html&gt; 
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=GB18030"&gt;
+&lt;title&gt;&lt;fmt:message key="user.title"/&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h1&gt;&lt;fmt:message key="user.title"/&gt;&lt;/h1&gt;
+	&lt;hr&gt;
+	&lt;form action="login.do" method="post"&gt;
+		&lt;fmt:message key="user.username"/&gt;：&lt;input type="text" name="username"&gt;&lt;br&gt;
+		&lt;fmt:message key="user.password"/&gt;：&lt;input type="password" name="password"&gt;&lt;br&gt;
+		&lt;input type="submit" value="&lt;fmt:message key="user.login"/&gt;"&gt;
+	&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+
+消息文本的国际化，分为三个步骤：
+	* 创建消息
+	* 传递消息
+	* 显示消息
+	
+
+public class LoginAction extends Action {</pre> 
+<pre name="code" class="java">&nbsp;@Override
+&nbsp;public ActionForward execute(ActionMapping mapping, ActionForm form,
+&nbsp;&nbsp;&nbsp;HttpServletRequest request, HttpServletResponse response)
+&nbsp;&nbsp;&nbsp;throws Exception {
+&nbsp;&nbsp;LoginActionForm laf = (LoginActionForm)form;
+&nbsp;&nbsp;String username = laf.getUsername();
+&nbsp;&nbsp;String password = laf.getPassword();</pre> 
+<pre name="code" class="java">&nbsp;&nbsp;ActionMessages messages = new ActionMessages();
+&nbsp;&nbsp;try {
+&nbsp;&nbsp;&nbsp;UserManager.getInstance().validate(username, password);
+&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;//创建国际化消息文本
+&nbsp;&nbsp;&nbsp;ActionMessage message = new ActionMessage("user.login.success", username);
+&nbsp;&nbsp;&nbsp;//ActionMessage message = new ActionMessage("user.login.success", new Object[]{username});
+&nbsp;&nbsp;&nbsp;messages.add("loginSuccess1", message);
+&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;messages.add("loginSuccess2", message);
+&nbsp;&nbsp;&nbsp;//传递国际化消息文本
+&nbsp;&nbsp;&nbsp;this.saveMessages(request, messages);
+&nbsp;&nbsp;&nbsp;return mapping.findForward("success");
+&nbsp;&nbsp;}catch(UserNotFoundException unfe) {
+&nbsp;&nbsp;&nbsp;//创建国际化消息文本
+&nbsp;&nbsp;&nbsp;ActionMessage message = new ActionMessage("user.not.found", username);
+&nbsp;&nbsp;&nbsp;messages.add("error1", message);
+&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;//传递国际化消息文本
+&nbsp;&nbsp;&nbsp;this.saveErrors(request, messages);
+&nbsp;&nbsp;}catch(PasswordErrorException pee ) {
+&nbsp;&nbsp;&nbsp;//创建国际化消息文本
+&nbsp;&nbsp;&nbsp;ActionMessage message = new ActionMessage("user.password.error");
+&nbsp;&nbsp;&nbsp;messages.add("error2", message);
+&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;//传递国际化消息文本
+&nbsp;&nbsp;&nbsp;this.saveErrors(request, messages);
+&nbsp;&nbsp;}
+&nbsp;&nbsp;//return mapping.findForward("error");
+&nbsp;&nbsp;return mapping.getInputForward();
+&nbsp;}</pre> 
+<pre name="code" class="java">}</pre> 
+<pre name="code" class="java">
+如何创建消息？
+&nbsp;* 理解ActionMessage和ActionMessages的区别</pre> 
+<pre name="code" class="java"></pre> 
+<pre name="code" class="java">如何传递消息？
+&nbsp;* 理解saveMessages和saveErrors的区别</pre> 
+<pre name="code" class="java">如何显示消息？
+&nbsp;* 通过&lt;html:messages/&gt;标签显示消息（可以显示提示消息和错误消息，既能读取MESSAGE_KEY也能读取ERROR_KEY）
+&nbsp;&lt;font color="red"&gt;
+&nbsp;&lt;html:messages id="msg" property="error1"&gt;
+&nbsp;&nbsp;&lt;bean:write name="msg"/&gt;
+&nbsp;&lt;/html:messages&gt;
+&nbsp;&lt;/font&gt;
+&nbsp;
+&nbsp;&lt;font color="blue"&gt;
+&nbsp;&lt;html:messages id="msg" property="error2"&gt;
+&nbsp;&nbsp;&lt;bean:write name="msg"/&gt;
+&nbsp;&lt;/html:messages&gt;
+&nbsp;&lt;/font&gt;
+-----------------------
+&nbsp;&lt;html:messages id="msg" message="true" property="loginSuccess1"&gt;
+&nbsp;&nbsp;&lt;bean:write name="msg"/&gt;
+&nbsp;&lt;/html:messages&gt;</pre> 
+<pre name="code" class="java">&nbsp;
+&nbsp;* 通过&lt;html:errors/&gt;标签显示消息（只能显示错误消息），只能读取ERROR_KEY
+&nbsp;&lt;html:errors/&gt;
+-----------------------------			</pre> 
+<p>&nbsp;</p>

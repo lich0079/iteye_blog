@@ -1,0 +1,43 @@
+<pre class="java" name="code">{
+									xtype : 'combo',
+									hiddenName : 'selPersonForUnit',
+									fieldLabel : '选择人员',
+									triggerAction : 'all',
+									readOnly : true,
+									editable : false,
+									lazyInit : false,
+									mode : 'local',
+									store : UnitPersonsDS,
+									displayField : 'persName',
+									valueField : 'persid',
+									listeners : {
+										select : function(combo, record, index) {
+											UnitFuncDS.load({
+														params : {
+															persid : combo
+																	.getValue()
+														}
+													});
+										}
+									}
+								}, {
+									xtype : 'combo',
+									hiddenName : 'selFuncForUnit',
+									fieldLabel : '选择岗位',
+									triggerAction : 'all',
+									readOnly : true,
+									editable : false,
+									lazyInit : false,
+									mode : 'local',
+									store : UnitFuncDS,
+									displayField : 'funcName',
+									valueField : 'funcId'
+								}</pre> 
+<p>&nbsp;我是这样做的 </p> 
+<p>2个 combo 都是local，store的数据从服务器读</p> 
+<p>点击一个按钮会弹出一个window,上面就有这2个combo，在弹出的时候就第一个combo的store就会去load数据，然后因为combo的mode 为local，这时下拉第一个combo会展示加载好的数据（假如为remote的话会再次加载，造成浪费）</p> 
+<p>然后设置第一个combo的select事件是加载第2个combo的store的数据（把第一个combo的选择数据传到后台），然后下拉第2个的时候就可以展示数据，以此类推可以一直联动下去</p> 
+<p>&nbsp;</p> 
+<p>关于mode</p> 
+<p>假如为local 则 点击下拉的时候 直接combo去取store的数据&nbsp; 然后展示 不管有没有</p> 
+<p>假如为remote 则一定会让store load一次，不管之前是否已有数据</p>

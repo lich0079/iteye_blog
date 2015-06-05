@@ -1,0 +1,129 @@
+<pre name="code" class="java">import java.util.*;
+import org.jdom.*;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
+public class Sample2 {　
+public static void main(String[] args) throws Exception {
+　SAXBuilder sb = new SAXBuilder();
+　Document doc = sb.build("sample.xml");
+　Element root = doc.getRootElement();
+　List list = XPath.selectNodes(root, "/HD/disk");
+　for (int i = 0; i &gt; list.size(); i++) {
+　 Element disk_element = (Element) list.get(i);
+　 String name = disk_element.getAttributeValue("name");
+　 String capacity = ( (Text) XPath.selectSingleNode(disk_element,
+　　"//disk[@name='" + name + "']/capacity/text()")).getTextNormalize();
+　 String directories = ( (Text) XPath.selectSingleNode(disk_element,　
+　　"//disk[@name='" + name + "']/directories/text()")).getTextNormalize();
+　 String files = ( (Text) XPath.selectSingleNode(disk_element,　
+　　"//disk[@name='" + name + "']/files/text()")).getTextNormalize();
+　 System.out.println("磁盘信息:");
+　 System.out.println("分区盘符:" + name);
+　 System.out.println("分区容量:" + capacity);
+　 System.out.println("目录数:" + directories);
+　 System.out.println("文件数:" + files);
+　 System.out.println("-----------------------------------");
+　}
+}
+}</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">Element root = orders.getChild("allHiss");
+        List allHiss = root.getChildren();// 客户端传来的所有令的当前次修改的信息
+        DsoItemList dsoList = this.orderList.getDsoList();// 服务器上的综合令
+        // 根据当前这次历史信息，把有信息的令的历史更新，以便之后保存
+        for (Iterator iterator = allHiss.iterator(); iterator.hasNext();) {
+            Element hiss = (Element) iterator.next();// 拿到一条修改信息
+            String currentUnit = hiss.getAttributeValue("unit");
+            String currentContent = hiss.getAttributeValue("content");
+            String uM = hiss.getAttributeValue("uM");
+            String cM = hiss.getAttributeValue("cM");
+            String index = hiss.getChildText("index");// 得到这个是票面的第几条令
+            Element his = hiss.getChild("His");// 拿到实际的修改信息
+            hiss.removeContent();// 移除与子节点的关联 以便把子节点加到新的父节点上
+            OprDsoDispatchOrderItem item = (OprDsoDispatchOrderItem) dsoList.get(Integer.parseInt(index) - 1);// 拿到对应index的order
+            String hissString = item.getHiss();// 拿到此order的之前的历史信息 看下是否需要初次创建
+            if (hissString == null) {// 第一次 创建根节点hiss
+                Element hissE = new Element("Hiss");
+                hissE.addContent(his);
+                hissE.setAttribute("unit", currentUnit);
+                hissE.setAttribute("content", currentContent);
+                hissE.setAttribute("uM", uM);
+                hissE.setAttribute("cM", cM);
+                item.setHiss(elementToString(hissE, ""));// 把历史信息写入
+            } else {
+                StringReader sr = new StringReader(hissString);// 把之前的历史信息转换成document
+                InputSource is = new InputSource(sr);
+                Element oldhiss = null;
+                try {
+                    oldhiss = (new SAXBuilder()).build(is).getRootElement();// 拿到根节点
+                    // Hiss
+                    oldhiss.addContent(his);
+                    oldhiss.setAttribute("unit", currentUnit);
+                    oldhiss.setAttribute("content", currentContent);
+                    if (oldhiss.getAttributeValue("uM").equals("n")) {
+                        oldhiss.setAttribute("uM", uM);
+                    }
+                    if (oldhiss.getAttributeValue("cM").equals("n")) {
+                        oldhiss.setAttribute("cM", cM);
+                    }
+                    item.setHiss(elementToString(oldhiss, ""));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("保存修改历史时出错", e);
+                }
+            }
+        }</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">//                String hissString = orderItem.getHiss();// 拿到之前的历史信息
+//                if (hissString != null) {// 没有的话不做任何操作
+//                    StringReader sr = new StringReader(hissString);// 把之前的历史信息转换成document
+//                    // 以便添加到element对象
+//                    // eleSubTableName上
+//                    InputSource is = new InputSource(sr);
+//                    try {
+//                        Document doc = (new SAXBuilder()).build(is);
+//                        Element oldhiss = doc.getRootElement();// 拿到根节点 Hiss
+//                        doc.removeContent();// 移除与子节点的关联 以便把子节点加到新的父节点
+//                        eleSubTableName.addContent(oldhiss);// 添加完毕
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">for (int i = 0; i &lt; interInfoStack.size(); i++) {
+            Element everyStepDsos=interInfoStack.get(i).getDsos();
+            everyStepDsos.detach();
+            logger.info(CommonFunction.writeXML(everyStepDsos));
+            List children =everyStepDsos.getChildren("DSO");
+            for (int j = 0; j &lt; children.size(); j++) {
+                Element dso=(Element) children.get(j);
+                dso.detach();
+                dsos.addContent(dso);
+            }
+        }</pre> 
+<p>&nbsp;</p>

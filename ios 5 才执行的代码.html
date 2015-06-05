@@ -1,0 +1,20 @@
+<p>设置<span style="color: #01010a; font-family: Menlo; font-size: 14px;">navigationBar背景在ios5有了官方支持</span></p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">#if __IPHONE_OS_VERSION_MAX_ALLOWED &gt;= 50000
+    if ([self.navigationController.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)]){
+        NSLog(@"111");
+            [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"navi.png"] forBarMetrics:UIBarMetricsDefault];
+    }
+#endif&nbsp;</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&lt;!--?xml version="1.0" encoding="UTF-8" standalone="no"?--&gt; </p> 
+<p style=""><span style="color: #00020a;">if ([[[UIDevice currentDevice] systemVersion] floatValue] &gt;= 5.0) {</span></p> 
+<p style=""><span style="color: #00020a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CLog(@"ios5");</span></p> 
+<p style=""><span style="color: #00020a;"><br></span></p> 
+<p style=""><span style="color: #00020a;">&nbsp;&nbsp;&nbsp; }else {</span></p> 
+<p style=""><span style="color: #00020a;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CLog(@"ios4");</span></p> 
+<p style=""><span style="color: #00020a;"><br></span></p> 
+<p style=""><span style="color: #00020a;">&nbsp;&nbsp;&nbsp; }</span></p> 
+<p>&nbsp;</p>

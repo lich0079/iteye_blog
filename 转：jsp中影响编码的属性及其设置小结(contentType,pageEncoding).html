@@ -1,0 +1,75 @@
+080523 
+<br> content reloadable="true" 
+<br> 
+<br> &lt;Connector port="80" protocol="HTTP/1.1" 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; connectionTimeout="20000" 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; redirectPort="8443" 
+<br> &nbsp;&nbsp; URIEncoding="GBK"/&gt;&nbsp;&nbsp; post 
+<br> 
+<br> 
+<br>//解决post方式提交内容的乱码 可以不用 URIEncoding="GBK" 
+<br> //一定要写在存取第一个参数之前 
+<br> request.setCharacterEncoding("GBK"); 
+<br> 
+<br> 
+<br>//解决get方式乱码问题：--&gt;URIEncoding="GBK" 
+<br> 可以不用&nbsp; request.setCharacterEncoding("GBK"); 
+<br> 
+<br> 
+<br>GBK-----ISO8859-1----UTF-8-------ISO8859-1-----GBK 
+<br>program-------IE----nettranfer-----IE-----------program 
+<br> 
+<br> 
+<br> 
+<br> 
+<br>------------------------------------------------------------------- 
+<br> 
+<br> 
+<br>1. 名词解释及其作用 
+<br>&nbsp;&nbsp;&nbsp; 1. contentType: &lt;%@ page contentType="text/html; charset=UTF-8"%&gt; 
+<br>&nbsp;&nbsp;&nbsp; 2. pageEncoding:&lt;%@ page pageEncoding="UTF-8"%&gt; 
+<br>&nbsp;&nbsp;&nbsp; 3. html页面charset:&lt;META http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt; 
+<br>&nbsp;&nbsp;&nbsp; 4. setCharacterEncoding:request.setCharacterEncoding(),response.setCharacterEncoding() 
+<br>&nbsp;&nbsp;&nbsp; 5. setContentType:response.setContentType() 
+<br>&nbsp;&nbsp;&nbsp; 6. setHeader: response.setHeader() 
+<br>&nbsp;&nbsp;&nbsp; 7. jsp页面编码: jsp文件本身的编码 
+<br>&nbsp;&nbsp;&nbsp; 8. web页面显示编码:jsp的输出流在浏览器中显示的编码 
+<br>&nbsp;&nbsp;&nbsp; 9. web页面输入编码: 输入框输入的字体编码 
+<br>&nbsp;&nbsp;&nbsp; 10. web服务器输入的请求流: web Server相应浏览器的请求数据 
+<br>&nbsp;&nbsp;&nbsp; 11. web服务器输出的响应流: web Server相应浏览器的输出数据 
+<br>2. 他们之间的相互影响和作用域,以及先后作用顺序 
+<br>&nbsp;&nbsp;&nbsp; 1. pageEncoding: 只是指明了 JSP 页面本身的编码格式，跟页面显示的编码没有关系; 
+<br>&nbsp;&nbsp;&nbsp; 容器在读取(文件)或者(数据库)或者(字符串常量)时将起转化为内部使用的 Unicode,而页面显示的时候将 
+<br>&nbsp;&nbsp;&nbsp; 内部的Unicode转换为contentType指定的编码后显示页面内容; 
+<br>&nbsp;&nbsp;&nbsp; 如果pageEncoding属性存在，那么JSP页面的字符编码方式就由pageEncoding决定， 
+<br>&nbsp;&nbsp;&nbsp; 否则就由contentType属性中的charset决定，如果charset也不存在，JSP页面的字符编码方式就采用 
+<br>&nbsp;&nbsp;&nbsp; 默认的ISO-8859-1。 
+<br>&nbsp;&nbsp;&nbsp; 2. contentType: 指定了MIME类型和JSP页面回应时的字符编码方式。MIME类型的默认值是“text/html”; 
+<br>&nbsp;&nbsp;&nbsp; 字符编码方式的默认值是“ISO-8859-1”. MIME类型和字符编码方式由分号隔开; 
+<br>&nbsp;&nbsp;&nbsp; 3. pageEncoding和contentType的关系: 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. pageEncoding的内容只是用于jsp输出时的编码，不会作为header发出去的; 是告诉web Server 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; jsp页面按照什么编码输出,即web服务器输出的响应流的编码; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. 第一阶段是jsp编译成.java，它会根据pageEncoding的设定读取jsp，结果是由指定的编码方案翻译 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 成统一的UTF-8 JAVA源码（即.java）. 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. 第二阶段是由JAVAC的JAVA源码至java byteCode的编译，不论JSP编写时候用的是什么编码方案， 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 经过这个阶段的结果全部是UTF-8的encoding的java源码.JAVAC用UTF-8的encoding读取 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; java源码，编译成UTF-8 encoding的二进制码（即.class），这是JVM对常数字串在二进制码 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; （java encoding）内表达的规范. 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4. 第三阶段是Tomcat（或其的application container）载入和执行阶段二的来的JAVA二进制码， 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 输出的结果，也就是在客户端见到的，这时隐藏在阶段一和阶段二的参数contentType就发挥了功效&nbsp;&nbsp;&nbsp; 
+<br>&nbsp;&nbsp;&nbsp; 4. 和contentType效果一样的设置方式还有 html页面charset, response.setCharacterEncoding(), 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; response.setContentType(),response.setHeader(); response.setContentType(), 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; response.setHeader();优先级最好,其次是response.setCharacterEncoding();再者是 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;%@page contentType="text/html; chareset=gbk"%&gt;,最后是&lt;meta http-equiv="content-type" 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; content="text/html; charset=gb2312" /&gt;. 
+<br>&nbsp;&nbsp;&nbsp; 5. web页面输入编码: 在设置页面编码&lt;%@page contentType="text/html; chareset=gbk"%&gt;的同时，也&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 就指定了页面的输入编码; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 如果页面的显示被设置为UTF-8，那么用户所有的页面输入都会按照 UTF-8 编码; 服务器端程序在读 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 取表单输入之前要设定输入编码; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 表单被提交后，浏览器会将表单字段值转换为指定字符集对应的字节值，然后根据 HTTP 标准 URL 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 编码方案对结果字节进行编码.但是页面需要告诉服务器当前页面的编码方式; 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; request.setCharacterEncoding(),能修改Serverlet获取请求的编码,response.setCharacterEncoding(), 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 能修改Serverlet返回结果的编码. 
+<br> 
+<br>&nbsp;&nbsp; 参考资料: 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; http://www.99inf.net/softwaredev/java/54592.htm 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; http://www.ibm.com/developerworks/cn/web/wa-lo-utf8/index.html

@@ -1,0 +1,502 @@
+<p>基本上是按照 http://flurdy.com/docs/postfix 这个教程做的</p> 
+<p>推荐初次搭建邮件服务器的人看的书</p> 
+<p>&nbsp;</p> 
+<p>LINUX系统管理技术手册（第2版）</p> 
+<p>POSTFIX权威指南</p> 
+<p>&nbsp;</p> 
+<p>这2本书里面讲了很多邮件服务器方面的基本概念，不明白的话配置文件的时候简直像猜大小</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>写几点要注意的地方</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>ln -s &nbsp;&nbsp; /tmp/mysql.sock &nbsp;/var/run/mysqld/mysqld.sock</p> 
+<p>&nbsp;</p> 
+<p>配置postfix邮件系统要很多配置文件， 里面的某些配置文件里面是不会自动trim()的, 如：</p> 
+<p>xxx = mysql</p> 
+<p>有一个认证模块的配置文件里面我在mysql后面多了一个空格，结果log一直提示我mysql模块未安装，</p> 
+<p>其实它说的是'mysql&nbsp; '模块，注意到没，引号里有一个空格，这个错误弄了老半天，最后在网上看到老外也提到了这点，才试着一个个去去除空格，结果就好了。。。</p> 
+<p>&nbsp;</p> 
+<p>还有一个，就是配置ssl，生成证书的时候，他会让你写一些信息， 如下</p> 
+<p>Country Name (2 letter code) [AU]:cn<br> State or Province Name (full name) [Some-State]:sh<br> Locality Name (eg, city) []:pd<br> Organization Name (eg, company) [Internet Widgits Pty Ltd]:company<br> Organizational Unit Name (eg, section) []:section<br> Common Name (eg, YOUR name) []:yourdomain.com<br> Email Address []:xxx@gmail.com</p> 
+<p>&nbsp;</p> 
+<p>这里的Common Name一定要和你的邮件服务器的名字一样，其他无所谓， 这里也是碰壁了，网上查了才知道的，原文没有提到</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>最后就配置了mysql+postfix+sasl_ssl,配置文件记一下</p> 
+<p>&nbsp;</p> 
+<p><code>vi /etc/mailname</code> </p> 
+<pre name="code" class="java">mailserver.com</pre> 
+<p>&nbsp;</p> 
+<p><code>vi /etc/postfix/main.cf</code> </p> 
+<pre name="code" class="java">smtpd_banner = $myhostname ESMTP $mail_name (Ubuntu)
+biff = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+# Uncomment the next line to generate "delayed mail" warnings
+#delay_warning_time = 4h
+
+readme_directory = no
+
+# TLS parameters
+smtpd_tls_cert_file=/etc/postfix/postfix.cert
+smtpd_tls_key_file=/etc/postfix/postfix.key
+smtpd_use_tls=yes
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+
+smtp_tls_security_level = may
+smtpd_tls_security_level = may
+smtp_tls_note_starttls_offer = yes
+smtpd_tls_loglevel = 1
+smtpd_tls_received_header = yes
+smtpd_tls_session_cache_timeout = 3600s
+tls_random_source = dev:/dev/urandom
+
+# See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
+# information on enabling SSL in the smtp client.
+
+myhostname = mailserver.com
+myorigin = mailserver.com
+relayhost =
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+mynetworks_style = host
+
+
+local_recipient_maps =
+mydestination =
+
+
+alias_maps = hash:/etc/postfix/aliases
+alias_database = hash:/etc/postfix/aliases
+virtual_mailbox_base = /var/spool/mail/virtual
+virtual_mailbox_maps = mysql:/etc/postfix/mysql_mailbox.cf
+virtual_alias_maps = mysql:/etc/postfix/mysql_alias.cf
+virtual_mailbox_domains = mysql:/etc/postfix/mysql_domains.cf
+virtual_uid_maps = static:5000
+virtual_gid_maps = static:5000
+
+
+smtpd_sasl_auth_enable = yes
+broken_sasl_auth_clients = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain =
+
+
+smtpd_helo_restrictions = permit_mynetworks, warn_if_reject reject_non_fqdn_hostname, reject_invalid_hostname, permit
+smtpd_sender_restrictions =permit_sasl_authenticated, permit_mynetworks, warn_if_reject reject_non_fqdn_sender, reject_unknown_sender_domain, reject_unauth_pipelining, permit
+#smtpd_client_restrictions = reject_rbl_client sbl.spamhaus.org, reject_rbl_client blackholes.easynet.nl, reject_rbl_client dnsbl.njabl.org
+smtpd_recipient_restrictions = reject_unauth_pipelining, permit_sasl_authenticated, permit_mynetworks, reject_non_fqdn_recipient, reject_unknown_recipient_domain, reject_unauth_destination, permit
+smtpd_data_restrictions = reject_unauth_pipelining
+
+# how long if undelivered before sending warning update to sender
+delay_warning_time = 4h
+# will it be a permanent error or temporary
+unknown_local_recipient_reject_code = 450
+# how long to keep message on queue before return as failed.
+# some have 3 days, I have 16 days as I am backup server for some people
+# whom go on holiday with their server switched off.
+maximal_queue_lifetime = 7d
+# max and min time in seconds between retries if connection failed
+minimal_backoff_time = 1000s
+maximal_backoff_time = 8000s
+# how long to wait when servers connect before receiving rest of data
+smtp_helo_timeout = 60s
+# how many address can be used in one message.
+# effective stopper to mass spammers, accidental copy in whole address list
+# but may restrict intentional mail shots.
+smtpd_recipient_limit = 999
+# how many error before back off.
+smtpd_soft_error_limit = 3
+# how many max errors before blocking it.
+smtpd_hard_error_limit = 12
+
+</pre> 
+<p>&nbsp; <code>vi /etc/postfix/mysql_mailbox.cf</code> </p> 
+<p><code>vi /etc/postfix/mysql_alias.cf</code> </p> 
+<p><code>vi /etc/postfix/mysql_domains.cf</code> </p> 
+<p>这3个文件没什么可说的 注意后面没有空格就好了</p> 
+<p>&nbsp;</p> 
+<p><code>vi /etc/courier/authdaemonrc</code> </p> 
+<pre name="code" class="java">authmodulelist="authmysql"
+注意这个就好了 其他没改</pre> 
+<p>&nbsp;</p> 
+<p><code>vi /etc/courier/authmysqlrc</code> </p> 
+<pre name="code" class="java">这个也是照着教程上的改就好了
+注意的就是
+MYSQL_CRYPT_PWFIELD crypt
+# MYSQL_CLEAR_PWFIELD clear
+</pre> &nbsp; 
+<p><code>vi /etc/courier/imapd </code> </p> 
+<p>这里没改</p> 
+<p>&nbsp;</p> 
+<p><code>vi /etc/default/saslauthd</code> </p> 
+<pre name="code" class="java">START=yes
+OPTIONS="-r -c  -m /var/spool/postfix/var/run/saslauthd"
+就改了这2个地方
+</pre> &nbsp; 
+<p><code>vi /etc/postfix/sasl/smtpd.conf&nbsp;&nbsp; 这个文件就是空格事件的案发现场<br></code> </p> 
+<pre name="code" class="java">pwcheck_method:saslauthd
+mech_list: plain login cram-md5 digest-md5
+log_level: 7
+allow_plaintext: true
+auxprop_plugin: mysql
+sql_engine: mysql
+sql_hostnames: 127.0.0.1
+sql_user: admin
+sql_passw: admin
+sql_database: maildb
+sql_select: select crypt from users where id='%u@%r' and enabled = 1
+</pre> &nbsp; 
+<p><code>vi /etc/pam.d/smtp</code> </p> 
+<p>&nbsp;</p> 
+<pre name="code" class="java">auth required pam_mysql.so user=mail passwd=aPASSWORD host=127.0.0.1 db=maildb table=users usercolumn=id passwdcolumn=crypt crypt=1 
+account sufficient pam_mysql.so user=mail passwd=aPASSWORD host=127.0.0.1 db=maildb table=users usercolumn=id passwdcolumn=crypt crypt=1</pre> 
+<p>&nbsp;</p> 
+<p><code>vi /etc/postfix/master.cf&nbsp; 这个是配ssl时改的</code> </p> 
+<pre name="code" class="java">smtp      inet  n       -       -       -       -       smtpd
+#submission inet n       -       -       -       -       smtpd
+#  -o smtpd_tls_security_level=encrypt
+#  -o smtpd_sasl_auth_enable=yes
+#  -o smtpd_client_restrictions=permit_sasl_authenticated,reject
+#  -o milter_macro_daemon_name=ORIGINATING
+smtps     inet  n       -       -       -       -       smtpd
+  -o smtpd_tls_wrappermode=yes
+  -o smtpd_sasl_auth_enable=yes
+  -o smtpd_client_restrictions=permit_sasl_authenticated,reject
+  -o smtpd_sasl_security_options=noanonymous,noplaintext
+  -o smtpd_sasl_tls_security_options=noanonymous
+</pre> 
+<p>&nbsp;</p> 
+<p>配置amavis 基本上也是按照教程来的&nbsp; 然后用其他邮箱发邮件测试&nbsp; 看mail.log的输出 这里我就出了一个文件读取权限的错误 改</p> 
+<pre name="code" class="java">daemon_user 就好了</pre> 
+<p>vi /etc/amavis/conf.d/<code>50-user</code> </p> 
+<pre name="code" class="java">$mydomain = 'yourdomain';
+$myhostname = 'yourdomain';
+$daemon_user= 'amavis';
+$daemon_group= 'amavis';
+@local_domains_acl = qw(.);
+$log_level = 1;
+$syslog_priority = 'info';
+$sa_kill_level_deflt = 8.0;
+# triggers spam evasive actions
+#$final_spam_destiny = D_PASS;
+$final_spam_destiny = D_DISCARD;
+</pre> 
+<p>&nbsp;</p> 
+<p>vi /etc/postfix/master.cf</p> 
+<pre name="code" class="java">pickup    fifo  n       -       -       60      1       pickup
+  -o content_filter=
+  -o receive_override_options=no_header_body_checks
+
+
+amavis unix - - - - 2 smtp
+   -o smtp_data_done_timeout=1200
+   -o smtp_send_xforward_command=yes
+   -o disable_dns_lookups=yes
+   -o max_use=20
+
+
+127.0.0.1:10025 inet n - - - - smtpd
+   -o content_filter=
+   -o local_recipient_maps=
+   -o relay_recipient_maps=
+   -o smtpd_restriction_classes=
+   -o smtpd_delay_reject=no
+   -o smtpd_client_restrictions=permit_mynetworks,reject
+   -o smtpd_helo_restrictions=
+   -o smtpd_sender_restrictions=
+   -o smtpd_recipient_restrictions=permit_mynetworks,reject
+   -o smtpd_data_restrictions=reject_unauth_pipelining
+   -o smtpd_end_of_data_restrictions=
+   -o mynetworks=127.0.0.0/8
+   -o smtpd_error_sleep_time=0
+   -o smtpd_soft_error_limit=1001
+   -o smtpd_hard_error_limit=1000
+   -o smtpd_client_connection_count_limit=0
+   -o smtpd_client_connection_rate_limit=0
+   -o receive_override_options=no_header_body_checks,no_unknown_recipient_checks
+</pre> 
+<p>&nbsp;</p> 
+<p><code>vi /etc/postfix/main.cf</code> </p> 
+<pre name="code" class="java">content_filter = amavis:[127.0.0.1]:10024
+</pre> 
+<p>&nbsp;</p> 
+<p><code>vi </code> /etc/amavis/conf.d/<code>15-content_filter_mode</code> </p> 
+<pre name="code" class="java">@bypass_virus_checks_maps = ( \%bypass_virus_checks, \@bypass_virus_checks_acl, \$bypass_virus_checks_re); 
+@bypass_spam_checks_maps = ( \%bypass_spam_checks, \@bypass_spam_checks_acl, \$bypass_spam_checks_re);</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>在用javamail发邮件的时候出了问题&nbsp; 说 unable to find valid certification path to requested target</p> 
+<p>一看就是认证方面的</p> 
+<p>接着就上网找资料 重新配置认证文件，然后把认证文件导入到当前用到的jre\lib\security\cacerts中，</p> 
+<p>我很怀疑其实我原来的认证文件就可以的，只要导入到当前的jre中就可以</p> 
+<p>&nbsp;</p> 
+<p>怎么导入呢 </p> 
+<p>JDK/bin/keytool &nbsp; -import &nbsp; -file &nbsp; mailcert.pem &nbsp; -keystore &nbsp; %java_home%/jre/lib/security/cacerts</p> 
+<p>这里会问密码&nbsp; 是 changeit&nbsp; 这个对jdk都是一样的&nbsp; 默认密码</p> 
+<p>这里要注意的是你的java运行的时候用的那个jre你就要导入到那个里去，mailcert.pem就是你mailserver用到的认证文件</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>===========================================================</p> 
+<p>配置认证文件</p> 
+<p>8.1 配置OpenSSL<br><br> 8.1.1 制作root CA<br><br> 1. 修改openssl配置文件<br><br> 修改openssl配置文件：/etc/pki/tls/openssl.cnf <br> 将</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>dir&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;= ../../CA&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;# Where everything is kept</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br> 改成</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>dir&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; = /etc/pki/CA&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;# Where everything is kept</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 2. 安装CA的脚本</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>shell# yum install openssl-perl</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 3. 生成Root CA<br><br> 备份原有文件</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>shell# cd /etc/pki</li> 
+   <li>shell# mv CA CA.bak</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 生成Root CA</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>shell# cd /etc/pki/tls/misc/</li> 
+   <li>shell# ./CA.pl -newca</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 下面为脚本的输出</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>CA certificate filename (or enter to create)</li> 
+   <li> <br> </li> 
+   <li>Making CA certificate ...</li> 
+   <li>Generating a 1024 bit RSA private key</li> 
+   <li>.....++++++</li> 
+   <li>...................................++++++</li> 
+   <li>writing new private key to '../../CA/private/cakey.pem'</li> 
+   <li>Enter PEM pass phrase:</li> 
+   <li>Verifying - Enter PEM pass phrase:</li> 
+   <li>-----</li> 
+   <li>You are about to be asked to enter information that will be incorporated</li> 
+   <li>into your certificate request.</li> 
+   <li>What you are about to enter is what is called a Distinguished Name or a DN.</li> 
+   <li>There are quite a few fields but you can leave some blank</li> 
+   <li>For some fields there will be a default value,</li> 
+   <li>If you enter '.', the field will be left blank.</li> 
+   <li>-----</li> 
+   <li>Country Name (2 letter code) [CN]:CN</li> 
+   <li>State or Province Name (full name) [Liaoning]:Liaoning</li> 
+   <li>Locality Name (eg, city) [Dalian]: Dalian</li> 
+   <li>Organization Name (eg, company) [My Company Ltd]:test dot com</li> 
+   <li>Organizational Unit Name (eg, section) []:test&nbsp; &nbsp;</li> 
+   <li>Common Name (eg, your name or your server's hostname) []:test</li> 
+   <li>Email Address []:postmaster@test.com</li> 
+   <li> <br> </li> 
+   <li>Please enter the following 'extra' attributes</li> 
+   <li>to be sent with your certificate request</li> 
+   <li>A challenge password []:</li> 
+   <li>An optional company name []:</li> 
+   <li>Using configuration from /etc/pki/tls/openssl.cnf</li> 
+   <li>Enter pass phrase for ../../CA/private/cakey.pem:</li> 
+   <li>Check that the request matches the signature</li> 
+   <li>Signature ok</li> 
+   <li>Certificate Details:</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;Serial Number:</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;f4:60:02:37:19:43:e5:5e</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;Validity</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;Not Before: Dec&nbsp;&nbsp;2 13:23:11 2009 GMT</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;Not After : Dec&nbsp;&nbsp;1 13:23:11 2012 GMT</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;Subject:</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;countryName&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;= CN</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;stateOrProvinceName&nbsp; &nbsp;&nbsp; &nbsp; = Liaoning</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;organizationName&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; = test dot com</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;organizationalUnitName&nbsp; &nbsp; = test</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;commonName&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; = test</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;emailAddress&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;= postmaster@test.com</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;X509v3 extensions:</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;X509v3 Subject Key Identifier:</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; 77:21:CF:21:FA:CA:2E:92:D1:7D:9D:D8:F9:7C:05:A1:EE:57:4A:DC</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;X509v3 Authority Key Identifier:</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; keyid:77:21:CF:21:FA:CA:2E:92:D1:7D:9D:D8:F9:7C:05:A1:EE:57:4A:DC</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; DirName:/C=CN/ST=Liaoning/O=test dot com/OU=test/CN=test/emailAddress=postmaster@test.com</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; serial:F4:60:02:37:19:43:E5:5E</li> 
+   <li> <br> </li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;X509v3 Basic Constraints:</li> 
+   <li>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; CA:TRUE</li> 
+   <li>Certificate is to be certified until Dec&nbsp;&nbsp;1 13:23:11 2012 GMT (1095 days)</li> 
+   <li> <br> </li> 
+   <li>Write out database with 1 new entries</li> 
+   <li>Data Base Updated</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 8.1.2 生成私钥和req文件<br><br> 1. 建立私钥目录</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>shell# mkdir /etc/pki/myca</li> 
+   <li>shell# cd /etc/pki/myca</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 2. 生成私钥和req文件</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>shell# openssl req -new -nodes -keyout mailkey.pem -out mailreq.pem -days 3650</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 下面为输出内容：</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>Generating a 1024 bit RSA private key</li> 
+   <li>....++++++</li> 
+   <li>....++++++</li> 
+   <li>writing new private key to 'mailkey.pem'</li> 
+   <li>-----</li> 
+   <li>You are about to be asked to enter information that will be incorporated</li> 
+   <li>into your certificate request.</li> 
+   <li>What you are about to enter is what is called a Distinguished Name or a DN.</li> 
+   <li>There are quite a few fields but you can leave some blank</li> 
+   <li>For some fields there will be a default value,</li> 
+   <li>If you enter '.', the field will be left blank.</li> 
+   <li>-----</li> 
+   <li>Country Name (2 letter code) [CN]: CN</li> 
+   <li>State or Province Name (full name) [Liaoning]: Liaoning</li> 
+   <li>Locality Name (eg, city) [Dalian]: Dalian</li> 
+   <li>Organization Name (eg, company) [My Company Ltd]:test dot com</li> 
+   <li>Organizational Unit Name (eg, section) []:test</li> 
+   <li>Common Name (eg, your name or your server's hostname) []:test</li> 
+   <li>Email Address []:postmaster@test.com</li> 
+   <li> <br> </li> 
+   <li>Please enter the following 'extra' attributes</li> 
+   <li>to be sent with your certificate request</li> 
+   <li>A challenge password []:</li> 
+   <li>An optional company name []:</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 查看文件是否生成：</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>shell# cd /etc/pki/myca</li> 
+   <li>shell# ls -l</li> 
+   <li>total 8</li> 
+   <li>-rw-r--r-- 1 root root 887 Dec&nbsp;&nbsp;2 21:28 mailkey.pem</li> 
+   <li>-rw-r--r-- 1 root root 700 Dec&nbsp;&nbsp;2 21:28 mailreq.pem</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 在上面文件中mailkey.pem为私钥 ，mailreq.pem为req文件。<br><br> 8.1.3 签署req文件</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>shell# openssl x509 -req -days 3650 -in mailreq.pem -signkey mailkey.pem -out mailcert.pem</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 输出内容</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>Signature ok</li> 
+   <li>subject=/C=CN/ST=Liaoning/L=Dalian/O=test dot com/OU=test/CN=test/emailAddress=postmaster@test.com</li> 
+   <li>Getting Private key</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br><br> 将root CA 复制到私钥的目录中</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>shell# cp /etc/pki/CA/cacert.pem /etc/pki/myca</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 8.2 配置postfix<br><br> 修改 /etc/postfix/main.cf 增加一下几行</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li># tls setting for smtp server</li> 
+   <li>smtpd_use_tls&nbsp; &nbsp;&nbsp; &nbsp; = yes</li> 
+   <li>smtpd_tls_key_file&nbsp;&nbsp;= /etc/pki/myca/mailkey.pem</li> 
+   <li>smtpd_tls_cert_file = /etc/pki/myca/mailcert.pem</li> 
+   <li>smtpd_tls_CAfile&nbsp; &nbsp; = /etc/pki/myca/cacert.pem</li> 
+   <li>#smtpd_tls_security_level = encrypt</li> 
+   <li>smtpd_tls_received_header = yes</li> 
+   <li>smtpd_enforce_tls = yes</li> 
+   <li>smtpd_tls_loglevel = 2</li> 
+   <li> <br> </li> 
+   <li># tls setting for smtp client</li> 
+   <li>smtp_use_tls&nbsp; &nbsp;&nbsp; &nbsp; = yes</li> 
+   <li>smtp_tls_key_file&nbsp;&nbsp;= /etc/pki/myca/mailkey.pem</li> 
+   <li>smtp_tls_cert_file = /etc/pki/myca/mailcert.pem</li> 
+   <li>smtp_tls_CAfile&nbsp; &nbsp; = /etc/pki/myca/cacert.pem</li> 
+   <li>#smtp_tls_policy_maps = hash:/etc/postfix/tls_policy_maps</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br><br> 修改/etc/postfix/master.cf文件<br><br> 增加下面内容：</p> 
+<div class="blockcode"> 
+ <div> 
+  <ol> 
+   <li>smtps&nbsp; &nbsp;&nbsp;&nbsp;inet&nbsp; &nbsp;&nbsp;&nbsp;n&nbsp; &nbsp;&nbsp;&nbsp;-&nbsp; &nbsp;&nbsp;&nbsp;n&nbsp; &nbsp;&nbsp;&nbsp;-&nbsp; &nbsp;&nbsp;&nbsp;-&nbsp; &nbsp;&nbsp;&nbsp;smtpd</li> 
+   <li>&nbsp;&nbsp;-o smtpd_tls_wrappermode=yes -o smtpd_sasl_auth_enable=yes</li> 
+  </ol> 
+ </div> 
+ <em>复制代码</em> 
+</div> 
+<p> <br><br> 重启动postfix<br><br> source : <br> http://bbs.chinaunix.net/archiver/tid-1664576.html<br> http://bbs.chinaunix.net/viewthread.php?tid=1664576</p>

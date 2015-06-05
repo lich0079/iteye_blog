@@ -1,0 +1,18 @@
+<p>更新一下&nbsp; 如果你的数据时用hibernate读出来的，有时候是你想要的那个类的一个动态代理子类，这时会多出很多属性，</p> 
+<p>这时可以用</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>JsonConfig config = new JsonConfig();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; config.setJsonPropertyFilter(new PropertyFilter() {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public boolean apply(Object source, String name, Object value) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // 只转换我要的属性<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (name.equals("funcId") || name.equals("funcName") || name.equals("funcCode")) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return false;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return true;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; });<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JSONArray jsonArray = JSONArray.fromObject(allFuncs, config);</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>-------------------------------------------------------------------------------------------------</p> 
+<p>大意是你在Hibernate中出现了递归调用(姑且就叫做递归- -!)导致JSON无法解析你查询出来的数据,详细原因参考网上其他高手的博客,我这里只是详细介绍一下如何在ExtHelper中统一处理这种错误.</p> 
+<p>关于ExtHelper的使用,可以参考我在DojoChina上发表的一篇文章,地址<a href="http://www.dojochina.com/index.php?q=node/1306"><span style="color: #c4a30c;">http://www.dojochina.com/index.php?q=node/1306</span></a></p> 
+<p>在需要获取JSON的地方加入JSON过滤器,用于过滤一些容易产生递归的参数写法如下</p> 
+<p>&nbsp;&nbsp;List&lt;Department&gt; list = idepartmentBiz.findAll();//获取数据<br>&nbsp;&nbsp;//自定义JsonConfig用于过滤Hibernate配置文件所产生的递归数据<br>&nbsp;&nbsp;JsonConfig config = new JsonConfig();<br>&nbsp;&nbsp;config.setJsonPropertyFilter(new PropertyFilter() {<br>&nbsp;&nbsp;&nbsp;public boolean apply(Object source, String name, Object value) {</p> 
+<p>//配置你可能出现递归的属性<br>&nbsp;&nbsp;&nbsp;&nbsp;if (name.equals("posts") || name.equals("hrmIndagates")<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|| name.equals("hrmPlans")) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;<br>&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;});</p> 
+<p>//调用ExtHelper将你的JSONConfig传递过去<br>&nbsp;&nbsp;String json=ExtHelper.getJsonFromList(list, config);</p> 
+<p>在ExtHelper中加入一个方法如下</p> 
+<p>&nbsp;/**<br>&nbsp; * 通过自定义confi生成JSON数据<br>&nbsp; * @param beanList 包含bean对象的集合<br>&nbsp; * @param config JSONObject的配置文件<br>&nbsp; * @return<br>&nbsp; */<br>&nbsp;public static String getJsonFromList(List beanList,JsonConfig config){<br>&nbsp;&nbsp;TotalJson total=new TotalJson();<br>&nbsp;&nbsp;total.setItems(beanList);<br>&nbsp;&nbsp;total.setResults(beanList.size());<br>&nbsp;&nbsp;JSONObject JsonObject=JSONObject.fromObject(total, config);<br>&nbsp;&nbsp;return JsonObject.toString();<br>&nbsp;}</p> 
+<p>这样我们就又可以方便的调用ExtHelper生成我们所需要的JSON数据了.</p>

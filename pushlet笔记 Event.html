@@ -1,0 +1,132 @@
+<pre name="code" class="java">public class Event implements Protocol, Serializable {
+
+	protected Map attributes = new HashMap(3);
+
+	public Event(String anEventType) {
+		this(anEventType, null);
+	}
+
+	//初始化方法 设置事件的时间 类型 属性  这些数据都在map中
+	public Event(String anEventType, Map theAttributes) {
+
+		if (theAttributes != null) {
+			setAttrs(theAttributes);
+		}
+
+		// Set required field event type
+		setField(P_EVENT, anEventType);
+
+		// Set time in seconds since 1970
+		setField(P_TIME, System.currentTimeMillis() / 1000);
+	}
+
+	//初始化方法 设置属性  因为没有提供默认的时间类型， 所以属性中必须包含类型信息
+	public Event(Map theAttributes) {
+		if (!theAttributes.containsKey(P_EVENT)) {
+			throw new IllegalArgumentException(P_EVENT + " not found in attributes");
+		}
+		setAttrs(theAttributes);
+	}
+
+	public static Event createDataEvent(String aSubject) {
+		return createDataEvent(aSubject, null);
+	}
+
+	//创建数据事件  设置主题 
+	public static Event createDataEvent(String aSubject, Map theAttributes) {
+		Event dataEvent = new Event(E_DATA, theAttributes);
+		dataEvent.setField(P_SUBJECT, aSubject);
+		return dataEvent;
+	}
+
+	//拿到事件类型
+	public String getEventType() {
+		return getField(P_EVENT);
+	}
+
+	//拿到事件主题
+	public String getSubject() {
+		return getField(P_SUBJECT);
+	}
+
+	public void setField(String name, String value) {
+		attributes.put(name, value);
+	}
+
+	public void setField(String name, int value) {
+		attributes.put(name, value + "");
+	}
+
+	public void setField(String name, long value) {
+		attributes.put(name, value + "");
+	}
+
+	public String getField(String name) {
+		return (String) attributes.get(name);
+	}
+
+	/**
+	 * Return field; if null return default.
+	 */
+	public String getField(String name, String aDefault) {
+		String result = getField(name);
+		return result == null ? aDefault : result;
+	}
+
+	public Iterator getFieldNames() {
+		return attributes.keySet().iterator();
+	}
+
+	public String toString() {
+		return attributes.toString();
+	}
+
+	/**
+	 * Convert to HTTP query string.
+	 * 拼出一个http  get请求  id=1&amp;name=xxx&amp;age=13$v=34  类似这样的
+	 */
+	public String toQueryString() {
+		String queryString = "";
+		String amp = "";
+		for (Iterator iter = getFieldNames(); iter.hasNext();) {
+			String nextAttrName = (String) iter.next();
+			String nextAttrValue = getField(nextAttrName);
+			queryString = queryString + amp + nextAttrName + "=" + nextAttrValue;
+			// After first add "&amp;".
+			amp = "&amp;";
+		}
+
+		return queryString;
+	}
+
+	//转换成xml格式  strict  true的话会把其中value的特殊字符转换成html的格式 &lt; &gt; \' \" \\ &amp;
+	//转成 &lt;event  id="id"  name="name" /&gt;
+	public String toXML(boolean strict) {
+		String xmlString = "&lt;event ";
+		for (Iterator iter = getFieldNames(); iter.hasNext();) {
+			String nextAttrName = (String) iter.next();
+			String nextAttrValue = getField(nextAttrName);
+			xmlString = xmlString + nextAttrName + "=\"" + (strict ? Sys.forHTMLTag(nextAttrValue) : nextAttrValue) + "\" ";
+		}
+
+		xmlString += "/&gt;";
+		return xmlString;
+	}
+
+	//默认xml不转成html特殊字符
+	public String toXML() {
+		return toXML(false);
+	}
+
+	public Object clone() {
+		// Clone the Event by using copy constructor
+		return new Event(attributes);
+	}
+
+	/**
+	 * Copy given attributes into event attributes
+	 */
+	private void setAttrs(Map theAttributes) {
+		attributes.putAll(theAttributes);
+	}
+}</pre>

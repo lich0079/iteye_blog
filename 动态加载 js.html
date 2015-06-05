@@ -1,0 +1,55 @@
+<pre class="java" name="code">function onClickTreeNode(node) {//点击不同节点 加载对应的js
+
+ 
+	if (node.getDepth() &gt; 0) {
+
+	
+ 		
+		 var n = Ext.mypanels.contentPanel.getComponent(node.id);
+		// alert(node.id);
+		// alert(!n);
+		if (!n) { // 判断是否已经打开该面板
+			//	alert("添加");
+			 
+					 
+					importJS('lib.main.'+node.id);
+					 //加载完js中的定义后再开出新的panel
+			n = Ext.mypanels.contentPanel.add({
+						'id' : node.id,
+						'title' : node.text,
+						contentEl : 'tab_'+node.id,
+						
+						closable : true,
+						iconCls : 'tabs'
+						 });
+		}
+		Ext.mypanels.contentPanel.setActiveTab(n);
+	}
+}</pre> 
+<p>&nbsp;</p> 
+<p>动态加载的方法</p> 
+<pre class="java" name="code">function importJS(src) {     //src  like  lib.main.tab_get_left  <span style="color: #0000ff;">  </span>	 
+	    
+ 
+	src=src.replace(/\./g,'\/');    //把.替换为/ 
+	jpath=src+'.js';    //        lib/main/tab_get_left.js
+	
+	
+	 for(var i=0;i&lt;document.getElementsByTagName('script').length; i++){
+ 
+                       if(document.getElementsByTagName('script').item(i).src== jpath){
+     
+                            return ;
+                         }//查看是否已有这个了
+ 
+ 
+                  }
+	//动态添加'script' 的导入定义
+	var headerDom = document.getElementsByTagName('head').item(0);
+	var jsDom = document.createElement('script');
+	jsDom.type = 'text/javascript';
+	jsDom.src = jpath;
+	headerDom.appendChild(jsDom);
+	
+}</pre> 
+<p>&nbsp;</p>

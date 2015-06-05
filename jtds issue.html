@@ -1,0 +1,92 @@
+<strong><a name="c0" href="http://renxiangzyq.iteye.com/admin/blogs/show_bug.cgi?id=631#c0">Description</a>:</strong>
+<table border="0">
+ <tbody>
+  <tr> &nbsp;&nbsp; 
+   <td width="30%"> <strong>Opened:</strong> 2004-11-02 12:07 </td> 
+  </tr>
+ </tbody>
+</table> 
+<pre class="bz_comment_text">I have PAL Itn6, snapshot of ~12:00 yesterday installed in Tomcat 5.0.28
+talking
+to SQL server via a JNDI data-source and the JNDI driver
+net.sourceforge.jtds.jdbc.Driver. When doing the PAL self-tests, it creates
+vast
+temporary files inside the Tomcat installation:
+
+<span class="quote">&gt; pwd</span>
+/home/sybase/jakarta-tomcat-5.0.28/temp
+<span class="quote">&gt; ls -l</span>
+total 13762224
+-rw-r--r--   1 sybase   sybase   1465106432 Nov  1 18:16 jtds20228.tmp
+-rw-r--r--   1 sybase   sybase   3934224384 Nov  1 18:58 jtds20230.tmp
+-rw-r--r--   1 sybase   sybase   1643454464 Nov  1 18:58 jtds20231.tmp
+
+Note that these files are left over from test runs yesterday evening; they seem
+to have leaked. These files filled the space in the account running Tomcat and
+stopped operations, both of PAL and of other services at CASU.
+
+It's not clear whether the files are leaked when the tests are successful or
+when they are aborted; some runs went each way.
+
+We need to find some way of bounding the temporary space used and possibly of
+redirecting it to a different directory.  We also need to document the amount
+of
+space needed as a function of the size of the DB.
+
+This is a blocker. If we don't fix it, then it will not be possible to run PAL
+on CASU machines. For now, during PAL tests, I'll delete the files manually as
+they are leaked. However, it won't be possible to registe the service for
+general use until the problem is solved.
+</pre> 
+<div class="bz_comment"> 
+ <span class="bz_comment_head"><span class="comment_rule">-------</span> <em>Comment <a name="c1" href="http://renxiangzyq.iteye.com/admin/blogs/show_bug.cgi?id=631#c1">#1</a> From <a href="mailto:gtr@ast.cam.ac.uk">Guy Rixon</a> 2004-11-02 14:31:02 </em><span class="comment_rule">-------</span> </span> 
+ <pre class="bz_comment_text">I've looked at the issues log of the jTDS project and it looks like this make
+be
+a mis-feature of their JDBC driver. They suggest that the temporary files are
+deleted when the JVM exists (NBG for us) or when finalizers are called for
+"certain classes" to do with the JDBC connection. I have may PAL set up with
+connection pooling and I now suspect that the connections are never closed so
+the files are never deleted. I've asked jTDS about this; no reply yet.
+
+Anyway, even if this is not fixable in our PAL code we need to characterize it
+and  to explain it in the installation documents. It may be that we have to
+avoid JNDI data-sources and associated connection pooling.
+</pre> 
+</div> 
+<div class="bz_comment"> 
+ <span class="bz_comment_head"><span class="comment_rule">-------</span> <em>Comment <a name="c2" href="http://renxiangzyq.iteye.com/admin/blogs/show_bug.cgi?id=631#c2">#2</a> From <a href="mailto:mch@roe.ac.uk">Martin (Cindy?!)</a> 2004-11-02 14:59:09 </em><span class="comment_rule">-------</span> </span> 
+ <pre class="bz_comment_text">An alternative is to use the direct JDBC connections instead of data sources;
+see the WEB-INF/classes/default.properties for which properties to set.  We use
+the Microsoft JDBC drivers at ROE and don't seem to get this problem.
+
+</pre> 
+</div> 
+<div class="bz_comment"> 
+ <span class="bz_comment_head"><span class="comment_rule">-------</span> <em>Comment <a name="c3" href="http://renxiangzyq.iteye.com/admin/blogs/show_bug.cgi?id=631#c3">#3</a> From <a href="mailto:gtr@ast.cam.ac.uk">Guy Rixon</a> 2004-11-02 15:04:31 </em><span class="comment_rule">-------</span> </span> 
+ <pre class="bz_comment_text">Where does one get the MS JDBC driver? I couldn't find a download link on MS'
+site. Is there a licence fee?</pre> 
+</div> 
+<div class="bz_comment"> 
+ <span class="bz_comment_head"><span class="comment_rule">-------</span> <em>Comment <a name="c4" href="http://renxiangzyq.iteye.com/admin/blogs/show_bug.cgi?id=631#c4">#4</a> From <a href="mailto:mch@roe.ac.uk">Martin (Cindy?!)</a> 2004-11-02 16:10:50 </em><span class="comment_rule">-------</span> </span> 
+ <pre class="bz_comment_text">Here's the link to the download :-) 
+
+<a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=ee91ad1a-1ee4-49e1-95ea-e3f0e39114a9&amp;DisplayLang=en">http://www.microsoft.com/downloads/details.aspx?FamilyID=ee91ad1a-1ee4-49e1-95ea-e3f0e39114a9&amp;DisplayLang=en</a>
+
+I don't know if it includes all the patches and stuff.  I don't believe there's
+any licence fee.
+
+</pre> 
+</div> 
+<div class="bz_comment"> 
+ <span class="bz_comment_head"><span class="comment_rule">-------</span> <em>Comment <a name="c5" href="http://renxiangzyq.iteye.com/admin/blogs/show_bug.cgi?id=631#c5">#5</a> From <a href="mailto:mch@roe.ac.uk">Martin (Cindy?!)</a> 2004-11-09 12:01:00 </em><span class="comment_rule">-------</span> </span> 
+ <pre class="bz_comment_text">I believe this has been resolved by using the m$ drivers
+</pre> 
+</div> 
+<div class="bz_comment"> 
+ <span class="bz_comment_head"><span class="comment_rule">-------</span> <em>Comment <a name="c6" href="http://renxiangzyq.iteye.com/admin/blogs/show_bug.cgi?id=631#c6">#6</a> From <a href="mailto:gtr@ast.cam.ac.uk">Guy Rixon</a> 2004-11-09 14:03:10 </em><span class="comment_rule">-------</span> </span> 
+ <pre class="bz_comment_text">Yes, the MS driver now works at IoA and avoids this problem. Thanks for
+providing the link.
+
+The MS driver is also faster, by about a factor of 20, in the self-test case of
+a large ADQL output.</pre> 
+</div>

@@ -1,0 +1,29 @@
+<p>selNode.reload(function(node) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;selNode.expand(true);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});</p> 
+<p>&nbsp;</p> 
+<p>在ext的api中AsyncTreeNode有个方法reload，执行这个方法的时候会去后台异步加载下数据，重新把这个节点刷一遍，我这里是在添加了新子节点后为了把新节点刷出来，但既然涉及到异步加载，就存在一个失败的风险，就是failure的时候怎么办，至少要告诉前台，我失败了吧，但这个api是这样写的</p> 
+<p><a href="http://localhost:8080/ext-3.0.0/docs/source/AsyncTreeNode.html#method-Ext.tree.AsyncTreeNode-reload"><strong>reload</strong></a>(&nbsp;<code>Function&nbsp;callback</code>,&nbsp;<span title="Optional" class="optional">[<code>Object&nbsp;scope</code>]</span>&nbsp;) : void </p> 
+<div class="mdesc"> 
+ <div class="short">
+  Trigger a reload for this node
+ </div> 
+ <div class="long">
+  Trigger a reload for this node 
+  <div class="mdetail-params"> 
+   <strong>Parameters:</strong> 
+   <ul> 
+    <li> <code>callback</code> : Function </li> 
+    <li> <code>scope</code> : Object 
+     <div class="sub-desc">
+      (optional) The scope in which to execute the callback.
+     </div> </li> 
+   </ul> 
+   <strong>Returns:</strong> 
+   <ul> 
+    <li>void</li> 
+   </ul> 
+  </div> 
+ </div> 
+</div> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;上面没有提callback有什么参数给他，后来我自己试，发现callback有个参数，就是node本身，那么这样还是无法判断加载中的后台失败</p>

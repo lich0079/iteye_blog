@@ -1,0 +1,69 @@
+<p>fyi:</p> 
+<pre class="java" name="code">function submitFunction() {
+	if (searchPanel.getForm().isValid()) {
+		searchPanel.getForm().submit({
+			url : 'xxxxxxxx',
+			method : 'post',
+			params : {
+				start : 0,
+				limit : 10
+			},
+			waitMsg : '查询中，请稍后...',
+			success : function(form, option) {
+
+				queryWindow.hide();
+				store.removeAll();
+				store.loadData(option.result);
+				store.baseParams = {
+					xxx: Ext.get('xxx').dom.value,
+					xxxx: Ext.get('xxxx').dom.value
+				}
+			},
+			failure : function() {
+				Ext.Msg.alert("信息提示", " 连接服务器出现错误,请稍后再试！");
+			}
+		});
+	};
+}
+
+
+
+
+
+searchPanel = new Ext.form.FormPanel({
+	labelAlign : 'left',
+	labelWidth : 65,
+	frame : true,
+	bodyStyle : 'padding:0px 0px 0',
+	width : 590,
+<strong>	keys : [{
+				key : 13,</strong></pre> 
+<pre class="java" name="code"><strong>                                                                ctrl: true,
+				fn : submitFunction
+			}],</strong>
+
+
+
+
+
+	autoHeight : true,
+	items : [.......],
+        buttons : [{
+				text : '查询',
+				type : 'submit',
+				handler :<strong> submitFunction
+</strong>
+
+
+
+
+			}, {
+				text : '重置',
+				handler : function() {
+					searchPanel.getForm().reset();
+				}
+			}]
+
+});</pre> 
+<p>&nbsp; </p> 
+<p>这样就可以回车提交&nbsp; 按钮提交</p>

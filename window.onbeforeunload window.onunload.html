@@ -1,0 +1,15 @@
+<p>&nbsp;window.onbeforeunload=function()<br>&nbsp;{<br>&nbsp;&nbsp;&nbsp; return "你确定要退出本系统吗？";<br>&nbsp;}<br>&nbsp;<br>&nbsp;window.onunload=function(){<br>&nbsp;&nbsp;&nbsp; if(PL &amp;&amp; PL.sessionId){<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ext.Ajax.request({<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; url : '../message.do?method=logout',<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; method : 'POST',<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; params : {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sessionId:&nbsp; PL.sessionId<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; });<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>&nbsp;&nbsp;&nbsp; }<br>&nbsp;}</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>onbeforeunload事件在页面document对象发生变化的时候触发：包括刷新，关闭，前进，后退，主页这些按钮，js修改location.href，还有document.open之类的改变document对象的行为。而且可以让用户自己选择是否保持原页面不变化<br>unload是以onfeforeunload事件之后，且onbeforeunload返回的应该是true才可能触发unload事件</p> 
+<p>&nbsp;</p> 
+<p>事实真的是我们想象的那样吗</p> 
+<p>&lt;a href="javascript:;"&gt;点我一下&lt;/a&gt;<br>&lt;a href="javascript:alert('test');"&gt;点我一下&lt;/a&gt;<br>&lt;a href="###" onclick="alert('test');"&gt;点我一下&lt;/a&gt;<br>&lt;script type="text/javascript"&gt;//&lt;![CDATA[<br><br>window.onbeforeunload = function(e){<br>&nbsp;&nbsp;return 'leave or stay';<br>}<br>window.onunload = function(){<br>&nbsp;&nbsp;alert('onunload');<br>}<br>//]]&gt;&lt;/script&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>IE运行完之后，请打开firefox，运行上面的面例子。可以简单得到结论：IE里，只要在a标签里锚点除外，都会触发onbeforeunload事件。不符合前边我们说到更改location.href会触发onbeforeunload事件的条件。</p> 
+<p>但没有执行unload事件&nbsp; 只有在刷新页面的时候才会执行onload事件<br>firefox的话就是正确的结果了，在本例中firefox只有在离开页面时才触发这两个事件。<br><br>从这个例子可以得到些教训，不要在onbeforeunload写销毁对象的handler。 </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

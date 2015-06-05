@@ -1,0 +1,285 @@
+<p>https://www.evernote.com/shard/s20/sh/83c1aced-abdf-4866-a6a1-8f247815b5c2/eec821d6a4fb9940ff7deea4c190d713</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<p>数字类型是浮点型</p> 
+<p>&nbsp;</p> 
+<p>常规数组用 数字 做下标</p> 
+<p>&nbsp;</p> 
+<p>关联数组用 字符串 做下标</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>image.width &nbsp;也可以 &nbsp;image["width"]</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;//第2种方法[]里面是个字符串 &nbsp;这个就有很大的灵活性 &nbsp;因为可以放一个字符串变量 &nbsp;在运行时决定真正要读的属性</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;//字符串是动态的 &nbsp;属性标示符是静态的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;//第2种方法把对象叫关联数组 实际在js内部是用关联数组实现对象的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>var a = &nbsp;new Array();</p> 
+<p>&nbsp;</p> 
+<p>a[0] = 1.2;</p> 
+<p>&nbsp;</p> 
+<p>a[1] = true;</p> 
+<p>&nbsp;</p> 
+<p>//数组可变长度?</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>对基本类型的自动包装 &nbsp; Number &nbsp;String Boolean</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>js函数体代码执行时会首先扫描所有变量定义 &nbsp;然后才处理代码逻辑</p> 
+<p>&nbsp;</p> 
+<p>var scope = "global";</p> 
+<p>&nbsp;</p> 
+<p>function f(){</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;alert(scope); &nbsp; &nbsp;//显示undefined &nbsp;因为首先扫描到局部定义 &nbsp; 把全局的屏蔽了 &nbsp;但此时赋值的代码又未执行</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;var scope = "local";</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;alert(scope);</p> 
+<p>&nbsp;</p> 
+<p>}</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>in 运算符 &nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 左边的是一个字符串 右边的是一个对象或数组 &nbsp;如果左边的值是右边的一个属性名， 返回true</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;"name" &nbsp;in &nbsp;{name:1,age:23} &nbsp; &nbsp; // true</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>instanceof 运算符</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; d instanceof Date &nbsp;// 左边是对象 &nbsp; 右边是类名</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>typeof 运算符</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 返回 number &nbsp;string &nbsp;boolean &nbsp;object &nbsp; function &nbsp;undefined</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>delete 运算符</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 删除属性引用?</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>对象属性的枚举</p> 
+<p>&nbsp;</p> 
+<p>for (var pname in myobject){</p> 
+<p>&nbsp;</p> 
+<p>} &nbsp;//pname 是属性名 &nbsp;myobject[pname] 是 属性值</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>函数定义在解析时发生，不是在运行时发生</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>with (object)</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;statement &nbsp;//把object 加到作用域链的头部</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>函数的实际参数 &nbsp;arguments[]对象</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;调用函数时可以传超过定义的参数个数 &nbsp;然后访问arguments[]去获取</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>函数内参数 callee &nbsp;&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp; //引用函数自身 &nbsp;可以方便的拿到未命名的函数引用</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>arguments.length 是实参的数目 &nbsp; Function.length 是形参的数目</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;var actual = args.length;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;var expected = args.callee.length;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>call()</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;f.call(o,1,2);</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;o.m = f;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;o.m(1,2);</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;delete o.m;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>apply() 和 call相似 &nbsp;只不过参数是数组 &nbsp; &nbsp;f.apply(o,[1,2]);</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;//为什么要这样?</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;//对象上的函数叫方法 &nbsp;方法和普通函数有一个区别 &nbsp;this关键字的指向 &nbsp;在方法中this指向对象 &nbsp; &nbsp;所以o.m=f后 &nbsp; &nbsp;如果f中有代码this的话 &nbsp;这时this就指向o了</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;//而普通函数中的this指向的是全局对象 &nbsp; &nbsp; &nbsp;this的指向是函数和方法的主要区别</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>prototype</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; 原型对象 &nbsp; 原型对象属性读的时候， 如果实例没有，就会去原型上读，（大大减少每个对象对内存的需求量）但如果写入的话，是会在实例上创建一个并写在实例上的，并以后读该属性都是在实例上读了</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>constructor &nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;//指向构造函数 &nbsp; 这个属性是从原型继承而来 即此属性在原型上 假如原型被替换成其他对象 &nbsp;那个对象不一定有constructor属性</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;var o = new Complex(1,2);</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;o.constructor == Complex &nbsp;// true</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;f.prototype.constructor == f //true</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>hasOwnProperty()</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;判断一个属性是否挂在对象本身上的 挂在原型上是false &nbsp;假如找不到也是false &nbsp; &nbsp;o.hasOwnProperty("name")</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>isPrototypeOf()</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;Object.prototype.isPrototypeOf(o) &nbsp; //true</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>数组不过是一个具有额外功能层的对象</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>js数组是稀疏的 数组下标不会落在一个连续的数字范围内&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>var c = new Circle();</p> 
+<p>&nbsp;</p> 
+<p>c[0] = "xxxx"; &nbsp; &nbsp;//只是添加了一个名为0的属性 &nbsp;将数组元素添加到对象不会使他成为数组</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>数组的length总是比最大元素的下标多1 &nbsp;即使在稀疏的情况下</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;length值可写 &nbsp;设置一个比实际小的数 &nbsp; 数组会被截断 长度之外的元素会被抛弃</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;一般的对象没有length属性 &nbsp;length属性成了数组最重要的特性</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp;join() &nbsp;数组的元素转换成字符串，用逗号分隔符连起来&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;a = [1,2,3] &nbsp; a.join() // "1,2,3" &nbsp; a.join(",") &nbsp;//"1, 2, 3" 后面的有空格</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp;reverse() &nbsp; 翻转整个数组</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>window == this // true &nbsp;window就是顶级全局对象</p> 
+<p>&nbsp;</p> 
+<p>document == window.document &nbsp;//true</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>navigator&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;包含web浏览器的总体信息 &nbsp; // for(var p in navigator) document.write(p+":"+navigator[p]+"&lt;br&gt;");</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>document</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;//for(var p in document) document.write(p+":"+document[p]+"&lt;br&gt;");</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>cookie</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;name=value;path=path;domain=domain;expires=expires;secure=secure;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;expires 生存周期</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;path &nbsp;cookie可见性 只对path的同一目录或子目录的页面可见</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;domain &nbsp;跨域 访问 &nbsp; 不能将一个cookies域设置成服务器所在的域之外的域</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;secure &nbsp; 是否只在https时才传输cookies</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;不能有分号 &nbsp;逗号 &nbsp;空白符 &nbsp;所以存时要escape() 读的时候unescape()</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>event</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;type //click &nbsp; mouseover</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;target 发生事件的节点</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;currentTarget &nbsp;传播到的节点</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;timeStamp &nbsp;何时发生</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;bubbles 是否在文档树起泡</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; &nbsp; &nbsp;stopPropagation() &nbsp;阻止传播</p> 
+<p>&nbsp;</p>

@@ -1,0 +1,51 @@
+<p><code>update</code></p> 
+<p><code>ERROR 1364 (HY000): Field 'ssl_cipher' doesn't have a default value</code></p> 
+<p><code> </code></p>
+<p><code><strong><span style="font-size: small;">建议使用GRANT语句进行授权，语句如下：</span></strong></code></p>
+<code> </code>
+<p></p> 
+<p><code>grant&nbsp;all&nbsp;privileges&nbsp;on&nbsp;*.*&nbsp;to&nbsp;root@<span class="string"><span style="color: #0000ff;">'%'</span></span><span>&nbsp;identified&nbsp;by&nbsp;</span><span class="string"><span style="color: #0000ff;">"root"</span></span><span>;</span></code></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><code>---------------------------------------------------</code></p> 
+<p><code>GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP </code></p> 
+<p><code>ON maildb.* </code></p> 
+<p><code>TO 'mail'@'localhost' </code></p> 
+<p><code>IDENTIFIED by '<em>mailPASSWORD</em> '; </code></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>创建snort数据库，创建snort用户，将snort库所有表的所有权限赋予用户snort。<br>mysql&gt; create database snort; <br>Query OK, 1 row affected (0.06 sec)<br>创建数据库<br><br>mysql&gt; use mysql;<br><span style="font-style: italic; color: #800000;">进入mysql库</span> <br>mysql&gt; insert into user (Host,User,Password) values ("localhost","snort",PASSWORD("112233445566"));<br><span style="font-style: italic; color: #800000;">创建用户，设置初始密码</span> <br>mysql&gt; flush privileges; <br>Query OK, 0 rows affected (0.00 sec)<br><span style="font-style: italic; color: #800000;">使改动生效；</span> <span style="font-style: italic; color: #993300;">注：如果不执行该指令，则无法正常执行后续指令。</span> <br>mysql&gt; grant all on snort.* to 'snort'@'localhost' ;&nbsp;&nbsp;&nbsp;&nbsp; <br>Query OK, 0 rows affected (0.00 sec)<br><span style="font-style: italic; color: #800000;">将snort库的所有权限赋予 snort用户</span> <br>mysql&gt; flush privileges;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br>Query OK, 0 rows affected (0.00 sec)<br><span style="font-style: italic; color: #800000;">使改动生效</span> <br>mysql&gt; show grants for snort@localhost;<br>+-------------------------------------------------------------------------------------+<br>| Grants for snort@localhost&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>+-------------------------------------------------------------------------------------+<br>| GRANT USAGE ON *.* TO 'snort'@'localhost' IDENTIFIED BY PASSWORD '1e6b29186dd45e97' |<br>| GRANT ALL PRIVILEGES ON `snort`.* TO 'snort'@'localhost'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<br>+-------------------------------------------------------------------------------------+<br>2 rows in set (0.00 sec)</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>MySQL 赋予用户权限命令的简单格式可概括为：grant 权限 on 数据库对象 to 用户 </p> 
+<p>一、grant 普通数据用户，查询、插入、更新、删除 数据库中所有表数据的权利。<br><span style="color: #0000ff;">grant select on testdb.* to </span><span style="color: #0000ff;">common_user@'%'</span> <br><span style="color: #0000ff;">grant insert on testdb.* to </span><span style="color: #0000ff;">common_user@'%'</span> <br><span style="color: #0000ff;">grant update on testdb.* to </span><span style="color: #0000ff;">common_user@'%'</span> <br><span style="color: #0000ff;">grant delete on testdb.* to </span><span style="color: #0000ff;">common_user@'%'</span> </p> 
+<p>或者，用一条 MySQL 命令来替代：<br><span style="color: #0000ff;">grant select, insert, update, delete on testdb.* to </span><span style="color: #0000ff;">common_user@'%'</span> </p> 
+<p>二、grant 数据库开发人员，创建表、索引、视图、存储过程、函数。。。等权限。<br>grant 创建、修改、删除 MySQL 数据表结构权限。</p> 
+<p><span style="color: #0000ff;">grant create on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;<br>grant alter&nbsp; on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;<br>grant drop&nbsp;&nbsp; on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;</span> </p> 
+<p>grant 操作 MySQL 外键权限。 </p> 
+<p><span style="color: #0000ff;">grant references on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;</span> </p> 
+<p>grant 操作 MySQL 临时表权限。 </p> 
+<p><span style="color: #0000ff;">grant create temporary tables on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;</span> </p> 
+<p>grant 操作 MySQL 索引权限。 </p> 
+<p><span style="color: #0000ff;">grant index on&nbsp; testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;</span> </p> 
+<p>grant 操作 MySQL 视图、查看视图源代码 权限。 </p> 
+<p><span style="color: #0000ff;">grant create view on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;<br>grant show&nbsp;&nbsp; view on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;</span> </p> 
+<p>grant 操作 MySQL 存储过程、函数 权限。 </p> 
+<p><span style="color: #0000ff;">grant create routine on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;&nbsp; -- now, can show procedure status<br>grant alter&nbsp; routine on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;&nbsp; -- now, you can drop a procedure<br>grant execute&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; on testdb.* to </span><span style="color: #0000ff;">developer@'192.168.0.%'</span> <span style="color: #0000ff;">;<br></span>三、grant 普通 DBA 管理某个 MySQL 数据库的权限。<br><span style="color: #0000ff;">grant all privileges on testdb to </span><span style="color: #0000ff;">dba@'localhost'</span> <br>其中，关键字 “privileges” 可以省略。</p> 
+<p>四、grant 高级 DBA 管理 MySQL 中所有数据库的权限。<br><span style="color: #0000ff;">grant all on *.* to </span><span style="color: #0000ff;">dba@'localhost'</span> </p> 
+<p><br>五、MySQL grant 权限，分别可以作用在多个层次上。<br>1. grant 作用在整个 MySQL 服务器上：</p> 
+<p><span style="color: #0000ff;">grant select on *.* to </span><span style="color: #0000ff;">dba@localhost</span> <span style="color: #0000ff;">;</span> -- dba 可以查询 MySQL 中所有数据库中的表。<br><span style="color: #0000ff;">grant all&nbsp;&nbsp;&nbsp; on *.* to </span><span style="color: #0000ff;">dba@localhost</span> <span style="color: #0000ff;">;</span> -- dba 可以管理 MySQL 中的所有数据库<br>2. grant 作用在单个数据库上： </p> 
+<p><span style="color: #0000ff;">grant select on testdb.* to </span><span style="color: #0000ff;">dba@localhost</span> <span style="color: #0000ff;">;</span> -- dba 可以查询 testdb 中的表。</p> 
+<p>3. grant 作用在单个数据表上： </p> 
+<p><span style="color: #0000ff;">grant select, insert, update, delete on testdb.orders to </span><span style="color: #0000ff;">dba@localhost</span> <span style="color: #0000ff;">;</span> </p> 
+<p>4. grant 作用在表中的列上： </p> 
+<p><span style="color: #0000ff;">grant select(id, se, rank) on testdb.apache_log to </span><span style="color: #0000ff;">dba@localhost</span> <span style="color: #0000ff;">;</span> </p> 
+<p>5. grant 作用在存储过程、函数上： </p> 
+<p><span style="color: #0000ff;">grant execute on procedure testdb.pr_add to </span><span style="color: #0000ff;">'dba'@'localhost'</span> <br><span style="color: #0000ff;">grant execute on function&nbsp; testdb.fn_add to </span><span style="color: #0000ff;">'dba'@'localhost'</span> <br>六、查看 MySQL 用户权限<br>查看当前用户（自己）权限：</p> 
+<p>show grants;<br>查看其他 MySQL 用户权限：</p> 
+<p>show grants for dba@localhost;<br>七、撤销已经赋予给 MySQL 用户权限的权限。<br>revoke 跟 grant 的语法差不多，只需要把关键字 “to” 换成 “from” 即可：</p> 
+<p>grant&nbsp; all on *.* to&nbsp;&nbsp; dba@localhost;<br>revoke all on *.* from dba@localhost;<br>八、MySQL grant、revoke 用户权限注意事项<br>1. grant, revoke 用户权限后，该用户只有重新连接 MySQL 数据库，权限才能生效。</p> 
+<p>2. 如果想让授权的用户，也可以将这些权限 grant 给其他用户，需要选项 “grant option“</p> 
+<p>grant select on testdb.* to dba@localhost with grant option;<br>这个特性一般用不到。实际中，数据库权限最好由 DBA 来统一管理。</p>

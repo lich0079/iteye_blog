@@ -1,0 +1,494 @@
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="border-collapse: collapse; font-family: Tahoma, Verdana; font-size: 14px; line-height: 22px;"><strong style="font-style: normal; font-weight: bold; line-height: normal;"><span style="font-size: large;"><span style="font-size: 18px;">判断当前设备 是否ipad</span></span></strong></span></p> 
+<p>&nbsp;</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px; color: #e2905c;">#define isIPad&nbsp; UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad</p> 
+<p style="margin: 0.0px 0.0px 0.0px 0.0px; color: #e2905c;">&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<div>
+ <span style="font-family: Arial; font-size: medium;"><span style="font-family: Arial, sans-serif, Helvetica, Tahoma;"><span style="line-height: 25px;"><strong><span style="font-size: large;"><span style="font-size: 18px;">剪贴板</span></span></strong></span></span></span>
+</div> 
+<div> 
+ <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: 14px; line-height: 25px;">得到剪贴板</span>
+ <br> 
+</div> 
+<div> 
+ <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: medium;"><span style="font-size: 14px; line-height: 25px;"><strong><span style="font-weight: normal;">UIPasteboard *pasteboard=[UIPasteboard generalPasteboard];</span></strong></span></span> 
+ <div>
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: medium;"><span style="font-size: 14px; line-height: 25px;"><span style="font-weight: normal;"><br></span></span></span>
+ </div> 
+ <div>
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: medium;"><span style="font-weight: normal;">把一个字符串放置到剪贴板上： //用户此后在输入框 粘贴的就是这个字符串</span></span>
+ </div> 
+ <div>
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: medium;"><span style="font-weight: normal;">pasteboard.string = @"Hello World";</span></span>
+ </div> 
+ <div>
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: medium;"><span style="font-weight: normal;"><br></span></span>
+ </div> 
+ <div>
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: medium;"><span style="font-weight: normal;">从剪贴板获取字符串：</span></span>
+ </div> 
+ <div style="display: inline !important;">
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: medium;"><span style="font-weight: normal;">UIPasteboard *pasteboard=[UIPasteboard generalPasteboard];&nbsp;&nbsp;</span></span>
+ </div> 
+ <div style="display: inline !important;">
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: medium;"><span style="font-weight: normal;">NSString *myString=pasteboard.string;&nbsp;</span></span>
+ </div> 
+</div> 
+<div> 
+ <div style="display: inline !important;">
+  <span style="font-family: Arial, sans-serif, Helvetica, Tahoma; font-size: medium;"><span style="font-weight: normal;"><br></span></span>
+ </div> 
+</div> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<div> 
+ <div style="font-family: Arial; font-size: medium;"> 
+  <div style="font-size: 18px;"> 
+   <div>
+    <strong>在iphone模拟器截屏</strong>
+   </div> 
+   <div>
+    <span style="font-size: medium;"><span style="font-size: 14px; font-weight: normal;">打开模拟器 按住ctrl键打开编辑菜单，里面会有拷贝屏幕这一项，</span></span>
+   </div> 
+   <div>
+    <span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">然后打开预览 文件-》从夹纸板新建</span></span></span>
+   </div> 
+   <strong><span style="font-size: large;"><span style="font-size: 18px;"><span style="font-size: medium;"><span style="font-size: 14px; font-weight: normal;"><br></span></span></span></span></strong> 
+  </div> 
+  <div style="font-size: 18px;">
+   <strong><span style="font-size: large;"><span style="font-size: 18px;"><br></span></span></strong>
+  </div> 
+  <div style="font-size: 18px;">
+   <strong><span style="font-size: large;"><span style="font-size: 18px;">添加静态库</span></span></strong>
+  </div> 
+  <div style="font-size: 18px;">
+   <span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">把***.a文件拖到项目的framework里面</span></span></span>
+  </div> 
+  <div style="font-size: 18px;">
+   <span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">把头文件路径添加到header search path里</span></span></span>
+  </div> 
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;"> 
+  <span style="font-size: 18px;">拿到app的documents路径</span> 
+ </div> 
+ <div style="font-family: Arial; font-size: medium;"> 
+  <pre class="java" name="code">NSString *appDocDir = [[[[NSFileManagerdefaultManager] URLsForDirectory:NSDocumentDirectoryinDomains:NSUserDomainMask] lastObject] relativePath];
+
+另一种写法
+    NSString *appDocDir = [[[[NSFileManagerdefaultManager] URLsForDirectory:NSDocumentDirectoryinDomains:NSUserDomainMask] lastObject] relativePath];
+
+    NSArray *contentOfFolder = [[NSFileManagerdefaultManager] contentsOfDirectoryAtPath:appDocDir error:NULL];
+    for (NSString *aPath in contentOfFolder) {
+        NSLog(@"apath: %@", aPath);
+        NSString * fullPath = [appDocDir stringByAppendingPathComponent:aPath];
+        BOOL isDir;
+        if ([[NSFileManagerdefaultManager] fileExistsAtPath:fullPath isDirectory:&amp;isDir] &amp;&amp; !isDir)
+        {
+            [fileList addObject:aPath];
+        }
+    }
+
+</pre> &nbsp;&nbsp;
+  <span style="color: #00020a; font-family: Menlo; font-size: 14px;">&nbsp; &nbsp;&nbsp;NSURL *home = [[[NSFileManagerdefaultManager] URLsForDirectory:NSDocumentDirectoryinDomains:NSUserDomainMask] lastObject];</span> 
+ </div> 
+ <br>
+ <span style="font-family: Arial; font-size: medium;"> 
+  <div style="font-size: 18px; display: inline !important;"> 
+   <div style="display: inline !important;"> 
+    <div style="display: inline !important;"> 
+     <div style="display: inline !important;"> 
+      <div style="display: inline !important;"> 
+       <div style="display: inline !important;"> 
+        <div style="display: inline !important;"> 
+         <div style="display: inline !important;"> 
+          <div style="display: inline !important;"> 
+           <div style="display: inline !important;"> 
+            <div style="display: inline !important;"> 
+             <div style="display: inline !important;"> 
+              <div style="display: inline !important;"> 
+               <div style="display: inline !important;"> 
+                <div style="display: inline !important;"> 
+                 <div style="display: inline !important;"> 
+                  <div style="display: inline !important;"> 
+                   <div style="display: inline !important;"> 
+                    <div style="display: inline !important;"> 
+                     <div style="display: inline !important;"> 
+                      <div style="display: inline !important;"> 
+                       <div style="display: inline !important;"> 
+                        <div style="display: inline !important;"> 
+                         <div style="display: inline !important;"> 
+                          <div style="display: inline !important;"> 
+                           <div style="display: inline !important;"> 
+                            <div style="display: inline !important;"> 
+                             <div style="display: inline !important;"> 
+                              <div style="display: inline !important;"> 
+                               <div style="display: inline !important;"> 
+                                <div style="display: inline !important;"> 
+                                 <div style="display: inline !important;"> 
+                                  <div style="display: inline !important;"> 
+                                   <div style="display: inline !important;"> 
+                                    <div style="display: inline !important;"> 
+                                     <div style="display: inline !important;"> 
+                                      <div style="display: inline !important;"> 
+                                       <p><strong><span style="font-size: large;"><span style="font-weight: normal; font-size: medium;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="color: #00020a; font-size: medium;">&nbsp; &nbsp;&nbsp;NSURL *imaurl = [NSURLURLWithString:@"img2.jpg"relativeToURL:home];</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></strong></p> 
+                                       <p>&nbsp;</p> 
+                                      </div> 
+                                     </div> 
+                                    </div> 
+                                   </div> 
+                                  </div> 
+                                 </div> 
+                                </div> 
+                               </div> 
+                              </div> 
+                             </div> 
+                            </div> 
+                           </div> 
+                          </div> 
+                         </div> 
+                        </div> 
+                       </div> 
+                      </div> 
+                     </div> 
+                    </div> 
+                   </div> 
+                  </div> 
+                 </div> 
+                </div> 
+               </div> 
+              </div> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+  </div> </span> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;"> 
+  <span style="font-size: 18px;"> 
+   <div style="display: inline !important;"> 
+    <div style="display: inline !important;"> 
+     <div style="display: inline !important;"> 
+      <div style="display: inline !important;"> 
+       <div style="display: inline !important;"> 
+        <div style="display: inline !important;"> 
+         <div style="display: inline !important;"> 
+          <div style="display: inline !important;"> 
+           <div style="display: inline !important;"> 
+            <div style="display: inline !important;"> 
+             <div style="display: inline !important;"> 
+              <div style="display: inline !important;"> 
+               <div style="display: inline !important;"> 
+                <div style="display: inline !important;"> 
+                 <div style="display: inline !important;"> 
+                  <div style="display: inline !important;"> 
+                   <div style="display: inline !important;"> 
+                    <div style="display: inline !important;"> 
+                     <div style="display: inline !important;"> 
+                      <div style="display: inline !important;"> 
+                       <div style="display: inline !important;"> 
+                        <div style="display: inline !important;"> 
+                         <div style="display: inline !important;"> 
+                          <div style="display: inline !important;"> 
+                           <div style="display: inline !important;"> 
+                            <div style="display: inline !important;"> 
+                             <div style="display: inline !important;"> 
+                              <div style="display: inline !important;"> 
+                               <div style="display: inline !important;"> 
+                                <div style="display: inline !important;"> 
+                                 <div style="display: inline !important;"> 
+                                  <div style="display: inline !important;"> 
+                                   <div style="display: inline !important;"> 
+                                    <div style="display: inline !important;"> 
+                                     <div style="display: inline !important;"> 
+                                      <div style="display: inline !important;"> 
+                                       <div style="display: inline !important;"> 
+                                        <div style="display: inline !important;"> 
+                                         <div style="display: inline !important;"> 
+                                          <div style="display: inline !important;"> 
+                                           <div style="display: inline !important;"> 
+                                            <div style="display: inline !important;"> 
+                                             <div style="display: inline !important;"> 
+                                              <div style="display: inline !important;"> 
+                                               <div style="display: inline !important;"> 
+                                                <div style="display: inline !important;"> 
+                                                 <div style="display: inline !important;"> 
+                                                  <div style="display: inline !important;">
+                                                   <span style="font-weight: normal; font-size: medium;"><strong><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;"><span style="font-size: large;">让app支持itunes传文件</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></strong></span>
+                                                  </div> 
+                                                 </div> 
+                                                </div> 
+                                               </div> 
+                                              </div> 
+                                             </div> 
+                                            </div> 
+                                           </div> 
+                                          </div> 
+                                         </div> 
+                                        </div> 
+                                       </div> 
+                                      </div> 
+                                     </div> 
+                                    </div> 
+                                   </div> 
+                                  </div> 
+                                 </div> 
+                                </div> 
+                               </div> 
+                              </div> 
+                             </div> 
+                            </div> 
+                           </div> 
+                          </div> 
+                         </div> 
+                        </div> 
+                       </div> 
+                      </div> 
+                     </div> 
+                    </div> 
+                   </div> 
+                  </div> 
+                 </div> 
+                </div> 
+               </div> 
+              </div> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> </span> 
+  <div style="font-size: 18px;">
+   <span><span style="font-family: 'Lucida Grande', Geneva, Helvetica, Arial, sans-serif;"><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">Add the&nbsp;</span></span></span><code style="font-family: Courier, Consolas, monospace; color: #666666;"><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">UIFileSharingEnabled</span></span></span></code><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">&nbsp;key to your application’s&nbsp;</span></span></span><code style="font-family: Courier, Consolas, monospace; color: #666666;"><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">Info.plist</span></span></span></code><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">&nbsp;file and set the value of the key to&nbsp;</span></span></span><code style="font-family: Courier, Consolas, monospace; color: #666666;"><span style="font-size: medium;"><span style="font-size: 14px;"><span style="font-weight: normal;">YES</span></span></span></code></span></span>
+  </div> 
+  <div style="font-size: 18px;">
+   <br>
+  </div> 
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;"> 
+  <div> 
+   <div style="font-weight: bold; font-size: 18px;">
+    判读当前是否横向
+   </div> 
+  </div> 
+  <div style="display: inline !important;"> 
+   <div style="display: inline !important;"> 
+    <div style="display: inline !important;"> 
+     <div style="display: inline !important;"> 
+      <div style="display: inline !important;"> 
+       <div style="display: inline !important;"> 
+        <div style="display: inline !important;"> 
+         <div style="display: inline !important;"> 
+          <div style="display: inline !important;"> 
+           <div style="display: inline !important;"> 
+            <div style="display: inline !important;"> 
+             <div style="display: inline !important;"> 
+              <div style="display: inline !important;"> 
+               <div style="display: inline !important;"> 
+                <div style="display: inline !important;"> 
+                 <div style="display: inline !important;"> 
+                  <div style="display: inline !important;"> 
+                   <div style="display: inline !important;"> 
+                    <div style="display: inline !important;"> 
+                     <div style="display: inline !important;"> 
+                      <div style="display: inline !important;"> 
+                       <div style="display: inline !important;"> 
+                        <div style="display: inline !important;"> 
+                         <div style="display: inline !important;"> 
+                          <div style="display: inline !important;"> 
+                           <div style="display: inline !important;"> 
+                            <p><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span style="color: #01010a;">if (UIInterfaceOrientationIsLandscape([UIDevice currentDevice].orientation)) {</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p> 
+                           </div> 
+                          </div> 
+                         </div> 
+                        </div> 
+                       </div> 
+                      </div> 
+                     </div> 
+                    </div> 
+                   </div> 
+                  </div> 
+                 </div> 
+                </div> 
+               </div> 
+              </div> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;"> 
+  <span style="font-family: Times; font-size: 18px;"><strong>如果你的程序中用到了WiFi，想在没有有效WiFi的时候出现如图所示的提示该怎么做？</strong></span> 
+ </div> 
+ <div style="font-family: Arial; font-size: medium;"> 
+  <span><br>UIRequiresPersistentWiFi Boolean <span style="color: #0000ff;">true</span></span> 
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <br>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <span><span style="font-size: 18px;"><strong>图标不要光环</strong></span></span>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  UIPrerenderedIcon YES
+ </div> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div> 
+ <br>
+ <div style="margin-bottom: 15px; font-family: Arial; font-size: medium;"> 
+  <div>
+   <span><span style="font-size: 18px;"><strong>免费程序中链接你的收费app</strong></span></span>
+  </div> 
+  <p style="margin-top: 0px; margin-right: 0px; margin-bottom: 1em; margin-left: 0px; font-size: 14px; vertical-align: baseline; background-color: transparent; clear: both; padding: 0px;"><span>To send customers to a specific application:&nbsp;<a href="http://itunes.com/apps/appname" style="font-size: 14px; vertical-align: baseline; background-color: transparent; color: #0077cc; text-decoration: none; cursor: pointer; padding: 0px; margin: 0px;">http://itunes.com/apps/appname</a></span></p> 
+  <p style="margin-top: 0px; margin-right: 0px; margin-bottom: 1em; margin-left: 0px; font-size: 14px; vertical-align: baseline; background-color: transparent; clear: both; padding: 0px;"><span>To send customers to a list of apps you have on the App Store:<a href="http://itunes.com/apps/developername" style="font-size: 14px; vertical-align: baseline; background-color: transparent; color: #0077cc; text-decoration: none; cursor: pointer; padding: 0px; margin: 0px;">http://itunes.com/apps/developername</a></span></p> 
+ </div> 
+ <span style="font-family: Arial; font-size: medium;"><span style="border-collapse: collapse; font-family: Arial, 'Liberation Sans', 'DejaVu Sans', sans-serif; font-size: 14px; line-height: 18px;">To send customers to a specific app with your company name included in the URL:</span></span>
+ <span style="font-family: Arial; font-size: medium;"><span style="border-collapse: collapse; font-family: Arial, 'Liberation Sans', 'DejaVu Sans', sans-serif; font-size: 14px; line-height: 18px;"><a href="http://itunes.com/apps/developername/appname" style="font-size: 14px; vertical-align: baseline; background-color: transparent; color: #0077cc; text-decoration: none; cursor: pointer; padding: 0px; margin: 0px;">http://itunes.com/apps/developername/appname</a></span></span> 
+ <div style="font-family: Arial; font-size: medium;">
+  <span style="border-collapse: collapse; color: #444444; font-family: Arial, 'Liberation Sans', 'DejaVu Sans', sans-serif; font-size: 13px; line-height: 17px;">A tip is to use itms:// instead of http://, then it'll open in the app store directly. On the iPhone, it will make 2 (!) redirects when using http, and 1 when using itms.</span>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <span style="border-collapse: collapse; color: #444444; font-family: Arial, 'Liberation Sans', 'DejaVu Sans', sans-serif; font-size: 13px; line-height: 17px;">White space in app name should just be removed</span>
+ </div> 
+ <div style="font-family: Arial; font-size: medium;">
+  <span style="font-family: Arial, 'Liberation Sans', 'DejaVu Sans', sans-serif;"><span style="border-collapse: collapse;"><span style="color: #444444;"><span style="line-height: 17px;"><a href="http://developer.apple.com/library/ios/#qa/qa1633/_index.html">http://developer.apple.com/library/ios/#qa/qa1633/_index.html</a></span></span></span></span>
+ </div> 
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div style="font-family: Arial; font-size: medium;">
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div> 
+ <br>
+ <div style="margin-bottom: 15px; font-family: Arial; font-size: medium;"> 
+  <div>
+   <span><span style="font-size: 18px; color: #01010a;"><strong>代码中调用safari 可实现跳转到app store!</strong></span></span>
+  </div> 
+  <p><span><span style="color: #01010a;">&nbsp; &nbsp;&nbsp;NSURL *requestURL = [NSURLURLWithString:@"<a href="http://www.163.com/">http://www.163.com</a>"];</span></span></p> 
+ </div> 
+ <span style="font-family: Arial; font-size: medium;"><span style="font-family: Menlo; font-size: 14px;"><span style="color: #01010a;">&nbsp; &nbsp; [[UIApplicationsharedApplication] openURL:requestURL];</span></span></span> 
+</div> 
+<div> 
+ <div>
+  <br>
+ </div> 
+ <div>
+  <br>
+ </div> 
+ <div>
+  <span style="font-family: Arial; line-height: normal; font-size: medium;"><span><span><span style="border-collapse: collapse; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; line-height: 24px;"><span style="border-collapse: collapse; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Arial, Verdana, sans-serif; line-height: 24px; font-size: 18px;"><strong><span style="color: #01010a;"><br>关闭后台运行</span></strong><strong style="font-weight: normal;"><span style="color: #01010a;">&nbsp;</span><span style="color: #333333;">&nbsp;</span></strong></span></span></span></span></span>
+ </div> 
+ <span style="font-size: 14px;">&nbsp;</span>
+ <span style="font-family: Tahoma; line-height: normal;">iOS 4引进了所谓多任务，可以让程序运行于后台，不过对目前大部分程序而言这只是一个鸡肋。有没有办法直接在用户按下Home键后像iOS 4之前的程序一样直接退出呢？方法如下：</span> 
+</div> 
+<div>
+ <ol> 
+  <li>打开info.plist</li> 
+  <li>加入&nbsp;<strong>UIApplicationExitsOnSuspend</strong>&nbsp;或者选择“Application does not run in background（程序不运行于后台）”</li> 
+  <li>将其设为 YES</li> 
+ </ol>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ <br>
+</div> 
+<div>
+ sadasd
+</div> 
+<p>&nbsp;</p>

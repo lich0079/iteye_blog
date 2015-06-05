@@ -1,0 +1,415 @@
+<pre class="java" name="code">1. 首先String不属于8种基本数据类型，String是一个对象。 
+
+　　因为对象的默认值是null，所以String的默认值也是null；但它又是一种特殊的对象，有其它对象没有的一些特性。 
+
+　　2. new String()和new String(“”)都是申明一个新的空字符串，是空串不是null； 
+
+　　3. String str=”kvill”； 
+String str=new String (“kvill”);的区别： 
+
+　　在这里，我们不谈堆，也不谈栈，只先简单引入常量池这个简单的概念。 
+
+　　常量池(constant pool)指的是在编译期被确定，并被保存在已编译的.class文件中的一些数据。它包括了关于类、方法、接口等中的常量，也包括字符串常量。 
+
+　　看例1： 
+
+String s0=”kvill”; 
+String s1=”kvill”; 
+String s2=”kv” + “ill”; 
+System.out.println( s0==s1 ); 
+System.out.println( s0==s2 );  
+
+　　结果为： 
+
+true 
+true  
+
+　　首先，我们要知道Java会确保一个字符串常量只有一个拷贝。 
+
+　　因为例子中的s0和s1中的”kvill”都是字符串常量，它们在编译期就被确定了，所以s0==s1为true；而”kv”和”ill”也都是字符串常量，当一个字符串由多个字符串常量连接而成时，它自己肯定也是字符串常量，所以s2也同样在编译期就被解析为一个字符串常量，所以s2也是常量池中”kvill”的一个引用。 
+
+　　所以我们得出s0==s1==s2; 
+
+　　用new String() 创建的字符串不是常量，不能在编译期就确定，所以new String() 创建的字符串不放入常量池中，它们有自己的地址空间。 
+
+　　看例2： 
+
+String s0=”kvill”; 
+String s1=new String(”kvill”); 
+String s2=”kv” + new String(“ill”); 
+System.out.println( s0==s1 ); 
+System.out.println( s0==s2 ); 
+System.out.println( s1==s2 );  
+
+　　结果为： 
+
+false 
+false 
+false  
+
+　　例2中s0还是常量池中”kvill”的应用，s1因为无法在编译期确定，所以是运行时创建的新对象”kvill”的引用，s2因为有后半部分new String(“ill”)所以也无法在编译期确定，所以也是一个新创建对象”kvill”的应用;明白了这些也就知道为何得出此结果了。 
+
+　　4. String.intern()： 
+
+　　再补充介绍一点：存在于.class文件中的常量池，在运行期被JVM装载，并且可以扩充。String的intern()方法就是扩充常量池的一个方法；当一个String实例str调用intern()方法时，Java查找常量池中是否有相同Unicode的字符串常量，如果有，则返回其的引用，如果没有，则在常量池中增加一个Unicode等于str的字符串并返回它的引用；看例3就清楚了 
+
+　　例3： 
+
+String s0= “kvill”; 
+String s1=new String(”kvill”); 
+String s2=new String(“kvill”); 
+System.out.println( s0==s1 ); 
+System.out.println( “**********” ); 
+s1.intern(); 
+s2=s2.intern(); //把常量池中“kvill”的引用赋给s2 
+System.out.println( s0==s1); 
+System.out.println( s0==s1.intern() ); 
+System.out.println( s0==s2 );  
+
+　　结果为： 
+
+false 
+********** 
+false //虽然执行了s1.intern(),但它的返回值没有赋给s1 
+true //说明s1.intern()返回的是常量池中”kvill”的引用 
+true  
+
+　　最后我再破除一个错误的理解： 
+
+　　有人说，“使用String.intern()方法则可以将一个String类的保存到一个全局String表中，如果具有相同值的Unicode字符串已经在这个表中，那么该方法返回表中已有字符串的地址，如果在表中没有相同值的字符串，则将自己的地址注册到表中“如果我把他说的这个全局的String表理解为常量池的话，他的最后一句话，“如果在表中没有相同值的字符串，则将自己的地址注册到表中”是错的： 
+
+　　看例4： 
+
+String s1=new String("kvill"); 
+String s2=s1.intern(); 
+System.out.println( s1==s1.intern() ); 
+System.out.println( s1+" "+s2 ); 
+System.out.println( s2==s1.intern() );  
+
+　　结果： 
+
+false 
+kvill kvill 
+true  
+
+　　在这个类中我们没有声名一个”kvill”常量，所以常量池中一开始是没有”kvill”的，当我们调用s1.intern()后就在常量池中新添加了一个”kvill”常量，原来的不在常量池中的”kvill”仍然存在，也就不是“将自己的地址注册到常量池中”了。 
+
+　　s1==s1.intern()为false说明原来的“kvill”仍然存在； 
+
+　　s2现在为常量池中“kvill”的地址，所以有s2==s1.intern()为true。 
+
+　　5. 关于equals()和==: 
+
+　　这个对于String简单来说就是比较两字符串的Unicode序列是否相当，如果相等返回true;而==是比较两字符串的地址是否相同，也就是是否是同一个字符串的引用。 
+
+　　6. 关于String是不可变的
+
+　　这一说又要说很多，大家只要知道String的实例一旦生成就不会再改变了，比如说：String str=”kv”+”ill”+” “+”ans”; 
+就是有4个字符串常量，首先”kv”和”ill”生成了”kvill”存在内存中，然后”kvill”又和” “ 生成 ”kvill “存在内存中，最后又和生成了”kvill ans”;并把这个字符串的地址赋给了str,就是因为String的“不可变”产生了很多临时变量，这也就是为什么建议用StringBuffer的原因了，因为StringBuffer是可改变的</pre> 
+<p>&nbsp;出处：<a href="http://www.iteye.com/topic/122206">http://www.iteye.com/topic/122206</a></p> 
+<p>&nbsp;</p> 
+<p>By the way,关于 String.intern() 在实际中的应用，我在tomcat的源码中找到了一个地方用到了，如下：</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">/*
+ * Copyright 1999,2004-2005 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation and was
+ * originally based on software copyright (c) 1999, International
+ * Business Machines, Inc., http://www.apache.org.  For more
+ * information on the Apache Software Foundation, please see
+ * &lt;http://www.apache.org/&gt;.
+ */
+
+package org.apache.jasper.xmlparser;
+
+/**
+ * This class is a symbol table implementation that guarantees that
+ * strings used as identifiers are unique references. Multiple calls
+ * to &lt;code&gt;addSymbol&lt;/code&gt; will always return the same string
+ * reference.
+ * &lt;p&gt;
+ * The symbol table performs the same task as &lt;code&gt;String.intern()&lt;/code&gt;
+ * with the following differences:
+ * &lt;ul&gt;
+ *  &lt;li&gt;
+ *   A new string object does not need to be created in order to
+ *   retrieve a unique reference. Symbols can be added by using
+ *   a series of characters in a character array.
+ *  &lt;/li&gt;
+ *  &lt;li&gt;
+ *   Users of the symbol table can provide their own symbol hashing
+ *   implementation. For example, a simple string hashing algorithm
+ *   may fail to produce a balanced set of hashcodes for symbols
+ *   that are &lt;em&gt;mostly&lt;/em&gt; unique. Strings with similar leading
+ *   characters are especially prone to this poor hashing behavior.
+ *  &lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @author Andy Clark
+ * @version $Id: SymbolTable.java 306179 2005-07-27 15:12:04Z yoavs $
+ */
+public class SymbolTable {
+
+    //
+    // Constants
+    //
+
+    /** Default table size. */
+    protected static final int TABLE_SIZE = 101;
+
+    //
+    // Data
+    //
+
+    /** Buckets. */
+    protected Entry[] fBuckets = null;
+
+    // actual table size
+    protected int fTableSize;
+
+    //
+    // Constructors
+    //
+
+    /** Constructs a symbol table with a default number of buckets. */
+    public SymbolTable() {
+        this(TABLE_SIZE);
+    }
+
+    /** Constructs a symbol table with a specified number of buckets. */
+    public SymbolTable(int tableSize) {
+        fTableSize = tableSize;
+        fBuckets = new Entry[fTableSize];
+    }
+
+    //
+    // Public methods
+    //
+
+    /**
+     * Adds the specified symbol to the symbol table and returns a
+     * reference to the unique symbol. If the symbol already exists,
+     * the previous symbol reference is returned instead, in order
+     * guarantee that symbol references remain unique.
+     *
+     * @param symbol The new symbol.
+     */
+    public String addSymbol(String symbol) {
+
+        // search for identical symbol
+        int bucket = hash(symbol) % fTableSize;
+        int length = symbol.length();
+        OUTER: for (Entry entry = fBuckets[bucket]; entry != null; entry = entry.next) {
+            if (length == entry.characters.length) {
+                for (int i = 0; i &lt; length; i++) {
+                    if (symbol.charAt(i) != entry.characters[i]) {
+                        continue OUTER;
+                    }
+                }
+                return entry.symbol;
+            }
+        }
+
+        // create new entry
+        Entry entry = new Entry(symbol, fBuckets[bucket]);
+        fBuckets[bucket] = entry;
+        return entry.symbol;
+
+    } // addSymbol(String):String
+
+    /**
+     * Adds the specified symbol to the symbol table and returns a
+     * reference to the unique symbol. If the symbol already exists,
+     * the previous symbol reference is returned instead, in order
+     * guarantee that symbol references remain unique.
+     *
+     * @param buffer The buffer containing the new symbol.
+     * @param offset The offset into the buffer of the new symbol.
+     * @param length The length of the new symbol in the buffer.
+     */
+    public String addSymbol(char[] buffer, int offset, int length) {
+
+        // search for identical symbol
+        int bucket = hash(buffer, offset, length) % fTableSize;
+        OUTER: for (Entry entry = fBuckets[bucket]; entry != null; entry = entry.next) {
+            if (length == entry.characters.length) {
+                for (int i = 0; i &lt; length; i++) {
+                    if (buffer[offset + i] != entry.characters[i]) {
+                        continue OUTER;
+                    }
+                }
+                return entry.symbol;
+            }
+        }
+
+        // add new entry
+        Entry entry = new Entry(buffer, offset, length, fBuckets[bucket]);
+        fBuckets[bucket] = entry;
+        return entry.symbol;
+
+    } // addSymbol(char[],int,int):String
+
+    /**
+     * Returns a hashcode value for the specified symbol. The value
+     * returned by this method must be identical to the value returned
+     * by the &lt;code&gt;hash(char[],int,int)&lt;/code&gt; method when called
+     * with the character array that comprises the symbol string.
+     *
+     * @param symbol The symbol to hash.
+     */
+    public int hash(String symbol) {
+
+        int code = 0;
+        int length = symbol.length();
+        for (int i = 0; i &lt; length; i++) {
+            code = code * 37 + symbol.charAt(i);
+        }
+        return code &amp; 0x7FFFFFF;
+
+    } // hash(String):int
+
+    /**
+     * Returns a hashcode value for the specified symbol information.
+     * The value returned by this method must be identical to the value
+     * returned by the &lt;code&gt;hash(String)&lt;/code&gt; method when called
+     * with the string object created from the symbol information.
+     *
+     * @param buffer The character buffer containing the symbol.
+     * @param offset The offset into the character buffer of the start
+     *               of the symbol.
+     * @param length The length of the symbol.
+     */
+    public int hash(char[] buffer, int offset, int length) {
+
+        int code = 0;
+        for (int i = 0; i &lt; length; i++) {
+            code = code * 37 + buffer[offset + i];
+        }
+        return code &amp; 0x7FFFFFF;
+
+    } // hash(char[],int,int):int
+
+    /**
+     * Returns true if the symbol table already contains the specified
+     * symbol.
+     *
+     * @param symbol The symbol to look for.
+     */
+    public boolean containsSymbol(String symbol) {
+
+        // search for identical symbol
+        int bucket = hash(symbol) % fTableSize;
+        int length = symbol.length();
+        OUTER: for (Entry entry = fBuckets[bucket]; entry != null; entry = entry.next) {
+            if (length == entry.characters.length) {
+                for (int i = 0; i &lt; length; i++) {
+                    if (symbol.charAt(i) != entry.characters[i]) {
+                        continue OUTER;
+                    }
+                }
+                return true;
+            }
+        }
+
+        return false;
+
+    } // containsSymbol(String):boolean
+
+    /**
+     * Returns true if the symbol table already contains the specified
+     * symbol.
+     *
+     * @param buffer The buffer containing the symbol to look for.
+     * @param offset The offset into the buffer.
+     * @param length The length of the symbol in the buffer.
+     */
+    public boolean containsSymbol(char[] buffer, int offset, int length) {
+
+        // search for identical symbol
+        int bucket = hash(buffer, offset, length) % fTableSize;
+        OUTER: for (Entry entry = fBuckets[bucket]; entry != null; entry = entry.next) {
+            if (length == entry.characters.length) {
+                for (int i = 0; i &lt; length; i++) {
+                    if (buffer[offset + i] != entry.characters[i]) {
+                        continue OUTER;
+                    }
+                }
+                return true;
+            }
+        }
+
+        return false;
+
+    } // containsSymbol(char[],int,int):boolean
+
+    //
+    // Classes
+    //
+
+    /**
+     * This class is a symbol table entry. Each entry acts as a node
+     * in a linked list.
+     */
+    protected static final class Entry {
+
+        //
+        // Data
+        //
+
+        /** Symbol. */
+        public String symbol;
+
+        /**
+         * Symbol characters. This information is duplicated here for
+         * comparison performance.
+         */
+        public char[] characters;
+
+        /** The next entry. */
+        public Entry next;
+
+        //
+        // Constructors
+        //
+
+        /**
+         * Constructs a new entry from the specified symbol and next entry
+         * reference.
+         */
+        public Entry(String symbol, Entry next) {
+            this.symbol = symbol.intern();
+            characters = new char[symbol.length()];
+            symbol.getChars(0, characters.length, characters, 0);
+            this.next = next;
+        }
+
+        /**
+         * Constructs a new entry from the specified symbol information and
+         * next entry reference.
+         */
+        public Entry(char[] ch, int offset, int length, Entry next) {
+            characters = new char[length];
+            System.arraycopy(ch, offset, characters, 0, length);
+            symbol = new String(characters).intern();
+            this.next = next;
+        }
+
+    } // class Entry
+
+} // class SymbolTable
+</pre> 
+<p>&nbsp;</p>

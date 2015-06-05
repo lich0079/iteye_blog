@@ -1,0 +1,38 @@
+Struts2的s:if标签很怪异，下面来具体地看看，如何用s:if标签来判断URL中的参数。
+访问一个带有URL参数的页面，如：http://localhost:8080/a.jsp?name=xht555
+Html代码  收藏代码
+# <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>   
+# <%@ taglib prefix="s" uri="/struts-tags"%>  
+# <html>   
+# <head>   
+# <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">   
+# <title>Struts2 url参数测试</title>   
+# </head>   
+# <body>   
+# <s:property value="#parameters.name"/><!-- 有值 -->   
+# <s:if test="#parameters.name=='xht555'">OK</s:if><!-- 无值 -->   
+# <s:if test="#parameters.name.equals('xht555')">OK</s:if><!-- 无值 -->   
+# </body>   
+# </html>  
+ 
+ 
+就上面一个简单的代码，却始终不能进入到IF判断语句中，郁闷了好久，甚至在骂Struts2，一个不智能的作品。
+经过大量的查找资料，直到问题发生的第三天，我回过头来偶然又想起了这个问题，才在一个帮助文档中发现。原来Struts2是将URL传的参数封装 成一个数组的，也就是说你可以在一个URL传两个同名的参数（即?name=a&name=b），个人觉得这个做的不怎么好，因为一般在传参的时 候如果要传数组也不会通过URL方式来处理 。既然传递的是一个数值，那么所有的问题就迎刃而解了。
+所以上面的取参数应该改为：
+Java代码  收藏代码
+ 1. <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>   
+ 2. <%@ taglib prefix="s" uri="/struts-tags"%>   
+ 3. <html>   
+ 4. <head>   
+ 5. <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">   
+ 6. <title>Struts2 url参数测试</title>   
+ 7. </head>   
+ 8. <body>   
+ 9. <s:property value="#parameters.name[0]"/><br /><!-- 有值 -->   
+10. <s:if test="#parameters.name[0]=='xht555'">OK</s:if><br /><!-- 有值 -->   
+11. <s:if test="#parameters.name[0].equals('xht555')">OK</s:if><!-- 有值 -->   
+12. </body>   
+13. </html>   
+ 
+ 
+OK，问题搞定！希望碰到此类问题的朋友能有所启发，不要再在这个问题上浪费太多的时间了。

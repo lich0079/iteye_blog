@@ -1,0 +1,73 @@
+<pre class="java" name="code">public class ThreadTest {
+    int a;
+    private boolean _maintenanceThreadStarted = true;
+
+    public void task() {
+        System.out.println(++a + "  " + Thread.currentThread().getId());
+    }
+
+    public void startThread() {
+        (new Thread() {
+            public void run() {
+                while (_maintenanceThreadStarted) {
+                    task();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void startServiceThread() {
+        Runnable r = new Runnable() {
+            public void run() {
+                while (_maintenanceThreadStarted) {
+                    task();
+                    if (a &gt; 100) {
+                        _maintenanceThreadStarted = false;
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        };
+        Thread _serviceThread = new Thread(r, "SessionPoolServer-RequestServiceThread");
+        _serviceThread.start();
+    }
+
+    public void stopMaintenanceThread() {
+        _maintenanceThreadStarted = false;
+    }
+
+    public static void main(String[] args) throws Exception {
+        ThreadTest a = new ThreadTest();
+        a.startThread();
+        new ThreadTest().startServiceThread();
+        Thread.sleep(5000);
+        a.stopMaintenanceThread();
+        System.out.println("end");
+    }
+
+}
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;"><span style="font-family: Arial; font-size: x-small;">从操作系统的角度讲，os会维护一个ready queue（就绪的线程队列）。并且在某一时刻cpu只为ready queue中位于队列头部的线程服务。<br>但是当前正在被服务的线程可能觉得cpu的服务质量不够好，于是提前退出，这就是yield。<br>或者当前正在被服务的线程需要睡一会，醒来后继续被服务，这就是sleep。</span></p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;"><span style="font-family: Arial; font-size: x-small;">sleep方法不推荐使用，可用wait。<br>线程退出最好自己实现，在运行状态中一直检验一个状态，如果这个状态为真，就一直运行，如果外界更改了这个状态变量，那么线程就停止运行。<br></span></p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;"><span style="font-family: Arial; font-size: x-small;"><span style="font-size: small;">sleep()使当前线程进入停滞状态，所以执行sleep()的线程在指定的时间内肯定不会执行；yield()只是使当前线程重新回到可执行状态，所以执行yield()的线程有可能在进入到可执行状态后马上又被执行。<br>sleep()可使优先级低的线程得到执行的机会，当然也可以让同优先级和高优先级的线程有执行的机会；yield()只能使同优先级的线程有执行的机会。</span></span></p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;"><span style="font-family: Arial; font-size: x-small;"><span style="font-size: small;">当调用wait()后，线程会释放掉它所占有的“锁标志”，从而使线程所在对象中的其它synchronized数据可被别的线程使用。</span></span></p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;"><span style="font-family: Arial; font-size: x-small;"><span style="font-size: small;">waite()和notify()因为会对对象的“锁标志”进行操作，所以它们必须在synchronized函数或synchronized　block中进行调用。如果在non-synchronized函数或non-synchronized　block中进行调用，虽然能编译通过，但在运行时会发生IllegalMonitorStateException的异常。</span></span></p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;">&nbsp;</p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;">&nbsp;</p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;">&nbsp;</p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;">&nbsp;</p> 
+<p style="color: #333333; font-family: Arial; font-size: 14px; line-height: 26px;"><span style="font-size: medium;">.&nbsp;wait()、notify()、notifyAll()和suspend()、resume()、sleep()的讨论</span><br style="font-size: medium;"><span style="font-size: medium;">4.1&nbsp;这两组函数的区别</span><br style="font-size: medium;"><span style="font-size: medium;">1)&nbsp;wait()使当前线程进入停滞状态时，还会释放当前线程所占有的“锁标志”，从而使线程对象中的synchronized资源可被对象中别的线程使用；而suspend()和sleep()使当前线程进入停滞状态时不会释放当前线程所占有的“锁标志”。</span><br style="font-size: medium;"><span style="font-size: medium;">2)&nbsp;前一组函数必须在synchronized函数或synchronized　block中调用，否则在运行时会产生错误；而后一组函数可以non-synchronized函数和synchronized　block中调用。</span><br style="font-size: medium;"><span style="font-size: medium;">4.2&nbsp;这两组函数的取舍</span><br style="font-size: medium;"><span style="font-size: medium;">Java2已不建议使用后一组函数。因为在调用</span><span style="font-size: medium;">sleep</span><span style="font-size: medium;">()时不会释放当前线程所取得的“锁标志”，这样很容易造成“死锁”。</span></p> 
+<p>&nbsp;</p>

@@ -1,0 +1,126 @@
+<pre><tt><em>window</em></tt>.open(<tt><em>url</em></tt>, <tt><em>name</em></tt>, <tt><em>features</em></tt>, <tt><em>replace</em></tt>)
+</pre> 
+<p>出自 ：&nbsp; oreilly.javascript.the.definitive.guide.5th.edition.aug.2006</p> 
+<p><br><a name="jscript5-CHP-25-SECT-309.1.1"></a></p> 
+<h5 class="docSection3Title">25.309.1.1. Arguments</h5> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><tt><em>url</em></tt></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">An optional string that specifies the URL to be displayed in the new window. If this argument is omitted, or if the empty string is specified, the new window does not display a document.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><tt><em>name</em></tt></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">An optional string of alphanumeric and underscore characters that specifies a name for the new window. This name can be used as the value of the <tt>target</tt> attribute of <tt>&lt;a&gt;</tt> and <tt>&lt;form&gt;</tt> HTML tags. If this argument names a window that already exists, the <tt>open( )</tt> method does not create a new window, but simply returns a reference to the named window. In this case, the <tt><em>features</em></tt> argument is ignored.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><tt><em>features</em></tt></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">A string that specifies which features of a standard browser window are to appear in the new window. The format of this string is specified in the Window Features section. This argument is optional; if it is not specified, the new window has all the standard features.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><tt><em>replace</em></tt></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">An optional boolean argument that specifies whether the URL loaded into the window should create a new entry in the window's browsing history or replace the current entry in the browsing history. If this argument is <tt>true</tt>, no new history entry is created. Note that this argument is intended for use when changing the contents of an existing named window.</p> 
+</dd> 
+<p><a name="jscript5-CHP-25-SECT-309.1.2"></a></p> 
+<h5 class="docSection3Title">25.309.1.2. Returns</h5> 
+<p><a name="IDX-CHP-25-4414"></a></p> 
+<p class="docText">A reference to a Window object, which may be a newly created or an already existing one, depending on the <tt><em>name</em></tt> argument.</p> 
+<p><a name="jscript5-CHP-25-SECT-309.2"></a></p> 
+<h4 class="docSection2Title">25.309.2. Description</h4> 
+<p class="docText">The <tt>open( )</tt> method looks up an existing window or opens a new browser window. If the <tt><em>name</em></tt> argument specifies the name of an existing window, a reference to that window is returned. The returned window displays the URL specified by <tt><em>url</em></tt>, but the <tt><em>features</em></tt><a name="IDX-CHP-25-4415"></a> argument is ignored. This is the only way in JavaScript to obtain a reference to a window that is known only by name.</p> 
+<p class="docText">If the <tt><em>name</em></tt> argument is not specified, or if no window with that name already exists, the <tt>open( )</tt> method creates a new browser window. The created window displays the URL specified by <tt><em>url</em></tt> and has the name specified by <tt><em>name</em></tt> and the size and controls specified by <tt><em>features</em></tt> (the format of this argument is described in the next section). If <tt><em>url</em></tt> is the empty string, <tt>open( )</tt> opens an empty window.</p> 
+<p class="docText">The <tt><em>name</em></tt> argument specifies a name for the new window. This name may contain only alphanumeric characters and the underscore character. It may be used as the value of the <tt>target</tt> attribute of an <tt>&lt;a&gt;</tt> or <tt>&lt;form&gt;</tt> tag in HTML to force documents to be displayed in the window.</p> 
+<p class="docText">When you use <tt>Window.open( )</tt> to load a new document into an existing named window, you can pass the <tt><em>replace</em></tt> argument to specify whether the new document has its own entry in the window's browsing history or whether it replaces the history entry of the current document. If <tt><em>replace</em></tt> is <tt>TRue</tt>, the new document replaces the old. If this argument is <tt>false</tt> or is not specified, the new document has its own entry in the Window's browsing history. This argument provides functionality much like that of the <tt>Location.replace( )</tt> method.</p> 
+<p class="docText">Don't confuse <tt>Window.open( )</tt> with <tt>Document.open( )</tt>; the two methods perform very different functions. For clarity in your code, you may want to use <tt>Window.open( )</tt> instead of <tt>open( )</tt>. In event handlers defined as HTML attributes, <tt>open( )</tt> is usually interpreted as <tt>Document.open( )</tt>, so in this case, you must use <tt>Window.open( )</tt>.</p> 
+<p><a name="jscript5-CHP-25-SECT-309.3"></a></p> 
+<h4 class="docSection2Title">25.309.3. Window Features</h4> 
+<p class="docText">The <tt><em>features</em></tt> argument is a comma-separated list of features that appears in the window. If this optional argument is empty or not specified, all features are present in the window. On the other hand, if <tt><em>features</em></tt> specifies any one feature, any features that do not appear in the list do not appear in the window. The string should not contain any spaces or other whitespace. Each element in the list has the format:</p> 
+<pre><tt><em>feature</em></tt>[=<tt><em>value</em></tt>]
+</pre> 
+<p>&nbsp;</p> 
+<p class="docText">For most features, the <tt><em>value</em></tt> is <tt>yes</tt> or <tt>no</tt>. For these features, the equals sign and the <tt><em>value</em></tt> may be omitted; if the feature appears, <tt>yes</tt> is assumed, and if it doesn't, <tt>no</tt> is assumed. For the <tt>width</tt> and <tt>height</tt> features, <tt><em>value</em></tt> is required and must specify a size in pixels.</p> 
+<p class="docText">Here are the commonly supported features and their meanings:</p> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">height</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">Specifies the height, in pixels, of the window's document display area.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">left</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">The X coordinate, in pixels, of the window.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">location</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">The input field for entering URLs directly into the browser.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">menubar</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">The menu bar.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">resizable</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">If this feature is not present or is set to <tt>no</tt>, the window does not have resize handles around its border. (Depending on the platform, the user may still have ways to resize the window.) Note that a common bug is to misspell this feature as "resizeable," with an extra "e."</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">scrollbars</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">Enables horizontal and vertical scrollbars when they are necessary.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">status</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">The status line.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">toolbar</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">The browser toolbar, with <span class="docEmphStrong">Back</span> and <span class="docEmphStrong">Forward</span> buttons, etc.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">top</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">The Y coordinate, in pixels, of the window.</p> 
+</dd> 
+<dt> 
+ <br>
+ <p><span class="docPubcolor"><span class="docPubcolor"><span class="docMonofont">width</span></span></span></p> 
+</dt> 
+<dd> 
+ <p class="docList">Specifies the width, in pixels, of the window's document display area.</p> 
+</dd> 
+<p><a name="jscript5-CHP-25-SECT-309.4"></a></p> 
+<h4 class="docSection2Title">25.309.4. See Also</h4> 
+<p><a name="IDX-CHP-25-4416"></a></p> 
+<p class="docText"><tt>Location.replace( )</tt>, <tt>Window.close( )</tt>, the <tt>closed</tt> and <tt>opener</tt> properties of <tt>Window</tt></p>

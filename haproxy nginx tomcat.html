@@ -1,0 +1,126 @@
+<p>拟机上搭了 haproxy nginx tomcat的架构模型</p> 
+<p>&nbsp;</p> 
+<p>没有haproxy的时候&nbsp;&nbsp; nginx监听80端口&nbsp; 将动态请求转发给后端的8080</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>有haproxy后&nbsp; haproxy监听80&nbsp; 转发给nginx的8001 nginx在讲动态的请求转发给tomcat的8080</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>但是就有了一个问题， 请求的url后面会包含有8001端口的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>最后找到了解决办法</p> 
+<p>&nbsp;</p> 
+<p>在nginx.conf</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">server {
+          listen       8001;
+          server_name  beta.google.com;
+        
+
+location / {
+             proxy_pass http://tomcat;
+
+                   <span style="color: #ff0000;">proxy_redirect off;
+                   proxy_set_header Host $host;
+                   proxy_set_header X-Real-IP $remote_addr;
+                   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span>
+
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>这样就不会有8001了</p> 
+<p>&nbsp;</p> 
+<p>haproxy.conf</p> 
+<pre class="java" name="code">listen lbserver  *:80
+   cookie JSESSIONID prefix
+  # - equal weights on all servers
+  # - maxconn will queue requests at HAProxy if limit is reached
+  # - minconn dynamically scales the connection concurrency (bound my maxconn) depending on size of HAProxy queue
+  # - check health every 20000 microseconds
+ option httpchk GET /index
+  server nginx1  127.0.0.1:8001  weight 1 minconn 3 maxconn 6 check inter 20000
+  server tomcat2  127.0.0.1:8082  weight 1 minconn 3 maxconn 6 check inter 20000
+</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>后来8001又出现了</p> 
+<p>因为配了一个</p> 
+<p>rewrite /mmm&nbsp; /fff&nbsp; permanent；</p> 
+<p>&nbsp;</p> 
+<p>这样在转发后就又出现了8001</p> 
+<p>&nbsp;</p> 
+<p>解决方法</p> 
+<p>&nbsp;</p> 
+<p>rewrite /mmm&nbsp; http://beta.google.cn/fff&nbsp; permanent；</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>看现象的话 nginx内部转发的话&nbsp; 你是什么端口的来的就转发到什么端口&nbsp; 8001 来的 自然转发到8001</p> 
+<p>但从外部来的话 就是80 来的 </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>网上找相关资料</p> 
+<pre>Hi, everyone.
+
+I have a server running a php web forum. User logging into my site
+using 'logging.php'.
+
+I had set up a https server using nginx, but consdering server load, I
+just want my user using https in only logging.php.
+
+I want to settle this by using url rewrite. When my users click
+<a href="http://mysite.com/logging.php,">http://mysite.com/logging.php,</a>
+ nginx will automatic change the url to
+<a href="https://mysite.com/logging.php">https://mysite.com/logging.php</a>
+. And when my user click any other links
+in my site, for example, <a href="https://mysite.com/index.php,">https://mysite.com/index.php,</a>
+ nginx will
+change https to http.
+
+Can rewrite work like this?
+
+Thank you!
+
+BTW,changing my forum codes may work, but I didn't know much about php
+coding...so, I want to settle this in nginx rewrite...</pre> 
+<pre>In your plain http server block:
+
+if ($uri ~* "/logging.php$") {
+ rewrite ^/(.*)$ <a href="https://%24host/%241">https://$host/$1</a>
+ redirect;
+}
+
+
+In your https server block
+
+if ($uri !~* "/logging.php$") {
+ rewrite ^/(.*)$ <a href="http://%24host/%241">http://$host/$1</a>
+ redirect;
+}
+
+
+This is when you are using standard ports (80 for HTTP and 443 for 
+HTTPS). If you are using non-standard ports (say 8080 for http, and 8443 
+for https, then in this case, you should have in your http block)
+
+if ($uri ~* "/logging.php$") {
+ rewrite ^/(.*)$ <a href="https://%24host:8443/%241">https://$host:8443/$1</a>
+ redirect;
+}
+
+and correspondingly, in your https block, you should have:
+
+if ($uri !~* "/logging.php$") {
+ rewrite ^/(.*)$ <a href="http://%24host:8080/%241">http://$host:8080/$1</a>
+ redirect;
+}
+
+The $host variable is the host portion of the URL that was used to reach 
+your server
+See <a href="http://wiki.codemongers.com/NginxHttpCoreModule">http://wiki.codemongers.com/NginxHttpCoreModule</a>
+ for the list of 
+variables
+
+</pre> 
+<p>&nbsp;</p>

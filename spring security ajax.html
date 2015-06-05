@@ -1,0 +1,1891 @@
+<p>转自 http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/</p> 
+<p>&nbsp;</p> 
+<p>This tutorial will walk through how to configure <a href="http://www.extjs.com/" target="_blank">ExtJS</a> Login form (Ajax login form) instead of default Spring Security login.jsp.</p> 
+<p>Instead of using login.jsp from spring security, why do not use an ajax login form?</p> 
+<p>And How to integrate the <a href="http://www.extjs.com/" target="_blank">ExtJS</a> Login Form with <a href="http://static.springsource.org/spring-security/site/" target="_blank">Spring Security</a> ?</p> 
+<p>You did try to do it, the user is successfully authenticated, but the user is not redirected to the application main page. How to fix this situation? How to make it work?</p> 
+<p>It does not matter if you set the default-target-url in applicationContext-security.xml, or set a redirect URL on server side. It will not work this way.</p> 
+<p>The issue is that <a href="http://www.extjs.com/" target="_blank">ExtJS</a> make Ajax calls, and no redirect will work on server side. You have to redirect it on the client side, which is the ExtJS/javascript code.</p> 
+<p>First, you need to create the login form. You can use the <a href="http://www.extjs.com/learn/Tutorial:Basic_Login" target="_blank">javascript code provided by ExtJS</a> and you can modify it to work with spring security.</p> 
+<p>If you take a look at the login.jsp, you will see three key points:</p> 
+<ol> 
+ <li>URL / form action: <strong>j_spring_security_check</strong> </li> 
+ <li>Username input name: <strong>j_username</strong> </li> 
+ <li>Password input name: <strong>j_password</strong> </li> 
+</ol> 
+<p>That is what you need to customize to make ExtJS Login form works! But do not be too comfortable, there are some issues you need to fix to make it work perfectly.</p> 
+<p>Take a look how login.js looks like (after customization):</p> 
+<div class="syntaxhighlighter  jscript"> 
+ <div class="bar                                                "> 
+  <div class="toolbar"> 
+   <a href="http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/#viewSource" title="view source" class="item viewSource" style="width: 16px; height: 16px;">view source</a> 
+   <div class="item copyToClipboard"></div> 
+   <a href="http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/#printSource" title="print" class="item printSource" style="width: 16px; height: 16px;">print</a> 
+   <a href="http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/#about" title="?" class="item about" style="width: 16px; height: 16px;">?</a> 
+  </div> 
+ </div> 
+ <div class="lines no-wrap"> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>01</code> </td> 
+      <td class="content"> <code class="jscript plain">Ext.onReady(</code> <code class="jscript keyword">function</code> <code class="jscript plain">(){</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>02</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript 
+plain">Ext.QuickTips.init();</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>03</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>04</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// Create a variable to hold our EXT Form Panel.</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>05</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>06</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// Assign various config options as seen.</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>07</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript 
+keyword">var</code> <code class="jscript plain">login = </code> <code class="jscript keyword">new</code> <code class="jscript plain">Ext.FormPanel({</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>08</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">labelWidth:80,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>09</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">url:</code> <code class="jscript string">'j_spring_security_check'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>10</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">frame:</code> <code class="jscript keyword">true</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>11</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">title:</code> <code class="jscript string">'Please Login'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>12</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>13</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">defaultType:</code> <code class="jscript string">'textfield'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>14</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">width:300,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>15</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">height:150,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>16</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">monitorValid:</code> <code class="jscript keyword">true</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>17</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// Specific attributes for the text fields for username / password.</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>18</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// The "name" attribute defines the name of variables sent to the server.</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>19</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>20</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">items:[{</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>21</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">fieldLabel:</code> <code class="jscript string">'Username'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>22</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">name:</code> <code class="jscript string">'j_username'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>23</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">allowBlank:</code> <code class="jscript keyword">false</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>24</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">},{</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>25</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">fieldLabel:</code> <code class="jscript string">'Password'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>26</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>27</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">name:</code> <code class="jscript string">'j_password'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>28</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">inputType:</code> <code class="jscript string">'password'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>29</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">allowBlank:</code> <code class="jscript keyword">false</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>30</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">}],</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>31</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>32</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// All the magic happens after the user clicks the button</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>33</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">buttons:[{</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>34</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>35</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">text:</code> <code class="jscript string">'Login'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>36</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">formBind: </code> <code class="jscript keyword">true</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>37</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// Function that fires when user clicks the button</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>38</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">handler:</code> <code class="jscript keyword">function</code> <code class="jscript plain">(){</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>39</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">login.getForm().submit({</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>40</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>41</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">method:</code> <code class="jscript string">'POST'</code> <code class="jscript plain">,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>42</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>43</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// Functions that fire (success or failure) when the server responds.</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>44</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// The server would actually respond with valid JSON,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>45</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// something like: response.write "{ success: true}" or</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>46</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>47</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// response.write "{ success: false, errors: { reason: 'Login failed. Try again.' }}"</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>48</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// depending on the logic contained within your server script.</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>49</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// If a success occurs, the user is notified with an alert messagebox,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>50</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>51</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// and when they click "OK", they are redirected to whatever page</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>52</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// you define as redirect.</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>53</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>54</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">success:</code> <code class="jscript keyword">function</code> <code class="jscript plain">(){</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>55</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">Ext.Msg.alert(</code> <code class="jscript string">'Status'</code> <code class="jscript plain">, </code> <code class="jscript string">'Login Successful!'</code> <code class="jscript plain">, </code> <code class="jscript keyword">function</code> <code class="jscript plain">(btn, text){</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>56</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>57</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript keyword">if</code> <code class="jscript plain">(btn == </code> <code class="jscript string">'ok'</code> <code class="jscript plain">){</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>58</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">window.location = </code> <code class="jscript 
+string">'main.action'</code> <code class="jscript plain">;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>59</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">}</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>60</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">});</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>61</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>62</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">},</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>63</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>64</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// Failure function, see comment above re: success and failure.</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>65</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// You can see here, if login fails, it throws a messagebox</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>66</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript comments">// at the user telling him / her as much.</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>67</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>68</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">failure:</code> <code class="jscript keyword">function</code> <code class="jscript plain">(form, action){</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>69</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript keyword">if</code> <code class="jscript plain">(action.failureType == </code> <code class="jscript string">'server'</code> <code class="jscript plain">){</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>70</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">obj = Ext.util.JSON.decode(action.response.responseText);</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>71</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>72</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">Ext.Msg.alert(</code> <code class="jscript string">'Login Failed!'</code> <code class="jscript 
+plain">, obj.errors.reason);</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>73</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">}</code> <code class="jscript keyword">else</code> <code class="jscript plain">{</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>74</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">Ext.Msg.alert(</code> <code class="jscript string">'Warning!'</code> <code class="jscript plain">, </code> <code class="jscript string">'Authentication server is unreachable : '</code> <code class="jscript plain">+ action.response.responseText);</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>75</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>76</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">}</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>77</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">login.getForm().reset();</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>78</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">}</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>79</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>80</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">});</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>81</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">}</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>82</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript plain">}]</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>83</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript 
+plain">});</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>84</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>85</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="jscript 
+plain">login.render(</code> <code class="jscript string">'login'</code> <code class="jscript plain">);</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>86</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>87</code> </td> 
+      <td class="content"> <code class="jscript plain">});</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+ </div> 
+</div> 
+<p>If you make these changes and try to execute the application with a basic <strong>applicationContext-security.xml</strong> file, the user will be successfully authenticated, but is not going to be redirected.</p> 
+<p>What are we missing then?</p> 
+<p>You need to customize <a href="http://static.springsource.org/spring-security/site/docs/3.0.x/apidocs/org/springframework/security/web/authentication/AuthenticationProcessingFilter.html" target="_blank"><strong>AuthenticationProcessingFilter</strong> </a> class for spring security to perform actions on login.</p> 
+<p>The “onSuccessfulAuthentication” and “onUnsuccessfulAuthentication” methods need to return some JSON content. If user is successfully authenticated, then redirect to main page, otherwise, the application will show an error message.</p> 
+<p>This is <strong>MyAuthenticationProcessingFilter</strong> class:</p> 
+<div class="syntaxhighlighter  java"> 
+ <div class="bar                        "> 
+  <div class="toolbar"> 
+   <a href="http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/#viewSource" title="view source" class="item 
+viewSource" style="width: 16px; height: 16px;">view source</a> 
+   <div class="item copyToClipboard"></div> 
+   <a href="http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/#printSource" title="print" class="item printSource" style="width: 16px; height: 16px;">print</a> 
+   <a href="http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/#about" title="?" class="item about" style="width: 16px; height: 16px;">?</a> 
+  </div> 
+ </div> 
+ <div class="lines no-wrap"> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>01</code> </td> 
+      <td class="content"> <code class="java
+ keyword">package</code> <code class="java plain">com.loiane.security;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>02</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>03</code> </td> 
+      <td class="content"> <code class="java keyword">import</code> <code class="java plain">java.io.IOException;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>04</code> </td> 
+      <td class="content"> <code class="java keyword">import</code> <code class="java plain">java.io.Writer;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>05</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>06</code> </td> 
+      <td class="content"> <code class="java keyword">import</code> <code class="java plain">javax.servlet.http.HttpServletRequest;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>07</code> </td> 
+      <td class="content"> <code class="java keyword">import</code> <code class="java plain">javax.servlet.http.HttpServletResponse;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>08</code> </td> 
+      <td class="content"> <code class="java keyword">import</code> <code class="java plain">javax.servlet.http.HttpServletResponseWrapper;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>09</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>10</code> </td> 
+      <td class="content"> <code class="java keyword">import</code> <code class="java plain">org.springframework.security.Authentication;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>11</code> </td> 
+      <td class="content"> <code class="java keyword">import</code> <code class="java plain">org.springframework.security.AuthenticationException;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>12</code> </td> 
+      <td class="content"> <code class="java keyword">import</code> <code class="java plain">org.springframework.security.ui.webapp.AuthenticationProcessingFilter;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>13</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>14</code> </td> 
+      <td class="content"> <code class="java keyword">public</code> <code class="java keyword">class</code> <code class="java plain">MyAuthenticationProcessingFilter </code> <code class="java keyword">extends</code> <code class="java plain">AuthenticationProcessingFilter {</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>15</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>16</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java 
+keyword">protected</code> <code class="java keyword">void</code> <code class="java plain">onSuccessfulAuthentication(HttpServletRequest request,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>17</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">HttpServletResponse response, Authentication authResult)</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>18</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java 
+keyword">throws</code> <code class="java plain">IOException {</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>19</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java 
+keyword">super</code> <code class="java plain">.onSuccessfulAuthentication(request, response, authResult);</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>20</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>21</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">HttpServletResponseWrapper responseWrapper = </code> <code class="java keyword">new</code> <code class="java plain">HttpServletResponseWrapper(response);</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>22</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>23</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">Writer out = responseWrapper.getWriter();</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>24</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>25</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">String targetUrl = determineTargetUrl( request );</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>26</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java 
+plain">out.write(</code> <code class="java string">"{success:true, targetUrl : \'"</code> <code class="java plain">+ targetUrl + </code> <code class="java string">"\'}"</code> <code class="java plain">);</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>27</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java 
+plain">out.close();</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>28</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>29</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">}</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>30</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>31</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java keyword">protected</code> <code class="java keyword">void</code> <code class="java plain">onUnsuccessfulAuthentication( HttpServletRequest request,</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>32</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">HttpServletResponse response, AuthenticationException failed )</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>33</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java keyword">throws</code> <code class="java plain">IOException {</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>34</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>35</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">HttpServletResponseWrapper responseWrapper = </code> <code class="java keyword">new</code> <code class="java plain">HttpServletResponseWrapper(response);</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>36</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>37</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">Writer out = responseWrapper.getWriter();</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>38</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>39</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">out.write(</code> <code class="java string">"{ success: false, errors: { reason: 'Login failed. Try again.' }}"</code> <code class="java plain">);</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>40</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java 
+plain">out.close();</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>41</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>42</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="java plain">}</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>43</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>44</code> </td> 
+      <td class="content"> <code class="java plain">}</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+ </div> 
+</div> 
+<p>And this is how <strong>applicationContext-security.xml <strong>looks like</strong> :</strong> </p> 
+<div class="syntaxhighlighter  xml"> 
+ <div class="bar          "> 
+  <div class="toolbar"> 
+   <a href="http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/#viewSource" title="view source" class="item viewSource" style="width: 16px; height: 16px;">view source</a> 
+   <div class="item copyToClipboard"></div> 
+   <a href="http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/#printSource" title="print" class="item printSource" style="width: 16px; height: 16px;">print</a> 
+   <a href="http://loianegroner.com/2010/02/integrating-spring-security-with-extjs-login-page/#about" title="?" class="item about" style="width: 16px; height: 16px;">?</a> 
+  </div> 
+ </div> 
+ <div class="lines no-wrap"> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>01</code> </td> 
+      <td class="content"> <code class="xml 
+plain">&lt;?</code> <code class="xml keyword">xml</code> <code class="xml
+ color1">version</code> <code class="xml plain">=</code> <code class="xml 
+string">"1.0"</code> <code class="xml color1">encoding</code> <code class="xml plain">=</code> <code class="xml string">"UTF-8"</code> <code class="xml plain">?&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>02</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>03</code> </td> 
+      <td class="content"> <code class="xml
+ plain">&lt;</code> <code class="xml keyword">beans</code> <code class="xml color1">xmlns</code> <code class="xml plain">=</code> <code class="xml string">"<a href="http://www.springframework.org/schema/beans">http://www.springframework.org/schema/beans</a> "</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>04</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+color1">xmlns:security</code> <code class="xml plain">=</code> <code class="xml string">"<a href="http://www.springframework.org/schema/security">http://www.springframework.org/schema/security</a> "</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>05</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+color1">xmlns:xsi</code> <code class="xml plain">=</code> <code class="xml
+ string">"<a href="http://www.w3.org/2001/XMLSchema-instance">http://www.w3.org/2001/XMLSchema-instance</a> "</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>06</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">xsi:schemaLocation="<a href="http://www.springframework.org/schema/beans">http://www.springframework.org/schema/beans</a> <a href="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">http://www.springframework.org/schema/beans/spring-beans-2.0.xsd</a> </code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>07</code> </td> 
+      <td class="content"> <code class="xml plain"><a href="http://www.springframework.org/schema/security">http://www.springframework.org/schema/security</a> <a href="http://www.springframework.org/schema/security/spring-security-2.0.xsd">http://www.springframework.org/schema/security/spring-security-2.0.xsd</a> "&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>08</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>09</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;</code> <code class="xml keyword">security:global-method-security</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>10</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>11</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;</code> <code class="xml keyword">security:http</code> <code class="xml color1">auto-config</code> <code class="xml plain">=</code> <code class="xml string">"false"</code> <code class="xml color1">entry-point-ref</code> <code class="xml plain">=</code> <code class="xml string">"authenticationProcessingFilterEntryPoint"</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>12</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;</code> <code class="xml keyword">security:intercept-url</code> <code class="xml color1">pattern</code> <code class="xml plain">=</code> <code class="xml string">"/index.jsp"</code> <code class="xml color1">filters</code> <code class="xml plain">=</code> <code class="xml string">"none"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>13</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;</code> <code class="xml keyword">security:intercept-url</code> <code class="xml color1">pattern</code> <code class="xml plain">=</code> <code class="xml string">"/*.action"</code> <code class="xml color1">access</code> <code class="xml plain">=</code> <code class="xml string">"ROLE_USER"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>14</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;/</code> <code class="xml keyword">security:http</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>15</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>16</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;</code> <code class="xml keyword">bean</code> <code class="xml color1">id</code> <code class="xml plain">=</code> <code class="xml string">"authenticationProcessingFilter"</code> <code class="xml color1">class</code> <code class="xml plain">=</code> <code class="xml string">"com.loiane.security.MyAuthenticationProcessingFilter"</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>17</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;</code> <code class="xml keyword">security:custom-filter</code> <code class="xml color1">position</code> <code class="xml plain">=</code> <code class="xml string">"AUTHENTICATION_PROCESSING_FILTER"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>18</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;</code> <code class="xml keyword">property</code> <code class="xml color1">name</code> <code class="xml plain">=</code> <code class="xml string">"defaultTargetUrl"</code> <code class="xml color1">value</code> <code class="xml plain">=</code> <code class="xml string">"/main.html"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>19</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;</code> <code class="xml keyword">property</code> <code class="xml color1">name</code> <code class="xml plain">=</code> <code class="xml string">"authenticationManager"</code> <code class="xml 
+color1">ref</code> <code class="xml plain">=</code> <code class="xml 
+string">"authenticationManager"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>20</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;/</code> <code class="xml keyword">bean</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>21</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>22</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;</code> <code class="xml keyword">security:authentication-manager</code> <code class="xml color1">alias</code> <code class="xml plain">=</code> <code class="xml string">"authenticationManager"</code> <code class="xml 
+plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line 
+alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>23</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>24</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;</code> <code class="xml keyword">bean</code> <code class="xml color1">id</code> <code class="xml plain">=</code> <code class="xml string">"authenticationProcessingFilterEntryPoint"</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>25</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+color1">class</code> <code class="xml plain">=</code> <code class="xml 
+string">"org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint"</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>26</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;</code> <code class="xml keyword">property</code> <code class="xml color1">name</code> <code class="xml plain">=</code> <code class="xml string">"loginFormUrl"</code> <code class="xml color1">value</code> <code class="xml plain">=</code> <code class="xml string">"/index.jsp"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>27</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;</code> <code class="xml keyword">property</code> <code class="xml color1">name</code> <code class="xml plain">=</code> <code class="xml string">"forceHttps"</code> <code class="xml color1">value</code> <code class="xml plain">=</code> <code class="xml string">"false"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>28</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;/</code> <code class="xml keyword">bean</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>29</code> </td> 
+      <td class="content">&nbsp;</td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>30</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml comments">&lt;!--</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>31</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+comments">Usernames/Passwords are</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>32</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+comments">rod/koala</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>33</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+comments">dianne/emu</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>34</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+comments">scott/wombat</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>35</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+comments">peter/opal</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>36</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+comments">These passwords are from spring security app example</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>37</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+comments">--&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line 
+alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>38</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;</code> <code class="xml keyword">security:authentication-provider</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>39</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;</code> <code class="xml keyword">security:password-encoder</code> <code class="xml color1">hash</code> <code class="xml plain">=</code> <code class="xml string">"md5"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>40</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;</code> <code class="xml keyword">security:user-service</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>41</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;</code> <code class="xml keyword">security:user</code> <code class="xml color1">name</code> <code class="xml plain">=</code> <code class="xml string">"rod"</code> <code class="xml color1">password</code> <code class="xml plain">=</code> <code class="xml string">"a564de63c2d0da68cf47586ee05984d7"</code> <code class="xml color1">authorities</code> <code class="xml plain">=</code> <code class="xml string">"ROLE_SUPERVISOR, ROLE_USER, ROLE_TELLER"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>42</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;</code> <code class="xml keyword">security:user</code> <code class="xml color1">name</code> <code class="xml plain">=</code> <code class="xml string">"dianne"</code> <code class="xml color1">password</code> <code class="xml plain">=</code> <code class="xml string">"65d15fe9156f9c4bbffd98085992a44e"</code> <code class="xml color1">authorities</code> <code class="xml plain">=</code> <code class="xml string">"ROLE_USER,ROLE_TELLER"</code> <code class="xml 
+plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line 
+alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>43</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml
+ plain">&lt;</code> <code class="xml keyword">security:user</code> <code class="xml color1">name</code> <code class="xml plain">=</code> <code class="xml string">"scott"</code> <code class="xml color1">password</code> <code class="xml plain">=</code> <code class="xml string">"2b58af6dddbd072ed27ffc86725d7d3a"</code> <code class="xml color1">authorities</code> <code class="xml plain">=</code> <code class="xml string">"ROLE_USER"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>44</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;</code> <code class="xml keyword">security:user</code> <code class="xml color1">name</code> <code class="xml plain">=</code> <code class="xml string">"peter"</code> <code class="xml color1">password</code> <code class="xml plain">=</code> <code class="xml string">"22b5c9accc6e1ba628cedc63a72d57f8"</code> <code class="xml color1">authorities</code> <code class="xml plain">=</code> <code class="xml string">"ROLE_USER"</code> <code class="xml plain">/&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>45</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml 
+plain">&lt;/</code> <code class="xml keyword">security:user-service</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt2"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>46</code> </td> 
+      <td class="content"> <code class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="xml plain">&lt;/</code> <code class="xml keyword">security:authentication-provider</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+  <div class="line alt1"> 
+   <table border="0">
+    <tbody>
+     <tr> 
+      <td class="number"> <code>47</code> </td> 
+      <td class="content"> <code class="xml plain">&lt;/</code> <code class="xml 
+keyword">beans</code> <code class="xml plain">&gt;</code> </td> 
+     </tr>
+    </tbody>
+   </table> 
+  </div> 
+ </div> 
+</div> 
+<p>Now you can login using ExtJS login form.</p> 
+<p>I coded a sample application for this example. If you like it, you can download it from my GitHub: <a href="http://github.com/loiane/spring-security-extjs-login" target="_blank">http://github.com/loiane/spring-security-extjs-login</a> </p> 
+<p>Happy coding!</p>

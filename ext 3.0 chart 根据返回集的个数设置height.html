@@ -1,0 +1,15 @@
+<p>不设置height的话 默认是占满当前区域的，但数据多的时候会出现一些数据省略了</p> 
+<p>如：</p> 
+<p><img height="349" src="/upload/attachment/123617/8f7a4b89-3391-3fcc-b8d0-8fc21f6825e0.bmp" alt="" width="332"></p> 
+<p>&nbsp;</p> 
+<p>2，4，6等就没有显示出来，所以必须根据结果集的个数动态设置height</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<pre class="js" name="code">store.load({
+									params : {
+		
+									},
+									callback : function(r, options, success) {
+										chart.setHeight(store.getTotalCount()* 30);
+									}
+								});</pre> &nbsp;

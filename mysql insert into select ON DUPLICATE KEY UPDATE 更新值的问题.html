@@ -1,0 +1,7 @@
+<p>我有一句话<br> 要达到<br><br> INSERT INTO table1 (count)<br> select count(b.c1) count<br> &nbsp; from table2 b<br> &nbsp; where date(b.date) =...<br> &nbsp; group by b.page_hash<br> ON DUPLICATE KEY UPDATE count=count+b.count</p> 
+<p>&nbsp;</p> 
+<p>ON DUPLICATE KEY UPDATE count=count+<span style="color: #ff0000;">values(count)</span> </p> 
+<p>等号后第一个count是表里已经存在的，&nbsp;<span style="color: #ff0000;">values(count)是打算插入的的</span></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>今天在写一个mysql 批量更新语句时遇到一个问题<br> 在一个统计表中，有许多统计数据，数据来源于多个数据库和表，很多数据需要使用批量更新方法，（不可能查出所有数据然后一条一条去更新吧），因此需要使用 insert into table select xx from table2这样的语句。<br> 同时，由于需要多次更新table，table定义了一个unique key，因此如果第二次运行或者更新第二批数据的时候，会产生<br> Error Code : 1062<br> Duplicate entry ‘xx-yy’key for 'keyname' 错误<br> 自然，我们会想到用 on duplicate key 来解除约束，这个时候就需要用到 values 取值函数<br> values 取值函数：<span><span>VALUES(<em>col_name</em> )</span> 可以引用被插入的<em><span>col_name</span> </em> 的 值，注意这个函数只在 insert ... update 语句中有意义<br> sql例子：<br> insert into table (a, b, c)<br> select a, b, c from table2<br> on duplicate key update c = <strong><span style="color: #ff0000;">values(c)</span> </strong> ;<br><span style="color: #cc0000;">注意 values(c)中的c不需要加任何修饰</span> <br> table 表 设有 a,b 联合unique key<br></span> </p>

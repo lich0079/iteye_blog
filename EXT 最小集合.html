@@ -1,0 +1,20 @@
+<p><span style="line-height: 21px; font-size: 14px; font-family: verdana;"> </span></p>
+<div class="postTitle" style="font-family: verdana; font-size: 14px; font-weight: bold; padding: 10px; border: 0px solid red;"> 
+ <a class="postTitle2" style="border-bottom-style: dotted; border-bottom-width: 0px; border-bottom-color: #efefef; padding-bottom: 10px; color: #a7a7a7; text-decoration: underline;" href="http://www.cnblogs.com/amboyna/archive/2009/01/18/1377849.html">EXT 最小集合</a> 
+</div> 
+<p style="margin-top: 0px; margin-right: auto; margin-bottom: 10px; margin-left: auto; text-indent: 0px;">想把ext放入自己的项目，需要自己整理一下，因为发布包里的东西并非都是必要的，比如文档，比如例子，比如源代码。</p> 
+<p style="margin-top: 0px; margin-right: auto; margin-bottom: 10px; margin-left: auto; text-indent: 0px;">必要的最小集合是这样：ext-all.js，adapter/ext/ext-base.js，build/locale/ext-lang-zh_CN.js和整个resources目录。</p> 
+<div class="orderedlist" style="font-family: verdana;">
+ <ol> 
+  <li style="margin-left: 10px;"> <p style="margin-top: 0px; margin-right: auto; margin-bottom: 10px; margin-left: auto; text-indent: 0px;">ext-all.js，adapter/ext/ext-base.js就包含了ext的所有功能，所有的js脚本都在这里了。</p> </li> 
+  <li style="margin-left: 10px;"> <p style="margin-top: 0px; margin-right: auto; margin-bottom: 10px; margin-left: auto; text-indent: 0px;">build/locale/ext-lang-zh_CN.js是中文翻译。</p> </li> 
+  <li style="margin-left: 10px;"> <p style="margin-top: 0px; margin-right: auto; margin-bottom: 10px; margin-left: auto; text-indent: 0px;">resources目录下是css样式表和图片。</p> </li> 
+ </ol>
+</div> 
+<p style="margin-top: 0px; margin-right: auto; margin-bottom: 10px; margin-left: auto; text-indent: 0px;">自己的项目里只需要包含这些东西，就可以使用ext了。使用时，在页面中导入：</p> 
+<pre class="programlisting">&lt;link rel="stylesheet" type="text/css" href="${放置ext的目录}/resources/css/ext-all.css" /&gt;
+&lt;script type="text/javascript" src="${放置ext的目录}/ext-base.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="${放置ext的目录}/ext-all.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="${放置ext的目录}/ext-lang-zh_CN.js"&gt;&lt;/script&gt;</pre> 
+<p style="margin-top: 0px; margin-right: auto; margin-bottom: 10px; margin-left: auto; text-indent: 0px;">请注意js脚本的导入顺序，其他的就可以自由发挥了。</p>  
+<p></p>

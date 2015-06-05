@@ -1,0 +1,32 @@
+<p>mac 10.6.7上的apache配了半天出不来 </p> 
+<p><br> log错误如下</p> 
+<pre name="code" class="java">[Tue Apr 12 00:16:37 2011] [warn] Init: Session Cache is not configured [hint: SSLSessionCache]
+httpd: Could not reliably determine the server's fully qualified domain name, using lich0079matoMacBook-Pro.local for Se
+rverName
+[Tue Apr 12 00:16:42 2011] [notice] Digest: generating secret for digest authentication ...
+[Tue Apr 12 00:16:42 2011] [notice] Digest: done
+[Tue Apr 12 00:16:42 2011] [notice] Apache/2.2.17 (Unix) mod_ssl/2.2.17 OpenSSL/0.9.8l DAV/2 PHP/5.2.9 configured -- resuming normal operations
+[Tue Apr 12 00:18:26 2011] [notice] child pid 92 exit signal Segmentation fault (11)
+[Tue Apr 12 00:18:28 2011] [notice] child pid 341 exit signal Segmentation fault (11)
+[Tue Apr 12 00:18:30 2011] [notice] child pid 351 exit signal Segmentation fault (11)
+[Tue Apr 12 00:18:33 2011] [notice] child pid 352 exit signal Segmentation fault (11)[Tue Apr 12 00:18:40 2011] [notice] child pid 353 exit signal Segmentation fault (11)
+[Tue Apr 12 00:18:41 2011] [notice] child pid 365 exit signal Segmentation fault (11)
+[Tue Apr 12 00:18:49 2011] [notice] child pid 366 exit signal Segmentation fault (11)[Tue Apr 12 00:18:58 2011] [notice] child pid 367 exit signal Segmentation fault (11)</pre> 
+<p>&nbsp;google了下</p> 
+<p>http://discussions.apple.com/thread.jspa?threadID=2712112&amp;tstart=45</p> 
+<p>这篇文字里提到php的问题， 我装本地wiki的时候好像是装过一个老版本的php</p> 
+<p>但卸载很麻烦啊</p> 
+<p>&nbsp;</p> 
+<p>http://lisaandroger.com/2009/08/upgrading-to-mac-os-x-10-6-snow-leopard/</p> 
+<p>这篇文字提到 </p> 
+<p>Open /etc/apache2/httpd.conf and uncomment line 115</p> 
+<div class="codesnip-container"> 
+ <div class="ini codesnip" style="font-family: monospace;">
+  LoadModule php5_module &nbsp; &nbsp; &nbsp;libexec/apache2/libphp5.so
+ </div> 
+ <div class="ini codesnip" style="font-family: monospace;">
+  <br>
+ </div> 
+</div> 
+<p>抱着试下的想法，去掉注释，重启，就好了</p> 
+<p>折磨人啊</p>

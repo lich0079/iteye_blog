@@ -1,0 +1,13 @@
+<p>Filters 'com.lich0079.services.CustomAuthenticationProcessingFilter[ order=700; ]' and 'org.springframework.security.ui.webapp.AuthenticationProcessingFilter[ order=700; ]' have the same 'order' value. When using custom filters, please make sure the positions do not conflict with default filters. Alternatively you can disable the default filters by removing the corresponding child elements from &lt;http&gt; and avoiding the use of &lt;http auto-config='true'&gt;.</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">&lt;beans:bean id="customAuthenticationProcessingFilter"
+		class="com.lich0079.services.CustomAuthenticationProcessingFilter"&gt;
+		&lt;custom-filter position="AUTHENTICATION_PROCESSING_FILTER" /&gt;
+		&lt;beans:property name="authenticationManager" ref="_authenticationManager"/&gt;
+        &lt;beans:property name="defaultTargetUrl" value="/"/&gt;
+		
+		&lt;!--
+			before|position|after
+		--&gt;
+	&lt;/beans:bean&gt;</pre> 
+<p>&nbsp;position 改成 before</p>

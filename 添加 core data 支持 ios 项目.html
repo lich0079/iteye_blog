@@ -1,0 +1,182 @@
+<p>网上很多教程包括apple自己的都是从一个core data的模板项目教起， 没有一个怎么在既有的项目上添加core data的方法（也许有，反正我没找到）， 下面就是自己研究的添加core data的步骤， 我用的是mac os x 10.6.7, xcode4.0.0</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>1. &nbsp;添加core data framework&nbsp;</p> 
+<p>xcode中选中项目根，在右边的面板中选中targets下面的项目名，再在右边选中 Build Phases, 再选中Link Binary with Libraries, &nbsp;点加号添加core data 框架</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;&nbsp; 在项目中找一个xx.pch的文件， 加上一行 &nbsp;<span style="font-size: 14px; font-family: Menlo; color: #ff434c;"><span style="color: #ffffff;">&nbsp; &nbsp; </span> <span style="color: #ef8f62;">#import </span> &lt;CoreData/CoreData.h&gt;</span> </p> 
+<p>&nbsp;</p> 
+<p>2. 在项目的XXXAppDelegate.h 文件中 加入</p> 
+<p>&nbsp;</p> 
+<pre class="c" name="code">@property (nonatomic, retain, readonly) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
+@property (nonatomic, retain, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+
+- (void)saveContext;
+- (NSURL *)applicationDocumentsDirectory;</pre> &nbsp; 
+<p>XXXAppDelegate.m文件中加入</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="c" name="code">@synthesize managedObjectContext=__managedObjectContext;//session
+
+@synthesize managedObjectModel=__managedObjectModel;
+
+@synthesize persistentStoreCoordinator=__persistentStoreCoordinator;
+
+
+
+//相当与持久化方法
+- (void)saveContext
+{
+    NSError *error = nil;
+    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
+    if (managedObjectContext != nil)
+    {
+        if ([managedObjectContext hasChanges] &amp;&amp; ![managedObjectContext save:&amp;error])
+        {
+            /*
+             Replace this implementation with code to handle the error appropriately.
+             
+             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
+             */
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        } 
+    }
+}
+
+
+#pragma mark - Core Data stack
+
+/**
+ Returns the managed object context for the application.
+ If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
+ */</pre> 
+<pre class="c" name="code">//初始化context对象</pre> 
+<pre class="c" name="code">- (NSManagedObjectContext *)managedObjectContext</pre> 
+<pre class="c" name="code">{
+    if (__managedObjectContext != nil)
+    {
+        return __managedObjectContext;
+    }
+    
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    if (coordinator != nil)
+    {
+        __managedObjectContext = [[NSManagedObjectContext alloc] init];
+        [__managedObjectContext setPersistentStoreCoordinator:coordinator];
+    }
+    return __managedObjectContext;
+}
+
+/**
+ Returns the managed object model for the application.
+ If the model doesn't already exist, it is created from the application's model.
+ */
+- (NSManagedObjectModel *)managedObjectModel
+{
+    if (__managedObjectModel != nil)
+    {
+        return __managedObjectModel;
+    }</pre> 
+<pre class="c" name="code">//这里的URLForResource:@"lich" 的url名字（lich）要和你建立datamodel时候取的名字是一样的，至于怎么建datamodel很多教程讲的很清楚
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"lich" withExtension:@"momd"];
+    __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];    
+    return __managedObjectModel;
+}
+
+/**
+ Returns the persistent store coordinator for the application.
+ If the coordinator doesn't already exist, it is created and the application's store added to it.
+ */
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
+{
+    if (__persistentStoreCoordinator != nil)
+    {
+        return __persistentStoreCoordinator;
+    }
+    //这个地方的lich.sqlite名字没有限制，就是一个数据库文件的名字
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"lich.sqlite"];
+    
+    NSError *error = nil;
+    __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+    if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&amp;error])
+    {
+        /*
+         Replace this implementation with code to handle the error appropriately.
+         
+         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
+         
+         Typical reasons for an error here include:
+         * The persistent store is not accessible;
+         * The schema for the persistent store is incompatible with current managed object model.
+         Check the error message to determine what the actual problem was.
+         
+         
+         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
+         
+         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
+         * Simply deleting the existing store:
+         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
+         
+         * Performing automatic lightweight migration by passing the following dictionary as the options parameter: 
+         [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+         
+         Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
+         
+         */
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }    
+    
+    return __persistentStoreCoordinator;
+}
+
+#pragma mark - Application's Documents directory
+
+/**
+ Returns the URL to the application's Documents directory.
+ */
+- (NSURL *)applicationDocumentsDirectory
+{
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+}</pre> 
+<p>&nbsp;</p> 
+<p>因为加入了新的属性，自己记得去release</p> 
+<p>&nbsp;</p> 
+<p>这里比较奇怪的一点是<span style="white-space: pre;">RLForResource:@"lich" withExtension:@"momd"]; 扩展名是momd 而不是xcdatamodeld，不明白</span> </p> 
+<p>&nbsp;</p> 
+<p>上面很多代码是从core data模板项目里copy过来的，大致的意思就是先建立一个<span style="white-space: pre;">managedObjectModel, </span> </p> 
+<p><span style="white-space: pre;">然后根据</span> <span style="white-space: pre;">managedObjectModel</span> <span style="white-space: pre;">建立</span> <span style="white-space: pre;">persistentStoreCoordinator</span> </p> 
+<p><span style="white-space: pre;">然后根据</span> <span style="white-space: pre;">persistentStoreCoordinator</span> <span style="white-space: pre;">建立</span> <span style="white-space: pre;">managedObjectContext</span> </p> 
+<p>&nbsp;</p> 
+<p>3. 然后是把<span style="white-space: pre;">managedObjectContext传给真正要使用数据的 viewcontroller</span> </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+   // NSLog(@"%@===================", [self applicationDocumentsDirectory]);
+    [self.window makeKeyAndVisible];
+    NSManagedObjectContext *context = [self managedObjectContext];
+    NSArray *array =  self.tabBarController.viewControllers;
+    for (UINavigationController *navi in array) {
+        RootView *rv = (RootView *)navi.topViewController;
+        rv.context = context;
+    }</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>我开始不明白为什么要在XXXAppDelegate中建立<span style="white-space: pre;">managedObjectContext 而不是在viewcontroller中,那样就不用传来传去了啊</span> </p> 
+<p>也许是view对象有时候会被销毁吧</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>至于其他的怎么插数据 读数据， apple教程上都有就不讲了。</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

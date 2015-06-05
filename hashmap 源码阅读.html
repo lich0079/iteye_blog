@@ -1,0 +1,124 @@
+<p>hashmap 在开发中用的很多，看下源码实现学习一下，</p> 
+<p>&nbsp;</p> 
+<p>字段</p> 
+<pre class="java" name="code">    static final int DEFAULT_INITIAL_CAPACITY = 16;//默认的数组长度
+
+
+    static final int MAXIMUM_CAPACITY = 1 &lt;&lt; 30;//最大的数组长度
+
+
+    static final float DEFAULT_LOAD_FACTOR = 0.75f;//默认负载比率，数组不会全部填满数据 
+
+  
+    transient Entry[] table;//hashmap内部也是用数组来存储数据
+
+
+    transient int size;//实际存的数据的个数
+
+ 
+    int threshold;//实际当前可以存的数据量 = loadFactor*table.length
+ 
+
+    final float loadFactor; //实际的负载比率</pre> 
+<p>&nbsp;</p> 
+<p>构造方法</p> 
+<pre class="java" name="code">    public HashMap(int initialCapacity, float loadFactor) {
+        if (initialCapacity &lt; 0)
+            throw new IllegalArgumentException("Illegal initial capacity: " +
+                                               initialCapacity);
+        if (initialCapacity &gt; MAXIMUM_CAPACITY)
+            initialCapacity = MAXIMUM_CAPACITY;
+        if (loadFactor &lt;= 0 || Float.isNaN(loadFactor))
+            throw new IllegalArgumentException("Illegal load factor: " +
+                                               loadFactor);
+
+        // Find a power of 2 &gt;= initialCapacity
+        int capacity = 1;
+        while (capacity &lt; initialCapacity)
+            capacity &lt;&lt;= 1;    //不管你希望的初始长度是多少，系统都是对1做移位运算，最后的结果只能是2的次方
+
+        this.loadFactor = loadFactor;
+        threshold = (int)(capacity * loadFactor);  //计算实际容量
+        table = new Entry[capacity];  // 初始数组
+        init();    //留给子类实现的一些操作，默认空
+    }</pre> 
+<p>&nbsp;</p> 
+<p>put方法</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">    public V put(K key, V value) {
+        if (key == null)
+            return putForNullKey(value);
+        int hash = hash(key.hashCode());
+        int i = indexFor(hash, table.length);
+        for (Entry&lt;K,V&gt; e = table[i]; e != null; e = e.next) {
+            Object k;
+            if (e.hash == hash &amp;&amp; ((k = e.key) == key || key.equals(k))) {
+                V oldValue = e.value;
+                e.value = value;
+                e.recordAccess(this);
+                return oldValue;
+            }
+        }
+
+        modCount++;
+        addEntry(hash, key, value, i);
+        return null;
+    }</pre> 
+<p>&nbsp;// 首先根据内部的一个hash算法计算出key对应的hash值(防止key本身的hashcode实现很差)，再根据这个hash值和表的长度算出一个数组的index值，&nbsp; 然后在数组的该index值上看有没有存东西，东西一不一致(equals)，不一致查找entry链表下一个（关于链表下面有说明），直到找到一个null, 就可以确定没有了，然后准备插入</p> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">    void addEntry(int hash, K key, V value, int bucketIndex) {
+	Entry&lt;K,V&gt; e = table[bucketIndex];
+        table[bucketIndex] = new Entry&lt;K,V&gt;(hash, key, value, e);
+        if (size++ &gt;= threshold)
+            resize(2 * table.length);
+    }</pre> 
+<p>&nbsp;entry</p> 
+<pre class="java" name="code">    static class Entry&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {
+        final K key;
+        V value;
+        Entry&lt;K,V&gt; next;
+        final int hash;
+
+        /**
+         * Creates new entry.
+         */
+        Entry(int h, K k, V v, Entry&lt;K,V&gt; n) {
+            value = v;
+            next = n;
+            key = k;
+            hash = h;
+        }</pre> 
+<p>&nbsp;entry实际上是在实现单向链表结构，每一个entry内部有一个next指向他的后面,所以hashmap的内部数组每个格子存放的是实际上是一个链表的火车头，在最开始的时候table[index]位置上肯定是null，这个就是火车尾了。所以get的时候查找操作是以null为循环终点判断依据的。</p> 
+<p>在插入的时候把新加的元素替代原来的成为链表火车头，把之前元素的放在新加的火车头后面，</p> 
+<p>这么做是因为不同的key是有可能算出相同的hash值的，这种情况的时候，他们都会存放在数组的同一个index位置上，相同的hash不同的key的值彼此用链表连接起来，</p> 
+<p>&nbsp;</p> 
+<p>get</p> 
+<pre class="java" name="code">    public V get(Object key) {
+        if (key == null)
+            return getForNullKey();
+        int hash = hash(key.hashCode());
+        for (Entry&lt;K,V&gt; e = table[indexFor(hash, table.length)];
+             e != null;
+             e = e.next) {
+            Object k;
+            if (e.hash == hash &amp;&amp; ((k = e.key) == key || key.equals(k)))
+                return e.value;
+        }
+        return null;
+    }</pre> 
+<p>&nbsp;get的时候就是算出key的hash值，算出数组的index位置，然后到数组的index位置上去遍历链表找到相应的key，如果hash重复的少的话，链表的长度就会很短，hashmap查找的速度就很快了，即使有重复，接下来就是遍历链表，所以要依靠好的算法保证hash重复的概率小，缩短链表的长度</p> 
+<p>&nbsp;</p> 
+<p>假如2个对象的key最后算出来的index值一样呢， 就是这2个对象存在一条链表上， 那么get的时候会不会拿错了呢</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<pre class="java" name="code">if (e.hash == hash &amp;&amp; ((k = e.key) == key || key.equals(k)))</pre> 
+<p>&nbsp;</p> 
+<p>看这行代码就知道了， 链表上的实体存了自己的key的， 所以即使不同的实体是放在一个index上，也可以通过不同的key来区分的</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

@@ -1,0 +1,231 @@
+<p>启动Memcache的服务器端：<br> /usr/local/bin/memcached -d -u root </p> 
+<p>&nbsp;</p> 
+<p>设置vsftpd上传根路径</p> 
+<p>local_root=/home/lich/upload</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>设置 dns&nbsp; </p> 
+<p>vi /etc/resolv.conf&nbsp; </p> 
+<p>&nbsp;</p> 
+<p>nameserver 202.96.209.5<br> nameserver 202.96.199.132<br> nameserver 202.96.199.133</p> 
+<p>&nbsp;</p> 
+<p>/etc/init.d/networking restart</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>编译安装mysql 改变安装路径 数据路径</p> 
+<p>./configure --prefix=/usr/local/mysql --localstatedir=/usr/local/mysql/data </p> 
+<p>make</p> 
+<p>make install</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>改变源</p> 
+<p><span style="font-size: x-small;"> vi /etc/apt/sources.list</span> </p> 
+<p>apt-get update</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>端口使用 情况&nbsp; netstat -lnp --ip</p> 
+<p>netstat -utdlp</p> 
+<p>&nbsp;</p> 
+<p>ifconfig&nbsp;&nbsp; //ip<br><br> inittab&nbsp; //modify init level<br><br> startx&nbsp;&nbsp; 图形界面<br><br> rm -r -f&nbsp; remove<br><br> mkdir&nbsp;&nbsp;&nbsp; make directory<br><br> rmdir&nbsp;&nbsp; remove <br><br> ls -l<br><br> touch&nbsp; 创建<br><br><br> mv&nbsp;&nbsp;&nbsp; move&nbsp; rename <br><br> cp&nbsp; copy&nbsp;&nbsp; -r<br><br><br> find&nbsp; /etc -name inittab <br><br> whereis&nbsp;&nbsp; java<br><br><br> echo $PATH<br><br><br> ln 3.txt 4&nbsp; 联结&nbsp; -s<br><br><br> useradd lich <br><br> passwd lich<br><br> groupadd testuser<br><br> usermod&nbsp; -g testuser lich<br><br><br> su lich&nbsp; //switch user<br><br> chmod +x filename// chmod u+x&nbsp;&nbsp; chmod g+x&nbsp; chmod o+x<br><br> chown&nbsp;&nbsp; //change file owner and group<br><br> wc&nbsp; //word count<br><br> grep keyword filename<br><br><br> ctrl+c&nbsp;&nbsp; //cancel job<br><br> lssss 2&gt;cmd.txt&nbsp; 错误输出<br><br> service vsftpd start<br><br><br><br> vsftpd<br><br> vsftpd.conf&nbsp;&nbsp; <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; anon_root=/&nbsp; //access to all directory<br><br> allow root access&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete root in vsftp.user_list&nbsp; vsftpd.user<br><br> [root@localhost etc]# vi vsftpd.ftpusers<br> [root@localhost etc]# vi vsftpd.user_list<br> [root@localhost etc]# vi vsftpd.user_list<br><br><br> vsftpd auto start&nbsp; <br> &nbsp; 1.&nbsp; vi /etc/rc.local&nbsp; add&nbsp;&nbsp; /usr/sbin/vsftpd&nbsp; <br> &nbsp; 2.&nbsp;&nbsp; chkconfig vsftpd on<br><br><br> apache&nbsp; decompress<br><br> gzip -d apache-tomcat.gz<br> tar -xvf apr.tar<br><br> /etc/rc.local<br> /etc/profile<br><br><br> JAVA_HOME=/usr/java/jdk1.6.0_03<br> export JAVA_HOME<br><br> service iptables stop<br><br> rpm -qa&nbsp;&nbsp; //all install package<br> rpm -e&nbsp; --nodeps&nbsp; //uninstall<br> rpm -ivh</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<div class="quote-content">
+ wget 
+ <a target="_blank" href="http://blog.s135.com/soft/linux/webbench/webbench-1.5.tar.gz">http://blog.s135.com/soft/linux/webbench/webbench-1.5.tar.gz</a> 
+ <br> tar zxvf webbench-1.5.tar.gz
+ <br> cd webbench-1.5
+ <br> make &amp;&amp; make install
+</div> 
+<p><br> 　　3、使用：</p> 
+<div class="quote"> 
+ <div class="quote-title">
+  引用
+ </div> 
+ <div class="quote-content">
+  webbench -c 500 -t 30 
+  <a target="_blank" href="http://127.0.0.1/test.jpg">http://127.0.0.1/test.jpg</a> 
+ </div> 
+</div> 
+<p>　 　参数说明：-c表示并发数，-t表示时间(秒)<br><br> 　　4、测试结果示例：</p> 
+<div class="quote"> 
+ <div class="quote-title">
+  引用
+ </div> 
+ <div class="quote-content">
+  Webbench - Simple Web Benchmark 1.5
+  <br> Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+  <br>
+  <br> Benchmarking: GET 
+  <a target="_blank" href="http://127.0.0.1/test.jpg">http://127.0.0.1/test.jpg</a> 
+  <br> 500 clients, running 30 sec.
+  <br>
+  <br> Speed=3230 pages/min, 11614212 bytes/sec.
+  <br> Requests: 1615 susceed, 0 failed.
+ </div> 
+ <div class="quote-content">
+  <br>
+ </div> 
+ <div class="quote-content">
+  <br>
+ </div> 
+ <div class="quote-content"> 
+  <div class="postTitle"> 
+   <h1> <a class="postTitle2" href="http://www.cnblogs.com/uhome/archive/2009/12/02/1615645.html">Ubuntu Linux配置IP地址</a> </h1> 
+  </div> 
+  <span style="font-size: 12pt;"><strong>一、使用命令设置ubuntu的ip地址<br></strong> </span> 
+  <br>
+  <span style="font-size: 12pt;">1.修改配置文件blacklist.conf禁用IPV6：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo vi /etc/modprobe.d/blacklist.conf</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">2.在文档最后添加 blacklist ipv6，然后查看修改结果：<br></span> 
+  <span style="font-size: 12pt; color: #0000ff;">cat /etc/modprobe.d/blacklist.conf</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">3.设置IP（设置网卡eth0的IP地址和子网掩码）</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo ifconfig eth0 192.168.2.1 netmask 255.255.255.0</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">4.设置网关</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo route add default gw 192.168.2.254</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">5. 设置DNS 修改/etc/resolv.conf，在其中加入nameserver DNS的地址1 和 nameserver DNS的地址2 完成。<br></span> 
+  <br>
+  <span style="font-size: 12pt;">6.重启网络服务（若不行，请重启 ubuntu：sudo reboot）：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo /etc/init.d/networking restart</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">7. 查看当前IP：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">ifconfig</span> 
+  <br>
+  <br>
+  <span style="font-size: 12pt;"><strong>二、直接修改系统配置文件<br></strong> </span> 
+  <br>
+  <span style="font-size: 12pt;">ubuntu的网络配置文件是：/etc/network/interfaces</span> 
+  <br>
+  <span style="font-size: 12pt;">打开后里面可设置DHCP或手动设置静态ip。前面auto eth0，让网卡开机自动挂载。</span> 
+  <br>
+  <span style="font-size: 12pt;">1. 以DHCP方式配置网卡</span> 
+  <br>
+  <span style="font-size: 12pt;">编辑文件/etc/network/interfaces：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo vi /etc/network/interfaces</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">并用下面的行来替换有关eth0的行：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;"># The primary network interface - use DHCP to find our address</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">auto eth0</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">iface eth0 inet dhcp</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">用 下面的命令使网络设置生效：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo /etc/init.d/networking restart</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">也可以在命令行下直接输入下面的命令来 获取地址</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo dhclient eth0</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">2. 为网卡配置静态IP地址</span> 
+  <br>
+  <span style="font-size: 12pt;">编辑文件/etc/network/interfaces：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo vi /etc/network/interfaces</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">并用下面的行来替换有关eth0的行：</span> 
+  <br>
+  <span style="font-size: 12pt;"># The primary network interface</span> 
+  <br>
+  <span style="font-size: 12pt;">auto eth0</span> 
+  <br>
+  <span style="font-size: 12pt;">iface eth0 inet static</span> 
+  <br>
+  <span style="font-size: 12pt;">address 192.168.2.1</span> 
+  <br>
+  <span style="font-size: 12pt;">gateway 192.168.2.254</span> 
+  <br>
+  <span style="font-size: 12pt;">netmask 255.255.255.0</span> 
+  <br>
+  <span style="font-size: 12pt;">#network 192.168.2.0</span> 
+  <br>
+  <span style="font-size: 12pt;">#broadcast 192.168.2.255<br></span> 
+  <br>
+  <span style="font-size: 12pt;">将上面的ip地址等信息换成 你自己就可以了.用下面的命令使网络设置生效：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo /etc/init.d/networking restart</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">3. 设定第二个IP地址(虚拟IP地址)</span> 
+  <br>
+  <span style="font-size: 12pt;">编辑文件/etc /network/interfaces：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo vi /etc/network/interfaces</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">在 该文件中添加如下的行：</span> 
+  <br>
+  <span style="font-size: 12pt;">auto eth0:1</span> 
+  <br>
+  <span style="font-size: 12pt;">iface eth0:1 inet static</span> 
+  <br>
+  <span style="font-size: 12pt;">address x.x.x.x</span> 
+  <br>
+  <span style="font-size: 12pt;">netmask x.x.x.x</span> 
+  <br>
+  <span style="font-size: 12pt;">network x.x.x.x</span> 
+  <br>
+  <span style="font-size: 12pt;">broadcast x.x.x.x</span> 
+  <br>
+  <span style="font-size: 12pt;">gateway x.x.x.x<br></span> 
+  <br>
+  <span style="font-size: 12pt;">根据你的情况填上所有诸如address,netmask,network,broadcast和 gateways等信息：</span> 
+  <br>
+  <span style="font-size: 12pt;">用下面的命令使网络设置生效：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo /etc/init.d/networking restart</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <span style="font-size: 12pt;">4. 设置主机名称(hostname)</span> 
+  <br>
+  <span style="font-size: 12pt;">使用下面的命令来查看当前主机的主机名称：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo /bin/hostname</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">使 用下面的命令来设置当前主机的主机名称：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo /bin/hostname newname</span> 
+  <span style="font-size: 12pt;"><br></span> 
+  <br>
+  <span style="font-size: 12pt;">系 统启动时,它会从/etc/hostname来读取主机的名称。<br></span> 
+  <br>
+  <span style="font-size: 12pt;">5. 配置DNS</span> 
+  <br>
+  <span style="font-size: 12pt;">首先，你可以在/etc /hosts中加入一些主机名称和这些主机名称对应的IP地址，这是简单使用本机的静态查询。</span> 
+  <span style="font-size: 12pt;">要访问DNS 服务器来进行查询,需要设置/etc/resolv.conf文件，假设DNS服务器的IP地址是192.168.2.2, 那么/etc/resolv.conf文件的内容应为：</span> 
+  <br>
+  <span style="font-size: 12pt;">search chotim.com</span> 
+  <br>
+  <span style="font-size: 12pt;">nameserver 192.168.2.2<br></span> 
+  <br>
+  <span style="font-size: 12pt;">6.手动重启网络服务：</span> 
+  <br>
+  <span style="font-size: 12pt; color: #0000ff;">sudo /etc/init.d/networking restart</span> 
+  <br>
+  <br>
+  <span style="font-size: 12pt;">返回结果如下：</span> 
+  <br>
+  <span style="font-size: 12pt;">*Reconfiguring network interfaces… [OK]</span> 
+ </div> 
+</div>

@@ -1,0 +1,49 @@
+<p>1、把pushlet.jar放到&nbsp; WebRoot\WEB-INF\lib下，添加进classpath</p> 
+<p>&nbsp;</p> 
+<p>2、把pushlet.properties，sources.properties放到 WebRoot\WEB-INF下，一个是pushlet的配置文件，一个是事件源的配置文件，如果没有用到她的事件源可以不要sources.properties，我用到了他的“/pushlet/ping”事件来保持响应，所以我加了</p> 
+<p>&nbsp;</p> 
+<p>3、添加pushlet 的ajax客户端js文件到你的项目中&nbsp; ajax-pushlet-client.js,并在用到的页面引入，这个文件封装了一些ajax访问的方法，用他提供的接口可以很方便的发布消息，订阅消息，至于他提供了什么方法，要看这个js文件的代码，很简单的，就700行，一看就懂，pushlet的源码也是，其实pushlet框架就是一个人写的，相当小型的框架，这个js文件里默认是把 PL._init() 方法和window的onload绑到一起了，和ext一起用的时候起冲突了，所以后来我把他注掉了，就在文件的最后一行， 然后在我用到pushet的时候在我自己的js代码里面先执行PL._init() ，然后才开始PL.joinListen('/pushlet/ping')，这个PL就是pushlet的客户端js对象</p> 
+<p>&nbsp;</p> 
+<p>4、在你的web.xml里添加pushlet的servlet，这个是用来给ajax访问用的</p> 
+<pre class="java" name="code">&lt;servlet&gt;
+        &lt;servlet-name&gt;pushlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;nl.justobjects.pushlet.servlet.Pushlet&lt;/servlet-class&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+
+    &lt;!-- Define the Servlet Mappings. --&gt;
+
+    &lt;!-- The pushlet --&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;pushlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/desktop/pushlet.srv&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt; </pre> 
+<p>&nbsp;这里需要注意的一点是，上面我映射的是/desktop/pushlet.srv，那是因为当时我引用ajax-pushlet-client.js的页面是<a href="http://localhost:8080/myproject/desktop/desktop.html">http://localhost:8080/myproject/desktop/desktop.html</a> ,在ajax-pushlet-client.js中，默认定义的访问地址是</p> 
+<p>PL.pushletURL = PL._getWebRoot() + 'pushlet.srv';&nbsp;&nbsp; 在我的应用中，他去访问的就是<span style="color: #0000ff;"><span style="text-decoration: underline;">/myproject/desktop</span> </span> <span style="color: #000000;">/pushlet.srv，最开始我写的是/pushlet.srv，出错了，才改成/desktop/pushlet.srv的，所以你在不同的页面调用时，要注意映射路径</span> </p> 
+<p><span style="color: #000000;">当然你也可以再PL初始化后在去改PL.pushletURL，这是公共属性，应该可以改的，然后写一个固定的url-pattern去访问</span> </p> 
+<p>&nbsp;</p> 
+<p>上面都配好后，就可以再你的页面中使用pushlet的方法了,主要是使用PL对象,使用前先PL._init(),然后怎么用就得看文档，看例子了，我写了一个简单的列子就是在页面中调用</p> 
+<p>PL._init();<br> PL.joinListen('/pushlet/ping'); </p> 
+<p>'/pushlet/ping'事件是pushelt自己的一个事件源例子，我调用的就是他，会每隔几秒就发个事件给客户端</p> 
+<p>&nbsp;</p> 
+<p>pushlet事件接受的时候会对窗口的状态栏写信息，看到这些就知道当前的pushlet的运行状态了</p> 
+<p>&nbsp;</p> 
+<p>等待消息中</p> 
+<p><img height="274" alt="" src="/upload/attachment/132501/83acc034-4e95-36f1-9ae7-b9868b08399a.bmp" width="274"></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>接受数据中</p> 
+<p><img height="273" alt="" src="/upload/attachment/132503/70724a0c-cc2c-3069-8c04-6ae674af226d.bmp" width="269"></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>下面是我的列子</p> 
+<p><img height="252" alt="" src="/upload/attachment/132507/672bd363-092b-30b0-a85d-026bfee130eb.bmp" width="224"></p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>下面有完整的列子下载</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;这个列子相当简单，要看复杂的看我javaeye博客上自己写的一个bsIM的即时聊天工具的列子，上面对于怎么调用pushelt 的ajax客户端方法有比较多的例子，注释也算详细</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

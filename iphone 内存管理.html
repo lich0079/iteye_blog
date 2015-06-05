@@ -1,0 +1,65 @@
+<br>http://www.robinlu.com/blog/archives/page/4 
+<br> 
+<br> 
+<br>开发iPhone 应用程序并不难，基本上就是三个词 - “memory, memory, memory” 。iPhone OS 对内存的要求很严格，有memory leak ，杀掉；内存使用超限额，杀掉。一个经过测试的程序，在使用过程中90%以上的崩溃都是内存问题造成的。在这里简单总结一下Object-C 内存管理。 
+<br>基本概念 
+<br> 
+<br>Object-C 的内存管理基于引用计数(Reference Count)这种非常常用的技术。简单讲，如果要使用一个对象，并希望确保在使用期间对象不被释放，需要通过函数调用来取得“所有权”，使用结束后再调用函数释放“所有权”。“所有权”的获得和释放，对应引用计数的增加和减少，为正数时代表对象还有引用，为零时代表可以释放。 
+<br>函数 
+<br> 
+<br>获得所有权的函数包括 
+<br> 
+<br>&nbsp;&nbsp;&nbsp; * alloc - 创建对象是调用alloc，为对象分配内存，对象引用计数加一。 
+<br>&nbsp;&nbsp;&nbsp; * copy - 拷贝一个对象，返回新对象，引用计数加一。 
+<br>&nbsp;&nbsp;&nbsp; * retain - 引用计数加一，获得对象的所有权。 
+<br> 
+<br>另外，名字中带有alloc, copy, retain 字串的函数也都认为会为引用计数加一。 
+<br> 
+<br>释放所有权的函数包括 
+<br> 
+<br>&nbsp;&nbsp;&nbsp; * release - 引用计数减一，释放所有权。如果引用计数减到零，对象会被释放。 
+<br>&nbsp;&nbsp;&nbsp; * autorelease - 在未来某个时机释放。下面具体解释。 
+<br> 
+<br>autorelease 
+<br> 
+<br>在某些情况下，并不想取得所有权，又不希望对象被释放。例如在一个函数中生成了一个新对象并返回，函数本身并不希望取得所有权，因为取得后再没有机会释放（除非创造出新的调用规则，而调用规则是一切混乱的开始），又不可能在函数内释放，可以借助autorelease 。所谓autorelease , 可以理解为把所有权交给一个外在的系统（这个系统实际上叫autorelease pool），由它来管理该对象的释放。通常认为交给 autorelease 的对象在当前event loop 中都是有效的。也可以自己创建NSAutoreleasePool 来控制autorelease的过程。 
+<br> 
+<br>据苹果的人说，autorelease效率不高，所以能自己release的地方，尽量自己release，不要随便交给autorelease来处理。 
+<br>规则 
+<br> 
+<br>引用计数系统有自己的引用规则，遵守规则就可以少出错： 
+<br> 
+<br>&nbsp;&nbsp;&nbsp; * 获得所有权的函数要和释放所有权的函数一一对应。 
+<br>&nbsp;&nbsp;&nbsp; * 保证只有带alloc, copy, retain 字串的函数才会让调用者获得所有权，也就是引用计数加一。 
+<br>&nbsp;&nbsp;&nbsp; * 在对象的 dealloc函数中释放对象所拥有的实例变量。 
+<br>&nbsp;&nbsp;&nbsp; * 永远不要直接调用dealloc来释放对象，完全依赖引用计数来完成对象的释放。 
+<br> 
+<br>有很多类都提供“便利构造函数(convenience constructors)”，它们创建对象但并不增加引用计数，意味着不需要调用release来释放所有权。很好辨认，它们的名字中不会有alloc和copy。 
+<br> 
+<br>只要遵守这些规则，基本上可以消除所有Intrument可以发现的内存泄露问题。 
+<br>容器 
+<br> 
+<br>类似NSArray, NSDictionary, NSSet 等类，会在对象加入后引用计数加一获得所有权，在对象被移除或者整个容器对象被释放的时候释放容器内对象的所有权。类似的情况还有UIView对 subview的所有权关系，UINavigationController对其栈上的controller的所有权关系等等。 
+<br>其他所有权的产生 
+<br> 
+<br>还有一些用法会让系统拥有对象的所有权。比如NSObject 的performSelector:withObject:afterDelay 。如果有必要，需要显示的调用cancelPreviousPerformRequestsWithTarget:selector:object: ，否则有可能产生内存泄露。 
+<br> 
+<br>因这种原因产生的泄露因为并不违反任何规则，是Intrument所无法发现的。 
+<br>循环引用 
+<br> 
+<br>所有的引用计数系统，都存在循环应用的问题。例如下面的引用关系： 
+<br> 
+<br>&nbsp;&nbsp;&nbsp; * 对象a创建并引用到了对象b. 
+<br>&nbsp;&nbsp;&nbsp; * 对象b创建并引用到了对象c. 
+<br>&nbsp;&nbsp;&nbsp; * 对象c创建并引用到了对象b. 
+<br> 
+<br>这时候b和c的引用计数分别是2和1。当a不再使用b，调用release释放对b的所有权，因为c还引用了b，所以b的引用计数为1，b不会被释放。b不释放，c的引用计数就是1，c也不会被释放。从此，b和c永远留在内存中。 
+<br> 
+<br>这种情况，必须打断循环引用，通过其他规则来维护引用关系。比如，我们常见的delegate往往是assign方式的属性而不是retain方式的属性，赋值不会增加引用计数，就是为了防止delegation两端产生不必要的循环引用。如果一个UITableViewController 对象a通过retain获取了UITableView对象b的所有权，这个UITableView对象b的delegate又是a，如果这个delegate是retain方式的，那基本上就没有机会释放这两个对象了。自己在设计使用delegate模式时，也要注意这点。 
+<br> 
+<br>因为循环引用而产生的内存泄露也是Instrument无法发现的，所以要特别小心。 
+<br> 
+<br>一些和内存管理相关的有用内容： 
+<br>Practical Memory Management 
+<br>Reference counting 
+<br>

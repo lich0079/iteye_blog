@@ -1,0 +1,24 @@
+<h3>1.2.1. Direct Publishing (local)</h3> 
+<div class="MAIN"> 
+ <p> Your application may directly publish Events by using <span style="font-family: courier;">/src/nl/justobjects/pushlet/core/Dispatcher.getInstance().java</span> . Since Dispatcher is (currently) a Singleton, sending the Event is a matter of calling<span style="font-family: courier;">Dispatcher.getInstance().multicast()/unicast()/broadcast()</span> . </p> 
+ <p> The other two methods (EventSource and Pushlet protocol) will eventually call <span style="font-family: courier;">Dispatcher.getInstance().multicast()/unicast()/broadcast()</span> . </p> 
+ <p> Note that in order to call <span style="font-family: courier;">Dispatcher.getInstance().multicast()/unicast()/broadcast()</span> , your class needs to be in the same classloader as the Dispatcher.getInstance(). This may be an issue when for example your sender is in another web application. You may use the Pushlet protocol in that case or put pushlet.jar on the system CLASSPATH. In Tomcat you can also make pushlet.jar a shared library. </p> 
+ <p>&nbsp;</p> 
+ <p>直接用<span style="font-family: courier;">Dispatcher的方法发布，可以向所有人广播，发布给订阅者，指定sessionid发布<br></span> </p> 
+</div> 
+<p> <a name="A1195909747017"></a> <a name="s1.2.2."></a> </p> 
+<h3>1.2.2. Using EventSource</h3> 
+<div class="MAIN"> 
+ <p> An EventSource is an object that is managed (activated/passivated) by the Pushlet framework. Developing your own EventSource involves creating a class that implements <span style="font-family: courier;">nl.justobjects.pushlet.core.EventSource</span> (when your EventSource pushes Events to the framework) or that extends <span style="font-family: courier;">nl.justobjects.pushlet.core.EventPullSource</span> (when the framework should pull your EventSource at dedicated intervals) and adding your EventSource to a properties file aptly named<span style="font-family: courier;">sources.properties</span> . </p> 
+ <p> See <span style="font-family: courier;">/webapps/pushlet/WEB-INF/classes/sources.properties</span> for an example. This file specifies which EventSource objects need to be created and managed. Note: since v2.0.3 <span style="font-family: courier;">sources.properties</span> can also be placed under WEB-INF. See <span style="font-family: courier;">/src/nl/justobjects/pushlet/core/EventSourceManager.java</span> how this is done. See examples in <span style="font-family: courier;">/src/nl/justobjects/pushlet/test/TestEventPullSources</span> where several example sources are bundled. </p> 
+ <p> During initialization the <span style="font-family: courier;">EventSourceManager</span> will look for the file <span style="font-family: courier;">sources.properties</span> in the CLASSPATH. Usually this file will be put under WEB-INF/classes. </p> 
+ <p>一个自己写的事件源类，需要配置在<span style="font-family: courier;">sources.properties</span> ，要继承<span style="font-family: courier;">EventPullSource</span> 或实现EventSource </p> 
+</div> 
+<p> <a name="A1195909747018"></a> <a name="s1.2.3."></a> </p> 
+<h3>1.2.3. Using the Pushlet protocol</h3> 
+<div class="MAIN"> 
+ <p> The Chat and WebPresentation examples use the remote publication of events through the Pushlet (control) protocol. In a webapp the Pushlet JS API provides a p_publish() method through which your app may send events. </p> 
+ <p> The <span style="font-family: courier;">/src/nl/justobjects/pushlet/test/PushletPingApplication.java</span> provides a complete example illustrating sending and receiving Events and using<span style="font-family: courier;">/src/nl/justobjects/pushlet/client/PushletClient.java</span> . DHTML clients may use the JavaScript pushlet library. </p> 
+ <p>&nbsp;</p> 
+ <p>使用pushlet 协议 收发交互 &nbsp; ，&nbsp; 可以跨服务器 </p> 
+</div>

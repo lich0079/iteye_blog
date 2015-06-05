@@ -1,0 +1,38 @@
+<p>任务</p> 
+<p><span style="white-space: pre;"> </span>&nbsp;找出文件夹下所有png的文件的文件名， 复制xxx.html &nbsp;为 &nbsp; &nbsp;文件名.html</p> 
+<p><span style="white-space: pre;"> </span>并且把xxx.html内容中的xxx &nbsp;替换为 文件名</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>ls | grep .png | sed 's/\.png\*//' &nbsp; | ./cp.sh</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>cp.sh</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>while read ip</p> 
+<p>do&nbsp;</p> 
+<p>&nbsp; &nbsp;sed 's/xxx/'"$ip"'/g' &nbsp;xxx.html &gt; &nbsp;$ip.html</p> 
+<p>done</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>==============================</p> 
+<p>统计sell</p> 
+<p>&nbsp;</p> 
+<p> </p> 
+<p>awk -F\t &nbsp; /^A/' {print $5 "\t" $8 "\t" $13 "\t" $14 "\t" $16}' S_W_85347240_20120826.txt \ &nbsp;#筛选数据</p> 
+<p>&nbsp; | sort \ &nbsp; &nbsp; &nbsp;#排序</p> 
+<p>&nbsp;</p> 
+<p>&nbsp; #定义变量</p> 
+<p>&nbsp; #统计 $=US 的 销售额</p> 
+<p>&nbsp; #打印结果</p> 
+<p>&nbsp;| &nbsp;awk -F\t &nbsp;'BEGIN { print "xxx"; total = 0 } &nbsp;</p> 
+<p>&nbsp;<span style="white-space: pre;"> </span>$5 != 0 &nbsp;&amp;&amp; $3 &nbsp;== "US" {print; total += $2*$5 &nbsp;} &nbsp;</p> 
+<p>&nbsp;<span style="white-space: pre;"> </span>END {print total}'&nbsp;</p> 
+<div>
+ <br>
+</div>

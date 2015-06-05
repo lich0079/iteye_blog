@@ -1,0 +1,111 @@
+<p><strong>1) 什么是JSONP?<br></strong><span style="font-family: Verdana;">JSONP是一个非官方的协议，它允许在服务器端集成Script tags返回至客户端，通过javascript callback的形式实现跨域访问（这仅仅是JSONP简单的实现形式）。<br></span><br><strong>2) 如何使用JSONP?</strong><br>&nbsp;&nbsp;&nbsp; 1. 在客户端调用提供JSONP支持的URL Service，获取JSONP格式数据<span style="font-family: Verdana;">。<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;比如客户想访问<a href="http://www.myserver.com/myService.aspx?jsonp=callbackFunction">http://www.myserver.com/myService.aspx?<span style="color: #ff0000;">jsonp=callbackFunction</span></a></span></p> 
+<p><span style="font-family: Verdana;"><span style="color: #ff0000;">//</span><span style="color: #00ccff;">这个“json”是服务提供端规定好了的字符，不能改 “callbackFunction”是调用者回调的函数，是调用者决定的，可以改<br></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #ff0000;">假设客户期望返回JSON数据：[“customername1","customername2"]<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 那么直正返回到客户端的是: callbackFunction(</span></span><span style="font-family: Verdana;"><span style="color: #ff0000;">[“customername1","customername2"])</span></span></p> 
+<p><span style="font-family: Verdana;"><span style="color: #ff0000;">//</span><span style="color: #00ffff;">服务器返回的这个字符串被嵌入在一个<span style="color: #000000;">&lt;</span><span style="color: #000000;">script&gt;&nbsp; 标签里执行</span><br></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 可能的调用方式：</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p> 
+<div style="padding-right: 5px; padding-left: 4px; font-size: 13px; padding-bottom: 4px; width: 98%; padding-top: 4px; background-color: #eeeeee; border: #cccccc 1px solid;">
+ &lt;!--&lt;br /&gt; &lt;br /&gt; Code highlighting produced by Actipro CodeHighlighter (freeware)&lt;br /&gt; http://www.CodeHighlighter.com/&lt;br /&gt; &lt;br /&gt; --&gt;
+ <span style="color: #ff0000;"><span style="color: #000000;">&lt;</span><span style="color: #000000;">script&nbsp;type</span><span style="color: #000000;">=</span><span style="color: #000000;">"</span><span style="color: #000000;">text/javascript</span><span style="color: #000000;">"</span><span style="color: #000000;">&nbsp;src</span><span style="color: #000000;">=</span><span style="color: #000000;">"</span><span style="color: #000000;">http://www.myserver.com/myService.aspx?jsonp=callbackFunction</span><span style="color: #000000;">"</span><span style="color: #000000;">&nbsp;</span><span style="color: #000000;">/</span><span style="color: #000000;">&gt;</span></span> 
+</div> 
+<p>&nbsp;&nbsp;&nbsp; 2. 在客户端写callbackFunction函数的实现&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p> 
+<div style="padding-right: 5px; padding-left: 4px; font-size: 13px; padding-bottom: 4px; width: 98%; padding-top: 4px; background-color: #eeeeee; border: #cccccc 1px solid;">
+ &lt;!--&lt;br /&gt; &lt;br /&gt; Code highlighting produced by Actipro CodeHighlighter (freeware)&lt;br /&gt; http://www.CodeHighlighter.com/&lt;br /&gt; &lt;br /&gt; --&gt;
+ <span style="color: #000000;">&lt;</span>
+ <span style="color: #000000;">script&nbsp;type</span>
+ <span style="color: #000000;">=</span>
+ <span style="color: #000000;">"</span>
+ <span style="color: #000000;">text/javascript</span>
+ <span style="color: #000000;">"</span>
+ <span style="color: #000000;">&gt;</span>
+ <span style="color: #000000;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+ <span style="color: #0000ff;">function</span>
+ <span style="color: #000000;">&nbsp;callbackFunction(result)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+ <span><span style="color: #000000;">{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000ff;">var</span><span style="color: #000000;">&nbsp;html&nbsp;</span><span style="color: #000000;">=</span><span style="color: #000000;">&nbsp;</span><span style="color: #000000;">'</span><span style="color: #000000;">&lt;ul&gt;</span><span style="color: #000000;">'</span><span style="color: #000000;">;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000ff;">for</span><span style="color: #000000;">(</span><span style="color: #0000ff;">var</span><span style="color: #000000;">&nbsp;i&nbsp;</span><span style="color: #000000;">=</span><span style="color: #000000;">&nbsp;</span><span style="color: #000000;">0</span><span style="color: #000000;">;&nbsp;i&nbsp;</span><span style="color: #000000;">&lt;</span><span style="color: #000000;">&nbsp;result.length;&nbsp;i</span><span style="color: #000000;">++</span><span style="color: #000000;">)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span><span style="color: #000000;">{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;html&nbsp;</span><span style="color: #000000;">+=</span><span style="color: #000000;">&nbsp;</span><span style="color: #000000;">'</span><span style="color: #000000;">&lt;li&gt;</span><span style="color: #000000;">'</span><span style="color: #000000;">&nbsp;</span><span style="color: #000000;">+</span><span style="color: #000000;">&nbsp;result[i]&nbsp;</span><span style="color: #000000;">+</span><span style="color: #000000;">&nbsp;</span><span style="color: #000000;">'</span><span style="color: #000000;">&lt;/li&gt;</span><span style="color: #000000;">'</span><span style="color: #000000;">;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span></span><span style="color: #000000;"><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;html&nbsp;</span><span style="color: #000000;">+=</span><span style="color: #000000;">&nbsp;</span><span style="color: #000000;">'</span><span style="color: #000000;">&lt;/ul&gt;</span><span style="color: #000000;">'</span><span style="color: #000000;">;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>document.getElementById<span style="color: #ff0000;"><span style="color: #000000;"><strong>(</strong></span><strong><span style="color: #000000;">'</span><span style="color: #000000;">divCustomers</span><span style="color: #000000;">'</span><span style="color: #000000;">).</span></strong></span></strong></span><strong><span style="color: #000000;">innerHTML&nbsp;</span><span style="color: #000000;">=</span></strong><span style="color: #000000;"><strong>&nbsp;html;</strong><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span></span>
+ <span style="color: #000000;"><br>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+ <span style="color: #000000;">&lt;</span>
+ <span style="color: #000000;">/</span>
+ <span style="color: #000000;">script&gt;</span> 
+</div> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>function CallJSONPServer(url){&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // 调用JSONP服务器，url为请求服务器地址<br>&nbsp;&nbsp;&nbsp; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var oldScript =document.getElementById(url);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // 如果页面中注册了调用的服务器，则重新调用<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(oldScript){<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; oldScript.setAttribute("src",url);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; var script =document.createElement("script");&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // 如果未注册该服务器，则注册并请求之<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; script.setAttribute("type", "text/javascript");<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; script.setAttribute("src",url);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; script.setAttribute("id", url);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; document.appendChild(script);<br>&nbsp;&nbsp;&nbsp; }</p> 
+<p>=======================================================================</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="html" name="code">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;base href="&lt;%=basePath%&gt;"&gt;
+
+		&lt;title&gt;My JSP 'index.jsp' starting page&lt;/title&gt;
+		&lt;meta http-equiv="pragma" content="no-cache"&gt;
+		&lt;meta http-equiv="cache-control" content="no-cache"&gt;
+		&lt;meta http-equiv="expires" content="0"&gt;
+		&lt;meta http-equiv="keywords" content="keyword1,keyword2,keyword3"&gt;
+		&lt;meta http-equiv="description" content="This is my page"&gt;
+
+		&lt;script language="javascript" type="text/javascript"
+			src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"&gt;&lt;/script&gt;
+		&lt;script type="text/javascript"&gt;
+    function clickme(){
+        $.getJSON('http://localhost:8080/web_test/callServer?callback=?',
+                {number:1}, 
+                function(data) {
+		 	        var items = [];
+			      
+			        $.each(data, function(key, val) {
+			          items.push('&lt;li id="' + key + '"&gt;' + val + '&lt;/li&gt;');
+			        });
+			      
+			        $('&lt;ul/&gt;', {
+			          'class': 'my-new-list',
+			          html: items.join('')
+			        }).appendTo('body');
+                }
+		);
+    }
+    &lt;/script&gt;
+
+
+
+	&lt;/head&gt;
+
+	&lt;body&gt;
+		This is my JSP page.
+		&lt;br&gt;
+		&lt;input type="button" value="clickme" onclick="clickme()"&gt;&lt;/input&gt;
+
+	&lt;/body&gt;
+&lt;/html&gt;</pre> 
+<p>&nbsp;</p> 
+<p><span style=""> </span></p>
+<div class="header-name" style="color: #545454; display: inline-block; margin-right: 0.5em; font-weight: bold; vertical-align: top; white-space: pre-wrap;">
+ Request URL:
+</div> 
+<div class="header-value source-code" style="font-family: Consolas, 'Lucida Console', monospace; font-size: 12px !important; white-space: pre-wrap; display: inline; margin-right: 100px; margin-top: 1px;">
+ http://localhost:8080/web_test/callServer?callback=jsonp1299753149125&amp;number=1
+</div> 
+<div class="header-value source-code" style="font-family: Consolas, 'Lucida Console', monospace; font-size: 12px !important; white-space: pre-wrap; display: inline; margin-right: 100px; margin-top: 1px;">
+ <br>
+</div> 
+<div class="header-value source-code" style="font-family: Consolas, 'Lucida Console', monospace; font-size: 12px !important; white-space: pre-wrap; display: inline; margin-right: 100px; margin-top: 1px;">
+ <br>
+</div> 
+<div class="header-value source-code" style="font-family: Consolas, 'Lucida Console', monospace; font-size: 12px !important; white-space: pre-wrap; display: inline; margin-right: 100px; margin-top: 1px;">
+ server out:
+</div> 
+<p></p> 
+<p> </p> 
+<p>jsonp1299753149125({"a": "b","c":"d","e":"f"})</p> 
+<div>
+ <br>
+</div> 
+<p>&nbsp;</p> 
+<p>server<span style="white-space: pre;"> public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {</span></p> 
+<pre class="java" name="code">        response.setContentType("text/html");
+        String callback = request.getParameter("callback");
+        
+        PrintWriter out = response.getWriter();
+        out.println(callback+"({\"a\": \"b\",\"c\":\"d\",\"e\":\"f\"})");
+        out.flush();
+        out.close();
+    }</pre>

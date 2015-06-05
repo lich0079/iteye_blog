@@ -1,0 +1,81 @@
+<p>users 表和&nbsp;<span style="white-space: pre;">auth_token_log表是一对多， 现在是把user的信息找出来 关联上一些</span> <span style="white-space: pre;">auth_token_log表的数据， 因为a表是多的一方，</span> </p> 
+<p>要多他的数据进行一些条件匹配</p> 
+<p>&nbsp;</p> 
+<p>这个sql目的是查出每个用户的最新的log记录</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>原始写法</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<pre class="sql" name="code">SELECT
+	users.first_name,
+	users.email_address,
+	users.tp_user_id,
+	users.tp_username,
+	auth_token_log.module_access,
+	auth_token_log.created_date
+FROM
+	users
+	INNER JOIN auth_token_log ON users.id = auth_token_log.user_id
+WHERE
+	auth_token_log.id in(
+		SELECT
+		max(id)
+FROM
+		auth_token_log
+WHERE
+		auth_token_log.user_id = users.id
+	)</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>自己的理解</p> 
+<p>&nbsp;</p> 
+<pre class="sql" name="code">SELECT
+	users.first_name,
+	users.email_address,
+	users.tp_user_id,
+	users.tp_username,
+	auth_token_log.module_access,
+	auth_token_log.created_date
+FROM
+	users
+	INNER JOIN auth_token_log ON users.id = auth_token_log.user_id
+WHERE
+	auth_token_log.id in(
+		SELECT
+		max(auth_token_log.id)
+FROM
+		auth_token_log,
+		users
+WHERE
+		auth_token_log.user_id = users.id
+GROUP BY
+		users.id
+	)</pre> &nbsp; 
+<p>&nbsp;</p> 
+<p>对于原始写法的理解是</p> 
+<p>先查出 </p> 
+<pre class="sql" name="code">SELECT
+	×
+FROM
+	users
+	INNER JOIN auth_token_log ON users.id = auth_token_log.user_id
+</pre> 
+<p>&nbsp;</p> 
+<p>的记录，&nbsp; 然后针对每一行记录X，拿出这一行X与 一个新的auth_token_log表做join，然后筛选出 log.user_id = x..user.id的所有记录， 然后查出max(id), 这就是最新的log记录的 id</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>还有一个类似的sql&nbsp; http://www.iteye.com/topic/1029921</p> 
+<p>&nbsp;</p> 
+<p>表t_stu；其中三个字段:name,gender,grade；要求用一条sql语句查出男生前5名和女生前五名</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;select * from t_stu a where 5&gt;(select count(*) FROM t_stu where gender=a.gender AND grade&gt;a.grade) order by a.grade desc</p> 
+<p>&nbsp;</p> 
+<p>对这个sql的理解是 对于每一行t_stu的记录， 拿出该条记录与一个新的t_stu做join, 然后找出这里面性别和自己一样，但分数比自己高的记录，然后统计这些记录的条数， 假如比自己高的记录数少于5，自己当然就是前5名了</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

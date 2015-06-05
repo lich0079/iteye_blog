@@ -1,0 +1,28 @@
+<p>编程珠玑第二版 第8章&nbsp; 给一个数组 求该数组的最大子集和</p> 
+<p>&nbsp;</p> 
+<p>其中最好的算法是扫描算法 O(n)</p> 
+<p>用java代码实现如下</p> 
+<pre name="code" class="java">public class MaxSubArray {
+    public static void main(String[] args) {
+        int array[] = { 31, -41, 59, 26, -53, 58, 97, -93, -23, 84 };
+//        int array[] = { -31, -41, -111,-12};
+        int maxsofar = 0;
+        int maxendinghere = 0;
+        for (int i = 0; i &lt; array.length; i++) {
+            maxendinghere = (maxendinghere + array[i] &gt; 0 ) ? (maxendinghere + array[i]) : 0;
+            maxsofar = maxsofar &gt; maxendinghere ? maxsofar : maxendinghere;
+            System.out.println(i+":   "+maxendinghere + "   " + maxsofar);
+        }
+        System.out.println("final:  "+maxendinghere + "   " + maxsofar);
+    }
+}</pre> 
+<p>&nbsp;</p> 
+<p>这其中有几个问题</p> 
+<p>1. 假如数组里面全是负数， 这题答案就是不对的</p> 
+<p>2. 这个问题可以说是上一题的root cause,&nbsp; 为什么用0做判断的准则， 我试过把0换成10, 也可以得出结果</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p>

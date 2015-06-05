@@ -1,0 +1,6 @@
+<p>程序是在一个map 上添加annotation, 添加的时候有title 和　subtitle, 之后会remove掉annotation</p> 
+<p>结果remove的时候老是有leak</p> 
+<p>&nbsp;</p> 
+<p>debug了半天，结果如下 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p> 
+<p>&nbsp;</p> 
+<p>MKPointAnnotation *ann = (MKPointAnnotation *)an;<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ann.title = nil;&nbsp;&nbsp; // 没有这２句直接remove就会内存泄露<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ann.subtitle = nil;// 没有这２句remove就会内存泄露<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [map removeAnnotation:an];</p>

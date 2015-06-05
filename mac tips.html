@@ -1,0 +1,170 @@
+<p><span style="font-size: 14px; line-height: 23px; font-family: 'Helvetica Neue',Arial,sans-serif; color: #222222;"> </span> </p> 
+<p><span style="font-family: Georgia, 'Times New Roman', Times, serif; line-height: 24px; font-size: 15px;"> </span></p> 
+<h2><span style="font-weight: normal;"> <h2> <span style="color: #666666; font-family: Tahoma, Geneva, sans-serif; font-size: 14px; line-height: 21px; font-weight: normal;"> <h1 class="post-title"><a href="http://www.evernote.com/shard/s20/sh/43d45a67-2947-4f31-a8a4-61b6b54c5028/3da6bcb0b33410ec3bc7d316dda89a0f">evernote链接</a></h1> <p>&nbsp;</p> <p>整站下载</p> <p><span>wget -r -np -nd&nbsp;</span><a href="http://appinn.com/">http://appinn.com</a></p> <p>&nbsp;</p> <h1 class="post-title"> </h1><h2 style="">MAC MONTAIN LION右键菜单打开方式出现重复项的解决办法</h2> 
+    <div class="post_intro" style="">
+     <br>
+    </div> 
+    <div class="content_date" style=""> 
+     <div class="datebg" style="margin: 8px 10px 0px; padding: 0px;"> 
+      <span class="day" style="margin: 0px; padding: 0px; color: #4b463a; font-size: 22px; font-weight: bold;">11</span>
+      <span style="margin: 0px; padding: 0px; color: #638b60;">八月</span>
+      <span style="margin: 0px; padding: 0px; color: #638b60;">2012</span> 
+     </div> 
+    </div> 
+    <div class="comments" style="">
+     <span class="cmt_num" style="margin: 0px; padding: 0px; height: 34px; background-position: 0% 0px;"><a title="《MAC MONTAIN LION右键菜单打开方式出现重复项的解决办法》上的评论" style="" href="http://www.shawnwang.net/946.html#respond">0</a></span>
+    </div> 
+    <div class="entry" style=""> 
+     <p style="margin-bottom: 10px; padding: 0px;">打开终端，输入以下命令回车即可：<br style="margin: 0px; padding: 0px;">/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -kill -r -domain local -domain system-domainuser</p> 
+    </div> </span></h2> <h1 class="post-title"><br></h1> <h1 class="post-title"><a style="text-decoration: none; color: #000000; padding: 0px; margin: 0px;" href="http://www.macgg.com/archives/6421.html">如何在Quick Look的预览窗口里选择文本？</a></h1> </span><span style="color: #666666; font-family: Tahoma, Geneva, sans-serif; font-size: 14px; line-height: 21px; font-weight: normal;"> <p style="margin-top: 0px; margin-right: 0px; margin-bottom: 1.2em; margin-left: 0px; padding: 0px;">首先，方法很简单,打开“终端”（Finder-&gt;应用程序-&gt;实用工具-&gt;终端），并且输入以下命令：&nbsp;<br style="padding: 0px; margin: 0px;">defaults write com.apple.finder QLEnableTextSelection -bool TRUE;killall Finder</p> <p style="margin-top: 0px; margin-right: 0px; margin-bottom: 1.2em; margin-left: 0px; padding: 0px;">设定将激励生效，如果你想还原成原样，也很简单，再次打开“终端”（Finder-&gt;应用程序-&gt;实用工具-&gt;终端），并且输入以下命令：&nbsp;<br style="padding: 0px; margin: 0px;">defaults delete com.apple.finder QLEnableTextSelection;killall Finder</p> </span> </h2> 
+<h2><br></h2> 
+<h2>Stop the Help Window From Floating</h2> 
+<p style="margin-top: 0px; margin-right: 0px; margin-bottom: 18px; margin-left: 0px; font-size: 15px; vertical-align: baseline; background-color: transparent; padding: 0px;">Another troublesome floating window is the Help window which appears when you click Help in most applications. To stop it floating, use</p> 
+<pre><code style="margin-top: 0px; margin-right: 0px; margin-bottom: 20px; margin-left: 0px; font-size: 15px; vertical-align: baseline; background-color: transparent; white-space: normal; padding: 0px;">defaults write com.apple.helpviewer NormalWindow -boolean yes</code></pre>  
+<h2>Disable the ‘Unexpectedly Quit’ Dialog</h2> 
+<p style="margin-top: 0px; margin-right: 0px; margin-bottom: 18px; margin-left: 0px; font-size: 15px; vertical-align: baseline; background-color: transparent; padding: 0px;">When an application crashes, you’ll see a dialog telling you the application quit unexpectedly. This can get annoying if it happens often, so you can disable that dialog using</p> 
+<pre><code style="margin-top: 0px; margin-right: 0px; margin-bottom: 20px; margin-left: 0px; font-size: 15px; vertical-align: baseline; background-color: transparent; white-space: normal; padding: 0px;">defaults write com.apple.CrashReporter DialogType none</code>
+You may need to restart your computer for changes to take effect. To turn this back on again, replace ‘none’ with ‘prompt’.
+</pre> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>disable spaces animation</p> 
+<p>&nbsp;</p> 
+<ul> 
+ <li>Open <em>/Applications/Utilities/Terminal.app</em> .</li> 
+ <li>Copy and paste the following into the terminal window and then press enter: 
+  <div style="margin-left: 20px; margin-top: 10px; margin-bottom: 10px; padding: 5px; border: 1px solid; width: 520px; height: 60px; overflow: scroll; white-space: nowrap;"> 
+   <pre>  defaults write com.apple.dock workspaces-swoosh-animation-off -bool YES &amp;&amp; killall Dock</pre> 
+  </div> </li> 
+</ul> 
+<p> If you'd like to re-enable the animation, just do the following: </p> 
+<ul> 
+ <li>Open Terminal.</li> 
+ <li>Copy and paste the following into the terminal window and then press enter: 
+  <div style="margin-left: 20px; margin-top: 10px; margin-bottom: 10px; padding: 5px; border: 1px solid; width: 520px; height: 60px; overflow: scroll; white-space: nowrap;"> 
+   <pre>defaults delete com.apple.dock workspaces-swoosh-animation-off &amp;&amp; killall Dock</pre> 
+  </div> </li> 
+</ul> 
+<p>&nbsp;</p> 
+<p>快速锁屏系统已经有默认快捷键了，control + shift + eject</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p class="p1">至于你的Mac是否支持64位的内核，主要看你的Mac是否有64-bit EFI， 请打开终端窗口， 输入：</p> 
+<p class="p2">&nbsp;</p> 
+<p class="p1">ioreg -l -p IODeviceTree | grep firmware-abi</p> 
+<p class="p2">&nbsp;</p> 
+<p class="p1">终端会返回“EFI32″ or “EFI64.”</p> 
+<p class="p3">&nbsp;</p> 
+<p class="p2">&nbsp;</p> 
+<p class="p1">如果我们想切换到64位系统的话，要在开机的时候按住键盘上的数字“4”和“6”，直到进入系统界面才是真正的切换到snow leopard的64位系统状态</p> 
+<p class="p3">&nbsp;</p> 
+<p class="p2">&nbsp;</p> 
+<p class="p1">这种切换的方法要在每次开机的时候都要按住“4”和“6”才能进入64位系统，如果不按的话还是默认进入到32位状态的！</p> 
+<p class="p1">接下来介绍的另外一种进入64位系统的方法，这种方法可以让我们每次开机的时候不用按住“4”和“6”直接进入到64位状态！</p> 
+<p class="p2">&nbsp;</p> 
+<p class="p1">sudo vi /Library/Preferences/SystemConfiguration/com.apple.Boot.plist</p> 
+<p class="p1">&nbsp;</p> 
+<p class="p2">&nbsp;</p> 
+<p class="p1">把文本里面的</p> 
+<p class="p1">&lt;key&gt;Kernel Flags&lt;/key&gt;</p> 
+<p class="p1">&lt;string&gt;&lt;/string&gt;</p> 
+<p class="p2">&nbsp;</p> 
+<p class="p1">替换成</p> 
+<p class="p1">&lt;key&gt;Kernel Flags&lt;/key&gt;</p> 
+<p class="p1">&lt;string&gt;arch=x86_64&lt;/string&gt;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>浏览器里 切换tab</p> 
+<p>ctrl+tab</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="font-size: small;"><span style="font-size: 18px;"><strong>切换同一个application的不同窗口</strong> </span> </span> </p> 
+<p><span style="font-size: small;"><span style="font-size: 18px;"><strong>Command-~</strong> </span> </span> </p> 
+<p>&nbsp;</p> 
+<h2> <span style="font-size: small;">查看使用Internet的应用程序 </span> </h2> 
+<h2> <span style="font-size: small;">lsof -P -i -n | cut -f 1 -d ” ” | uniq </span> </h2> 
+<p>&nbsp;</p> 
+<h2> <span style="font-size: small;">XRayFolder</span> </h2> 
+<h2> <span style="font-size: small;">defaults write com.apple.finder QLEnableXRayFolders 1&nbsp;&nbsp; </span> </h2> 
+<h2><br></h2> 
+<h2>在Space中收集窗口</h2> 
+<p><span style="font-size: large;"><span style="font-size: 18px;"><strong>Command-方向键</strong> </span> </span> </p> 
+<p>&nbsp;</p> 
+<h2>在打开/保存对话框中显示隐藏文件</h2> 
+<h2> <span style="font-size: large;"><span style="font-size: 18px;"><strong>Command-Shift-.</strong> </span> </span> </h2> 
+<h2><br></h2> 
+<h2>让菜单栏图标菜单显示更多信息</h2> 
+<p><span style="font-size: 18px; font-weight: bold;">Option-点击</span> </p> 
+<p>&nbsp;</p> 
+<h2>QS，按Command+L就可以看见这个增强剪贴版</h2> 
+<p>&nbsp;</p> 
+<p>Finder菜单中点击“显示”，然后选择“显示路径栏</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<h2>标题栏上显示目录完整路径</h2> 
+<p>defaults write com.apple.finder _FXShowPosixPathInTitle -bool YES</p> 
+<p>killall Finder</p> 
+<p>&nbsp;</p> 
+<h2> <span style="font-size: small;">改变截屏图片的保存位置</span> </h2> 
+<h2> <span style="font-size: small;">defaults write com.apple.screencapture location 存放位置</span> </h2> 
+<h2>强制Safari在新的标签中打开网页</h2> 
+<p>defaults write com.apple.Safari TargetedClicksCreateTabs -bool true</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p><span style="font-size: 24px; font-weight: bold; line-height: 36px; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; color: #111111;"><a title="永久链接 用键盘激活“Dock Exposé” (10.6)" style="font-weight: inherit; font-style: inherit; font-size: 24px; font-family: inherit; vertical-align: baseline; color: #eead24; text-decoration: none; border-bottom-width: 1px; border-bottom-style: dashed; border-bottom-color: initial; padding: 0px; margin: 0px;" href="http://mac.linsheng.me/archives/591.html">键盘激活“Dock Exposé” (10.6)</a> </span> </p> 
+<p>&nbsp;</p> 
+<ol style="margin-top: 0px; margin-right: 1.5em; margin-bottom: 1.25em; margin-left: 1.5em; font-weight: inherit; font-style: inherit; font-size: 14px; font-family: inherit; vertical-align: baseline; padding: 0px;"> 
+ <li style="margin-top: 0px; margin-right: 0px; margin-bottom: 0.25em; margin-left: 0px; font-weight: inherit; font-style: inherit; font-size: 14px; font-family: inherit; vertical-align: baseline; padding: 0px;">通过Command-Tab激活应用程序切换栏，用左右键或Tab键选中某个应用程序的图标，记住，不能松开Command键。</li> 
+ <li style="margin-top: 0px; margin-right: 0px; margin-bottom: 0.25em; margin-left: 0px; font-weight: inherit; font-style: inherit; font-size: 14px; font-family: inherit; vertical-align: baseline; padding: 0px;">选中应用程序图标后，按上键或者下键，这时Exposé就激活了。</li> 
+ <li style="margin-top: 0px; margin-right: 0px; margin-bottom: 0.25em; margin-left: 0px; font-weight: inherit; font-style: inherit; font-size: 14px; font-family: inherit; vertical-align: baseline; padding: 0px;">通过方向键可以进行窗口的选择。</li> 
+ <li style="margin-top: 0px; margin-right: 0px; margin-bottom: 0.25em; margin-left: 0px; font-weight: inherit; font-style: inherit; font-size: 14px; font-family: inherit; vertical-align: baseline; padding: 0px;">选中窗口后，可以用空格键进行预览，或者直接按Enter键激活窗口。</li> 
+</ol> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>我们在Terminal中，因为某些原因需要从Finder里打开当前路径对应的文件夹，传统的方法是从Dock中打开Finder，按照这个路径一层一层地找到最后的那个文件夹。这种方法有几种弊端：</p> 
+<ol> 
+ <li>很繁琐，特别是如果路径复杂，文件夹多，找到最后那层文件夹是很杀脑细胞的工作；</li> 
+ <li>如果某层文件夹有特殊权限或属性限制，比如是系统文件或者被隐藏，那么首先还得取消它们的这些属性。做完你的工作后还得还原它们的属性。修改系统文件夹的默认属性是应该避免的事情，这样会带来安全隐患。</li> 
+</ol> 
+<p>一个简单的方法是这样的，打开当前目录，则输入命令</p> 
+<blockquote style="background-color: #f9f9f9; border-left-width: 10px; border-left-style: solid; border-left-color: #cccccc; margin-top: 1.5em; margin-right: 10px; margin-bottom: 1.5em; margin-left: 10px; padding-top: 0.5em; padding-right: 10px; padding-bottom: 0.5em; padding-left: 10px;"> 
+ <p style="display: inline;">open .</p> 
+ <p style="display: inline;">&nbsp;</p> 
+ <p style="display: inline;">&nbsp;</p> 
+</blockquote> 
+<p>&nbsp;</p> 
+<p>1、在terminal下输入:</p> 
+<p><span><span>defaults&nbsp;write&nbsp;com.apple.finder&nbsp;AppleShowAllFiles&nbsp;TRUE &nbsp;&nbsp;</span> </span> </p> 
+<div class="dp-highlighter"> 
+ <div class="bar"> 
+  <p class="tools"><span>killall&nbsp;Finder&nbsp;&nbsp;</span> </p> 
+  <p><br> 全部hidden files都显示出来了. </p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>2.设置classpath</p> 
+  <p>&nbsp;</p> 
+  <p>vi /etc/zshenv</p> 
+  <p>&nbsp;</p> 
+  <p>vi ~/.zshenv</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Home</p> 
+  <p>&nbsp;</p> 
+  <p>export M2_HOME=/usr/local/maven</p> 
+  <p>&nbsp;</p> 
+  <p>export classpath=.:$JAVA_HOME/lib</p> 
+  <p>&nbsp;</p> 
+  <p>&nbsp;</p> 
+  <p>export PATH=$JAVA_HOME/bin:$M2_HOME/bin:/opt/local/bin:/opt/local/sbin:$PATH</p> 
+  <div>
+   <br>
+  </div> 
+  <p>==========================================</p> 
+  <p><span style="font-size: 14px; border-collapse: collapse; line-height: 21px; font-family: 'DejaVu Sans','Lucida Grande',Tahoma,'Hiragino Sans GB',STHeiti,SimSun,sans-serif; color: #444444;">本教程是教你在Mac OS X系统下怎样使用Terminal.命令行把DMG格式镜像文件转换为ISO镜像文件的，因为有时候你可能需要在Windows或者Linux操作系统下刻录DMG镜像。<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> 步骤1<br style="padding: 0px; margin: 0px;"> 把你要转换的DMG文件放在桌面上，打开Finder窗口。<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> 步骤2<br style="padding: 0px; margin: 0px;"> 进入应用程序Applications。<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> 步骤3<br style="padding: 0px; margin: 0px;"> 进入工具Utilities文件夹。<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> 步骤4<br style="padding: 0px; margin: 0px;"> 打开命令行工具Terminal。<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> 步骤5<br style="padding: 0px; margin: 0px;"> 按照下面的命令在窗口内输入：<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> hdiutil convert ~/Desktop/'filename.dmg' -format UDTO -o ~/Desktop/'filename.iso'<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> 提示*: 注意这里的'filename'就是你要转换的DMG镜像的文件名。<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> 步骤6<br style="padding: 0px; margin: 0px;"> 你将会注意到有个文件出现在桌面上后缀是.iso.cdr，选择这个文件修改后缀把.cdr去掉。<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> 将有窗口提示确认，选择确定。<br style="padding: 0px; margin: 0px;"><br style="padding: 0px; margin: 0px;"> 步骤7<br style="padding: 0px; margin: 0px;"> 下面你就可以把这个复制到任何Windows或Linux电脑上去刻录了。</span> </p> 
+ </div> 
+</div>

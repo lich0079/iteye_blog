@@ -1,0 +1,989 @@
+<pre class="java" name="code">今天研究了下这个JDK的线程池实现，当有任务来的时候，他首先用corePoolSize的线程执行，用完了就把任务放
+在队列里面排队，假如又排满了，这时才会启用新的超出corePoolSize大小的线程来执行，假如还是用完了
+maximumPoolSize，这个时候就会采用RejectedExecutionHandler来执行相应的策略，
+ThreadPoolExecutor.CallerRunsPolicy()这个策略是用ThreadPoolExecutor的执行线程或者说主线
+程来执行任务（而不是线程池中的线程），任务多的话就相当于主线程阻塞了，src如下：
+/**
+         * Executes task r in the caller's thread, unless the executor
+         * has been shut down, in which case the task is discarded.
+         * @param r the runnable task requested to be executed
+         * @param e the executor attempting to execute this task
+         */
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+            if (!e.isShutdown()) {
+                r.run();
+            }
+        }
+
+
+
+=======================
+线程池类为 
+java.util.concurrent.ThreadPoolExecutor，常用构造方法为：
+
+ThreadPoolExecutor(int
+ corePoolSize, int maximumPoolSize,
+long keepAliveTime, TimeUnit 
+unit,
+BlockingQueue&lt;Runnable&gt; workQueue,
+RejectedExecutionHandler
+ handler)
+
+                        </pre> 
+<p class="sysBr500 text">corePoolSize： 线程池维护线程的最少数量<br> maximumPoolSize：线程池维护线程的最大数量<br> keepAliveTime： 线程池维护线程所允许的空闲时间<br> unit： 线程池维护线程所允许的空闲时间的单位<br> workQueue： 线程池所使用的缓冲队列<br> handler： 线程池对拒绝任务的处理策略<br><br> 一个任务通过 execute(Runnable)方法被添加到线程池，任务就是一个 Runnable类型的对象，任务的执行方法就是 Runnable类型对象的run()方法。<br><br> 当一个任务通过 execute(Runnable)方法欲添加到线程池时：<br><br> 如果此时线程池中的数量小于corePoolSize，即使线程池中的线程都 处于空闲状态，也要创建新的线程来处理被添加的任务。</p> 
+<p class="sysBr500 text">如果此时线程池中的数 量等于 corePoolSize，但是缓冲队列 workQueue未满，那么任务被放入缓冲队列。</p> 
+<p class="sysBr500 text">如果此时线程池中的数 量大于corePoolSize，缓冲队列workQueue满，并且线程池中的数量小于maximumPoolSize，建新的线程来处理被添加的任 务。</p> 
+<p class="sysBr500 text">如果此时线程池中的数 量大于corePoolSize，缓冲队列workQueue满，并且线程池中的数量等于maximumPoolSize，那么通过 handler所指定的策略来处理此任务。<br><br> 也就是：处理任务的优先级为：<br> 核心线程corePoolSize、任务队列 workQueue、最大线程maximumPoolSize，如果三者都满了，使用handler处理被拒绝的任务。<br><br> 当线程池中的线程 数量大于 corePoolSize时，如果某线程空闲时间超过keepAliveTime，线程将被终止。这样，线程池可以动态的调整池中的线程数。<br><br> unit 可选的参数为java.util.concurrent.TimeUnit中的几个静态属性：<br> NANOSECONDS、 MICROSECONDS、MILLISECONDS、SECONDS。<br><br> workQueue我常用的 是：java.util.concurrent.ArrayBlockingQueue<br><br> handler有四个选择：<br> ThreadPoolExecutor.AbortPolicy()<br> 抛 出java.util.concurrent.RejectedExecutionException异常<br> ThreadPoolExecutor.CallerRunsPolicy()<br> 重 试添加当前的任务，他会自动重复调用execute()方法<br> ThreadPoolExecutor.DiscardOldestPolicy()<br> 抛 弃旧的任务<br> ThreadPoolExecutor.DiscardPolicy()<br> 抛弃当前的任务</p> 
+<pre class="java" name="code">
+=======================
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+
+public class TimingThreadPool extends ThreadPoolExecutor {
+
+    public TimingThreadPool(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
+            BlockingQueue&lt;Runnable&gt; workQueue, RejectedExecutionHandler handler) {
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
+    }
+
+    private final ThreadLocal&lt;Long&gt; startTime = new ThreadLocal&lt;Long&gt;();
+    private final AtomicLong numTasks = new AtomicLong();
+    private final AtomicLong totalTime = new AtomicLong();
+
+    protected void beforeExecute(Thread t, Runnable r) {
+        super.beforeExecute(t, r);
+        System.out.println(String.format("Thread %s: start %s", t, r));
+        startTime.set(System.nanoTime());
+    }
+
+    protected void afterExecute(Runnable r, Throwable t) {
+        try {
+            long endTime = System.nanoTime();
+            long taskTime = endTime - startTime.get();
+            numTasks.incrementAndGet();
+            totalTime.addAndGet(taskTime);
+            System.out.println(String.format("Thread %s: end %s, time=%dns", t, r, taskTime));
+        } finally {
+            super.afterExecute(r, t);
+        }
+    }
+
+    protected void terminated() {
+        try {
+            System.out.println(String.format("Terminated: avg time=%dns", totalTime.get() / numTasks.get()));
+        } finally {
+            super.terminated();
+        }
+    }
+
+    private static class Task implements Runnable{
+
+        private String task;
+        public Task(String task){
+            this.task=task;
+        }
+        
+        @Override
+        public void run() {
+            System.out.println(task);
+            if(task.equals("51")){
+                throw new RuntimeException();
+            }
+        }
+        
+    }
+    public static void main(String[] args) throws Exception {
+        TimingThreadPool pool = new TimingThreadPool(2, 4, 4, TimeUnit.SECONDS, new ArrayBlockingQueue&lt;Runnable&gt;(3),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        for (int i = 0; i &lt; 100; i++) {
+            try {
+                // 产生一个任务，并将其加入到线程池
+                String task = "" + i;
+                System.out.println("put " + task);
+                pool.execute(new Task(task));
+
+                // 便于观察，等待一段时间
+                Thread.sleep(1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        Thread.sleep(5000);
+        pool.shutdown();
+        System.out.println(pool.getTaskCount()+"   c:"+pool.getCompletedTaskCount());
+    }
+}
+</pre> 
+<p>&nbsp;输出</p> 
+<pre class="java" name="code">put 0
+put 1
+put 2
+put 3
+put 4
+put 5
+put 6
+put 7
+7
+put 8
+8
+put 9
+9
+put 10
+10
+put 11
+11
+put 12
+12
+put 13
+13
+put 14
+14
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1cf8583
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@901887
+1
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@3a6727
+5
+Thread null: end TimingThreadPool$Task@1cf8583, time=213828ns
+Thread null: end TimingThreadPool$Task@3a6727, time=58966ns
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@4a65e0
+2
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@665753
+3
+Thread null: end TimingThreadPool$Task@4a65e0, time=48434ns
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@ef22f8
+4
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@14693c7
+put 15
+Thread null: end TimingThreadPool$Task@ef22f8, time=63137ns
+Thread null: end TimingThreadPool$Task@665753, time=47749ns
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1e0cf70
+15
+0
+Thread null: end TimingThreadPool$Task@1e0cf70, time=55931ns
+6
+Thread null: end TimingThreadPool$Task@901887, time=2656284ns
+put 16
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@c40c80
+16
+Thread null: end TimingThreadPool$Task@14693c7, time=588756ns
+Thread null: end TimingThreadPool$Task@c40c80, time=60816ns
+put 17
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@110d81b
+17
+Thread null: end TimingThreadPool$Task@110d81b, time=55044ns
+put 18
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@dbe178
+18
+Thread null: end TimingThreadPool$Task@dbe178, time=55322ns
+put 19
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1af9e22
+19
+Thread null: end TimingThreadPool$Task@1af9e22, time=53804ns
+put 20
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@b6ece5
+20
+Thread null: end TimingThreadPool$Task@b6ece5, time=49594ns
+put 21
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@17ace8d
+21
+Thread null: end TimingThreadPool$Task@17ace8d, time=53844ns
+put 22
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@18eb9e6
+22
+Thread null: end TimingThreadPool$Task@18eb9e6, time=53462ns
+put 23
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@14ed9ff
+23
+Thread null: end TimingThreadPool$Task@14ed9ff, time=51846ns
+put 24
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@1ca318a
+24
+Thread null: end TimingThreadPool$Task@1ca318a, time=54117ns
+put 25
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@17a8913
+25
+Thread null: end TimingThreadPool$Task@17a8913, time=51171ns
+put 26
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1bd747e
+26
+Thread null: end TimingThreadPool$Task@1bd747e, time=52704ns
+put 27
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@12b3374
+27
+Thread null: end TimingThreadPool$Task@12b3374, time=50130ns
+put 28
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@13f3789
+28
+Thread null: end TimingThreadPool$Task@13f3789, time=51766ns
+put 29
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1571886
+29
+Thread null: end TimingThreadPool$Task@1571886, time=46267ns
+put 30
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@10b4199
+30
+put 31
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1ffb8dc
+31
+Thread null: end TimingThreadPool$Task@1ffb8dc, time=345324ns
+Thread null: end TimingThreadPool$Task@10b4199, time=51230ns
+put 32
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@1c184f4
+32
+Thread null: end TimingThreadPool$Task@1c184f4, time=52455ns
+put 33
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1ffbd68
+33
+Thread null: end TimingThreadPool$Task@1ffbd68, time=44397ns
+put 34
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@ec16a4
+34
+Thread null: end TimingThreadPool$Task@ec16a4, time=47546ns
+put 35
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1c29ab2
+35
+Thread null: end TimingThreadPool$Task@1c29ab2, time=185369ns
+put 36
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@13a328f
+36
+Thread null: end TimingThreadPool$Task@13a328f, time=145857ns
+put 37
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1cd8669
+37
+Thread null: end TimingThreadPool$Task@1cd8669, time=46673ns
+put 38
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@337838
+38
+Thread null: end TimingThreadPool$Task@337838, time=53263ns
+put 39
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@119cca4
+39
+Thread null: end TimingThreadPool$Task@119cca4, time=45766ns
+put 40
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@ca2dce
+40
+Thread null: end TimingThreadPool$Task@ca2dce, time=54013ns
+put 41
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@18558d2
+41
+Thread null: end TimingThreadPool$Task@18558d2, time=44441ns
+put 42
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@18a47e0
+42
+Thread null: end TimingThreadPool$Task@18a47e0, time=52530ns
+put 43
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@174cc1f
+43
+put 44
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@1050e1f
+44
+Thread null: end TimingThreadPool$Task@1050e1f, time=53745ns
+Thread null: end TimingThreadPool$Task@174cc1f, time=71815ns
+put 45
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@e24e2a
+45
+Thread null: end TimingThreadPool$Task@e24e2a, time=52243ns
+put 46
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@179c285
+46
+Thread null: end TimingThreadPool$Task@179c285, time=52579ns
+put 47
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@d1e604
+47
+Thread null: end TimingThreadPool$Task@d1e604, time=40479ns
+put 48
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@54172f
+48
+Thread null: end TimingThreadPool$Task@54172f, time=56997ns
+put 49
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@be2358
+49
+Thread null: end TimingThreadPool$Task@be2358, time=49872ns
+put 50
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1027b4d
+50
+Thread null: end TimingThreadPool$Task@1027b4d, time=54593ns
+put 51
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@1ed2ae8
+51
+Thread java.lang.RuntimeException: end TimingThreadPool$Task@1ed2ae8, time=293389ns
+put 52
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@19c26f5
+52
+Thread null: end TimingThreadPool$Task@19c26f5, time=51384ns
+Exception in thread "pool-1-thread-3" java.lang.RuntimeException
+	at TimingThreadPool$Task.run(TimingThreadPool.java:56)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+put 53
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@c1b531
+53
+Thread null: end TimingThreadPool$Task@c1b531, time=59174ns
+put 54
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@15eb0a9
+54
+Thread null: end TimingThreadPool$Task@15eb0a9, time=72415ns
+put 55
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1a05308
+55
+Thread null: end TimingThreadPool$Task@1a05308, time=51091ns
+put 56
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@ab50cd
+56
+Thread null: end TimingThreadPool$Task@ab50cd, time=51245ns
+put 57
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@145d068
+57
+Thread null: end TimingThreadPool$Task@145d068, time=53228ns
+put 58
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@758fc9
+58
+Thread null: end TimingThreadPool$Task@758fc9, time=55813ns
+put 59
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@32fb4f
+59
+Thread null: end TimingThreadPool$Task@32fb4f, time=64516ns
+put 60
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1113708
+60
+Thread null: end TimingThreadPool$Task@1113708, time=53527ns
+put 61
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@133f1d7
+61
+Thread null: end TimingThreadPool$Task@133f1d7, time=47685ns
+put 62
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@14a9972
+62
+Thread null: end TimingThreadPool$Task@14a9972, time=66598ns
+put 63
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@a01335
+63
+Thread null: end TimingThreadPool$Task@a01335, time=52664ns
+put 64
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@14d3343
+64
+Thread null: end TimingThreadPool$Task@14d3343, time=52168ns
+put 65
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1608e05
+65
+Thread null: end TimingThreadPool$Task@1608e05, time=50744ns
+put 66
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@f81843
+66
+Thread null: end TimingThreadPool$Task@f81843, time=51930ns
+put 67
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@dd5b
+67
+Thread null: end TimingThreadPool$Task@dd5b, time=47977ns
+put 68
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@c4bcdc
+68
+Thread null: end TimingThreadPool$Task@c4bcdc, time=52857ns
+put 69
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@4b4333
+69
+Thread null: end TimingThreadPool$Task@4b4333, time=50749ns
+put 70
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@128e20a
+70
+Thread null: end TimingThreadPool$Task@128e20a, time=51191ns
+put 71
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1100d7a
+71
+Thread null: end TimingThreadPool$Task@1100d7a, time=47754ns
+put 72
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@e4f972
+72
+Thread null: end TimingThreadPool$Task@e4f972, time=51478ns
+put 73
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@b4d3d5
+73
+Thread null: end TimingThreadPool$Task@b4d3d5, time=53333ns
+put 74
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1bf52a5
+74
+Thread null: end TimingThreadPool$Task@1bf52a5, time=54434ns
+put 75
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1cafa9e
+75
+Thread null: end TimingThreadPool$Task@1cafa9e, time=52619ns
+put 76
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@10b9d04
+76
+Thread null: end TimingThreadPool$Task@10b9d04, time=48652ns
+put 77
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@171732b
+77
+Thread null: end TimingThreadPool$Task@171732b, time=52614ns
+put 78
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1404536
+78
+Thread null: end TimingThreadPool$Task@1404536, time=51528ns
+put 79
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@7fdcde
+79
+Thread null: end TimingThreadPool$Task@7fdcde, time=50730ns
+put 80
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@7d8483
+80
+Thread null: end TimingThreadPool$Task@7d8483, time=52887ns
+put 81
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@86f241
+81
+Thread null: end TimingThreadPool$Task@86f241, time=51860ns
+put 82
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@18ac738
+82
+Thread null: end TimingThreadPool$Task@18ac738, time=50338ns
+put 83
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1d6096
+83
+Thread null: end TimingThreadPool$Task@1d6096, time=56953ns
+put 84
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@b02e7a
+84
+Thread null: end TimingThreadPool$Task@b02e7a, time=52748ns
+put 85
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@bb6ab6
+85
+Thread null: end TimingThreadPool$Task@bb6ab6, time=50636ns
+put 86
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@5afd29
+86
+Thread null: end TimingThreadPool$Task@5afd29, time=43648ns
+put 87
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1a2961b
+87
+Thread null: end TimingThreadPool$Task@1a2961b, time=48493ns
+put 88
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@15dfd77
+88
+Thread null: end TimingThreadPool$Task@15dfd77, time=46385ns
+put 89
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1abc7b9
+89
+Thread null: end TimingThreadPool$Task@1abc7b9, time=45330ns
+put 90
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@c55e36
+90
+Thread null: end TimingThreadPool$Task@c55e36, time=50130ns
+put 91
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1ac3c08
+91
+Thread null: end TimingThreadPool$Task@1ac3c08, time=57653ns
+put 92
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@9971ad
+92
+Thread null: end TimingThreadPool$Task@9971ad, time=117342ns
+put 93
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1f630dc
+93
+Thread null: end TimingThreadPool$Task@1f630dc, time=50665ns
+put 94
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1c5c1
+94
+Thread null: end TimingThreadPool$Task@1c5c1, time=49212ns
+put 95
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@5e0602
+95
+Thread null: end TimingThreadPool$Task@5e0602, time=52297ns
+put 96
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@dc840f
+96
+Thread null: end TimingThreadPool$Task@dc840f, time=53417ns
+put 97
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1621e42
+97
+Thread null: end TimingThreadPool$Task@1621e42, time=48067ns
+put 98
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@b09e89
+98
+Thread null: end TimingThreadPool$Task@b09e89, time=47244ns
+put 99
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1787038
+99
+Thread null: end TimingThreadPool$Task@1787038, time=47105ns
+Terminated: avg time=97174ns
+91   c:91
+</pre> 
+<p>这里要注意的是当其中一个线程（</p> 
+<pre class="java" name="code">thread-3</pre> 
+<p>）抛出异常后，他就再没执行过任务，但他还是占着一个线程计数，所以在代码中，可能要try catch，不然随着时间流逝，可用线程会越来越少。</p> 
+<p>&nbsp;</p> 
+<p>然后我修改了代码</p> 
+<pre class="java" name="code"> @Override
+        public void run() {
+            System.out.println(task);
+            if(task.equals("51")){
+                throw new RuntimeException();
+            }
+            if(task.equals("61")){
+                throw new RuntimeException();
+            }
+            if(task.equals("71")){
+                throw new RuntimeException();
+            }
+            if(task.equals("81")){
+                throw new RuntimeException();
+            }
+        }</pre> 
+<p>&nbsp;结果在线程不断减少，到了少于2个（corePoolSize）的时候，就会起新的线程，满足至少2个</p> 
+<p>&nbsp;</p> 
+<p>假如修改corePoolSize 为1甚至为0的时候，在线程不断减少的情况，他只会保持一个线程</p> 
+<pre class="java" name="code"> public void run() {
+            System.out.println(task);
+            if(task.equals("51")){
+                throw new RuntimeException();
+            }
+            if(task.equals("61")){
+                throw new RuntimeException();
+            }
+            if(task.equals("71")){
+                throw new RuntimeException();
+            }
+            if(task.equals("81")){
+                throw new RuntimeException();
+            }
+            if(task.equals("87")){
+                throw new RuntimeException();
+            }
+        }
+        
+    }
+    public static void main(String[] args) throws Exception {
+        TimingThreadPool pool = new TimingThreadPool(0, 4, 4, TimeUnit.SECONDS, new ArrayBlockingQueue&lt;Runnable&gt;(3),
+                new ThreadPoolExecutor.CallerRunsPolicy());</pre> 
+<p>&nbsp;</p> 
+<pre class="java" name="code">put 0
+put 1
+put 2
+put 3
+put 4
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1bf73fa
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1bf73fa
+0
+4
+Thread null: end TimingThreadPool$Task@1bf73fa, time=132334ns
+Thread null: end TimingThreadPool$Task@1bf73fa, time=730770ns
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@5740bb
+1
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@5ac072
+Thread null: end TimingThreadPool$Task@5740bb, time=50705ns
+2
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@109a4c
+3
+Thread null: end TimingThreadPool$Task@109a4c, time=211730ns
+Thread null: end TimingThreadPool$Task@5ac072, time=491021ns
+put 5
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1cf8583
+5
+Thread null: end TimingThreadPool$Task@1cf8583, time=57613ns
+put 6
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@14693c7
+6
+Thread null: end TimingThreadPool$Task@14693c7, time=54950ns
+put 7
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@901887
+7
+Thread null: end TimingThreadPool$Task@901887, time=59388ns
+put 8
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@3a6727
+8
+Thread null: end TimingThreadPool$Task@3a6727, time=55069ns
+put 9
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@4a65e0
+9
+Thread null: end TimingThreadPool$Task@4a65e0, time=58049ns
+put 10
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@665753
+10
+Thread null: end TimingThreadPool$Task@665753, time=59184ns
+put 11
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@ef22f8
+11
+Thread null: end TimingThreadPool$Task@ef22f8, time=57593ns
+put 12
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1e0cf70
+12
+Thread null: end TimingThreadPool$Task@1e0cf70, time=50125ns
+put 13
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@52fe85
+13
+Thread null: end TimingThreadPool$Task@52fe85, time=54101ns
+put 14
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@c40c80
+14
+Thread null: end TimingThreadPool$Task@c40c80, time=54107ns
+put 15
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@110d81b
+15
+Thread null: end TimingThreadPool$Task@110d81b, time=57637ns
+put 16
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@dbe178
+16
+Thread null: end TimingThreadPool$Task@dbe178, time=53467ns
+put 17
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1af9e22
+17
+Thread null: end TimingThreadPool$Task@1af9e22, time=54116ns
+put 18
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@b6ece5
+18
+Thread null: end TimingThreadPool$Task@b6ece5, time=52585ns
+put 19
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@17ace8d
+19
+Thread null: end TimingThreadPool$Task@17ace8d, time=52544ns
+put 20
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@18eb9e6
+20
+Thread null: end TimingThreadPool$Task@18eb9e6, time=56631ns
+put 21
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@14ed9ff
+21
+Thread null: end TimingThreadPool$Task@14ed9ff, time=55094ns
+put 22
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1ca318a
+22
+Thread null: end TimingThreadPool$Task@1ca318a, time=55615ns
+put 23
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@17a8913
+23
+Thread null: end TimingThreadPool$Task@17a8913, time=59363ns
+put 24
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1bd747e
+24
+Thread null: end TimingThreadPool$Task@1bd747e, time=62046ns
+put 25
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@12b3374
+25
+Thread null: end TimingThreadPool$Task@12b3374, time=61620ns
+put 26
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@13f3789
+26
+Thread null: end TimingThreadPool$Task@13f3789, time=55465ns
+put 27
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1571886
+27
+Thread null: end TimingThreadPool$Task@1571886, time=55108ns
+put 28
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@10b4199
+28
+Thread null: end TimingThreadPool$Task@10b4199, time=53859ns
+put 29
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1ffb8dc
+29
+Thread null: end TimingThreadPool$Task@1ffb8dc, time=57691ns
+put 30
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1c184f4
+30
+Thread null: end TimingThreadPool$Task@1c184f4, time=52297ns
+put 31
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1ffbd68
+31
+Thread null: end TimingThreadPool$Task@1ffbd68, time=53968ns
+put 32
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@ec16a4
+32
+Thread null: end TimingThreadPool$Task@ec16a4, time=51335ns
+put 33
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1c29ab2
+33
+Thread null: end TimingThreadPool$Task@1c29ab2, time=65482ns
+put 34
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@13a328f
+34
+Thread null: end TimingThreadPool$Task@13a328f, time=53120ns
+put 35
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1cd8669
+35
+Thread null: end TimingThreadPool$Task@1cd8669, time=56392ns
+put 36
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@337838
+36
+Thread null: end TimingThreadPool$Task@337838, time=49371ns
+put 37
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@119cca4
+37
+Thread null: end TimingThreadPool$Task@119cca4, time=54087ns
+put 38
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@ca2dce
+38
+Thread null: end TimingThreadPool$Task@ca2dce, time=52589ns
+put 39
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@18558d2
+39
+Thread null: end TimingThreadPool$Task@18558d2, time=55466ns
+put 40
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@18a47e0
+40
+Thread null: end TimingThreadPool$Task@18a47e0, time=54518ns
+put 41
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@174cc1f
+41
+Thread null: end TimingThreadPool$Task@174cc1f, time=54305ns
+put 42
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1050e1f
+42
+Thread null: end TimingThreadPool$Task@1050e1f, time=60261ns
+put 43
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@e24e2a
+43
+Thread null: end TimingThreadPool$Task@e24e2a, time=56988ns
+put 44
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@179c285
+44
+Thread null: end TimingThreadPool$Task@179c285, time=52381ns
+put 45
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@d1e604
+45
+Thread null: end TimingThreadPool$Task@d1e604, time=53725ns
+put 46
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@54172f
+46
+Thread null: end TimingThreadPool$Task@54172f, time=62929ns
+put 47
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@be2358
+47
+Thread null: end TimingThreadPool$Task@be2358, time=58525ns
+put 48
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1027b4d
+48
+Thread null: end TimingThreadPool$Task@1027b4d, time=55664ns
+put 49
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@1ed2ae8
+49
+Thread null: end TimingThreadPool$Task@1ed2ae8, time=53338ns
+put 50
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@19c26f5
+50
+Thread null: end TimingThreadPool$Task@19c26f5, time=54191ns
+put 51
+Thread Thread[pool-1-thread-1,5,main]: start TimingThreadPool$Task@c1b531
+51
+Thread java.lang.RuntimeException: end TimingThreadPool$Task@c1b531, time=95662ns
+Exception in thread "pool-1-thread-1" java.lang.RuntimeException
+	at TimingThreadPool$Task.run(TimingThreadPool.java:56)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+put 52
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@15eb0a9
+52
+Thread null: end TimingThreadPool$Task@15eb0a9, time=52371ns
+put 53
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1a05308
+53
+Thread null: end TimingThreadPool$Task@1a05308, time=51612ns
+put 54
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@ab50cd
+54
+Thread null: end TimingThreadPool$Task@ab50cd, time=51339ns
+put 55
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@145d068
+55
+Thread null: end TimingThreadPool$Task@145d068, time=51519ns
+put 56
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@758fc9
+56
+Thread null: end TimingThreadPool$Task@758fc9, time=52549ns
+put 57
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@32fb4f
+57
+Thread null: end TimingThreadPool$Task@32fb4f, time=53819ns
+put 58
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@14a9972
+58
+Thread null: end TimingThreadPool$Task@14a9972, time=59904ns
+put 59
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@a01335
+59
+Thread null: end TimingThreadPool$Task@a01335, time=52322ns
+put 60
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@14d3343
+60
+Thread null: end TimingThreadPool$Task@14d3343, time=50169ns
+put 61
+Thread Thread[pool-1-thread-2,5,main]: start TimingThreadPool$Task@1608e05
+61
+Thread java.lang.RuntimeException: end TimingThreadPool$Task@1608e05, time=68443ns
+Exception in thread "pool-1-thread-2" java.lang.RuntimeException
+	at TimingThreadPool$Task.run(TimingThreadPool.java:59)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+put 62
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@f81843
+62
+Thread null: end TimingThreadPool$Task@f81843, time=55005ns
+put 63
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@dd5b
+63
+Thread null: end TimingThreadPool$Task@dd5b, time=51117ns
+put 64
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@c4bcdc
+64
+Thread null: end TimingThreadPool$Task@c4bcdc, time=52391ns
+put 65
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@4b4333
+65
+Thread null: end TimingThreadPool$Task@4b4333, time=50759ns
+put 66
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@128e20a
+66
+Thread null: end TimingThreadPool$Task@128e20a, time=50720ns
+put 67
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@1100d7a
+67
+Thread null: end TimingThreadPool$Task@1100d7a, time=47714ns
+put 68
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@e4f972
+68
+Thread null: end TimingThreadPool$Task@e4f972, time=53100ns
+put 69
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@b4d3d5
+69
+Thread null: end TimingThreadPool$Task@b4d3d5, time=48885ns
+put 70
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@1bf52a5
+70
+Thread null: end TimingThreadPool$Task@1bf52a5, time=51513ns
+put 71
+Thread Thread[pool-1-thread-3,5,main]: start TimingThreadPool$Task@1cafa9e
+71
+Thread java.lang.RuntimeException: end TimingThreadPool$Task@1cafa9e, time=72410ns
+Exception in thread "pool-1-thread-3" java.lang.RuntimeException
+	at TimingThreadPool$Task.run(TimingThreadPool.java:62)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+put 72
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1404536
+72
+Thread null: end TimingThreadPool$Task@1404536, time=59636ns
+put 73
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@7fdcde
+73
+Thread null: end TimingThreadPool$Task@7fdcde, time=50759ns
+put 74
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@7d8483
+74
+Thread null: end TimingThreadPool$Task@7d8483, time=48815ns
+put 75
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@86f241
+75
+Thread null: end TimingThreadPool$Task@86f241, time=55381ns
+put 76
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@18ac738
+76
+Thread null: end TimingThreadPool$Task@18ac738, time=49445ns
+put 77
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@bb6ab6
+77
+put 78
+Thread null: end TimingThreadPool$Task@bb6ab6, time=55946ns
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@5afd29
+78
+Thread null: end TimingThreadPool$Task@5afd29, time=50070ns
+put 79
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@1a2961b
+79
+Thread null: end TimingThreadPool$Task@1a2961b, time=50244ns
+put 80
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@12d03f9
+80
+Thread null: end TimingThreadPool$Task@12d03f9, time=44858ns
+put 81
+Exception in thread "pool-1-thread-4" java.lang.RuntimeException
+	at TimingThreadPool$Task.run(TimingThreadPool.java:65)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+Thread Thread[pool-1-thread-4,5,main]: start TimingThreadPool$Task@5ffb18
+81
+Thread java.lang.RuntimeException: end TimingThreadPool$Task@5ffb18, time=70079ns
+put 82
+Thread Thread[pool-1-thread-5,5,main]: start TimingThreadPool$Task@c55e36
+82
+Thread null: end TimingThreadPool$Task@c55e36, time=199705ns
+put 83
+Thread Thread[pool-1-thread-5,5,main]: start TimingThreadPool$Task@1ac3c08
+83
+Thread null: end TimingThreadPool$Task@1ac3c08, time=52109ns
+put 84
+Thread Thread[pool-1-thread-5,5,main]: start TimingThreadPool$Task@9971ad
+84
+Thread null: end TimingThreadPool$Task@9971ad, time=49356ns
+put 85
+Thread Thread[pool-1-thread-5,5,main]: start TimingThreadPool$Task@1f630dc
+85
+Thread null: end TimingThreadPool$Task@1f630dc, time=48771ns
+put 86
+Thread Thread[pool-1-thread-5,5,main]: start TimingThreadPool$Task@1c5c1
+86
+Thread null: end TimingThreadPool$Task@1c5c1, time=45776ns
+put 87
+Thread Thread[pool-1-thread-5,5,main]: start TimingThreadPool$Task@5e0602
+87
+Thread java.lang.RuntimeException: end TimingThreadPool$Task@5e0602, time=81624ns
+Exception in thread "pool-1-thread-5" java.lang.RuntimeException
+	at TimingThreadPool$Task.run(TimingThreadPool.java:68)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+put 88
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@b09e89
+88
+Thread null: end TimingThreadPool$Task@b09e89, time=52227ns
+put 89
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@1787038
+89
+Thread null: end TimingThreadPool$Task@1787038, time=54186ns
+put 90
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@fa9cf
+90
+Thread null: end TimingThreadPool$Task@fa9cf, time=43271ns
+put 91
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@55571e
+91
+Thread null: end TimingThreadPool$Task@55571e, time=54137ns
+put 92
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@ca8327
+92
+Thread null: end TimingThreadPool$Task@ca8327, time=44869ns
+put 93
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@16897b2
+93
+Thread null: end TimingThreadPool$Task@16897b2, time=43539ns
+put 94
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@1bf6770
+94
+Thread null: end TimingThreadPool$Task@1bf6770, time=44808ns
+put 95
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@1201a25
+95
+Thread null: end TimingThreadPool$Task@1201a25, time=44704ns
+put 96
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@94948a
+96
+Thread null: end TimingThreadPool$Task@94948a, time=44735ns
+put 97
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@a401c2
+97
+Thread null: end TimingThreadPool$Task@a401c2, time=47551ns
+put 98
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@16f8cd0
+98
+Thread null: end TimingThreadPool$Task@16f8cd0, time=47864ns
+put 99
+Thread Thread[pool-1-thread-6,5,main]: start TimingThreadPool$Task@85af80
+99
+Thread null: end TimingThreadPool$Task@85af80, time=46212ns
+Terminated: avg time=69345ns
+95   c:95
+=</pre>

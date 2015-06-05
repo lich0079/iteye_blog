@@ -1,0 +1,11 @@
+<p>平常的show_sql=true 最后的参数只能看到一个？</p> 
+<p>&nbsp;</p> 
+<p>log4j设置</p> 
+<p>&nbsp;</p> 
+<p>log4j.category.org.hibernate.SQL=DEBUG,CA<br>log4j.category.org.hibernate.type=DEBUG,CA</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>log</p> 
+<pre class="java" name="code">DEBUG 10-03-18 17:26:17,203 main                  [AbstractBatcher.log:346]  select topdsobayi0_.BAYID as BAYID1_, topdsobayi0_.INDEX1 as INDEX1_1_, topdsobayi0_.INDEX1 as INDEX1_39_0_, topdsobayi0_.BAYID as BAYID39_0_, topdsobayi0_.DISCONNECTORID as DISCONNE3_39_0_, topdsobayi0_.DISCONNECTORTYPE as DISCONNE4_39_0_, topdsobayi0_.POSITIONBEGIN as POSITION5_39_0_, topdsobayi0_.POSITIONEND as POSITION6_39_0_, topdsobayi0_.POSITIONGROUD1 as POSITION7_39_0_, topdsobayi0_.POSITIONGROUD2 as POSITION8_39_0_, topdsobayi0_.NodeBegin as NodeBegin39_0_, topdsobayi0_.NodeEnd as NodeEnd39_0_ from JB_TOP_DSO_BAYInfo topdsobayi0_ where topdsobayi0_.BAYID=?
+DEBUG 10-03-18 17:26:17,203 main                  [NullableType.nullSafeSet:79]  binding '2228' to parameter: 1</pre> 
+<p>&nbsp;第2行的binding的就是实际参数</p>

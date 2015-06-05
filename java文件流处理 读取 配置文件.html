@@ -1,0 +1,74 @@
+<div style="font-size: 14px;" class="iteye-blog-content-contain"> 
+ <p style="margin: 0.0px 0.0px 0.0px 0.0px;">&nbsp;</p> 
+ <pre name="code" class="java">                try {
+                    FileWriter filewriter = new FileWriter(
+                            new File("f:/1.txt"), true);
+                    String content = text_1.getText();
+                    filewriter.write(content);
+                    filewriter.close();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }</pre> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; InputStream in = Config.class.getResourceAsStream("/config/config.properties");<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try {<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p.load(in);<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } catch (Exception e) {<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; throw new RuntimeException("error when try read config:"+property);<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p> 
+ <p>&nbsp;</p> 
+ <p>配置文件应该放在/src/config/config.properties &nbsp;&nbsp;</p> 
+ <p>/config/config.properties&nbsp;&nbsp;&nbsp; 第一个/指的应该就是classpath的root, 即源码的src目录</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <pre name="code" class="java">                File f2 = new File("E:/99.inc");
+                InputStreamReader read = null;
+                try {
+                    read = new InputStreamReader(new FileInputStream(f2),
+                            "UTF-8");
+                } catch (UnsupportedEncodingException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                } catch (FileNotFoundException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+                BufferedReader reader2 = new BufferedReader(read);
+                String line2;
+                try {
+                    while ((line2 = reader2.readLine()) != null) {
+                        System.out.println(line2);
+                    }
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }</pre> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <pre name="code" class="java">        File f = new File("/Users/aaa.txt");
+        String strContent = "";
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(f));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                strContent += line;
+            }
+            System.out.println(strContent);
+        } catch (FileNotFoundException e2) {
+            e2.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            if (reader!=null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }</pre> 
+ <p>&nbsp;</p> 
+ <p>&nbsp;</p> 
+ <p>utf-8 &nbsp;&nbsp;</p> 
+ <p><span style="font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px; background-color: #fafafa;">BufferedReader&nbsp;br=</span><span style="color: #7f0055; font-weight: bold; font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px; background-color: #fafafa;" class="keyword">new</span><span style="font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px; background-color: #fafafa;">&nbsp;BufferedReader(</span><span style="color: #7f0055; font-weight: bold; font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px; background-color: #fafafa;" class="keyword">new</span><span style="font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px; background-color: #fafafa;">&nbsp;InputStreamReader(</span><span style="color: #7f0055; font-weight: bold; font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px; background-color: #fafafa;" class="keyword">new</span><span style="font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px; background-color: #fafafa;">&nbsp;FileInputStream(fileName),</span><span style="color: blue; font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px; background-color: #fafafa;" class="string">"UTF-8"</span><span style="font-family: Monaco, 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Consolas, 'Courier New', monospace; font-size: 12px; line-height: 18px; background-color: #fafafa;">));&nbsp;</span></p> 
+</div>

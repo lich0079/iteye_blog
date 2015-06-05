@@ -1,0 +1,8 @@
+<p>jstl</p> 
+<p>&nbsp;</p> 
+<p>1、在jsp页面中不能通过${<span>list</span> .<span>size</span> }取列表长度，而是 <br> &lt;%@ taglib uri="http://java.sun.com/jsp/<span>jstl</span> /core" prefix="c" %&gt; <br> &lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/<span>jstl</span> /functions" %&gt; <br> &lt;c:out value="${fn:length(<span>list</span> )}"&gt;&lt;/c:out&gt; </p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>&nbsp;</p> 
+<p>struts2</p> 
+<p>&lt;s:property value="#request['list'].size()"/&gt;</p>

@@ -1,0 +1,379 @@
+<p><span style="border-collapse: separate; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-indent: 0px; white-space: normal; font-family: Verdana,Arial,Helvetica,sans-serif; color: #000000; font-size: medium;" class="Apple-style-span"><span style="font-size: 14px; line-height: 22px; color: #444444;" class="Apple-style-span"> </span></span></p>
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;">rewrite "^/api/say/(?!sex)(?!female)([0-9a-z]+)" http://xxx.cn/aaa?ttt=4&amp;yy=$1 ;&nbsp; //不匹配 sex female</p> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;">&nbsp;</p> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;">&nbsp;</p> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><a style="font-family: Verdana,Arial,Helvetica,sans-serif; color: #333333; text-decoration: none;" target="_blank" href="http://www.jzxue.com/tag/nginx/">nginx</a> <span class="Apple-converted-space">&nbsp;</span> rewrite 伪静态配置参数和使用例子 附正则使用说明</p> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;">正则表达式匹配，其中：</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">* ~ 为区分大小写匹配</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">* ~* 为不区分大小写匹配</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">* !~和!~*分别为区分大小写不匹配及不区分大小写不匹配</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">文件及目录匹配，其中：</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">* -f和!-f用来判断是否存在文件</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">* -d和!-d用来判断是否存在目录</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">* -e和!-e用来判断是否存在文件或目录</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">* -x和!-x用来判断文件是否可执行</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">flag标记有：</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">* last 相当于Apache里的[L]标记，表示完成rewrite</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">* break 终止匹配, 不再匹配后面的规则</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">* redirect 返回302临时重定向 地址栏会显示跳转后的地址</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">* permanent 返回301永久重定向 地址栏会显示跳转后的地址</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">一些可用的全局变量有，可以用做条件判断(待补全)</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">$args</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$content_length</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$content_type</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$document_root</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$document_uri</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$host</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$http_user_agent</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$http_cookie</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$limit_rate</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$request_body_file</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$request_method</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$remote_addr</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$remote_port</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$remote_user</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$request_filename</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$request_uri</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$query_string</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$scheme</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$server_protocol</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$server_addr</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$server_name</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$server_port</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">$uri</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">结合QeePHP的例子</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">if (!-d $request_filename) {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/([a-z-A-Z]+)/([a-z-A-Z]+)/?(.*)$ /index.php?namespace=user&amp;controller=$1&amp;action=$2&amp;$3 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/([a-z-A-Z]+)/?$ /index.php?namespace=user&amp;controller=$1 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">多目录转成参数</strong> <br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> abc.domian.com/sort/2 =&gt; abc.domian.com/index.php?act=sort&amp;name=abc&amp;id=2</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">if ($host ~* (.*)\.domain\.com) {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">set $sub_name $1;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/sort\/(\d+)\/?$ /index.php?act=sort&amp;cid=$sub_name&amp;id=$1 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">目录对换</strong> <br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> /123456/xxxx -&gt; /xxxx?id=123456</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">rewrite ^/(\d+)/(.+)/ /$2?id=$1 last;</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">例如下面设定nginx在用户使用ie的使用重定向到/nginx-ie目录下：</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">if ($http_user_agent ~ MSIE) {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^(.*)$ /nginx-ie/$1 break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">目录自动加“/”</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">if (-d $request_filename){</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/(.*)([^/])$ http://$host/$1$2/ permanent;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">禁止htaccess</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ~/\.ht {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">deny all;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">禁止多个目录</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ~ ^/(cron|templates)/ {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">deny all;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">禁止以/data开头的文件</strong> <br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> 可以禁止/data/下多级目录下.log.txt等请求;</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ~ ^/data {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">deny all;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">禁止单个目录</strong> <br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> 不能禁止.log.txt能请求</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location /searchword/cron/ {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">deny all;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">禁止单个文件</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ~ /data/sql/data.sql {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">deny all;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">给favicon.ico和robots.txt设置过期时间;</strong> <br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> 这里为favicon.ico为99天,robots.txt为7天并不记录404错误日志</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ~(favicon.ico) {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">log_not_found off;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">expires 99d;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">&nbsp;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">location ~(robots.txt) {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">log_not_found off;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">expires 7d;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">设定某个文件的过期时间;这里为600秒，并不记录访问日志</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ^~ /html/scripts/loadhead_1.js {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">access_log off;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">root /opt/lampp/htdocs/web;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">expires 600;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">文件反盗链并设置过期时间</strong> <br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> 这里的return 412 为自定义的http状态码，默认为403，方便找出正确的盗链的请求<br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> “rewrite ^/ http://leech.c1gstudio.com/leech.gif;”显示一张防盗链图片<br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> “access_log off;”不记录访问日志，减轻压力<br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> “expires 3d”所有文件3天的浏览器缓存</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ~* ^.+\.(jpg|jpeg|gif|png|swf|rar|zip|css|js)$ {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">valid_referers none blocked *.c1gstudio.com *.c1gstudio.net localhost 208.97.167.194;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">if ($invalid_referer) {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/ http://leech.c1gstudio.com/leech.gif;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">return 412;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">access_log off;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">root /opt/lampp/htdocs/web;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">expires 3d;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">只充许固定ip访问网站，并加上密码</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">root /opt/htdocs/www;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">allow 208.97.167.194;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">allow 222.33.1.2;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">allow 231.152.49.4;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">deny all;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">auth_basic "C1G_ADMIN";</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">auth_basic_user_file htpasswd;</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">将多级目录下的文件转成一个文件，增强seo效果</strong> <br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> /job-123-456-789.html 指向/job/123/456/789.html</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">rewrite ^/job-([0-9]+)-([0-9]+)-([0-9]+)\.html$ /job/$1/$2/jobshow_$3.html last;</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">将根目录下某个文件夹指向2级目录</strong> <br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> 如/<strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">shanghai</strong> job/ 指向 /area/<strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">shanghai</strong> /<br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> 如果你将last改成permanent，那么浏览器地址栏显是/location/shanghai/</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">rewrite ^/([0-9a-z]+)job/(.*)$ /area/$1/$2 last;</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;">上面例子有个问题是访问/shanghai 时将不会匹配</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">rewrite ^/([0-9a-z]+)job$ /area/$1/ last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/([0-9a-z]+)job/(.*)$ /area/$1/$2 last;</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;">这样/shanghai 也可以访问了，但页面中的相对链接无法使用，<br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> 如./list_1.html真实地址是/area/shanghia/list_1.html会变成/list_1.html,导至无法访问。</p> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;">那我加上自动跳转也是不行咯<br style="font-family: Verdana,Arial,Helvetica,sans-serif;"> (-d $request_filename)它有个条件是必需为真实目录，而我的rewrite不是的，所以没有效果</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">if (-d $request_filename){</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/(.*)([^/])$ http://$host/$1$2/ permanent;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;">知道原因后就好办了，让我手动跳转吧</p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">rewrite ^/([0-9a-z]+)job$ /$1job/ permanent;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/([0-9a-z]+)job/(.*)$ /area/$1/$2 last;</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">文件和目录不存在的时候重定向：</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">if (!-e $request_filename) {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">proxy_pass http://127.0.0.1;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">域名跳转</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">server</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">{</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">listen 80;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">server_name jump.c1gstudio.com;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">index index.html index.htm index.php;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">root /opt/lampp/htdocs/www;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/ http://www.c1gstudio.com/;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">access_log off;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">多域名转向</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">server_name www.c1gstudio.com www.c1gstudio.net;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">index index.html index.htm index.php;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">root /opt/lampp/htdocs;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">if ($host ~ "c1gstudio\.net") {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^(.*) http://www.c1gstudio.com$1 permanent;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">三级域名跳转</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">if ($http_host ~* "^(.*)\.i\.c1gstudio\.com$") {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^(.*) http://top.yingjiesheng.com$1;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">域名镜向</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">server</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">{</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">listen 80;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">server_name mirror.c1gstudio.com;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">index index.html index.htm index.php;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">root /opt/lampp/htdocs/www;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/(.*) http://www.c1gstudio.com/$1 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">access_log off;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">某个子目录作镜向</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ^~ /zhaopinhui {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^.+ http://zph.c1gstudio.com/ last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">discuz ucenter home (uchome) rewrite</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">rewrite ^/(space|network)-(.+)\.html$ /$1.php?rewrite=$2 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/(space|network)\.html$ /$1.php last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/([0-9]+)$ /space.php?uid=$1 last;</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">discuz 7 rewrite</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">rewrite ^(.*)/archiver/((fid|tid)-[\w\-]+\.html)$ $1/archiver/index.php?$2 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^(.*)/forum-([0-9]+)-([0-9]+)\.html$ $1/forumdisplay.php?fid=$2&amp;page=$3 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^(.*)/thread-([0-9]+)-([0-9]+)-([0-9]+)\.html$ $1/viewthread.php?tid=$2&amp;extra=page\%3D$4&amp;page=$3 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^(.*)/profile-(username|uid)-(.+)\.html$ $1/viewpro.php?$2=$3 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^(.*)/space-(username|uid)-(.+)\.html$ $1/space.php?$2=$3 last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^(.*)/tag-(.+)\.html$ $1/tag.php?name=$2 last;</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">给discuz某版块单独配置域名</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">server_name bbs.c1gstudio.com news.c1gstudio.com;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">&nbsp;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">location = / {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">if ($http_host ~ news\.c1gstudio.com$) {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^.+ http://news.c1gstudio.com/forum-831-1.html last;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">discuz ucenter 头像 rewrite 优化</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ^~ /ucenter {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">location ~ .*\.php?$</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">{</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">#fastcgi_pass unix:/tmp/php-cgi.sock;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">fastcgi_pass 127.0.0.1:9000;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">fastcgi_index index.php;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">include fcgi.conf;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">&nbsp;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">location /ucenter/data/avatar {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">log_not_found off;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">access_log off;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">location ~ /(.*)_big\.jpg$ {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">error_page 404 /ucenter/images/noavatar_big.gif;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">location ~ /(.*)_middle\.jpg$ {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">error_page 404 /ucenter/images/noavatar_middle.gif;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">location ~ /(.*)_small\.jpg$ {</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">error_page 404 /ucenter/images/noavatar_small.gif;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">expires 300;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div> 
+<p style="font-family: Verdana,Arial,Helvetica,sans-serif;"><strong style="font-family: Verdana,Arial,Helvetica,sans-serif;">jspace rewrite</strong> </p> 
+<div style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-surround">
+ <ol title="Double click to hide line number." style="font-family: Verdana,Arial,Helvetica,sans-serif;" class="hl-main ln-show"> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;" class="hl-firstline">location ~ .*\.php?$</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">{</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">#fastcgi_pass unix:/tmp/php-cgi.sock;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">fastcgi_pass 127.0.0.1:9000;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">fastcgi_index index.php;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">include fcgi.conf;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">&nbsp;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">location ~* ^/index.php/</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">{</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">rewrite ^/index.php/(.*) /index.php?$1 break;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">fastcgi_pass 127.0.0.1:9000;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">fastcgi_index index.php;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">include fcgi.conf;</li> 
+  <li style="font-family: Verdana,Arial,Helvetica,sans-serif; border-width: 0px; padding: 0px; margin: 0px;">}</li> 
+ </ol>
+</div>   
+<p></p>
